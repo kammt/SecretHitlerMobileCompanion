@@ -18,10 +18,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Server server = new Server(8080);
+        Server server = new Server(8080, this);
         server.startServer();
 
-        Log.v("Server", "URL is " + server.getURL(this));
+        Log.v("Server", "URL is " + server.getURL());
 
     }
 }

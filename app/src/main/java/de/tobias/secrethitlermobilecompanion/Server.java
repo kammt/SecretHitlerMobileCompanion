@@ -4,7 +4,17 @@ import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import fi.iki.elonen.NanoHTTPD;
 
@@ -12,14 +22,45 @@ import static android.content.Context.WIFI_SERVICE;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 public class Server extends NanoHTTPD {
-    public Server(int port) {
+    private Context c;
+
+    public Server(int port, Context c) {
         super(port);
+        this.c = c;
     }
 
     @Override
     public Response serve(IHTTPSession session) {
-        return newFixedLengthResponse("<html><head></head><body><h1>Juhu es funktioniert bää</h1><br><h2>Schervusch</h2></html>");
+        return newFixedLengthResponse(getHTML());
     }
+
+    public String getHTML() {
+        StringBuilder html = new StringBuilder();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(
+                    new InputStreamReader(c.getAssets().open("index.html")));
+
+            // do reading, usually loop until end of file reading
+            String mLine;
+            while ((mLine = reader.readLine()) != null) {
+                html.append(mLine + "\n");
+            }
+        } catch (IOException e) {
+            //log the exception
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    //log the exception
+                }
+            }
+        }
+
+        return html.toString();
+    }
+
 
     public void startServer() {
         try {
@@ -29,7 +70,7 @@ public class Server extends NanoHTTPD {
         }
     }
 
-    public String getURL(Context c) {
+    public String getURL() {
         WifiManager wifiManager = (WifiManager) c.getSystemService(WIFI_SERVICE);
 
         int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
