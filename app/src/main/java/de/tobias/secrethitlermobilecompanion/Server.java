@@ -40,20 +40,18 @@ public class Server extends NanoHTTPD {
         try {
             reader = new BufferedReader(
                     new InputStreamReader(c.getAssets().open("index.html")));
-
-            // do reading, usually loop until end of file reading
             String mLine;
             while ((mLine = reader.readLine()) != null) {
                 html.append(mLine + "\n");
             }
         } catch (IOException e) {
-            //log the exception
+            e.printStackTrace();
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    //log the exception
+                    e.printStackTrace();
                 }
             }
         }
@@ -77,9 +75,7 @@ public class Server extends NanoHTTPD {
         final String formatedIpAddress = String.format("%d.%d.%d.%d", (ipAddress & 0xff), (ipAddress >> 8 & 0xff),
                 (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
 
-        String result = "http://" + formatedIpAddress + ":" + getListeningPort();
-
-        return result;
+        return "http://" + formatedIpAddress + ":" + getListeningPort();
     }
 
 
