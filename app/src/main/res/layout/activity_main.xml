@@ -6,24 +6,172 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:background="@color/colorPrimaryDark"
+    android:focusable="true"
     tools:context=".MainActivity">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_view"
-        android:layout_width="365dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        app:cardBackgroundColor="@color/colorAccent"
-        app:cardCornerRadius="10dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cardList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <include
-            layout="@layout/card_legislative_session"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_main_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_baseline_add_24" />
 
-    </androidx.cardview.widget.CardView>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_execution"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:clickable="false"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:visibility="invisible"
+        app:backgroundTint="@color/colorFascist"
+        app:layout_constraintBottom_toTopOf="@+id/fab_investigation"
+        app:layout_constraintEnd_toEndOf="@+id/fab_investigation"
+        app:layout_constraintStart_toStartOf="@+id/fab_investigation"
+        app:srcCompat="@drawable/execution" />
+
+    <TextView
+        android:id="@+id/tv_execution"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="#000000"
+        android:fontFamily="@font/comfortaa_light"
+        android:text="@string/fab_menu_execution"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/fab_execution"
+        app:layout_constraintEnd_toStartOf="@+id/fab_execution"
+        app:layout_constraintTop_toTopOf="@+id/fab_execution" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_investigation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/colorFascist"
+        android:clickable="false"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/fab_legislative_session"
+        app:layout_constraintEnd_toEndOf="@+id/fab_legislative_session"
+        app:layout_constraintStart_toStartOf="@+id/fab_legislative_session"
+        app:srcCompat="@drawable/investigate_loyalty" />
+
+    <TextView
+        android:id="@+id/tv_investigation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="#000000"
+        android:fontFamily="@font/comfortaa_light"
+        android:text="@string/fab_menu_investigation"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/fab_investigation"
+        app:layout_constraintEnd_toStartOf="@+id/fab_investigation"
+        app:layout_constraintTop_toTopOf="@+id/fab_investigation" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_legislative_session"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:clickable="false"
+        android:visibility="invisible"
+        app:backgroundTint="@color/colorFascist"
+        app:layout_constraintBottom_toTopOf="@+id/fab_main_add"
+        app:layout_constraintEnd_toEndOf="@+id/fab_main_add"
+        app:layout_constraintStart_toStartOf="@+id/fab_main_add"
+        app:srcCompat="@drawable/ic_baseline_how_to_vote_24" />
+
+    <TextView
+        android:id="@+id/tv_legislative_session"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="#000000"
+        android:fontFamily="@font/comfortaa_light"
+        android:text="@string/fab_menu_legislative_session"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/fab_legislative_session"
+        app:layout_constraintEnd_toStartOf="@+id/fab_legislative_session"
+        app:layout_constraintTop_toTopOf="@+id/fab_legislative_session" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_policy_peek"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/colorFascist"
+        android:clickable="false"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/fab_execution"
+        app:layout_constraintEnd_toEndOf="@+id/fab_execution"
+        app:layout_constraintStart_toStartOf="@+id/fab_execution"
+        app:srcCompat="@drawable/policy_peek" />
+
+    <TextView
+        android:id="@+id/tv_policy_peek"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="#000000"
+        android:fontFamily="@font/comfortaa_light"
+        android:text="@string/fab_menu_policy_peek"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/fab_policy_peek"
+        app:layout_constraintEnd_toStartOf="@+id/fab_policy_peek"
+        app:layout_constraintTop_toTopOf="@+id/fab_policy_peek" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_special_election"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/colorFascist"
+        android:clickable="false"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/fab_policy_peek"
+        app:layout_constraintEnd_toEndOf="@+id/fab_policy_peek"
+        app:srcCompat="@drawable/special_election" />
+
+    <TextView
+        android:id="@+id/tv_special_election"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="#000000"
+        android:fontFamily="@font/comfortaa_light"
+        android:text="@string/fab_menu_special_election"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/fab_special_election"
+        app:layout_constraintEnd_toStartOf="@+id/fab_special_election"
+        app:layout_constraintTop_toTopOf="@+id/fab_special_election" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
