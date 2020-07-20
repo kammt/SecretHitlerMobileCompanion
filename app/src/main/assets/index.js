@@ -32,79 +32,162 @@ const loadPage = () => {
     let prevPlays = prevGameData == null ? null : prevGameData.game.plays;
     let plays = gameData.game.plays;
 
-    console.log(prevPlays);
-    console.log(plays);
+    //console.log(prevPlays);
+    //console.log(plays);
 
-    let gameLogSection = $('#game-log');
-    let gameLogSectionInnerHTML = gameLogSection.html();
-
-    console.log(prevPlays != null ? prevPlays.length - 1 : 0);
+    // console.log(prevPlays != null ? prevPlays.length - 1 : 0);
 
     for(let i = prevPlays != null ? prevPlays.length - 1 : 0; i < plays.length; i++) {
         let play = plays[i];
-        console.log(play.type);
+        //console.log(play.type);
         if(play.type === "legislative-session") {
-            gameLogSectionInnerHTML += getLegislativeSessionHTML(play)
+            addLegislativeSession(play);
         } else if(play.type === "executive-action") {
-            gameLogSectionInnerHTML += getExecutiveActionHTML(play);
+            addExecutiveAction(play);
         }
     }
-
-    gameLogSection.html(gameLogSectionInnerHTML);
 
     prevGameData = gameData;
 };
 
-const getLegislativeSessionHTML = (play) => {
-    let result = `<div class="game-action legislative-session"><h1 class="game-action-title">Legislative Session #${play.num} ${play.rejected === true ? '- Rejected' : ''} ${play.veto === true ? '- Vetoed' : ''}</h1><div class="president">
-        <img class="token president-token" src="${images.president}" alt="president-token"><span class="president-name">${play.president}</span>
-        <span class="right-align">${play.rejected === false ? getColouredClaim(play.president_claim) : ''}</span></div>
-        <div class="chancellor"><img class="token chancellor-token" src="${images.president}" alt="chancellor-token">
-        <span class="chancellor-name ${play.rejected === true ? 'cross-out' : ''}">${play.chancellor}</span>
-        <span class="right-align">${play.rejected === false ? getColouredClaim(play.chancellor_claim) : ''}</span></div>`
+const addLegislativeSession = (play) => {
+    // Create the main div that contains all of the legislative session html
+    let lsDiv = $(document.createElement('div'));
+    lsDiv.addClass('game-action legislative-session');
 
+    // Create the main title of the legislative session div
+    let lsTitle = $(document.createElement('h1'));
+    lsTitle.addClass('game-action-title');
+    // The text of the legislative session title contains special text if the chancellor was rejected or the policy vetoed
+    lsTitle.text(`Legislative Session #${play.num} ${play.rejected === true ? '- Rejected' : ''} ${play.veto === true ? '- Vetoed' : ''}`);
+    // Append the title to the main div
+    lsDiv.append(lsTitle);
+
+    // Append the president div and the chancellor div to the main div of the legislative session
+    lsDiv.append(getLeaderDiv(play, 'president'));
+    lsDiv.append(getLeaderDiv(play, 'chancellor'));
+
+    // Create the div containing the data on the policy played/that would have been played (in case of veto)
     if(play.rejected === false) {
-        result += `<div class="policy-played"><span class="policy-played-span ${play.veto === true ? 'cross-out' : ''}">Policy played</span><img class="policy-icon" src="${play.policy_played === 'B' ? images.bird : images.skull}" alt="policy-played"></div>`
+        let polPlayedDiv = $(document.createElement('div'));
+        polPlayedDiv.addClass('policyplayed');
+
+        let polPlayedSpan = $(document.createElement('span'));
+        polPlayedSpan.addClass('policy-played-span');
+        if(play.veto === true) polPlayedSpan.addClass('cross-out');
+        polPlayedSpan.text('Policy played');
+
+        polPlayedDiv.append(polPlayedSpan);
+
+        let polPlayedIcon = $(document.createElement('img'));
+        polPlayedIcon.addClass('policy-icon');
+        polPlayedIcon.attr('src', play.policy_played === 'B' ? images.bird : images.skull);
+        polPlayedIcon.attr('alt', 'policy-played-icon');
+
+        polPlayedDiv.append(polPlayedIcon);
+
+        lsDiv.append(polPlayedDiv);
     }
 
-    result += '</div>';
-    return result;
+    $('#game-log').append(lsDiv);
+    //console.log(lsDiv.html());
 };
 
-const getExecutiveActionHTML = (play) => {
-    let executiveActionText = "";
+const getLeaderDiv = (play, type) => {
+    // Create the div containing the token for the leader and the name of the leader
+    let leaderDiv = $(document.createElement('div'));
+    leaderDiv.addClass(type);
 
+    // Create the leader's token
+    let leaderToken = $(document.createElement('img'));
+    leaderToken.addClass('token');
+    leaderToken.attr('src', images[`${type}_token`]);
+    leaderToken.attr('alt', `${type}-token`);
+    leaderDiv.append(leaderToken);
+
+    // Create the leader's name span
+    let leaderNameSpan = $(document.createElement('span'));
+    leaderNameSpan.addClass(`${type}-name`);
+    leaderNameSpan.text(play[type]);
+    leaderDiv.append(leaderNameSpan)
+
+    // Create the leader's claim span
+    if(play.rejected === false) {
+        let leaderClaimSpan = $(document.createElement('span'));
+        leaderClaimSpan.addClass('right-align');
+        leaderClaimSpan.html(getColouredClaim(play[`${type}_claim`]));
+        leaderDiv.append(leaderClaimSpan)
+    }
+
+    return leaderDiv;
+}
+
+const addExecutiveAction = (play) => {
+    let executiveActionHTML = "";
+
+    // Get HTML code that highlights the players names using the getPlayerHTML function
     let presidentHTML = getPlayerHTML(play.president);
     let targetHTML = play.target != undefined ? getPlayerHTML(play.target) : '';
+
     switch(play.executive_action_type) {
         case 'execution':
-            executiveActionText = `President ${presidentHTML} selects to execute ${targetHTML}.`;
+            executiveActionHTML = `President ${presidentHTML} selects to execute ${targetHTML}.`;
             break;
         case 'investigate-loyalty':
-            executiveActionText = `President ${presidentHTML} sees the party membership of ${targetHTML} and claims to see a member of the ${play.claim === 'B' ? 'liberal' : 'fascist'} team.`
+            executiveActionHTML = `President ${presidentHTML} sees the party membership of ${targetHTML} and claims to see a member of the ${play.claim === 'B' ? 'liberal' : 'fascist'} team.`
             break;
         case 'policy-peek':
-            executiveActionText = `President ${presidentHTML} peeks at the next three policies and claims to see ${getColouredClaim(play.claim)}.`;
+            executiveActionHTML = `President ${presidentHTML} peeks at the next three policies and claims to see ${getColouredClaim(play.claim)}.`;
             break;
         case 'special-election':
-            executiveActionText = `President ${presidentHTML} has chosen to special elect ${targetHTML} as president.`;
+            executiveActionHTML = `President ${presidentHTML} has chosen to special elect ${targetHTML} as president.`;
             break;
         default:
-            executiveActionText = 'Unknwon executive action type';
+            executiveActionHTML = 'Unknwon executive action type';
             break;
     }
 
-    return `<div class="game-action executive-action"><div class="executive-action-top"><h1 class="game-action-title executive-action-title">Executive Action</h1>
-        <img class="executive-action-icon" src="${images[play.executive_action_type]}" alt="${play.executive_action_type}-icon"></div>
-        <p class="executive-action-text">${executiveActionText}</p> </div>`
+    // Create the main div containing all the other elements
+    let execActDiv = $(document.createElement('div'));
+    execActDiv.addClass('game-action executive-action');
+
+    // Create the div containing the title and the executive action icon
+    let execActDivTop = $(document.createElement('div'));
+    execActDivTop.addClass('executive-action-top');
+
+    execActDiv.append(execActDivTop);
+
+    let execActTitle = $(document.createElement('h1'));
+    execActTitle.addClass('game-action-title executive-action-title');
+    execActTitle.text('Executive Action');
+
+    execActDivTop.append(execActTitle);
+
+    let execActImg = $(document.createElement('img'));
+    execActImg.addClass('executive-action-icon');
+    execActImg.attr('src', images[play.executive_action_type]);
+    execActImg.attr('alt', `${play.executive_action_type}-icon`);
+
+    execActDivTop.append(execActImg);
+
+    // Create the p element that contains the text of the executive action
+    let execActText = $(document.createElement('p'));
+    execActText.addClass('executive-action-text');
+    execActText.html(executiveActionHTML);
+
+    execActDiv.append(execActText);
+
+    $('#game-log').append(execActDiv);
 };
 
+// Function that returns HTML code that highlights the name of players
 const getPlayerHTML = (name) => {
     return `<span class="player-name">${name != null ? name : ''}</span>`
 };
 
+// Function that returns HTML code that correctly colours the letters in policy claims (liberals => blue, fascists => red)
 const getColouredClaim = (claim) => {
-    console.log(claim.split(''));
+    //console.log(claim.split(''));
     let result = '';
     let chars = claim.split('');
 
