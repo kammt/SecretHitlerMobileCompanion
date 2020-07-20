@@ -41,18 +41,22 @@ public class Server extends NanoHTTPD {
         }
 
         Log.v("Server request header", "\n" + sb.toString());
-        switch(session.getUri()) {
-            case "index.html":
-            case "/":
-                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/html", getFile("index.html"));
-            case "/index.js":
-                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript",getFile("index.js"));
-            case "/css/style.css":
-                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css",getFile("style.css"));
-            default:
-                return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html",getFile("404.html"));
-        }
 
+        String uri = session.getUri();
+
+        if(uri.equals("/index.html") || uri.equals("/")) {
+            return newFixedLengthResponse(Response.Status.ACCEPTED, "text/html", getFile("index.html"));
+        } else if(uri.equals("/index.js")) {
+            return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript",getFile("index.js"));
+        } else if(uri.equals("/css/style.css")) {
+            return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css",getFile("style.css"));
+        } else if(uri.contains("/images/") && uri.contains(".png")) {
+            //Only png images supported
+            //TODO: Check if this is working
+            return newFixedLengthResponse(Response.Status.ACCEPTED, "image/png",getFile(uri.substring(1)));
+        } else {
+            return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", getFile("404.html"));
+        }
     }
 
     public String getFile(String fileName) {
