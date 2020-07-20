@@ -1,20 +1,17 @@
 package de.tobias.secrethitlermobilecompanion.SHClasses;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PlayerList {
-    private HashMap<String, Integer> playerList = new HashMap<String, Integer>();
-    private int nextID = 0;
+    private static ArrayList<String> playerList = new ArrayList<String>();
+    private static int nextID = 0;
 
-    public void addPlayer(String name) {
-        playerList.put(name, nextID++);
+    public static void addPlayer(String name) {
+        playerList.add(name);
     }
 
-    public Integer getID(String name) {
-        return playerList.get(name).intValue();
-    }
-
-    public HashMap<String, Integer> getPlayerList() {
+    public static ArrayList<String> getPlayerList() {
         return playerList;
     }
 }

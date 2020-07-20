@@ -1,8 +1,17 @@
 package de.tobias.secrethitlermobilecompanion.SHClasses;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+
+import de.tobias.secrethitlermobilecompanion.R;
+
 public class ClaimEvent extends GameEvent {
 
-    private int presidentID, chancellorID;
+    private String presidentName, chancellorName;
     private int presidentClaim, chancellorClaim;
     private int playedPolicy;
 
@@ -23,22 +32,26 @@ public class ClaimEvent extends GameEvent {
 
     public static final int NO_CLAIM = -1;
 
-    public ClaimEvent(int presidentID, int chancellorID, int presidentClaim, int chancellorClaim, int playedPolicy) {
-        this.presidentID = presidentID;
-        this.chancellorID = chancellorID;
+    Context c;
+
+    public ClaimEvent(String presidentName, String chancellorName, int presidentClaim, int chancellorClaim, int playedPolicy, Context context) {
+        this.chancellorName = chancellorName;
+        this.presidentName = presidentName;
 
         this.presidentClaim = presidentClaim;
         this.chancellorClaim = chancellorClaim;
 
         this.playedPolicy = playedPolicy;
+
+        c = context;
     }
 
     public int getChancellorClaim() {
         return chancellorClaim;
     }
 
-    public int getChancellorID() {
-        return chancellorID;
+    public String getChancellorName() {
+        return chancellorName;
     }
 
     public int getPlayedPolicy() {
@@ -49,7 +62,45 @@ public class ClaimEvent extends GameEvent {
         return presidentClaim;
     }
 
-    public int getPresidentID() {
-        return presidentID;
+    public String getPresidentName() {
+        return presidentName;
+    }
+
+    public String getClaimString(int claimString) {
+        switch(claimString){
+            case BBB:
+                return "<font color='blue'>BBB</font>";
+            case BBR:
+                return "<font color='blue'>BB</font><font color='red'>R</font>";
+            case BRR:
+                return "<font color='blue'>B</font><font color='red'>RR</font>";
+            case RRR:
+                return "<font color='red'>RRR</font>";
+            case RR:
+                return "<font color='red'>RR</font>";
+            case BR:
+                return "<font color='blue'>B</font><font color='red'>R</font>";
+            case BB:
+                return "<font color='blue'>BB</font>";
+            default: return c.getString(R.string.claim_nothing);
+
+
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        String playedPolicysp;
+        if(playedPolicy == LIBERAL) {
+            playedPolicysp = "<font color='blue'>" + c.getString(R.string.liberal) + "</font>";
+        } else {
+            playedPolicysp = "<font color='red'>" + c.getString(R.string.fascist) + "</font>";
+        }
+
+        String presidentNamecolored = "<font color='grey'>" + presidentName + "</font>";
+        String chancellorNamecolored = "<font color='grey'>" + chancellorName + "</font>";
+
+        return c.getString(R.string.claim_string, playedPolicysp, presidentNamecolored, getClaimString(presidentClaim), chancellorNamecolored, getClaimString(chancellorClaim));
     }
 }

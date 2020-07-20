@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">SecretHitler Mobile Companion</string>
+    <string name="new_claim">New Claim</string>
+    <string name="new_vote">New Vote</string>
+    <string name="New_Kill">New Kill</string>
+    <string name="play_sound">Play Sound</string>
+    <string name="vote_string">President %1$s proposed %2$s to be the next chancellor. %3$s</string>
+    <string name="vote_passed">The vote was passed.</string>
+    <string name="vote_rejected">The vote was rejected.</string>
+    <string name="claim_string">A %1$s policy was played, while President %2$s claims %3$s and Chancellor %4$s claims %5$s</string>
+    <string name="fascist">fascist</string>
+    <string name="liberal">liberal</string>
+    <string name="claim_nothing">nothing</string>
 </resources>
