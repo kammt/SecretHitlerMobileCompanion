@@ -1,21 +1,13 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Helo</title>
-    <script>
-        console.log(location.host);
-
-        const getRequest = () => {
-        const Http = new XMLHttpRequest();
-        const url=`http://${location.host}` ;
-        Http.open("GET", url);
-        Http.send();
-        Http.onreadystatechange = (e) => {
-            console.log(Http.responseText)
-        }
-        };
-
-        setInterval(getRequest, 2000);
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Hitler Mobile Companion</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
+<body>
+    <h1>Secret Hitler Mobile Companion</h1>
+    <script src = "index.js"></script>
+</body>
 </html>
