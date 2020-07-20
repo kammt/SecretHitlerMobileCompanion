@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         PlayerList.addPlayer("Hildegunde");
         PlayerList.addPlayer("Ferdinand");
 
-        logListtView = (LinearLayout) findViewById(R.id.GameLog);
+        //logListtView = (LinearLayout) findViewById(R.id.GameLog);
 
 
 
@@ -49,18 +49,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        final GameLog gameLog = new GameLog(logListtView, MainActivity.this);
+        //final GameLog gameLog = new GameLog(logListtView, MainActivity.this);
 
-        gameLog.addEvent(new VoteEvent("Rüdiger", "Hildegunde", VoteEvent.VOTE_PASSED, this));
-        gameLog.addEvent(new ClaimEvent("Rüdiger", "Hildegunde", ClaimEvent.RRR, ClaimEvent.RR, ClaimEvent.FASCIST, this));
+        //gameLog.addEvent(new VoteEvent("Rüdiger", "Hildegunde", VoteEvent.VOTE_PASSED, this));
+        //gameLog.addEvent(new ClaimEvent("Rüdiger", "Hildegunde", ClaimEvent.RRR, ClaimEvent.RR, ClaimEvent.FASCIST, this));
 
-        findViewById(R.id.button_add_Claim).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gameLog.addEvent(new VoteEvent("Hildegunde", "Ferdinand", VoteEvent.VOTE_PASSED, MainActivity.this));
-                gameLog.addEvent(new ClaimEvent("Hildegunde", "Ferdinand", ClaimEvent.BRR, ClaimEvent.BR, ClaimEvent.LIBERAL, MainActivity.this));
-            }
-        });
+        //gameLog.addEvent(new VoteEvent("Hildegunde", "Ferdinand", VoteEvent.VOTE_PASSED, MainActivity.this));
+       // gameLog.addEvent(new ClaimEvent("Hildegunde", "Ferdinand", ClaimEvent.BRR, ClaimEvent.BR, ClaimEvent.LIBERAL, MainActivity.this));
 
 
     }
