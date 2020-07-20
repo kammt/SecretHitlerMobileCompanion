@@ -13,6 +13,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -31,18 +32,38 @@ public class Server extends NanoHTTPD {
 
     @Override
     public Response serve(IHTTPSession session) {
-        return newFixedLengthResponse(getHTML());
+        Log.v(" Server request URI", session.getUri());
+        Log.v("Server request method", session.getMethod().toString());
+
+        StringBuilder sb = new StringBuilder();
+        for(Map.Entry<String, String> k : session.getHeaders().entrySet()) {
+            sb.append("  " + k.getKey() + ": " +  k.getValue() + "\n");
+        }
+
+        Log.v("Server request header", "\n" + sb.toString());
+        switch(session.getUri()) {
+            case "index.html":
+            case "/":
+                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/html", getFile("index.html"));
+            case "/index.js":
+                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript",getFile("index.js"));
+            case "/css/style.css":
+                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css",getFile("style.css"));
+            default:
+                return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html",getFile("404.html"));
+        }
+
     }
 
-    public String getHTML() {
-        StringBuilder html = new StringBuilder();
+    public String getFile(String fileName) {
+        StringBuilder fileData = new StringBuilder();
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(
-                    new InputStreamReader(c.getAssets().open("index.html")));
+                    new InputStreamReader(c.getAssets().open(fileName)));
             String mLine;
             while ((mLine = reader.readLine()) != null) {
-                html.append(mLine + "\n");
+                fileData.append(mLine + "\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -55,8 +76,7 @@ public class Server extends NanoHTTPD {
                 }
             }
         }
-
-        return html.toString();
+        return fileData.toString();
     }
 
 
