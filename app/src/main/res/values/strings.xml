@@ -11,4 +11,7 @@
     <string name="fascist">fascist</string>
     <string name="liberal">liberal</string>
     <string name="claim_nothing">nothing</string>
+    <string name="legislative_session">Legislative Session</string>
+    <string name="executive_action">Executive Action</string>
+    <string name="policy_played">Policy Played:</string>
 </resources>

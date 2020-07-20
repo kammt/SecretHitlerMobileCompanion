@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -22,9 +24,7 @@ import de.tobias.secrethitlermobilecompanion.SHClasses.VoteEvent;
 
 public class MainActivity extends AppCompatActivity {
 
-    ListView logListtView;
-    ArrayAdapter<Spanned> adapter;
-    ArrayList<Spanned> listItems = new ArrayList<Spanned>();
+    LinearLayout logListtView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +39,8 @@ public class MainActivity extends AppCompatActivity {
         PlayerList.addPlayer("Hildegunde");
         PlayerList.addPlayer("Ferdinand");
 
-        logListtView = (ListView) findViewById(R.id.GameLog);
-        adapter = new ArrayAdapter<Spanned>(this,
-                android.R.layout.simple_list_item_1,
-                listItems);
-        logListtView.setAdapter(adapter);
+        logListtView = (LinearLayout) findViewById(R.id.GameLog);
+
 
 
     }
@@ -52,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        final GameLog gameLog = new GameLog(logListtView, adapter, listItems);
+        final GameLog gameLog = new GameLog(logListtView, MainActivity.this);
 
         gameLog.addEvent(new VoteEvent("Rüdiger", "Hildegunde", VoteEvent.VOTE_PASSED, this));
         gameLog.addEvent(new ClaimEvent("Rüdiger", "Hildegunde", ClaimEvent.RRR, ClaimEvent.RR, ClaimEvent.FASCIST, this));

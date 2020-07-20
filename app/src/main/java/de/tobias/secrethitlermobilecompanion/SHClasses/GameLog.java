@@ -7,21 +7,30 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import de.tobias.secrethitlermobilecompanion.MainActivity;
+
 public class GameLog {
 
-    private ListView eventList;
-    private ArrayAdapter<Spanned> adapter;
-    private ArrayList<Spanned> listItems;
+    private LinearLayout eventList;
+    private ArrayList<TextView> listItems = new ArrayList<TextView>();
+    private Context c;
+    private LinearLayout.LayoutParams layoutParams =
+            new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
 
-    public GameLog(ListView eventList, ArrayAdapter<Spanned> adapter, ArrayList<Spanned> listItems) {
+
+
+    public GameLog(LinearLayout eventList, Context context) {
         this.eventList = eventList;
-        this.adapter = adapter;
-        this.listItems = listItems;
+        this.c = context;
+        layoutParams.setMargins(0, 4, 0, 4);
+        eventList.setLayoutParams(layoutParams);
     }
 
     private ArrayList<GameEvent> log = new ArrayList<GameEvent>();
@@ -30,13 +39,17 @@ public class GameLog {
         log.add(event);
         String toAppend = event.toString();
         Spanned colored;
+
+        TextView listItem = new TextView(c);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            colored = Html.fromHtml(toAppend,  Html.FROM_HTML_MODE_LEGACY);
+            listItem.setText(Html.fromHtml(toAppend,  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
         } else {
-            colored = Html.fromHtml(toAppend);
+            listItem.setText(Html.fromHtml(toAppend), TextView.BufferType.SPANNABLE);
         }
 
-        adapter.add(colored);
+        listItems.add(listItem);
+        eventList.addView(listItem);
     }
 
 
