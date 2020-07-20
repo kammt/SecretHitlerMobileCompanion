@@ -1,0 +1,86 @@
+{
+  "comment": "This is an example of what a game might look like in JSON format. Index.js would request this file via a HTTP request and generate the website accordingly.",
+  "game" : {
+    "id" : "758439574802",
+    "players" : ["Mario", "Tobi", "David", "Felix", "Eva", "Niclas", "Leander"],
+    "plays": [
+      {
+        "type": "legislative-session",
+        "num": 1,
+        "president": "David",
+        "chancellor": "Tobi",
+        "rejected": false,
+        "president_claim": "RRB",
+        "chancellor_claim": "RB",
+        "policy_played": "B",
+        "veto": false
+      },
+      {
+        "type": "legislative-session",
+        "num": 2,
+        "president": "Felix",
+        "chancellor": "David",
+        "rejected": false,
+        "president_claim": "RBB",
+        "chancellor_claim": "RR",
+        "policy_played": "R",
+        "veto": false
+      },
+
+      {
+        "type": "legislative-session",
+        "num": 3,
+        "president": "Felix",
+        "chancellor": "David",
+        "rejected": true
+      },
+
+      {
+        "type": "legislative-session",
+        "num": 4,
+        "president": "Felix",
+        "chancellor": "David",
+        "rejected": false,
+        "president_claim": "RBB",
+        "chancellor_claim": "RR",
+        "policy_played": "R",
+        "veto": true
+      },
+
+      {
+        "type": "executive-action",
+        "executive_action_type": "execution",
+        "president": "Felix",
+        "target": "David"
+      },
+
+      {
+        "type": "executive-action",
+        "executive_action_type": "investigate_loyalty",
+        "president": "Felix",
+        "target": "David",
+        "claim": "B"
+      },
+
+      {
+        "type": "executive-action",
+        "executive_action_type": "policy_peek",
+        "president": "Felix",
+        "claim": "RRR"
+      },
+
+      {
+        "type": "executive-action",
+        "executive_action_type": "special_election",
+        "president": "Felix",
+        "target": "David"
+      },
+
+      {
+        "type": "shuffle",
+        "fas-policies": 11,
+        "lib-policies": 6
+      }
+    ]
+  }
+}
