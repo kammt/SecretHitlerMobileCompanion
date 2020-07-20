@@ -1,3 +1,122 @@
+/* Colour palette */
+:root {
+    --banner-orange: #F2654B;
+    --light-grey: #242322;
+    --beige: #F5E1C4;
+    --dark-red: #7F3632;
+    --red: #E23A12;
+    --blue: #387CB3;
+}
+
+/* Tag selectors */
+
 body {
-    background-color: red;
+    background-color: var(--dark-red);
+    font-family: 'Comfortaa', cursive;
+    color: var(--beige);
+}
+
+/* Nav bar */
+
+.navbar {
+    background-color: var(--banner-orange);
+}
+
+#navbar-title {
+    font-family: 'Germania One', cursive;
+    color: var(--beige);
+    font-size: 1.3rem;
+}
+
+.fa-bars {
+    color: var(--beige);
+}
+
+/* Game log */
+
+.game-action {
+    background-color: var(--beige);
+    color: var(--light-grey);
+
+    border-radius: 5px;
+    border: solid 1px var(--light-grey);
+    margin: 10px;
+    padding: 10px;
+
+    text-align: center;
+}
+
+.game-action-title {
+    font-size: 1.2rem;
+    font-family: 'Germania One', cursive;
+    margin-bottom: 10px;
+}
+
+.right-align {
+    position: relative;
+    float: right;
+    margin-right: 10px;
+}
+
+.claim-span-red {
+    color: var(--red);
+}
+
+.claim-span-blue {
+    color: var(--blue);
+}
+
+.cross-out {
+    text-decoration: line-through;
+    color: var(--red);
+}
+
+/* Legislative session */
+
+.president, .chancellor {
+    text-align: left;
+}
+
+
+.token {
+    margin-right: 5px;
+    margin-bottom: 10px;
+}
+
+.policy-played {
+    padding: 5px;
+}
+
+.policy-played-span {
+    margin-right: 10px;
+}
+
+.policy-icon {
+    width: 2rem;
+    margin-right: 10px;
+}
+
+/* Executive action*/
+
+.executive-action-top {
+    height: 3rem;
+}
+
+.executive-action-title {
+    margin-top: 10px;
+    position: relative;
+    float: left;
+}
+
+.executive-action-icon {
+    float: right;
+    height: 2rem;
+}
+
+.executive-action-text {
+    margin-bottom: 0px;
+}
+
+.player-name {
+    font-weight: bold;
 }
