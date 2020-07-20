@@ -2,17 +2,25 @@ package de.tobias.secrethitlermobilecompanion;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.renderscript.ScriptGroup;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.Buffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -30,6 +38,7 @@ public class Server extends NanoHTTPD {
         this.c = c;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public Response serve(IHTTPSession session) {
         Log.v(" Server request URI", session.getUri());
@@ -50,10 +59,6 @@ public class Server extends NanoHTTPD {
             return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript",getFile("index.js"));
         } else if(uri.equals("/css/style.css")) {
             return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css",getFile("style.css"));
-        } else if(uri.contains("/images/") && uri.contains(".png")) {
-            //Only png images supported
-            //TODO: Check if this is working
-            return newFixedLengthResponse(Response.Status.ACCEPTED, "image/png",getFile(uri.substring(1)));
         } else {
             return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", getFile("404.html"));
         }

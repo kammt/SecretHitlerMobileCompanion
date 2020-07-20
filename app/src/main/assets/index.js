@@ -108,6 +108,7 @@ const getLeaderDiv = (play, type) => {
     // Create the leader's name span
     let leaderNameSpan = $(document.createElement('span'));
     leaderNameSpan.addClass(`${type}-name`);
+    if(type === 'chancellor' && play.rejected === true) leaderNameSpan.addClass('cross-out');
     leaderNameSpan.text(play[type]);
     leaderDiv.append(leaderNameSpan)
 
