@@ -4,6 +4,8 @@ import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableString;
 
+import androidx.cardview.widget.CardView;
+
 import de.tobias.secrethitlermobilecompanion.R;
 
 public class VoteEvent extends GameEvent {
@@ -50,4 +52,10 @@ public class VoteEvent extends GameEvent {
 
         return c.getString(R.string.vote_string, presidentNamecolored, chancellorNamecolored, votingResultsp);
     }
+
+    @Override
+    public void setupCard(CardView cardLayout) {
+        //Do nothing
+    }
+
 }

@@ -7,6 +7,8 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 
+import androidx.cardview.widget.CardView;
+
 import de.tobias.secrethitlermobilecompanion.R;
 
 public class ClaimEvent extends GameEvent {
@@ -14,6 +16,7 @@ public class ClaimEvent extends GameEvent {
     private String presidentName, chancellorName;
     private int presidentClaim, chancellorClaim;
     private int playedPolicy;
+    private boolean vetoed;
 
     //Single Policies
     public static final int FASCIST = 1;
@@ -34,7 +37,7 @@ public class ClaimEvent extends GameEvent {
 
     Context c;
 
-    public ClaimEvent(String presidentName, String chancellorName, int presidentClaim, int chancellorClaim, int playedPolicy, Context context) {
+    public ClaimEvent(String presidentName, String chancellorName, int presidentClaim, int chancellorClaim, int playedPolicy, boolean vetoed, Context context) {
         this.chancellorName = chancellorName;
         this.presidentName = presidentName;
 
@@ -42,6 +45,8 @@ public class ClaimEvent extends GameEvent {
         this.chancellorClaim = chancellorClaim;
 
         this.playedPolicy = playedPolicy;
+
+        this.vetoed = vetoed;
 
         c = context;
     }
@@ -64,6 +69,10 @@ public class ClaimEvent extends GameEvent {
 
     public String getPresidentName() {
         return presidentName;
+    }
+
+    public boolean isVetoed() {
+        return vetoed;
     }
 
     public String getClaimString(int claimString) {
@@ -103,4 +112,10 @@ public class ClaimEvent extends GameEvent {
 
         return c.getString(R.string.claim_string, playedPolicysp, presidentNamecolored, getClaimString(presidentClaim), chancellorNamecolored, getClaimString(chancellorClaim));
     }
+
+    @Override
+    public void setupCard(CardView cardLayout) {
+        //Do nothing
+    }
+
 }
