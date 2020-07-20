@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorAccent">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/title_executive_action"
@@ -59,11 +58,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toEndOf="@+id/img_president"
         app:layout_constraintStart_toStartOf="@+id/img_president"
         app:layout_constraintTop_toBottomOf="@+id/img_president"
-        app:layout_constraintVertical_bias="0.13999999"
         app:srcCompat="@drawable/chancellor_token" />
 
     <TextView
@@ -89,43 +86,33 @@
         app:layout_constraintEnd_toEndOf="@+id/pres_claim"
         app:layout_constraintTop_toTopOf="@+id/chanc_name" />
 
-    <TextView
-        android:id="@+id/policy_played"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/policy_played"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.4"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline4" />
-
-    <ImageView
-        android:id="@+id/img_policy_played"
+    <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="90dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.03"
-        app:layout_constraintStart_toEndOf="@+id/policy_played"
-        app:layout_constraintTop_toTopOf="@+id/guideline4"
-        app:srcCompat="@drawable/fascist_logo" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chanc_name">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.23" />
+        <TextView
+            android:id="@+id/policy_played"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/policy_played"
+            android:textSize="18sp" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.18" />
+        <ImageView
+            android:id="@+id/img_policy_played"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:adjustViewBounds="true"
+            android:cropToPadding="false"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/fascist_logo" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
