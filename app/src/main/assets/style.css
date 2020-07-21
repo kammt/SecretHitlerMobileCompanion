@@ -14,7 +14,15 @@ body {
     background-color: var(--dark-red);
     font-family: 'Comfortaa', cursive;
     color: var(--beige);
+
+    overflow-x: hidden;
 }
+
+/* General */
+.invisible {
+    display: none;
+}
+
 
 /* Nav bar */
 
@@ -30,6 +38,41 @@ body {
 
 .fa-bars {
     color: var(--beige);
+}
+
+/* Player pane */
+#player-pane {
+    /* Leave this value here (see index.js constructor of player pane) */
+    padding-left: 10px;
+
+}
+
+.player-pane {
+    position: relative;
+    display: flex;
+
+    padding-top: 5px;
+}
+
+.player-pane-player-div {
+    position: relative;
+    cursor: pointer;
+
+    padding: 5px;
+    margin-right: 5px;
+    border-radius: 3px;
+
+    text-align: center;
+    border: solid 1px var(--light-grey);
+}
+
+.player-name-tag {
+    color: var(--light-grey);
+
+    font-family: 'Germania One', cursive;
+
+    margin-top: 6px;
+    margin-bottom: 0;
 }
 
 /* Game log */
