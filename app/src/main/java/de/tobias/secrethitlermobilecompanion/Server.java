@@ -63,7 +63,9 @@ public class Server extends NanoHTTPD {
             return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript",getFile("index.js"));
         } else if(uri.equals("/images.js")) {
             return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript",getFile("images.js"));
-        } else if(uri.equals("/css/style.css")) {
+        } else if(uri.equals("/PlayerPane.js")) {
+            return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript",getFile("PlayerPane.js"));
+        }else if(uri.equals("/css/style.css")) {
             return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css",getFile("style.css"));
         } else {
             return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", getFile("404.html"));
