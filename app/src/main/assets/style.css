@@ -15,7 +15,7 @@ body {
     font-family: 'Comfortaa', cursive;
     color: var(--beige);
 
-    overflow-x: hidden;
+
 }
 
 /* General */
@@ -44,7 +44,7 @@ body {
 #player-pane {
     /* Leave this value here (see index.js constructor of player pane) */
     padding-left: 10px;
-
+    overflow-x: hidden;
 }
 
 .player-pane {
