@@ -27,4 +27,7 @@
     <string name="channel_title_server_notification">Sticky Server Notification</string>
     <string name="channel_desc_server_notification">A sticky notification that improves the stability of the server</string>
     <string name="stop_server_notification">Stop Server</string>
+    <string name="policypeek_string">President %1$s peeks at the next three policies and claims to see %2$s.</string>
+    <string name="investigation_string">President %1$s sees the party membership of %2$s and claims to see a member of the %3$s team.</string>
+    <string name="specialElection_string">President %1$s has chosen to special elect %2$s as president</string>
 </resources>

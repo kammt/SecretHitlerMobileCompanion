@@ -1,20 +1,15 @@
 package de.tobias.secrethitlermobilecompanion;
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.renderscript.ScriptGroup;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +23,11 @@ import de.tobias.secrethitlermobilecompanion.SHClasses.ClaimEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.ExecutionEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
+import de.tobias.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
+import de.tobias.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
+import de.tobias.secrethitlermobilecompanion.SHClasses.SpecialElectionEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.VoteEvent;
 
 public class MainActivity extends AppCompatActivity {
@@ -124,12 +123,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void testGameLog(GameLog gameLog) {
         VoteEvent ve1 = new VoteEvent("Rüdiger", "Hildegunde", VoteEvent.VOTE_PASSED, this);
-        ClaimEvent ce1 = new ClaimEvent("Rüdiger", "Hildegunde", ClaimEvent.RRR, ClaimEvent.RR, ClaimEvent.FASCIST, false, this);
+        ClaimEvent ce1 = new ClaimEvent("Rüdiger", "Hildegunde", Claim.RRR, Claim.RR, Claim.FASCIST, false, this);
 
         gameLog.addEvent(new LegislativeSession(ve1, ce1, this));
 
         VoteEvent ve2 =new VoteEvent("Hildegunde", "Ferdinand", VoteEvent.VOTE_PASSED, MainActivity.this);
-        ClaimEvent ce2 = new ClaimEvent("Hildegunde", "Ferdinand", ClaimEvent.BRR, ClaimEvent.BR, ClaimEvent.LIBERAL, true, MainActivity.this);
+        ClaimEvent ce2 = new ClaimEvent("Hildegunde", "Ferdinand", Claim.BRR, Claim.BR, Claim.LIBERAL, true, MainActivity.this);
 
         gameLog.addEvent(new LegislativeSession(ve2, ce2, this));
 
@@ -138,6 +137,9 @@ public class MainActivity extends AppCompatActivity {
         gameLog.addEvent(new LegislativeSession(ve3, null, this));
 
         gameLog.addEvent(new ExecutionEvent("Ferdinand", "Mario", this));
+        gameLog.addEvent(new PolicyPeekEvent("Ferdinand", Claim.BBR, this));
+        gameLog.addEvent(new LoyaltyInvestigationEvent("Ferdinand", "Mario", Claim.LIBERAL, this));
+        gameLog.addEvent(new SpecialElectionEvent("Ferdinand", "Mario", this));
     }
 
     public void setupFabMenu() {

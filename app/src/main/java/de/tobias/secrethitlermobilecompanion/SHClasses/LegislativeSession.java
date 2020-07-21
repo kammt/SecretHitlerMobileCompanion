@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import de.tobias.secrethitlermobilecompanion.R;
 
@@ -58,14 +57,14 @@ public class LegislativeSession extends GameEvent {
             title.setText(c.getString(R.string.legislative_session)+ " #"+sessionNumber);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                chancClaim.setText(Html.fromHtml(claimEvent.getClaimString(claimEvent.getChancellorClaim()),  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
-                presClaim.setText(Html.fromHtml(claimEvent.getClaimString(claimEvent.getPresidentClaim()),  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+                chancClaim.setText(Html.fromHtml(Claim.getClaimString(c, claimEvent.getChancellorClaim()),  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+                presClaim.setText(Html.fromHtml(Claim.getClaimString(c, claimEvent.getPresidentClaim()),  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
             } else {
-                chancClaim.setText(Html.fromHtml(claimEvent.getClaimString(claimEvent.getChancellorClaim())), TextView.BufferType.SPANNABLE);
-                presClaim.setText(Html.fromHtml(claimEvent.getClaimString(claimEvent.getPresidentClaim())), TextView.BufferType.SPANNABLE);
+                chancClaim.setText(Html.fromHtml(Claim.getClaimString(c, claimEvent.getChancellorClaim())), TextView.BufferType.SPANNABLE);
+                presClaim.setText(Html.fromHtml(Claim.getClaimString(c, claimEvent.getPresidentClaim())), TextView.BufferType.SPANNABLE);
             }
 
-            if(claimEvent.getPlayedPolicy() == ClaimEvent.LIBERAL) playedPolicyLogo.setImageDrawable(c.getDrawable(R.drawable.liberal_logo));
+            if(claimEvent.getPlayedPolicy() == Claim.LIBERAL) playedPolicyLogo.setImageDrawable(c.getDrawable(R.drawable.liberal_logo));
         }
 
         if(claimEvent != null && claimEvent.isVetoed()) {
