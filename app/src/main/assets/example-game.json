@@ -1,5 +1,4 @@
 {
-  "comment": "This is an example of what a game might look like in JSON format. Index.js would request this file via a HTTP request and generate the website accordingly.",
   "game" : {
     "id" : "758439574802",
     "players" : ["Mario", "Tobi", "David", "Felix", "Eva", "Niclas", "Leander"],
@@ -78,8 +77,8 @@
 
       {
         "type": "shuffle",
-        "fas-policies": 11,
-        "lib-policies": 6
+        "fascist_policies": 11,
+        "liberal_policies": 6
       }
     ]
   }
