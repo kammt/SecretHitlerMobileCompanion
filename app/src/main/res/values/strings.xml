@@ -14,4 +14,12 @@
     <string name="legislative_session">Legislative Session</string>
     <string name="executive_action">Executive Action</string>
     <string name="policy_played">Policy Played:</string>
+    <string name="fab_menu_investigation">Loyalty investigation</string>
+    <string name="fab_menu_legislative_session">Legislative session</string>
+    <string name="fab_menu_execution">Execution</string>
+    <string name="fab_menu_policy_peek">Policy Peek</string>
+    <string name="fab_menu_special_election">Special Election</string>
+    <string name="rejected">" - Rejected"</string>
+    <string name="vetoed">" - Vetoed"</string>
+    <string name="executed_string">President %1$s selects to execute %2$s.</string>
 </resources>

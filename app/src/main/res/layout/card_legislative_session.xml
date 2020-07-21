@@ -1,118 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="24dp"
+    android:layout_marginEnd="16dp"
+    android:alpha="1"
+    app:cardBackgroundColor="@color/colorAccent"
+    app:cardCornerRadius="10dp">
 
-    <TextView
-        android:id="@+id/title_executive_action"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:fontFamily="@font/germania_one"
-        android:text="@string/legislative_session"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/img_president"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_executive_action"
-        app:srcCompat="@drawable/president_token" />
-
-    <TextView
-        android:id="@+id/pres_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:fontFamily="@font/germania_one"
-        android:text="President Name"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/img_president"
-        app:layout_constraintStart_toEndOf="@+id/img_president"
-        app:layout_constraintTop_toTopOf="@+id/img_president" />
-
-    <TextView
-        android:id="@+id/pres_claim"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/germania_one"
-        android:text="RRR"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/pres_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.9"
-        app:layout_constraintStart_toEndOf="@+id/pres_name"
-        app:layout_constraintTop_toTopOf="@+id/pres_name" />
-
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="@+id/img_president"
-        app:layout_constraintStart_toStartOf="@+id/img_president"
-        app:layout_constraintTop_toBottomOf="@+id/img_president"
-        app:srcCompat="@drawable/chancellor_token" />
-
-    <TextView
-        android:id="@+id/chanc_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:fontFamily="@font/germania_one"
-        android:text="Chancellor Name"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView3"
-        app:layout_constraintStart_toEndOf="@+id/imageView3"
-        app:layout_constraintTop_toTopOf="@+id/imageView3" />
-
-    <TextView
-        android:id="@+id/chanc_claim"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/germania_one"
-        android:text="RR"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/chanc_name"
-        app:layout_constraintEnd_toEndOf="@+id/pres_claim"
-        app:layout_constraintTop_toTopOf="@+id/chanc_name" />
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chanc_name">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/policy_played"
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/policy_played"
-            android:textSize="18sp" />
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/germania_one"
+            android:text="@string/legislative_session"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/img_policy_played"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="16dp"
-            android:adjustViewBounds="true"
-            android:cropToPadding="false"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/fascist_logo" />
-    </LinearLayout>
+            android:id="@+id/img_president"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            app:srcCompat="@drawable/president_token" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/pres_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/comfortaa_light"
+            android:text="President Name"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/img_president"
+            app:layout_constraintStart_toEndOf="@+id/img_president"
+            app:layout_constraintTop_toTopOf="@+id/img_president" />
+
+        <TextView
+            android:id="@+id/pres_claim"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/comfortaa_light"
+            android:text="RRR"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/pres_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintStart_toEndOf="@+id/pres_name"
+            app:layout_constraintTop_toTopOf="@+id/pres_name" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="@+id/img_president"
+            app:layout_constraintStart_toStartOf="@+id/img_president"
+            app:layout_constraintTop_toBottomOf="@+id/img_president"
+            app:srcCompat="@drawable/chancellor_token" />
+
+        <TextView
+            android:id="@+id/chanc_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/comfortaa_light"
+            android:text="Chancellor Name"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+            app:layout_constraintStart_toEndOf="@+id/imageView3"
+            app:layout_constraintTop_toTopOf="@+id/imageView3" />
+
+        <TextView
+            android:id="@+id/chanc_claim"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/comfortaa_light"
+            android:text="RR"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/chanc_name"
+            app:layout_constraintEnd_toEndOf="@+id/pres_claim"
+            app:layout_constraintTop_toTopOf="@+id/chanc_name" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chanc_name">
+
+            <TextView
+                android:id="@+id/policy_played"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="@font/comfortaa_light"
+                android:text="@string/policy_played"
+                android:textSize="18sp" />
+
+            <ImageView
+                android:id="@+id/img_policy_played"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="16dp"
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/fascist_logo" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.cardview.widget.CardView>

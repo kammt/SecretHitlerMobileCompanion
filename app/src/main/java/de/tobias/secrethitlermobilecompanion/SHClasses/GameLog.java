@@ -5,56 +5,52 @@ import android.os.Build;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import de.tobias.secrethitlermobilecompanion.MainActivity;
+import de.tobias.secrethitlermobilecompanion.RecyclerViewAdapter;
+
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class GameLog {
 
-    private LinearLayout eventList;
-    private ArrayList<TextView> listItems = new ArrayList<TextView>();
+    public static int legSessionNo = 1;
+    private RecyclerView cardList;
     private Context c;
-    private LinearLayout.LayoutParams layoutParams =
-            new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
+    List<GameEvent> eventList = new ArrayList<GameEvent>();
+
+    private RecyclerView.Adapter cardListAdapter;
 
 
 
-    public GameLog(LinearLayout eventList, Context context) {
-        this.eventList = eventList;
+    public GameLog(RecyclerView cardList, Context context) {
+        this.cardList = cardList;
         this.c = context;
-        layoutParams.setMargins(0, 4, 0, 4);
-        eventList.setLayoutParams(layoutParams);
+
+
+        cardListAdapter = new RecyclerViewAdapter(eventList);
+        cardList.setAdapter(cardListAdapter);
     }
 
-    private ArrayList<GameEvent> log = new ArrayList<GameEvent>();
 
     public void addEvent(GameEvent event) {
-        log.add(event);
-        String toAppend = event.toString();
-        Spanned colored;
-
-        TextView listItem = new TextView(c);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            listItem.setText(Html.fromHtml(toAppend,  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
-        } else {
-            listItem.setText(Html.fromHtml(toAppend), TextView.BufferType.SPANNABLE);
-        }
-
-        listItems.add(listItem);
-        eventList.addView(listItem);
+        eventList.add(event);
     }
 
 
 
     public GameEvent[] getAllEvents() {
-        return (GameEvent[]) log.toArray();
+        return (GameEvent[]) eventList.toArray();
     }
 }
