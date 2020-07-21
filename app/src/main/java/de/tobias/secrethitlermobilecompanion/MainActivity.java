@@ -1,12 +1,20 @@
 package de.tobias.secrethitlermobilecompanion;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.renderscript.ScriptGroup;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,12 +34,31 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView cardList;
     private RecyclerView.LayoutManager layoutManager;
 
+    private ServerSercive boundServerService;
 
     private FloatingActionButton fab_main, fab_legislative, fab_execution, fab_policypeek, fab_specialelection, fab_investigation;
     private TextView tv_legislative, tv_execution, tv_policypeek, tv_specialelection, tv_investigation;
     private Animation fab_open, fab_close, fab_clock, fab_anticlock;
 
     boolean isOpen = false;
+    boolean serverConnected = false;
+
+    private ServiceConnection serverServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            boundServerService = ((ServerSercive.LocalBinder)service).getService();
+            Toast.makeText(MainActivity.this, boundServerService.server.getURL(), Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            boundServerService = null;
+            Toast.makeText(MainActivity.this,
+                    "Service disconnected",
+                    Toast.LENGTH_SHORT).show();
+        }
+    };
 
 
     @Override
@@ -39,9 +66,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Server server = new Server(8080, this);
-        server.startServer();
-        Log.v("Server", "URL is " + server.getURL());
+        startAndBindService();
 
         PlayerList.addPlayer("Rüdiger");
         PlayerList.addPlayer("Hildegunde");
@@ -55,11 +80,33 @@ public class MainActivity extends AppCompatActivity {
 
         setupFabMenu();
 
-        nix(gameLog);
-        gameLog.addEvent(new ExecutionEvent("Ferdinand", "Mario", this));
+        testGameLog(gameLog);
+
     }
 
-    public void nix(GameLog gameLog) {
+    void startAndBindService() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(new Intent(this, ServerSercive.class));
+        } else {
+            startService(new Intent(this, ServerSercive.class));
+        }
+
+        bindService(new Intent(MainActivity.this, ServerSercive.class),
+                serverServiceConnection,
+                Context.BIND_AUTO_CREATE);
+        serverConnected = true;
+    }
+
+    void unbindService() {
+        if (serverConnected) {
+            // Detach our existing connection.
+            unbindService(serverServiceConnection);
+            serverConnected = false;
+        }
+    }
+
+    public void testGameLog(GameLog gameLog) {
         VoteEvent ve1 = new VoteEvent("Rüdiger", "Hildegunde", VoteEvent.VOTE_PASSED, this);
         ClaimEvent ce1 = new ClaimEvent("Rüdiger", "Hildegunde", ClaimEvent.RRR, ClaimEvent.RR, ClaimEvent.FASCIST, false, this);
 
@@ -73,6 +120,8 @@ public class MainActivity extends AppCompatActivity {
 
         VoteEvent ve3 =new VoteEvent("Ferdinand", "Mario", VoteEvent.VOTE_FAILED, MainActivity.this);
         gameLog.addEvent(new LegislativeSession(ve3, null, this));
+
+        gameLog.addEvent(new ExecutionEvent("Ferdinand", "Mario", this));
     }
 
     public void setupFabMenu() {
@@ -158,10 +207,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
 
-
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService();
     }
 
 }

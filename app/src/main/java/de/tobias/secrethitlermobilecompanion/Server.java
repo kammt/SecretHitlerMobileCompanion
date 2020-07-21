@@ -1,11 +1,15 @@
 package de.tobias.secrethitlermobilecompanion;
 
+import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.IBinder;
 import android.renderscript.ScriptGroup;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import java.io.BufferedReader;
@@ -106,6 +110,5 @@ public class Server extends NanoHTTPD {
 
         return "http://" + formatedIpAddress + ":" + getListeningPort();
     }
-
 
 }
