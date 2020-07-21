@@ -1,29 +1,26 @@
 package de.tobias.secrethitlermobilecompanion;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.ExecutiveAction;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.CardViewHolder> {
+public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerViewAdapter.CardViewHolder> {
 
     List<GameEvent> events;
     private static final int EXECUTIVE_ACTION = 1;
     private static final int LEGISLATIVE_SESSION = 0;
     private static final int DECK_SHUFFLED = 2;
 
-    public RecyclerViewAdapter(List<GameEvent> events){
+    public CardRecyclerViewAdapter(List<GameEvent> events){
         this.events = events;
     }
 

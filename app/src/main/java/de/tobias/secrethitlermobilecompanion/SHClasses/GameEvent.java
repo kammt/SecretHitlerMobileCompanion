@@ -5,6 +5,8 @@ import android.text.Spannable;
 
 import androidx.cardview.widget.CardView;
 
+import org.json.JSONObject;
+
 public abstract class GameEvent {
     public abstract void setupCard(CardView cardView);
 }

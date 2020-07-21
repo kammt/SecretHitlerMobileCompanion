@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +34,7 @@ import de.tobias.secrethitlermobilecompanion.SHClasses.VoteEvent;
 
 public class MainActivity extends AppCompatActivity {
 
-    RecyclerView cardList;
+    RecyclerView cardList, playerCardList;
     private RecyclerView.LayoutManager layoutManager;
 
     private ServerSercive boundServerService;
@@ -68,7 +69,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        cardList = (RecyclerView) findViewById(R.id.cardList);
+        layoutManager = new LinearLayoutManager(this);
+        cardList.setLayoutManager(layoutManager);
 
+        playerCardList = findViewById(R.id.playerList);
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
+        layoutManager2.setOrientation(RecyclerView.HORIZONTAL);
+        playerCardList.setLayoutManager(layoutManager2);
+        PlayerList.setupPlayerList(playerCardList, this);
+
+        PlayerList.addPlayer("Rüdiger");
+        PlayerList.addPlayer("Hildegunde");
+        PlayerList.addPlayer("Ferdinand");
+
+        final GameLog gameLog = new GameLog(cardList, MainActivity.this);
+        testGameLog(gameLog);
     }
 
     @Override
@@ -80,20 +96,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        cardList = (RecyclerView) findViewById(R.id.cardList);
-        layoutManager = new LinearLayoutManager(this);
-        cardList.setLayoutManager(layoutManager);
+
 
         setupFabMenu();
 
         startAndBindService();
 
-        PlayerList.addPlayer("Rüdiger");
-        PlayerList.addPlayer("Hildegunde");
-        PlayerList.addPlayer("Ferdinand");
 
-        final GameLog gameLog = new GameLog(cardList, MainActivity.this);
-        testGameLog(gameLog);
     }
 
     void startAndBindService() {

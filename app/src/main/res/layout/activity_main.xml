@@ -10,14 +10,27 @@
     tools:context=".MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cardList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/playerList"
+        android:layout_width="0dp"
+        android:layout_height="135dp"
+        android:animateLayoutChanges="false"
+        android:orientation="horizontal"
+        android:scrollbars="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/cardList"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cardList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline3" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_main_add"
@@ -125,6 +138,7 @@
         android:layout_marginBottom="8dp"
         android:backgroundTint="@color/colorFascist"
         android:clickable="true"
+        android:focusable="true"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/fab_execution"
         app:layout_constraintEnd_toEndOf="@+id/fab_execution"
@@ -199,6 +213,13 @@
         app:layout_constraintBottom_toBottomOf="@+id/fab_special_election"
         app:layout_constraintEnd_toStartOf="@+id/fab_special_election"
         app:layout_constraintTop_toTopOf="@+id/fab_special_election" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="143dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
