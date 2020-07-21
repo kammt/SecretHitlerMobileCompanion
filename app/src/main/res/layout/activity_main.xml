@@ -119,6 +119,33 @@
         app:layout_constraintTop_toTopOf="@+id/fab_legislative_session" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_deck_shuffled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/colorFascist"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/fab_execution"
+        app:layout_constraintEnd_toEndOf="@+id/fab_execution"
+        app:layout_constraintStart_toStartOf="@+id/fab_execution"
+        app:srcCompat="@drawable/ic_baseline_shuffle_24" />
+
+    <TextView
+        android:id="@+id/tv_deck_shuffled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="#000000"
+        android:fontFamily="@font/comfortaa_light"
+        android:text="@string/deck_shuffled"
+        android:textColor="#FFFFFF"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/fab_deck_shuffled"
+        app:layout_constraintEnd_toStartOf="@+id/fab_deck_shuffled"
+        app:layout_constraintTop_toTopOf="@+id/fab_deck_shuffled" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_policy_peek"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -126,7 +153,7 @@
         android:backgroundTint="@color/colorFascist"
         android:clickable="false"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/fab_execution"
+        app:layout_constraintBottom_toTopOf="@+id/fab_deck_shuffled"
         app:layout_constraintEnd_toEndOf="@+id/fab_execution"
         app:layout_constraintStart_toStartOf="@+id/fab_execution"
         app:srcCompat="@drawable/policy_peek" />

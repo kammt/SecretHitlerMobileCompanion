@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ServerSercive boundServerService;
 
-    private FloatingActionButton fab_main, fab_legislative, fab_execution, fab_policypeek, fab_specialelection, fab_investigation;
-    private TextView tv_legislative, tv_execution, tv_policypeek, tv_specialelection, tv_investigation;
+    private FloatingActionButton fab_main, fab_legislative, fab_execution, fab_policypeek, fab_specialelection, fab_investigation, fab_deckshuffled;
+    private TextView tv_legislative, tv_execution, tv_policypeek, tv_specialelection, tv_investigation, tv_deckshuffled;
     private Animation fab_open, fab_close, fab_clock, fab_anticlock;
 
     boolean isOpen = false;
@@ -158,12 +158,14 @@ public class MainActivity extends AppCompatActivity {
         tv_specialelection = (TextView) findViewById(R.id.tv_special_election);
         tv_investigation = (TextView) findViewById(R.id.tv_investigation);
         tv_policypeek = (TextView) findViewById(R.id.tv_policy_peek);
+        tv_deckshuffled = (TextView) findViewById(R.id.tv_deck_shuffled);
 
         fab_legislative = (FloatingActionButton) findViewById(R.id.fab_legislative_session);
         fab_execution = (FloatingActionButton) findViewById(R.id.fab_execution);
         fab_specialelection = (FloatingActionButton) findViewById(R.id.fab_special_election);
         fab_investigation = (FloatingActionButton) findViewById(R.id.fab_investigation);
         fab_policypeek = (FloatingActionButton) findViewById(R.id.fab_policy_peek);
+        fab_deckshuffled = (FloatingActionButton) findViewById(R.id.fab_deck_shuffled);
 
         fab_main = (FloatingActionButton) findViewById(R.id.fab_main_add);
         fab_main.setOnClickListener(new View.OnClickListener() {
@@ -198,6 +200,10 @@ public class MainActivity extends AppCompatActivity {
         tv_policypeek.setVisibility(View.INVISIBLE);
         fab_policypeek.startAnimation(fab_close);
         fab_policypeek.setClickable(false);
+
+        tv_deckshuffled.setVisibility(View.INVISIBLE);
+        fab_deckshuffled.startAnimation(fab_close);
+        fab_deckshuffled.setClickable(false);
     }
 
     public void openFabMenu() {
@@ -223,6 +229,10 @@ public class MainActivity extends AppCompatActivity {
         tv_policypeek.setVisibility(View.VISIBLE);
         fab_policypeek.startAnimation(fab_open);
         fab_policypeek.setClickable(true);
+
+        tv_deckshuffled.setVisibility(View.VISIBLE);
+        fab_deckshuffled.startAnimation(fab_open);
+        fab_deckshuffled.setClickable(true);
     }
 
     @Override
