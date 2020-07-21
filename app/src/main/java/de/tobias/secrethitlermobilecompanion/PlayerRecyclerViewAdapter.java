@@ -8,19 +8,23 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameEvent;
+import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
 
 public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecyclerViewAdapter.PlayerCardViewHolder> {
 
     List<String> players;
     Context context;
+    private ArrayList<String> hiddenPlayers = new ArrayList<>();
 
     public PlayerRecyclerViewAdapter(List<String> players, Context context){
         this.players = players;
@@ -56,7 +60,7 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
     public void onBindViewHolder(PlayerCardViewHolder cardViewHolder, int i) {
         CardView cardView = cardViewHolder.cv;
 
-        String player = players.get(i);
+        final String player = players.get(i);
         TextView tvPlayerName = cardView.findViewById(R.id.tv_playerName);
         tvPlayerName.setText(player);
 
@@ -64,9 +68,19 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
             @Override
             public void onClick(View v) {
                 CardView cv = (CardView) v;
+
+                if(cv.getAlpha() == 1.0) {
+                    cv.setAlpha( (float) 0.5);
+                    hiddenPlayers.add(player);
+                } else {
+                    cv.setAlpha(1);
+                    hiddenPlayers.remove(player);
+                }
+                GameLog.blurEventsInvolvingHiddenPlayers(hiddenPlayers);
             }
         });
     }
+
 
     @Override
     public int getItemViewType(int position) {

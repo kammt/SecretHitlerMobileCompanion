@@ -1,9 +1,12 @@
 package de.tobias.secrethitlermobilecompanion;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,6 +14,7 @@ import java.util.List;
 
 import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameEvent;
+import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
 
 public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerViewAdapter.CardViewHolder> {
@@ -19,6 +23,8 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
     private static final int EXECUTIVE_ACTION = 1;
     private static final int LEGISLATIVE_SESSION = 0;
     private static final int DECK_SHUFFLED = 2;
+
+    public Integer[] hiddenIndexes;
 
     public CardRecyclerViewAdapter(List<GameEvent> events){
         this.events = events;
@@ -56,8 +62,9 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
 
     @Override
     public void onBindViewHolder(CardViewHolder cardViewHolder, int i) {
+        CardView cv = cardViewHolder.cv;
         GameEvent event = events.get(i);
-        event.setupCard(cardViewHolder.cv);
+        event.setupCard(cv);
     }
 
 
@@ -74,6 +81,16 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
         } else return EXECUTIVE_ACTION;
     }
 
+    @Override
+    public void onViewAttachedToWindow(@NonNull CardViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        int position = holder.getLayoutPosition();
 
+        CardView cv = holder.cv;
+
+        boolean toBeBlurred = GameLog.hiddenEventIndexes.contains(position);
+        if(toBeBlurred) cv.setAlpha((float) 0.5);
+        if(!toBeBlurred && cv.getAlpha() < 1) cv.setAlpha((float) 1);
+    }
 }
 

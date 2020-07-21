@@ -3,6 +3,8 @@ package de.tobias.secrethitlermobilecompanion.SHClasses;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
+import java.util.ArrayList;
+
 import de.tobias.secrethitlermobilecompanion.R;
 
 public class PolicyPeekEvent extends ExecutiveAction {
@@ -25,5 +27,10 @@ public class PolicyPeekEvent extends ExecutiveAction {
     @Override
     public Drawable getDrawable() {
         return c.getDrawable(R.drawable.policy_peek);
+    }
+
+    @Override
+    public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
+        return unselectedPlayers.contains(presidentName);
     }
 }

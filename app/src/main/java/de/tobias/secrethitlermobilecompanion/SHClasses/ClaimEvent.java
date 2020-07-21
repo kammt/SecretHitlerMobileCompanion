@@ -4,9 +4,11 @@ import android.content.Context;
 
 import androidx.cardview.widget.CardView;
 
+import java.util.ArrayList;
+
 import de.tobias.secrethitlermobilecompanion.R;
 
-public class ClaimEvent extends GameEvent {
+public class ClaimEvent {
 
     private String presidentName, chancellorName;
     private int presidentClaim, chancellorClaim;
@@ -66,11 +68,6 @@ public class ClaimEvent extends GameEvent {
         String chancellorNamecolored = "<font color='grey'>" + chancellorName + "</font>";
 
         return c.getString(R.string.claim_string, playedPolicysp, presidentNamecolored, Claim.getClaimString(c, presidentClaim), chancellorNamecolored, Claim.getClaimString(c, chancellorClaim));
-    }
-
-    @Override
-    public void setupCard(CardView cardLayout) {
-        //Do nothing
     }
 
 }

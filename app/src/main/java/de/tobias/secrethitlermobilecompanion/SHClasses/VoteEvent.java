@@ -6,9 +6,11 @@ import android.text.SpannableString;
 
 import androidx.cardview.widget.CardView;
 
+import java.util.ArrayList;
+
 import de.tobias.secrethitlermobilecompanion.R;
 
-public class VoteEvent extends GameEvent {
+public class VoteEvent {
 
     private String presidentName, chancellorName;
     private int votingResult;
@@ -51,11 +53,6 @@ public class VoteEvent extends GameEvent {
         String chancellorNamecolored = "<font color='grey'>" + chancellorName + "</font>";
 
         return c.getString(R.string.vote_string, presidentNamecolored, chancellorNamecolored, votingResultsp);
-    }
-
-    @Override
-    public void setupCard(CardView cardLayout) {
-        //Do nothing
     }
 
 }

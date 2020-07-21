@@ -3,6 +3,8 @@ package de.tobias.secrethitlermobilecompanion.SHClasses;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
+import java.util.ArrayList;
+
 import de.tobias.secrethitlermobilecompanion.R;
 
 public class SpecialElectionEvent extends ExecutiveAction {
@@ -23,5 +25,10 @@ public class SpecialElectionEvent extends ExecutiveAction {
     @Override
     public Drawable getDrawable() {
         return context.getDrawable(R.drawable.special_election);
+    }
+
+    @Override
+    public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
+        return unselectedPlayers.contains(presidentName) && unselectedPlayers.contains(electedPlayerName);
     }
 }

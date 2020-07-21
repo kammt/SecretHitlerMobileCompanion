@@ -1,5 +1,6 @@
 package de.tobias.secrethitlermobilecompanion;
 
+import android.animation.LayoutTransition;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +8,9 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
@@ -43,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView tv_legislative, tv_execution, tv_policypeek, tv_specialelection, tv_investigation, tv_deckshuffled;
     private Animation fab_open, fab_close, fab_clock, fab_anticlock;
 
+    GameLog gameLog;
+
     boolean isOpen = false;
     boolean serverConnected = false;
 
@@ -69,22 +74,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        cardList = (RecyclerView) findViewById(R.id.cardList);
-        layoutManager = new LinearLayoutManager(this);
-        cardList.setLayoutManager(layoutManager);
-
-        playerCardList = findViewById(R.id.playerList);
-        LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
-        layoutManager2.setOrientation(RecyclerView.HORIZONTAL);
-        playerCardList.setLayoutManager(layoutManager2);
-        PlayerList.setupPlayerList(playerCardList, this);
-
-        PlayerList.addPlayer("Rüdiger");
-        PlayerList.addPlayer("Hildegunde");
-        PlayerList.addPlayer("Ferdinand");
-
-        final GameLog gameLog = new GameLog(cardList, MainActivity.this);
-        testGameLog(gameLog);
+        setupRecyclerViews();
     }
 
     @Override
@@ -96,16 +86,29 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-
+        gameLog = new GameLog(cardList, MainActivity.this);
+        testGameLog(gameLog);
 
         setupFabMenu();
 
-        startAndBindService();
+        startAndBindServerService();
 
 
     }
 
-    void startAndBindService() {
+    public void setupRecyclerViews() {
+        cardList = (RecyclerView) findViewById(R.id.cardList);
+        layoutManager = new LinearLayoutManager(this);
+        cardList.setLayoutManager(layoutManager);
+
+        playerCardList = findViewById(R.id.playerList);
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
+        layoutManager2.setOrientation(RecyclerView.HORIZONTAL);
+        playerCardList.setLayoutManager(layoutManager2);
+        PlayerList.setupPlayerList(playerCardList, this);
+    }
+
+    void startAndBindServerService() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(new Intent(this, ServerSercive.class));
@@ -119,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         serverConnected = true;
     }
 
-    void stopAndUnbindService() {
+    void stopAndUnbindServerService() {
         if (serverConnected) {
             // Detach our existing connection.
             unbindService(serverServiceConnection);
@@ -132,6 +135,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testGameLog(GameLog gameLog) {
+        PlayerList.addPlayer("Rüdiger");
+        PlayerList.addPlayer("Hildegunde");
+        PlayerList.addPlayer("Ferdinand");
+        PlayerList.addPlayer("Mario");
+
+
         VoteEvent ve1 = new VoteEvent("Rüdiger", "Hildegunde", VoteEvent.VOTE_PASSED, this);
         ClaimEvent ce1 = new ClaimEvent("Rüdiger", "Hildegunde", Claim.RRR, Claim.RR, Claim.FASCIST, false, this);
 
@@ -252,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopAndUnbindService();
+        stopAndUnbindServerService();
     }
 
 }

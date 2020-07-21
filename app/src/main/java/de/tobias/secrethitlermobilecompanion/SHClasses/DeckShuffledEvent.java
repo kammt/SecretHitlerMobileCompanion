@@ -4,6 +4,8 @@ import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
 
+import java.util.ArrayList;
+
 import de.tobias.secrethitlermobilecompanion.R;
 
 public class DeckShuffledEvent extends GameEvent {
@@ -22,5 +24,10 @@ public class DeckShuffledEvent extends GameEvent {
 
         TextView tvfascist = cardView.findViewById(R.id.tv_fpolicies);
         tvfascist.setText("" + fascistPolicies);
+    }
+
+    @Override
+    public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
+        return false; //as no players are involved anyway
     }
 }

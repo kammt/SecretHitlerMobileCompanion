@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
 
+import java.util.ArrayList;
+
 import de.tobias.secrethitlermobilecompanion.R;
 
 public class LegislativeSession extends GameEvent {
@@ -72,6 +74,11 @@ public class LegislativeSession extends GameEvent {
             playedPolicytv.setTextColor(Color.RED);
             playedPolicytv.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         }
+    }
+
+    @Override
+    public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
+        return unselectedPlayers.contains(voteEvent.getPresidentName()) && unselectedPlayers.contains(voteEvent.getChancellorName());
     }
 
 }
