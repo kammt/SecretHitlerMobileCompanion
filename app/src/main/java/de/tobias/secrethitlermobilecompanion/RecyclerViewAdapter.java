@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
+import de.tobias.secrethitlermobilecompanion.SHClasses.ExecutiveAction;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
 
@@ -19,6 +21,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     List<GameEvent> events;
     private static final int EXECUTIVE_ACTION = 1;
     private static final int LEGISLATIVE_SESSION = 0;
+    private static final int DECK_SHUFFLED = 2;
 
     public RecyclerViewAdapter(List<GameEvent> events){
         this.events = events;
@@ -45,8 +48,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         if(type == LEGISLATIVE_SESSION) {
             //It is a legislative session - then we inflate the correct layout
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_legislative_session, viewGroup, false);
-        } else {
+        } else if (type == EXECUTIVE_ACTION) {
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_executive_action, viewGroup, false);
+        } else {
+            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_deck_shuffled, viewGroup, false);
         }
         CardViewHolder cardViewHolder = new CardViewHolder(v);
         return cardViewHolder;
@@ -67,9 +72,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         if(event.getClass().isAssignableFrom(LegislativeSession.class)) {
             //It is a legislative session - then we inflate the correct layout
             return LEGISLATIVE_SESSION;
-        } else {
-            return EXECUTIVE_ACTION;
-        }
+        } else if(event.getClass() == DeckShuffledEvent.class) {
+            return DECK_SHUFFLED;
+        } else return EXECUTIVE_ACTION;
     }
 
 

@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import de.tobias.secrethitlermobilecompanion.SHClasses.ClaimEvent;
+import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.ExecutionEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
@@ -140,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
         gameLog.addEvent(new PolicyPeekEvent("Ferdinand", Claim.BBR, this));
         gameLog.addEvent(new LoyaltyInvestigationEvent("Ferdinand", "Mario", Claim.LIBERAL, this));
         gameLog.addEvent(new SpecialElectionEvent("Ferdinand", "Mario", this));
+
+        gameLog.addEvent(new DeckShuffledEvent(6, 11));
     }
 
     public void setupFabMenu() {

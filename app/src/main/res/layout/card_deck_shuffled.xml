@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="24dp"
+    android:layout_marginEnd="16dp"
+    app:cardBackgroundColor="@color/colorAccent"
+    app:cardCornerRadius="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/germania_one"
+            android:text="@string/deck_shuffled"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/img_fascist_policy"
+            android:layout_width="70dp"
+            android:layout_height="110dp"
+            android:layout_marginStart="16dp"
+            android:alpha="0.7"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/title"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/icon_fpolicy" />
+
+        <TextView
+            android:id="@+id/tv_fpolicies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/germania_one"
+            android:text="11"
+            android:textColor="#000000"
+            android:textSize="45sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/img_fascist_policy"
+            app:layout_constraintStart_toStartOf="@+id/img_fascist_policy"
+            app:layout_constraintTop_toTopOf="@+id/img_fascist_policy" />
+
+        <ImageView
+            android:id="@+id/img_liberal_policy"
+            android:layout_width="70dp"
+            android:layout_height="110dp"
+            android:layout_marginStart="8dp"
+            android:alpha="0.7"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/img_fascist_policy"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/icon_lpolicy" />
+
+        <TextView
+            android:id="@+id/tv_lpolicies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/germania_one"
+            android:text="11"
+            android:textColor="#000000"
+            android:textSize="45sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/img_liberal_policy"
+            app:layout_constraintStart_toStartOf="@+id/img_liberal_policy"
+            app:layout_constraintTop_toTopOf="@+id/img_liberal_policy" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.cardview.widget.CardView>
