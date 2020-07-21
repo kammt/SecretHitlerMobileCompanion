@@ -1,8 +1,10 @@
 package de.tobias.secrethitlermobilecompanion;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
     boolean isOpen = false;
     boolean serverConnected = false;
 
+    Context context;
+    BroadcastReceiver updateUIReciver;
+
+
     private ServiceConnection serverServiceConnection = new ServiceConnection() {
 
         @Override
@@ -66,22 +72,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(updateUIReciver);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        cardList = (RecyclerView) findViewById(R.id.cardList);
+        layoutManager = new LinearLayoutManager(this);
+        cardList.setLayoutManager(layoutManager);
+
+        setupFabMenu();
+
         startAndBindService();
 
         PlayerList.addPlayer("Rüdiger");
         PlayerList.addPlayer("Hildegunde");
         PlayerList.addPlayer("Ferdinand");
 
-        cardList = (RecyclerView) findViewById(R.id.cardList);
-        layoutManager = new LinearLayoutManager(this);
-        cardList.setLayoutManager(layoutManager);
-
         final GameLog gameLog = new GameLog(cardList, MainActivity.this);
-
-        setupFabMenu();
-
         testGameLog(gameLog);
-
     }
 
     void startAndBindService() {
@@ -98,11 +115,15 @@ public class MainActivity extends AppCompatActivity {
         serverConnected = true;
     }
 
-    void unbindService() {
+    void stopAndUnbindService() {
         if (serverConnected) {
             // Detach our existing connection.
             unbindService(serverServiceConnection);
             serverConnected = false;
+
+            Intent stopIntent = new Intent(MainActivity.this, ServerSercive.class);
+            stopIntent.setAction(ServerSercive.ACTION_KILL_SERVER);
+            startService(stopIntent);
         }
     }
 
@@ -212,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService();
+        stopAndUnbindService();
     }
 
 }

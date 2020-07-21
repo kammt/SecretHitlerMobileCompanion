@@ -23,7 +23,8 @@
     <string name="vetoed">" - Vetoed"</string>
     <string name="executed_string">President %1$s selects to execute %2$s.</string>
     <string name="title_server_notification">Secret Hitler Server running</string>
-    <string name="desc_server_notification">Tap to return to app</string>
+    <string name="desc_server_notification">This notification is to improve the stability of the server</string>
     <string name="channel_title_server_notification">Sticky Server Notification</string>
     <string name="channel_desc_server_notification">A sticky notification that improves the stability of the server</string>
+    <string name="stop_server_notification">Stop Server</string>
 </resources>
