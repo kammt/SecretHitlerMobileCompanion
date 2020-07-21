@@ -45,10 +45,6 @@ public class MainActivity extends AppCompatActivity {
     boolean isOpen = false;
     boolean serverConnected = false;
 
-    Context context;
-    BroadcastReceiver updateUIReciver;
-
-
     private ServiceConnection serverServiceConnection = new ServiceConnection() {
 
         @Override
@@ -78,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(updateUIReciver);
     }
 
     @Override
