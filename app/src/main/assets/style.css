@@ -33,6 +33,9 @@ body {
 }
 
 /* Game log */
+#game-log {
+    padding-bottom: 20px;
+}
 
 .game-action {
     background-color: var(--beige);
