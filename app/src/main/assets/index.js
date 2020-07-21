@@ -1,5 +1,7 @@
 let prevGameData = null;
 
+
+
 const getGameJSON = () => {
     const Http = new XMLHttpRequest();
     const url=`http://${location.host}/getGameJSON` ;
@@ -16,7 +18,7 @@ const loadPage = () => {
     // Make an HTTP request to the server to receive the current game state
     //const gameData = getGameJSON();
 
-    gameData = JSON.parse('{"game":{"id":"758439574802","players":["Mario","Tobi","David","Felix","Eva","Niclas","Leander"],"plays":[{"type":"legislative-session","num":1,"president":"David","chancellor":"Tobi","rejected":false,"president_claim":"RRB","chancellor_claim":"RB","policy_played":"B","veto":false},{"type":"legislative-session","num":2,"president":"Felix","chancellor":"David","rejected":false,"president_claim":"RBB","chancellor_claim":"RR","policy_played":"R","veto":false},{"type":"legislative-session","num":3,"president":"Felix","chancellor":"David","rejected":true},{"type":"legislative-session","num":4,"president":"Felix","chancellor":"David","rejected":false,"president_claim":"RBB","chancellor_claim":"RR","policy_played":"R","veto":true},{"type":"executive-action","executive_action_type":"execution","president":"Felix","target":"David"},{"type":"executive-action","executive_action_type":"investigate_loyalty","president":"Felix","target":"David","claim":"B"},{"type":"executive-action","executive_action_type":"policy_peek","president":"Felix","claim":"RRR"},{"type":"executive-action","executive_action_type":"special_election","president":"Felix","target":"David"},{"type":"shuffle","fas-policies":11,"lib-policies":6}]}}');
+    gameData = JSON.parse('{"game":{"id":"758439574802","players":["Mario","Tobi","David","Felix","Eva","Niclas","Leander"],"plays":[{"type":"legislative-session","num":1,"president":"David","chancellor":"Tobi","rejected":false,"president_claim":"RRB","chancellor_claim":"RB","policy_played":"B","veto":false},{"type":"legislative-session","num":2,"president":"Felix","chancellor":"David","rejected":false,"president_claim":"RBB","chancellor_claim":"RR","policy_played":"R","veto":false},{"type":"legislative-session","num":3,"president":"Felix","chancellor":"David","rejected":true},{"type":"legislative-session","num":4,"president":"Felix","chancellor":"David","rejected":false,"president_claim":"RBB","chancellor_claim":"RR","policy_played":"R","veto":true},{"type":"executive-action","executive_action_type":"execution","president":"Felix","target":"David"},{"type":"executive-action","executive_action_type":"investigate_loyalty","president":"Felix","target":"David","claim":"B"},{"type":"executive-action","executive_action_type":"policy_peek","president":"Felix","claim":"RRR"},{"type":"executive-action","executive_action_type":"special_election","president":"Felix","target":"David"},{"type":"shuffle","fascist_policies":11,"liberal_policies":6}]}}');
 
     let prevPlays = prevGameData == null ? null : prevGameData.game.plays;
     let plays = gameData.game.plays;
@@ -29,10 +31,13 @@ const loadPage = () => {
     for(let i = prevPlays != null ? prevPlays.length - 1 : 0; i < plays.length; i++) {
         let play = plays[i];
         //console.log(play.type);
-        if(play.type === "legislative-session") {
+        if(play.type === 'legislative-session') {
             addLegislativeSession(play);
-        } else if(play.type === "executive-action") {
+        } else if(play.type === 'executive-action') {
             addExecutiveAction(play);
+        } else if(play.type === 'shuffle') {
+            addShuffle(play);
+            console.log(play);
         }
     }
 
@@ -123,13 +128,13 @@ const addExecutiveAction = (play) => {
         case 'execution':
             executiveActionHTML = `President ${presidentHTML} selects to execute ${targetHTML}.`;
             break;
-        case 'investigate-loyalty':
+        case 'investigate_loyalty':
             executiveActionHTML = `President ${presidentHTML} sees the party membership of ${targetHTML} and claims to see a member of the ${play.claim === 'B' ? 'liberal' : 'fascist'} team.`
             break;
-        case 'policy-peek':
+        case 'policy_peek':
             executiveActionHTML = `President ${presidentHTML} peeks at the next three policies and claims to see ${getColouredClaim(play.claim)}.`;
             break;
-        case 'special-election':
+        case 'special_election':
             executiveActionHTML = `President ${presidentHTML} has chosen to special elect ${targetHTML} as president.`;
             break;
         default:
@@ -188,5 +193,51 @@ const getColouredClaim = (claim) => {
     return result;
 };
 
-loadPage();
+const addShuffle = (play) => {
+    // Create the main container
+    let shuffleDiv = $(document.createElement('div'));
+    shuffleDiv.addClass('game-action shuffle-div');
 
+    // Create the title of the shuffle div
+    let shuffleDivTitle = $(document.createElement('h1'));
+    shuffleDivTitle.addClass('game-action-title shuffle-title');
+    shuffleDivTitle.text('Cards shuffled');
+
+    shuffleDiv.append(shuffleDivTitle);
+
+    // Create the container holding the number of policies and the image for both policy types
+    let shuffleDivBody = $(document.createElement('div'));
+    shuffleDivBody.addClass('shuffle-div-body');
+    shuffleDiv.append(shuffleDivBody);
+
+    shuffleDivBody.append(createPolicyCard(play, 'fascist'));
+    shuffleDivBody.append(createPolicyCard(play, 'liberal'));
+
+    // Append the shuffle div to the game-log section
+    $('#game-log').append(shuffleDiv);
+};
+
+const createPolicyCard = (play, type) => {
+    // Create the div for the fascist policies
+    let policyDiv = $(document.createElement('div'));
+    policyDiv.addClass('policy-number-div');
+
+    // Create the image for the fascist policies
+    let policyImg = $(document.createElement('img'));
+    policyImg.addClass('pol-card');
+    policyImg.attr('src', images[`${type}_policy`]);
+    policyImg.attr('alt', `${type}_policy_card`);
+
+    policyDiv.append(policyImg);
+
+    // Create the div showing the number of fascist policies
+    let policyNum = $(document.createElement('div'));
+    policyNum.addClass('policy-number');
+    policyNum.text(play[`${type}_policies`]);
+
+    policyDiv.append(policyNum);
+
+    return policyDiv;
+}
+
+loadPage();
