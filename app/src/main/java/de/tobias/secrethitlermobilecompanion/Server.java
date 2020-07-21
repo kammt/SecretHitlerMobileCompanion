@@ -36,10 +36,12 @@ import static java.net.HttpURLConnection.HTTP_OK;
 
 public class Server extends NanoHTTPD {
     private Context c;
+    private int port;
 
     public Server(int port, Context c) {
         super(port);
         this.c = c;
+        this.port = port;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -112,7 +114,7 @@ public class Server extends NanoHTTPD {
         final String formatedIpAddress = String.format("%d.%d.%d.%d", (ipAddress & 0xff), (ipAddress >> 8 & 0xff),
                 (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
 
-        return "http://" + formatedIpAddress + ":" + getListeningPort();
+        return "http://" + formatedIpAddress + ":" + port;
     }
 
 }
