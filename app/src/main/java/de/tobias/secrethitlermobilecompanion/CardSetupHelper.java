@@ -2,6 +2,7 @@ package de.tobias.secrethitlermobilecompanion;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -64,6 +65,14 @@ public class CardSetupHelper {
         final ImageView iv_fascist = setupCard.findViewById(R.id.img_policy_fascist);
         final ImageView iv_liberal = setupCard.findViewById(R.id.img_policy_liberal);
         final FloatingActionButton fab_create = setupCard.findViewById(R.id.fab_create);
+        ImageView iv_cancel = setupCard.findViewById(R.id.img_cancel);
+
+        iv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearLayout.removeAllViews();
+            }
+        });
 
         sw_votingoutcome.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
             @Override
@@ -115,7 +124,7 @@ public class CardSetupHelper {
                 //Firstly, the name of president and chancellor cannot be the same
                 if(presSpinner.getSelectedItem().equals(chancSpinner.getSelectedItem())) {
                     pass = false;
-                    Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG);
+                    Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
                 }
 
                 //Maybe add a check for claims in the future? E.g. RRR and BB should create an error

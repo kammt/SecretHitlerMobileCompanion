@@ -37,4 +37,5 @@
     <string name="president_name">President name</string>
     <string name="chancellor_name">Chancellor name</string>
     <string name="err_names_cannot_be_the_same">Players cannot be involved multiple times in an Event!</string>
+    <string name="new_legislative_session">New Legislative Session</string>
 </resources>
