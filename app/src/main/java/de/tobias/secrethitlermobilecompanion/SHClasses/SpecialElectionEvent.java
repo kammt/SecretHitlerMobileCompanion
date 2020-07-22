@@ -43,7 +43,7 @@ public class SpecialElectionEvent extends ExecutiveAction {
         obj.put("executive_action_type", "special_election");
         obj.put("president", presidentName);
         obj.put("target", electedPlayerName);
-        
+
         return obj;
     }
 }

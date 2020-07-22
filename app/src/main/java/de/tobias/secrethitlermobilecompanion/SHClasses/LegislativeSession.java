@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import de.tobias.secrethitlermobilecompanion.R;
@@ -50,7 +53,7 @@ public class LegislativeSession extends GameEvent {
         chancName.setText(voteEvent.getChancellorName());
 
         if(voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED) {
-            title.setText(c.getString(R.string.legislative_session)+ " #"+sessionNumber + c.getString(R.string.rejected));
+            title.setText(c.getString(R.string.legislative_session)+ " #" + sessionNumber + c.getString(R.string.rejected));
 
             //Hide unnecessary stuff
             chancClaim.setVisibility(View.GONE);
@@ -61,7 +64,7 @@ public class LegislativeSession extends GameEvent {
             chancName.setTextColor(Color.RED);
             chancName.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         } else {
-            title.setText(c.getString(R.string.legislative_session)+ " #"+sessionNumber);
+            title.setText(c.getString(R.string.legislative_session)+ " #" + sessionNumber);
 
             //The vote didn't fail, now we have to set the colored Claims. To do this, we parse the HTML <font> attribute (see Claim.java for more)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -85,6 +88,25 @@ public class LegislativeSession extends GameEvent {
     @Override
     public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
         return unselectedPlayers.contains(voteEvent.getPresidentName()) && unselectedPlayers.contains(voteEvent.getChancellorName());
+    }
+
+    @Override
+    public JSONObject getJSON() throws JSONException {
+        JSONObject obj = new JSONObject();
+
+        obj.put("type", "legislative-session");
+        obj.put("num", sessionNumber);
+        obj.put("president", voteEvent.getPresidentName());
+        obj.put("chancellor", voteEvent.getChancellorName());
+        obj.put("rejected", voteEvent.getVotingResult() == VoteEvent.VOTE_PASSED ? false : true);
+
+        if(claimEvent != null) {
+            obj.put("president_claim", claimEvent.getPresidentClaim());
+            obj.put("chancellor_claim", claimEvent.getChancellorClaim());
+            obj.put("veto", claimEvent.isVetoed());
+        }
+
+        return obj;
     }
 
 }
