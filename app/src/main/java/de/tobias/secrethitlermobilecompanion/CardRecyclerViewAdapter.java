@@ -88,8 +88,10 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
         int position = holder.getLayoutPosition();
 
         CardView cv = holder.cv;
+        boolean toBeBlurred = GameLog.hiddenEventIndexes.contains(position);
 
-        if(GameLog.hiddenEventIndexes.contains(position)) cv.setAlpha((float) 0.5);
+        if(toBeBlurred) cv.setAlpha((float) 0.5);
+        else if(cv.getAlpha() < 1) cv.setAlpha(1); //Views that are re-added have the same opacity as before. Because of that, we also check if it has to be un-blurred
     }
 }
 
