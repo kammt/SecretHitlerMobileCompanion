@@ -208,3 +208,54 @@ body {
 
     font-size: 2rem;
 }
+
+/* Styling for larger devices */
+@media (min-width: 768px) {
+    #main{
+        /*display: flex;*/
+        /*flex-direction: row;*/
+    }
+
+    #navbar {
+        position: fixed !important;
+    }
+
+    /* Not final */
+    .player-pane {
+
+        justify-content: center;
+        margin: 20px auto;
+    }
+
+    #game-log {
+    }
+
+    .game-action {
+        width: 20vw;
+    }
+
+    #game-log {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .shuffle-div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .shuffle-div-body {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .policy-number-div {
+        width: 4vw;
+    }
+
+    .policy-number {
+        font-size: 2.5rem;
+    }
+}
