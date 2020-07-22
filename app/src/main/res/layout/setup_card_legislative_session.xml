@@ -190,7 +190,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.75" />
+            app:layout_constraintGuide_percent="0.72" />
 
         <Spinner
             android:id="@+id/spinner_pres_claim"
@@ -209,7 +209,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.82" />
+            app:layout_constraintGuide_percent="0.78" />
 
         <Spinner
             android:id="@+id/spinner_chanc_claim"
