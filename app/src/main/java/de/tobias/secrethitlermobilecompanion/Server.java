@@ -7,11 +7,16 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
 
+import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
 import fi.iki.elonen.NanoHTTPD;
 
 import static android.content.Context.WIFI_SERVICE;
@@ -19,11 +24,16 @@ import static android.content.Context.WIFI_SERVICE;
 public class Server extends NanoHTTPD {
     private Context c;
     private int port;
+    private GameLog gameLog;
 
     public Server(int port, Context c) {
         super(port);
         this.c = c;
         this.port = port;
+    }
+
+    public void setGameLog(GameLog gameLog) {
+        this.gameLog = gameLog;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -49,8 +59,25 @@ public class Server extends NanoHTTPD {
             return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript",getFile("images.js"));
         } else if(uri.equals("/PlayerPane.js")) {
             return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript",getFile("PlayerPane.js"));
-        }else if(uri.equals("/css/style.css")) {
+        } else if(uri.equals("/css/style.css")) {
             return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css",getFile("style.css"));
+        } else if(uri.equals("/getGameJSON")) {
+            if(gameLog != null) {
+                JSONObject obj = new JSONObject();
+                JSONObject game = new JSONObject();
+
+                try {
+                    game.put("players", PlayerList.getPlayerListJSON());
+                    game.put("plays", gameLog.getEventsJSON());
+                    obj.put("game", game);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, "application/json", "");
+                }
+                Log.v("/getGameJSON: JSON: ", obj.toString());
+                return newFixedLengthResponse(Response.Status.OK, "application/json", obj.toString());
+            }
+            return newFixedLengthResponse(Response.Status.SERVICE_UNAVAILABLE, "application/json", "");
         } else {
             return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", getFile("404.html"));
         }

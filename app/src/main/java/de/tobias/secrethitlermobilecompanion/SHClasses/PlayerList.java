@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 
 import de.tobias.secrethitlermobilecompanion.PlayerRecyclerViewAdapter;
@@ -90,5 +92,15 @@ public class PlayerList {
 
     public static boolean isDead(int playerPosition) {
         return isDead.get(playerPosition);
+    }
+
+    public static JSONArray getPlayerListJSON() {
+        JSONArray arr = new JSONArray();
+
+        for(String player : playerList) {
+            arr.put(player);
+        }
+
+        return arr;
     }
 }

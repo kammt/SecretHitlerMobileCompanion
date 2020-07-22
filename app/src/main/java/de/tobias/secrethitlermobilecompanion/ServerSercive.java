@@ -22,6 +22,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
+import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
+
 import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 
 public class ServerSercive extends Service {
@@ -116,6 +118,10 @@ public class ServerSercive extends Service {
         mChannel.setDescription(description);
         mChannel.enableLights(false);
         notificationManager.createNotificationChannel(mChannel);
+    }
+
+    public void passGameLog(GameLog gameLog) {
+        server.setGameLog(gameLog);
     }
 
 }

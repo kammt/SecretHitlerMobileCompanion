@@ -8,18 +8,24 @@ const getGameJSON = () => {
 	Http.send();
 
 	Http.onreadystatechange = (e) => {
-		console.log(Http.responseText);
-		return Http.responseText;
+	    if(Http.readyState === 4) {
+	        //console.log('HTTP response text: ' + Http.responseText);
+        	loadPage(JSON.parse(Http.responseText));
+	    }
 	};
 };
 
-const loadPage = () => {
+const loadPage = (gameData) => {
 	// Make an HTTP request to the server to receive the current game state
 	//const gameData = getGameJSON();
 
-	gameData = JSON.parse(
-		'{"game":{"id":"758439574802","players":["Mario","Tobi","David","Felix","Eva","Niclas","Leander"],"plays":[{"type":"legislative-session","num":1,"president":"David","chancellor":"Tobi","rejected":false,"president_claim":"RRB","chancellor_claim":"RB","policy_played":"B","veto":false},{"type":"legislative-session","num":2,"president":"Felix","chancellor":"David","rejected":false,"president_claim":"RBB","chancellor_claim":"RR","policy_played":"R","veto":false},{"type":"legislative-session","num":3,"president":"Felix","chancellor":"David","rejected":true},{"type":"legislative-session","num":4,"president":"Felix","chancellor":"David","rejected":false,"president_claim":"RBB","chancellor_claim":"RR","policy_played":"R","veto":true},{"type":"executive-action","executive_action_type":"execution","president":"Felix","target":"David"},{"type":"executive-action","executive_action_type":"investigate_loyalty","president":"Felix","target":"David","claim":"B"},{"type":"executive-action","executive_action_type":"policy_peek","president":"Felix","claim":"RRR"},{"type":"executive-action","executive_action_type":"special_election","president":"Felix","target":"David"},{"type":"shuffle","fascist_policies":11,"liberal_policies":6}]}}'
-	);
+	// gameData = JSON.parse(
+	// 	'{"game":{"id":"758439574802","players":["Mario","Tobi","David","Felix","Eva","Niclas","Leander"],"plays":[{"type":"legislative-session","num":1,"president":"David","chancellor":"Tobi","rejected":false,"president_claim":"RRB","chancellor_claim":"RB","policy_played":"B","veto":false},{"type":"legislative-session","num":2,"president":"Felix","chancellor":"David","rejected":false,"president_claim":"RBB","chancellor_claim":"RR","policy_played":"R","veto":false},{"type":"legislative-session","num":3,"president":"Felix","chancellor":"David","rejected":true},{"type":"legislative-session","num":4,"president":"Felix","chancellor":"David","rejected":false,"president_claim":"RBB","chancellor_claim":"RR","policy_played":"R","veto":true},{"type":"executive-action","executive_action_type":"execution","president":"Felix","target":"David"},{"type":"executive-action","executive_action_type":"investigate_loyalty","president":"Felix","target":"David","claim":"B"},{"type":"executive-action","executive_action_type":"policy_peek","president":"Felix","claim":"RRR"},{"type":"executive-action","executive_action_type":"special_election","president":"Felix","target":"David"},{"type":"shuffle","fascist_policies":11,"liberal_policies":6}]}}'
+	// );
+
+	// gameData = JSON.parse(getGameJSON());
+
+	console.log(gameData);
 
 	let prevPlays = prevGameData == null ? null : prevGameData.game.plays;
 	let plays = gameData.game.plays;
@@ -275,4 +281,6 @@ const createPolicyCard = (play, type) => {
 	return policyDiv;
 };
 
-loadPage();
+getGameJSON();
+
+setInterval(getGameJSON, 2000);
