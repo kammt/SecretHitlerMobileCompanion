@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab_main, fab_legislative, fab_execution, fab_policypeek, fab_specialelection, fab_investigation, fab_deckshuffled;
     private TextView tv_legislative, tv_execution, tv_policypeek, tv_specialelection, tv_investigation, tv_deckshuffled;
     private Animation fab_open, fab_close, fab_clock, fab_anticlock;
+
+    private LinearLayout setupLayout;
 
     GameLog gameLog;
 
@@ -157,6 +160,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setupFabMenu() {
+        setupLayout = findViewById(R.id.cardSetup);
+
         //Loading Animations
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
@@ -184,6 +189,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(isOpen) closeFabMenu();
                 else openFabMenu();
+            }
+        });
+
+        fab_legislative.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeFabMenu();
+                CardSetupHelper.setupLegislativeSession(MainActivity.this, getLayoutInflater(), setupLayout);
             }
         });
     }

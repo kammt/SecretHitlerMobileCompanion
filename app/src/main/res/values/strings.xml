@@ -31,4 +31,10 @@
     <string name="investigation_string">President %1$s sees the party membership of %2$s and claims to see a member of the %3$s team.</string>
     <string name="specialElection_string">President %1$s has chosen to special elect %2$s as president</string>
     <string name="deck_shuffled">Deck shuffled</string>
+    <string name="CheckBox_vetoed">Policy was vetoed</string>
+    <string name="vote_passed_short">Vote passed</string>
+    <string name="vote_rejected_short">Vote Rejected</string>
+    <string name="president_name">President name</string>
+    <string name="chancellor_name">Chancellor name</string>
+    <string name="err_names_cannot_be_the_same">Players cannot be involved multiple times in an Event!</string>
 </resources>

@@ -2,6 +2,8 @@ package de.tobias.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
 
+import java.util.ArrayList;
+
 import de.tobias.secrethitlermobilecompanion.R;
 
 public class Claim {
@@ -68,6 +70,47 @@ public class Claim {
             case FASCIST:
                 return "R";
             default: return context.getString(R.string.claim_nothing); //Either no claim was made or the value is invalid
+        }
+    }
+
+    public static ArrayList<String> getPresidentClaims() {
+        ArrayList<String> claims = new ArrayList<>();
+
+        claims.add("RRR");
+        claims.add("BRR");
+        claims.add("BBR");
+        claims.add("BBB");
+
+        return claims;
+    }
+
+    public static ArrayList<String> getChancellorClaims() {
+        ArrayList<String> claims = new ArrayList<>();
+
+        claims.add("RR");
+        claims.add("BR");
+        claims.add("BB");
+
+        return claims;
+    }
+
+    public static Integer getClaimInt(String claimString) {
+        switch(claimString){
+            case "BBB":
+                return BBB;
+            case "BBR":
+                return BBR;
+            case "BRR":
+                return BRR;
+            case "RRR":
+                return RRR;
+            case "RR":
+                return RR;
+            case "BR":
+                return BR;
+            case "BB":
+                return BB;
+            default: return NO_CLAIM; //Either no claim was made or the value is invalid
         }
     }
 }

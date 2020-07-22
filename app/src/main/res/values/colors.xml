@@ -3,6 +3,7 @@
     <color name="colorPrimaryDark">#7e3431</color>
     <color name="colorPrimary">#f2654a</color>
     <color name="colorAccent">#f5e2c4</color>
+    <color name="colorSpinner">#FFD5BC96</color>
 
     <color name="colorLiberal">#5a9cc4</color>
     <color name="colorFascist">#c66851</color>
