@@ -81,7 +81,7 @@ class PlayerPane {
 						}
 					}
 
-					if (invisible) gameActions[i].classList.add('invisible');
+					if (invisible) gameActions[i].classList.add('low-opacity');
 				}
 
 			}
@@ -99,14 +99,14 @@ class PlayerPane {
 				);
 
 				// Fetch all the game-action elements that are currently hidden
-				let invisibleGameActions = $('.game-action.invisible');
+				let invisibleGameActions = $('.game-action.low-opacity');
 
 				// Check if any of the hidden game-action need to be shown again.
 				for (let i = 0; i < invisibleGameActions.length; i++) {
 					let classList = invisibleGameActions[i].classList;
 
 					if (classList.contains(`player_${player}`)) {
-						invisibleGameActions[i].classList.remove('invisible');
+						invisibleGameActions[i].classList.remove('low-opacity');
 					}
 				}
 			}

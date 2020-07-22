@@ -19,8 +19,8 @@ body {
 }
 
 /* General */
-.invisible {
-    display: none;
+.low-opacity {
+    opacity: 0.2;
 }
 
 .stop-scrolling {
