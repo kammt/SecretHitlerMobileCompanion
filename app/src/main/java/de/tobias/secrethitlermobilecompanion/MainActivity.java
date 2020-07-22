@@ -75,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setupRecyclerViews();
+        startAndBindServerService();
+        setupFabMenu();
+
         gameLog = new GameLog(cardList, MainActivity.this);
         testGameLog(gameLog);
     }
@@ -87,14 +90,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-
-
-        setupFabMenu();
-
-        startAndBindServerService();
-
-
     }
 
     public void setupRecyclerViews() {

@@ -15,6 +15,7 @@ public class ExecutionEvent extends ExecutiveAction {
         this.context = context;
         this.presidentName = presidentName;
         this.executedPlayerName = executedPlayerName;
+        PlayerList.setAsDead(executedPlayerName);
     }
 
     @Override

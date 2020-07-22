@@ -95,6 +95,10 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
         int claim = PlayerList.getMembershipClaims().get(position);
 
         CardView cv = holder.cv;
+        if(PlayerList.isDead(position)) {
+            PlayerList.setDeadSymbol(cv);
+            return;
+        }
         PlayerList.setClaimImage(cv, claim);
     }
 }

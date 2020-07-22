@@ -48,7 +48,7 @@ public class GameLog {
                 card.setAlpha(1);
             }
         }
-        hiddenEventIndexes = cardIndexesToBlur; //Update the static ArrayList, making it accessible to the RecyclerViewAdapter. When rendering a view, it will look up if it has to be blurred or not
+        hiddenEventIndexes = cardIndexesToBlur; //Update the static ArrayList, making it accessible to the RecyclerViewAdapter. When rendering a view (which was null before), it will look up if it has to be blurred or not
     }
 
 
