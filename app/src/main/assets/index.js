@@ -155,6 +155,7 @@ const addExecutiveAction = (play) => {
 			executiveActionHTML = `President ${presidentHTML} sees the party membership of ${targetHTML} and claims to see a member of the ${
 				play.claim === "B" ? "liberal" : "fascist"
 				} team.`;
+			playerPane.displayAccusation(play.target, play.claim);
 			break;
 		case "policy_peek":
 			executiveActionHTML = `President ${presidentHTML} peeks at the next three policies and claims to see ${getColouredClaim(

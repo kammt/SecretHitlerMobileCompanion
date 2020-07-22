@@ -15,17 +15,24 @@ class PlayerPane {
 			// Add css classes
 			playerDiv.addClass("player-pane-player-div");
 
+			// Create a div containing the image. This is needed in order to centre the question mark, in case of accusation,
+			// at the center of the image not the entire player div
+			let imgContainer = $(document.createElement('div'));
+			imgContainer.addClass('img-container');
+
 			// Create the secret role image
 			let secretRoleImg = $(document.createElement("img"));
 			secretRoleImg.attr("src", images.secret_role);
+
+			imgContainer.append(secretRoleImg);
 
 			// Create the player's name tag
 			let playerNameTag = $(document.createElement("p"));
 			playerNameTag.addClass(`player-name-tag player_${player}`);
 			playerNameTag.text(player);
 
-			// Add both the name tag and the secret role image to the main div (playerDiv)
-			playerDiv.append(secretRoleImg);
+			// Add both the name tag and the image div to the main div (playerDiv)
+			playerDiv.append(imgContainer);
 			playerDiv.append(playerNameTag);
 
 			// Add the main div for this player to the main div of the player-pane
@@ -116,20 +123,41 @@ class PlayerPane {
 	// Method to alter the offset of the playerpane in order to be able to scroll through the different elements
 	// CurrentPos is the current position of the mouse/finger based on which the new offset will be calculated
 	offset(currentPos) {
-		console.log(`Current position: ${currentPos}`);
-		console.log(`This.xPos: ${this.xPos}`);
+		// console.log(`Current position: ${currentPos}`);
+		// console.log(`This.xPos: ${this.xPos}`);
 
 		let offset =
 			Number(this.pane.css("left").split("p")[0]) + currentPos - this.xPos;
 
 		//console.log('Max offset: ' + this.maxOffset);
 
-		if (offset < 10 && Math.abs(offset) <= this.maxOffset) {
+		if (offset < 0 && Math.abs(offset) <= this.maxOffset) {
 			this.xPos = currentPos;
 			this.pane.css("left", `${offset}px`);
 		}
 
-		console.log(`Offset: ${offset}`);
+		// console.log(`Offset: ${offset}`);
+	}
+
+	displayAccusation(player, claim) {
+		// console.log(player + ' is allegedly ' + claim);
+		let playerDiv = this.playerDivs[player].find('.img-container');
+
+		// console.log(playerDiv);
+		// console.log(playerDiv.find('img'))
+
+		let membershipImg = playerDiv.find('img');
+		membershipImg.attr('src', images[claim.toLowerCase() === 'b' ? 'membership_liberal' : 'membership_fascist']);
+		membershipImg.addClass('low-opacity');
+
+		let questionMark = $(document.createElement('div'));
+		questionMark.text('?');
+
+		questionMark.addClass('question-mark');
+
+		playerDiv.append(questionMark);
+
+		// playerDiv.css('background-image', 'none');
 	}
 
 	//Constructor function takes in the players as array
@@ -163,7 +191,7 @@ class PlayerPane {
 				this.xPos = e.originalEvent.x;
 
 				this.pane.on('mousemove', (e) => {
-					console.log('Mousemove: ' + e.originalEvent.x);
+					// console.log('Mousemove: ' + e.originalEvent.x);
 
 					this.offset(e.originalEvent.x);
 				});
@@ -176,7 +204,7 @@ class PlayerPane {
 				$('body').addClass('stop-scrolling');
 
 				this.pane.on('touchmove', (e) => {
-					console.log('Touchmove: ' + e.originalEvent.touches[0].clientX);
+					// console.log('Touchmove: ' + e.originalEvent.touches[0].clientX);
 
 					this.offset(e.originalEvent.touches[0].clientX);
 				});
@@ -213,6 +241,6 @@ class PlayerPane {
 		//console.log(`Width of the pane: ${this.pane[0].scrollWidth}px`);
 		//console.log(`Width of the viewport: ${$(window).width()}px`);
 
-		this.maxOffset = this.pane[0].scrollWidth - $(window).width() + $('#player-pane').css('padding-left').split('p')[0] * 2 + 10;
+		this.maxOffset = this.pane[0].scrollWidth - $(window).width() + $('#player-pane').css('padding-left').split('p')[0] * 2;
 	}
 }

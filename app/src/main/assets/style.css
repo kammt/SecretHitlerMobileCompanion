@@ -14,13 +14,11 @@ body {
     background-color: var(--dark-red);
     font-family: 'Comfortaa', cursive;
     color: var(--beige);
-
-
 }
 
 /* General */
 .low-opacity {
-    opacity: 0.2;
+    opacity: 0.4;
 }
 
 .stop-scrolling {
@@ -71,6 +69,10 @@ body {
     border: solid 1px var(--light-grey);
 }
 
+.img-container {
+    position: relative;
+}
+
 .player-name-tag {
     color: var(--light-grey);
 
@@ -78,6 +80,19 @@ body {
 
     margin-top: 6px;
     margin-bottom: 0;
+}
+
+.question-mark {
+    font-family: 'Germania One', cursive;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    font-size: 3.5rem;
+
+    color: var(--light-grey);
 }
 
 /* Game log */
