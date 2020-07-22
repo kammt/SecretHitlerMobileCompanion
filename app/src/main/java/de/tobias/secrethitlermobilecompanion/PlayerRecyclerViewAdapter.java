@@ -4,8 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,11 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.GameEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
 import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
 
 public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecyclerViewAdapter.PlayerCardViewHolder> {
@@ -49,6 +43,7 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
 
     @Override
     public PlayerCardViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
+        //We have to differentiate between the first player and other players, as the first player need extra margin_left on his card. This has been solved using two layouts
         View v;
         if(type == 0) v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_player_list_single_player_first_entry, viewGroup, false);
         else v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_player_list_single_player, viewGroup, false);
@@ -70,14 +65,14 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
             public void onClick(View v) {
                 CardView cv = (CardView) v;
 
-                if(cv.getAlpha() == 1.0) {
+                if(cv.getAlpha() == 1.0) { //if it is unselected, select it
                     cv.setAlpha( (float) 0.5);
-                    hiddenPlayers.add(player);
-                } else {
+                    hiddenPlayers.add(player); //add it to the list of hidden players
+                } else { //if it is selected (Alpha is smaller than 1), remove it from the list and reset alpha
                     cv.setAlpha(1);
                     hiddenPlayers.remove(player);
                 }
-                GameLog.blurEventsInvolvingHiddenPlayers(hiddenPlayers);
+                GameLog.blurEventsInvolvingHiddenPlayers(hiddenPlayers); //Tell GameLog to update the list of which cards to blur
             }
         });
     }

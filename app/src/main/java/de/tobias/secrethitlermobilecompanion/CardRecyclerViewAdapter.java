@@ -1,10 +1,8 @@
 package de.tobias.secrethitlermobilecompanion;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -23,8 +21,6 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
     private static final int EXECUTIVE_ACTION = 1;
     private static final int LEGISLATIVE_SESSION = 0;
     private static final int DECK_SHUFFLED = 2;
-
-    public Integer[] hiddenIndexes;
 
     public CardRecyclerViewAdapter(List<GameEvent> events){
         this.events = events;

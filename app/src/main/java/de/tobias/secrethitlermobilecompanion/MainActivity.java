@@ -1,6 +1,5 @@
 package de.tobias.secrethitlermobilecompanion;
 
-import android.animation.LayoutTransition;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,12 +7,9 @@ import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobias.secrethitlermobilecompanion.SHClasses.ClaimEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.ExecutionEvent;
@@ -30,7 +27,6 @@ import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
-import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobias.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.SpecialElectionEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.VoteEvent;
@@ -51,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     boolean isOpen = false;
     boolean serverConnected = false;
 
-    private ServiceConnection serverServiceConnection = new ServiceConnection() {
+    private ServiceConnection serverServiceConnection = new ServiceConnection() { //TODO unused, remove?
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -62,9 +58,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             boundServerService = null;
-            Toast.makeText(MainActivity.this,
-                    "Service disconnected",
-                    Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -105,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void startAndBindServerService() {
-
+        //Starting with Android O, a ForeGroundService must be called using a different function
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(new Intent(this, ServerSercive.class));
         } else {

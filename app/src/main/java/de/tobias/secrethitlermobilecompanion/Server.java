@@ -1,38 +1,20 @@
 package de.tobias.secrethitlermobilecompanion;
 
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.os.IBinder;
-import android.renderscript.ScriptGroup;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.Buffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Base64;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.regex.Pattern;
 
 import fi.iki.elonen.NanoHTTPD;
 
 import static android.content.Context.WIFI_SERVICE;
-import static java.net.HttpURLConnection.HTTP_OK;
 
 public class Server extends NanoHTTPD {
     private Context c;
@@ -108,7 +90,7 @@ public class Server extends NanoHTTPD {
     }
 
     public String getURL() {
-        WifiManager wifiManager = (WifiManager) c.getSystemService(WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) c.getApplicationContext().getSystemService(WIFI_SERVICE);
 
         int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
         final String formatedIpAddress = String.format("%d.%d.%d.%d", (ipAddress & 0xff), (ipAddress >> 8 & 0xff),

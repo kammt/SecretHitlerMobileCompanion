@@ -17,6 +17,10 @@ import de.tobias.secrethitlermobilecompanion.R;
 
 public class LegislativeSession extends GameEvent {
 
+    /*
+    To simplify creating a Legislative Session, it is divided into two sub-events: VoteEvent and ClaimEvent. This is so that when a vote is rejected, no ClaimEvent has to be initialised (which would involve using a lot of null objects in the constructor
+     */
+
     private int sessionNumber;
     private VoteEvent voteEvent;
     private ClaimEvent claimEvent;
@@ -30,6 +34,7 @@ public class LegislativeSession extends GameEvent {
     }
 
     public void setupCard(CardView cardLayout) {
+        //We get the objects from the layout
         TextView title = cardLayout.findViewById(R.id.title);
         TextView presName = cardLayout.findViewById(R.id.pres_name);
         TextView chancName = cardLayout.findViewById(R.id.chanc_name);
@@ -40,7 +45,7 @@ public class LegislativeSession extends GameEvent {
         TextView playedPolicytv = cardLayout.findViewById(R.id.policy_played);
         ImageView playedPolicyLogo = cardLayout.findViewById(R.id.img_policy_played);
 
-
+        //Set the president and chancellor names. This will always be done, no matter what outcome the event was
         presName.setText(voteEvent.getPresidentName());
         chancName.setText(voteEvent.getChancellorName());
 
@@ -58,6 +63,7 @@ public class LegislativeSession extends GameEvent {
         } else {
             title.setText(c.getString(R.string.legislative_session)+ " #"+sessionNumber);
 
+            //The vote didn't fail, now we have to set the colored Claims. To do this, we parse the HTML <font> attribute (see Claim.java for more)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 chancClaim.setText(Html.fromHtml(Claim.getClaimString(c, claimEvent.getChancellorClaim()),  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
                 presClaim.setText(Html.fromHtml(Claim.getClaimString(c, claimEvent.getPresidentClaim()),  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);

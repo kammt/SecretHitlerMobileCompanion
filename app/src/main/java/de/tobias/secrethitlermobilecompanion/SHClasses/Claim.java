@@ -43,9 +43,7 @@ public class Claim {
                 return "<font color='blue'>" + context.getString(R.string.liberal) + "</font>";
             case FASCIST:
                 return "<font color='red'>" + context.getString(R.string.fascist) + "</font>";
-            default: return context.getString(R.string.claim_nothing);
-
-
+            default: return context.getString(R.string.claim_nothing); //Either no claim was made or the value is invalid
         }
 
     }

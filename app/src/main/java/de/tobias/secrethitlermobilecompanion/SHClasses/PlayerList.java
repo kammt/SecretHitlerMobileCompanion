@@ -10,9 +10,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import de.tobias.secrethitlermobilecompanion.CardRecyclerViewAdapter;
 import de.tobias.secrethitlermobilecompanion.PlayerRecyclerViewAdapter;
 import de.tobias.secrethitlermobilecompanion.R;
 
@@ -45,7 +43,7 @@ public class PlayerList {
         Drawable membershipDrawable;
         if(playerPartyMemberShip == Claim.LIBERAL) membershipDrawable = c.getDrawable(R.drawable.membership_liberal);
         else if (playerPartyMemberShip == Claim.FASCIST) membershipDrawable = c.getDrawable(R.drawable.membership_fascist);
-        else return;
+        else return; //This function will always be called when a view is re-added. This means that when there is no claim of a player, we abort the function.
 
         ImageView ivmembership = cardView.findViewById(R.id.img_secretRole);
         ivmembership.setImageDrawable(membershipDrawable);
