@@ -124,7 +124,7 @@ class PlayerPane {
 
 		//console.log('Max offset: ' + this.maxOffset);
 
-		if (offset < 0 && Math.abs(offset) <= this.maxOffset) {
+		if (offset < 10 && Math.abs(offset) <= this.maxOffset) {
 			this.xPos = currentPos;
 			this.pane.css("left", `${offset}px`);
 		}
@@ -213,6 +213,6 @@ class PlayerPane {
 		//console.log(`Width of the pane: ${this.pane[0].scrollWidth}px`);
 		//console.log(`Width of the viewport: ${$(window).width()}px`);
 
-		this.maxOffset = this.pane[0].scrollWidth - $(window).width() + $('#player-pane').css('padding-left').split('p')[0] * 2;
+		this.maxOffset = this.pane[0].scrollWidth - $(window).width() + $('#player-pane').css('padding-left').split('p')[0] * 2 + 10;
 	}
 }
