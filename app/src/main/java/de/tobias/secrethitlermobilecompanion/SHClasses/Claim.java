@@ -45,6 +45,29 @@ public class Claim {
                 return "<font color='red'>" + context.getString(R.string.fascist) + "</font>";
             default: return context.getString(R.string.claim_nothing); //Either no claim was made or the value is invalid
         }
+    }
 
+    public static String getClaimStringForJSON(Context context, int claimString) {
+        switch(claimString){
+            case BBB:
+                return "BBB";
+            case BBR:
+                return "BBR";
+            case BRR:
+                return "BRR";
+            case RRR:
+                return "RRR";
+            case RR:
+                return "RR";
+            case BR:
+                return "BR";
+            case BB:
+                return "BB";
+            case LIBERAL:
+                return "B";
+            case FASCIST:
+                return "R";
+            default: return context.getString(R.string.claim_nothing); //Either no claim was made or the value is invalid
+        }
     }
 }

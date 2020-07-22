@@ -101,8 +101,8 @@ public class LegislativeSession extends GameEvent {
         obj.put("rejected", voteEvent.getVotingResult() == VoteEvent.VOTE_PASSED ? false : true);
 
         if(claimEvent != null) {
-            obj.put("president_claim", claimEvent.getPresidentClaim());
-            obj.put("chancellor_claim", claimEvent.getChancellorClaim());
+            obj.put("president_claim", Claim.getClaimStringForJSON(c, claimEvent.getPresidentClaim()));
+            obj.put("chancellor_claim", Claim.getClaimStringForJSON(c, claimEvent.getChancellorClaim()));
             obj.put("veto", claimEvent.isVetoed());
         }
 

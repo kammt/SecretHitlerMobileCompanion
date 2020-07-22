@@ -5,6 +5,10 @@ import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,5 +58,15 @@ public class GameLog {
 
     public static GameEvent[] getAllEvents() {
         return (GameEvent[]) eventList.toArray();
+    }
+
+    public static JSONArray getEventsJSON() throws JSONException {
+        JSONArray arr = new JSONArray();
+
+        for(GameEvent event : eventList) {
+            arr.put(event.getJSON());
+        }
+
+        return arr;
     }
 }

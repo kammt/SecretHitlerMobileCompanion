@@ -47,7 +47,7 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
         obj.put("executive_action_type", "investigate_loyalty");
         obj.put("president", presidentName);
         obj.put("target", playerName);
-        obj.put("claim", claim == Claim.LIBERAL ? 'B' : 'R');
+        obj.put("claim", Claim.getClaimStringForJSON(c, claim));
 
         return obj;
     }
