@@ -3,6 +3,9 @@ package de.tobias.secrethitlermobilecompanion.SHClasses;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import de.tobias.secrethitlermobilecompanion.R;
@@ -31,5 +34,17 @@ public class ExecutionEvent extends ExecutiveAction {
     @Override
     public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
         return unselectedPlayers.contains(presidentName) && unselectedPlayers.contains(executedPlayerName);
+    }
+
+    @Override
+    public JSONObject getJSON() throws JSONException {
+        JSONObject obj = new JSONObject();
+
+        obj.put("type", "executive-action");
+        obj.put("executive_action_type", "execution");
+        obj.put("president", presidentName);
+        obj.put("target", executedPlayerName);
+
+        return obj;
     }
 }

@@ -4,6 +4,9 @@ import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import de.tobias.secrethitlermobilecompanion.R;
@@ -29,5 +32,16 @@ public class DeckShuffledEvent extends GameEvent {
     @Override
     public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
         return false; //as no players are involved anyway
+    }
+
+    @Override
+    public JSONObject getJSON() throws JSONException {
+        JSONObject obj = new JSONObject();
+
+        obj.put("type", "shuffle");
+        obj.put("fascist_policies", fascistPolicies);
+        obj.put("liberal_policies", liberalPolicies);
+
+        return obj;
     }
 }
