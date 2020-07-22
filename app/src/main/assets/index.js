@@ -43,7 +43,7 @@ const loadPage = (gameData) => {
 	}
 
 	for (
-		let i = prevPlays != null ? prevPlays.length - 1 : 0;
+		let i = prevPlays != null ? prevPlays.length  : 0;
 		i < plays.length;
 		i++
 	) {
