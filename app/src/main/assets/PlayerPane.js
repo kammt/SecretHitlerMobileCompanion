@@ -160,6 +160,15 @@ class PlayerPane {
 		// playerDiv.css('background-image', 'none');
 	}
 
+	displayDead(player) {
+		let playerDiv = this.playerDivs[player].find('.img-container');
+
+		let membershipImg = playerDiv.find('img');
+		membershipImg.removeClass('low-opacity');
+		playerDiv.find('.question-mark').remove();
+		membershipImg.attr('src', images.dead_player);
+	}
+
 	//Constructor function takes in the players as array
 	constructor(players) {
 		this.players = players;

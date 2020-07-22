@@ -156,6 +156,7 @@ const addExecutiveAction = (play) => {
 	switch (play.executive_action_type) {
 		case "execution":
 			executiveActionHTML = `President ${presidentHTML} selects to execute ${targetHTML}.`;
+			playerPane.displayDead(play.target);
 			break;
 		case "investigate_loyalty":
 			executiveActionHTML = `President ${presidentHTML} sees the party membership of ${targetHTML} and claims to see a member of the ${
