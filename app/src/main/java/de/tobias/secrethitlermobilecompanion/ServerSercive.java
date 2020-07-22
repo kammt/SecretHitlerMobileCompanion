@@ -64,8 +64,8 @@ public class ServerSercive extends Service {
                 if (intent != null) {
                     Toast.makeText(context, "Killing Server Service...", Toast.LENGTH_LONG).show();
                     //Server is intended to be killed
-                    stopForeground(true);
                     server.stop();
+                    stopForeground(true);
                     stopSelf();
                 }
             }
