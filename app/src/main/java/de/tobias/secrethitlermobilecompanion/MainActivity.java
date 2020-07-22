@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setupRecyclerViews();
+        gameLog = new GameLog(cardList, MainActivity.this);
+        testGameLog(gameLog);
     }
 
     @Override
@@ -86,8 +88,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        gameLog = new GameLog(cardList, MainActivity.this);
-        testGameLog(gameLog);
+
 
         setupFabMenu();
 

@@ -71,7 +71,7 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
     @Override
     public int getItemViewType(int position) {
         GameEvent event = events.get(position);
-        //The card can use two layouts - Legislative session or Executive Action. Thus we check to which class the Event belongs
+        //The card can use three layouts - Legislative session, Deck shuffled or Executive Action. Thus we check to which class the Event belongs
         View v;
         if(event.getClass().isAssignableFrom(LegislativeSession.class)) {
             //It is a legislative session - then we inflate the correct layout
@@ -84,13 +84,12 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
     @Override
     public void onViewAttachedToWindow(@NonNull CardViewHolder holder) {
         super.onViewAttachedToWindow(holder);
+        //This function is called when a prior removed View is re-added by Android. Now, we check if it has to be blurred, beginning by getting its position
         int position = holder.getLayoutPosition();
 
         CardView cv = holder.cv;
 
-        boolean toBeBlurred = GameLog.hiddenEventIndexes.contains(position);
-        if(toBeBlurred) cv.setAlpha((float) 0.5);
-        if(!toBeBlurred && cv.getAlpha() < 1) cv.setAlpha((float) 1);
+        if(GameLog.hiddenEventIndexes.contains(position)) cv.setAlpha((float) 0.5);
     }
 }
 

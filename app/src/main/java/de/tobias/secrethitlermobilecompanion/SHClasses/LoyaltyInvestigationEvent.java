@@ -18,6 +18,7 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
         this.playerName = playerName;
         this.claim = claim;
         this.c = context;
+        PlayerList.setClaim(playerName, claim, context);
     }
 
     @Override

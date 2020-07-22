@@ -15,10 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
+import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
 
 public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecyclerViewAdapter.PlayerCardViewHolder> {
 
@@ -47,7 +49,6 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
 
     @Override
     public PlayerCardViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
-        //The card can use two layouts - Legislative session or Executive Action. Thus we check to which class the Event belongs
         View v;
         if(type == 0) v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_player_list_single_player_first_entry, viewGroup, false);
         else v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_player_list_single_player, viewGroup, false);
@@ -85,6 +86,16 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
     @Override
     public int getItemViewType(int position) {
         return (position == 0) ? 0 : 1;
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull PlayerCardViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        int position = holder.getLayoutPosition();
+        int claim = PlayerList.getMembershipClaims().get(position);
+
+        CardView cv = holder.cv;
+        PlayerList.setClaimImage(cv, claim);
     }
 }
 

@@ -41,6 +41,20 @@
             app:layout_constraintEnd_toEndOf="@+id/img_secretRole"
             app:layout_constraintStart_toStartOf="@+id/img_secretRole"
             app:layout_constraintTop_toBottomOf="@+id/img_secretRole" />
+
+        <TextView
+            android:id="@+id/tv_questionmark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/germania_one"
+            android:text=""
+            android:textColor="#000000"
+            android:textSize="60sp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/img_secretRole"
+            app:layout_constraintEnd_toEndOf="@+id/img_secretRole"
+            app:layout_constraintStart_toStartOf="@+id/img_secretRole"
+            app:layout_constraintTop_toTopOf="@+id/img_secretRole" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
