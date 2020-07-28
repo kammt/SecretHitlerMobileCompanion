@@ -2,7 +2,6 @@ package de.tobias.secrethitlermobilecompanion;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -10,7 +9,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -100,6 +98,9 @@ public class CardSetupHelper {
                 ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorLiberal));
                 fab_create.setBackgroundTintList(csl);
                 cb_vetoed.setButtonTintList(csl);
+
+                sw_votingoutcome.setThumbTintList(csl);
+                sw_votingoutcome.setTrackTintList(csl);
             }
         });
 
@@ -112,6 +113,9 @@ public class CardSetupHelper {
                 ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorFascist));
                 fab_create.setBackgroundTintList(csl);
                 cb_vetoed.setButtonTintList(csl);
+
+                sw_votingoutcome.setThumbTintList(csl);
+                sw_votingoutcome.setTrackTintList(csl);
             }
         });
 
