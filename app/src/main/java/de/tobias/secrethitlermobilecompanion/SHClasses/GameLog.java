@@ -17,10 +17,15 @@ public class GameLog {
     public static int legSessionNo = 1;
     static private RecyclerView cardList;
     static List<GameEvent> eventList;
+    private static boolean initialised;
 
     private static RecyclerView.Adapter cardListAdapter;
 
     public static ArrayList<Integer> hiddenEventIndexes;
+
+    public static boolean isInitialised() {
+        return initialised;
+    }
 
     public static void initialise(RecyclerView recyclerView) {
         eventList = new ArrayList<>();
@@ -29,6 +34,7 @@ public class GameLog {
         cardList = recyclerView;
         cardListAdapter = new CardRecyclerViewAdapter(eventList);
         cardList.setAdapter(cardListAdapter);
+        initialised = true;
     }
 
     public static void addEvent(GameEvent event) {

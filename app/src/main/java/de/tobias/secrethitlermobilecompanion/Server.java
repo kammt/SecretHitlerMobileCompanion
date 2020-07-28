@@ -24,16 +24,11 @@ import static android.content.Context.WIFI_SERVICE;
 public class Server extends NanoHTTPD {
     private Context c;
     private int port;
-    private GameLog gameLog;
 
     public Server(int port, Context c) {
         super(port);
         this.c = c;
         this.port = port;
-    }
-
-    public void setGameLog(GameLog gameLog) {
-        this.gameLog = gameLog;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -44,42 +39,44 @@ public class Server extends NanoHTTPD {
 
         StringBuilder sb = new StringBuilder();
         for(Map.Entry<String, String> k : session.getHeaders().entrySet()) {
-            sb.append("  " + k.getKey() + ": " +  k.getValue() + "\n");
+            sb.append("  ").append(k.getKey()).append(": ").append(k.getValue()).append("\n");
         }
 
         Log.v("Server request header", "\n" + sb.toString());
 
         String uri = session.getUri();
 
-        if(uri.equals("/index.html") || uri.equals("/")) {
-            return newFixedLengthResponse(Response.Status.ACCEPTED, "text/html", getFile("index.html"));
-        } else if(uri.equals("/index.js")) {
-            return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript",getFile("index.js"));
-        } else if(uri.equals("/images.js")) {
-            return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript",getFile("images.js"));
-        } else if(uri.equals("/PlayerPane.js")) {
-            return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript",getFile("PlayerPane.js"));
-        } else if(uri.equals("/css/style.css")) {
-            return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css",getFile("style.css"));
-        } else if(uri.equals("/getGameJSON")) {
-            if(gameLog != null) {
-                JSONObject obj = new JSONObject();
-                JSONObject game = new JSONObject();
+        switch (uri) {
+            case "/index.html":
+            case "/":
+                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/html", getFile("index.html"));
+            case "/index.js":
+                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("index.js"));
+            case "/images.js":
+                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("images.js"));
+            case "/PlayerPane.js":
+                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("PlayerPane.js"));
+            case "/css/style.css":
+                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("style.css"));
+            case "/getGameJSON":
+                if (GameLog.isInitialised()) {
+                    JSONObject obj = new JSONObject();
+                    JSONObject game = new JSONObject();
 
-                try {
-                    game.put("players", PlayerList.getPlayerListJSON());
-                    game.put("plays", gameLog.getEventsJSON());
-                    obj.put("game", game);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, "application/json", "");
+                    try {
+                        game.put("players", PlayerList.getPlayerListJSON());
+                        game.put("plays", GameLog.getEventsJSON());
+                        obj.put("game", game);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, "application/json", "");
+                    }
+                    Log.v("/getGameJSON: JSON: ", obj.toString());
+                    return newFixedLengthResponse(Response.Status.OK, "application/json", obj.toString());
                 }
-                Log.v("/getGameJSON: JSON: ", obj.toString());
-                return newFixedLengthResponse(Response.Status.OK, "application/json", obj.toString());
-            }
-            return newFixedLengthResponse(Response.Status.SERVICE_UNAVAILABLE, "application/json", "");
-        } else {
-            return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", getFile("404.html"));
+                return newFixedLengthResponse(Response.Status.SERVICE_UNAVAILABLE, "application/json", "");
+            default:
+                return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", getFile("404.html"));
         }
     }
 
@@ -91,7 +88,7 @@ public class Server extends NanoHTTPD {
                     new InputStreamReader(c.getAssets().open(fileName)));
             String mLine;
             while ((mLine = reader.readLine()) != null) {
-                fileData.append(mLine + "\n");
+                fileData.append(mLine).append("\n");
             }
         } catch (IOException e) {
             e.printStackTrace();

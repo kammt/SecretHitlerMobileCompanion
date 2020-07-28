@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             boundServerService = ((ServerSercive.LocalBinder)service).getService();
-            boundServerService.passGameLog(gameLog);
             Toast.makeText(MainActivity.this, boundServerService.server.getURL(), Toast.LENGTH_LONG).show();
         }
 
