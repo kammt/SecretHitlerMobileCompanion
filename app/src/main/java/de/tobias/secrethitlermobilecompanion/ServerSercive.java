@@ -17,21 +17,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
-
-import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
-
-import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 
 public class ServerSercive extends Service {
 
     private final IBinder mBinder = new LocalBinder();
     public Server server;
-    private NotificationManager notificationManager;
-    private NotificationCompat.Builder builder;
     private String notifChannelID = "StickyNotificationServer";
 
     private BroadcastReceiver killSignalReceiver;
@@ -84,7 +75,7 @@ public class ServerSercive extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        server.stop();
+        while(server.isAlive()) server.stop();
         unregisterReceiver(killSignalReceiver);
     }
 
@@ -95,15 +86,14 @@ public class ServerSercive extends Service {
                 PendingIntent.getBroadcast(this, 0, stopIntent, 0);
 
 
-        notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createChannel(notificationManager);
-        builder = new NotificationCompat.Builder(getApplicationContext(), notifChannelID)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), notifChannelID)
                 .setSmallIcon(R.drawable.fascist_logo)
                 .setContentTitle(getString(R.string.title_server_notification))
                 .setContentText(getString(R.string.desc_server_notification))
                 .addAction(R.drawable.execution, getString(R.string.stop_server_notification),
                         stopPendingIntent);
-
 
         return builder.getNotification();
     }
@@ -118,10 +108,6 @@ public class ServerSercive extends Service {
         mChannel.setDescription(description);
         mChannel.enableLights(false);
         notificationManager.createNotificationChannel(mChannel);
-    }
-
-    public void passGameLog(GameLog gameLog) {
-        server.setGameLog(gameLog);
     }
 
 }

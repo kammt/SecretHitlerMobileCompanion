@@ -44,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
 
     private LinearLayout setupLayout;
 
-    GameLog gameLog;
-
     boolean isOpen = false;
     boolean serverConnected = false;
 
