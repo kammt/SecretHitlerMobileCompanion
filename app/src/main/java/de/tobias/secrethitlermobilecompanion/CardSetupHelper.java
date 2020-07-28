@@ -29,6 +29,7 @@ import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobias.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.VoteEvent;
 
 public class CardSetupHelper {
@@ -39,6 +40,7 @@ public class CardSetupHelper {
     public static final int LOYALTY_INVESTIGATION = 102;
     public static final int EXECUTION = 103;
     public static final int DECK_SHUFFLED = 104;
+    public static final int POLICY_PEEK = 105;
 
 
     public static void setupCard(final LinearLayout linearLayout, final int cardType, final Context context) {
@@ -86,6 +88,9 @@ public class CardSetupHelper {
                 break;
             case DECK_SHUFFLED:
                 setupDeckShuffled(linearLayout, context);
+                break;
+            case POLICY_PEEK:
+                setupPolicyPeek(linearLayout, context);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown cardType specified!");
@@ -376,6 +381,41 @@ public class CardSetupHelper {
                     GameLog.addEvent(new DeckShuffledEvent(liberalPolicies, fascistPolicies));
                     linearLayout.removeAllViews();
                 }
+            }
+        });
+
+        linearLayout.addView(setupCard);
+    }
+
+    private static void setupPolicyPeek(final LinearLayout linearLayout, final Context c) {
+        CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_policy_peek, linearLayout, false);
+
+        FloatingActionButton fab_create = setupCard.findViewById(R.id.fab_create);
+        ImageView iv_cancel = setupCard.findViewById(R.id.img_cancel);
+        iv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearLayout.removeAllViews();
+            }
+        });
+
+        final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
+        ArrayAdapter<String> playerListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
+        playerListadapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        presSpinner.setAdapter(playerListadapter);
+
+        final Spinner presClaimSpinner = setupCard.findViewById(R.id.spinner_pres_claim);
+        final ArrayAdapter<String> presClaimListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, Claim.getPresidentClaims());
+        presClaimListadapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        presClaimSpinner.setAdapter(presClaimListadapter);
+
+        fab_create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GameLog.addEvent(new PolicyPeekEvent(presSpinner.getSelectedItem().toString(), Claim.getClaimInt(presClaimSpinner.getSelectedItem().toString()), c));
+                linearLayout.removeAllViews();
             }
         });
 

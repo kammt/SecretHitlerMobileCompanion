@@ -216,6 +216,14 @@ public class MainActivity extends AppCompatActivity {
                 CardSetupHelper.setupCard(setupLayout, CardSetupHelper.DECK_SHUFFLED, MainActivity.this);
             }
         });
+
+        fab_policypeek.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeFabMenu();
+                CardSetupHelper.setupCard(setupLayout, CardSetupHelper.POLICY_PEEK, MainActivity.this);
+            }
+        });
     }
 
     public void closeFabMenu() {

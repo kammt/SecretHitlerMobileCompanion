@@ -45,4 +45,5 @@
     <string name="new_execution">New Execution</string>
     <string name="executed">executed</string>
     <string name="cannot_be_empty">This field cannot be empty</string>
+    <string name="new_policy_peek">New Policy Peek</string>
 </resources>
