@@ -41,7 +41,7 @@ public class CardSetupHelper {
     public static final int DECK_SHUFFLED = 104;
 
 
-    public static void setupCard(final LinearLayout linearLayout, final LayoutInflater layoutInflater, final int cardType, final Context context) {
+    public static void setupCard(final LinearLayout linearLayout, final int cardType, final Context context) {
         /*
         This function will check if there is another "Setup-Card" present and will ask the user to either replace the old one or cancel the operation.
         This helps to keep the screen cleaner, as the LinearLayout is not scrollable and thus does not support multiple setup-Cards
@@ -54,7 +54,7 @@ public class CardSetupHelper {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             linearLayout.removeAllViews();
-                            callSetupFunction(linearLayout, layoutInflater, cardType, context);
+                            callSetupFunction(linearLayout, cardType, context);
                         }
                     })
                     .setNegativeButton(context.getString(R.string.dialog_another_setup_btn_cancel), new DialogInterface.OnClickListener() {
@@ -64,10 +64,10 @@ public class CardSetupHelper {
                         }
                     })
                     .show();
-        } else callSetupFunction(linearLayout, layoutInflater, cardType, context); //The child count is 0 => Layout is empty
+        } else callSetupFunction(linearLayout, cardType, context); //The child count is 0 => Layout is empty
     }
 
-    private static void callSetupFunction(LinearLayout linearLayout, LayoutInflater layoutInflater, int cardType, Context context) {
+    private static void callSetupFunction(LinearLayout linearLayout, int cardType, Context context) {
         /*
         This function is to save code, as this will be executed in two scenarios:
             - layout is empty
@@ -76,28 +76,28 @@ public class CardSetupHelper {
 
         switch(cardType) {
             case LEGISLATIVE_SESSION:
-                setupLegislativeSession(linearLayout, layoutInflater, context);
+                setupLegislativeSession(linearLayout, context);
                 break;
             case LOYALTY_INVESTIGATION:
-                setupLoyaltyInvestigation(linearLayout, layoutInflater, context);
+                setupLoyaltyInvestigation(linearLayout, context);
                 break;
             case EXECUTION:
-                setupExecution(linearLayout, layoutInflater, context);
+                setupExecution(linearLayout, context);
                 break;
             case DECK_SHUFFLED:
-                setupDeckShuffled(linearLayout, layoutInflater, context);
+                setupDeckShuffled(linearLayout, context);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown cardType specified!");
         }
     }
 
-    private static void setupLegislativeSession(final LinearLayout linearLayout, LayoutInflater layoutInflater, final Context c) {
-        CardView setupCard = (CardView) layoutInflater.from(c).inflate(R.layout.setup_card_legislative_session, linearLayout, false);
+    private static void setupLegislativeSession(final LinearLayout linearLayout, final Context c) {
+        CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_legislative_session, linearLayout, false);
 
         //Setting up Spinners
         final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = new ArrayAdapter<String>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
+        ArrayAdapter<String> playerListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
@@ -107,13 +107,13 @@ public class CardSetupHelper {
         chancSpinner.setSelection(1); //Setting a different item on the chancellor spinner so they don't have the same name at the beginning
 
         final Spinner presClaimSpinner = setupCard.findViewById(R.id.spinner_pres_claim);
-        final ArrayAdapter<String> presClaimListadapter = new ArrayAdapter<String>(c, android.R.layout.simple_spinner_item, Claim.getPresidentClaims());
+        final ArrayAdapter<String> presClaimListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, Claim.getPresidentClaims());
         presClaimListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presClaimSpinner.setAdapter(presClaimListadapter);
 
         final Spinner chancClaimSpinner = setupCard.findViewById(R.id.spinner_chanc_claim);
-        ArrayAdapter<String> chancClaimListadapter = new ArrayAdapter<String>(c, android.R.layout.simple_spinner_item, Claim.getChancellorClaims());
+        ArrayAdapter<String> chancClaimListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, Claim.getChancellorClaims());
         chancClaimListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         chancClaimSpinner.setAdapter(chancClaimListadapter);
@@ -225,12 +225,12 @@ public class CardSetupHelper {
     }
 
 
-    private static void setupLoyaltyInvestigation(final LinearLayout linearLayout, LayoutInflater layoutInflater, final Context c) {
-        CardView setupCard = (CardView) layoutInflater.from(c).inflate(R.layout.setup_card_loyalty_investigation, linearLayout, false);
+    private static void setupLoyaltyInvestigation(final LinearLayout linearLayout, final Context c) {
+        CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_loyalty_investigation, linearLayout, false);
 
         //Setting up Spinners
         final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = new ArrayAdapter<String>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
+        ArrayAdapter<String> playerListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
@@ -295,12 +295,12 @@ public class CardSetupHelper {
     }
 
 
-    private static void setupExecution(final LinearLayout linearLayout, LayoutInflater layoutInflater, final Context c) {
-        CardView setupCard = (CardView) layoutInflater.from(c).inflate(R.layout.setup_card_execution, linearLayout, false);
+    private static void setupExecution(final LinearLayout linearLayout, final Context c) {
+        CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_execution, linearLayout, false);
 
         //Setting up Spinners
         final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = new ArrayAdapter<String>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
+        ArrayAdapter<String> playerListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
@@ -340,8 +340,8 @@ public class CardSetupHelper {
     }
 
 
-    private static void setupDeckShuffled(final LinearLayout linearLayout, LayoutInflater layoutInflater, final Context c) {
-        CardView setupCard = (CardView) layoutInflater.from(c).inflate(R.layout.setup_card_deck_shuffled, linearLayout, false);
+    private static void setupDeckShuffled(final LinearLayout linearLayout, final Context c) {
+        CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_deck_shuffled, linearLayout, false);
 
         FloatingActionButton fab_create = setupCard.findViewById(R.id.fab_create);
         ImageView iv_cancel = setupCard.findViewById(R.id.img_cancel);
