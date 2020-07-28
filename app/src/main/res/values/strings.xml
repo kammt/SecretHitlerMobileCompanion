@@ -40,6 +40,10 @@
     <string name="new_legislative_session">New Legislative Session</string>
     <string name="dialog_another_setup_btn_replace">Replace</string>
     <string name="dialog_another_setup_btn_cancel">Cancel</string>
-    <string name="dialog_another_setup_title">Warning</string>
+    <string name="dialog_another_setup_title">Setup already in progress</string>
     <string name="dialog_another_setup_desc">Another Event Setup is in progress. Would you like to cancel and continue working on the old event or replace the old setup?</string>
+    <string name="new_loyalty_investigation">New Loyalty Investigation</string>
+    <string name="party_membership">Party Membership:</string>
+    <string name="president">President</string>
+    <string name="investigated">Investigated Player</string>
 </resources>

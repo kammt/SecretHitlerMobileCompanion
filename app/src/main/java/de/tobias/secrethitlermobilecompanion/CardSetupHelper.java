@@ -21,8 +21,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobias.secrethitlermobilecompanion.SHClasses.ClaimEvent;
+import de.tobias.secrethitlermobilecompanion.SHClasses.ExecutiveAction;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
+import de.tobias.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
 import de.tobias.secrethitlermobilecompanion.SHClasses.VoteEvent;
 
@@ -31,6 +33,7 @@ public class CardSetupHelper {
     This class is responsible for displaying the setup for each card. It is called from the onClickListeners in the MainActivity
      */
     public static final int LEGISLATIVE_SESSION = 101;
+    public static final int LOYALTY_INVESTIGATION = 102;
 
 
     public static void setupCard(final LinearLayout linearLayout, final LayoutInflater layoutInflater, final int cardType, final Context context) {
@@ -69,6 +72,9 @@ public class CardSetupHelper {
         switch(cardType) {
             case LEGISLATIVE_SESSION:
                 setupLegislativeSession(linearLayout, layoutInflater, context);
+                break;
+            case LOYALTY_INVESTIGATION:
+                setupLoyaltyInvestigation(linearLayout, layoutInflater, context);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown cardType specified!");
@@ -207,4 +213,73 @@ public class CardSetupHelper {
         linearLayout.addView(setupCard);
     }
 
+
+    private static void setupLoyaltyInvestigation(final LinearLayout linearLayout, LayoutInflater layoutInflater, final Context c) {
+        CardView setupCard = (CardView) layoutInflater.from(c).inflate(R.layout.setup_card_loyalty_investigation, linearLayout, false);
+
+        //Setting up Spinners
+        final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
+        ArrayAdapter<String> playerListadapter = new ArrayAdapter<String>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
+        playerListadapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        presSpinner.setAdapter(playerListadapter);
+
+        final Spinner investigatedSpinner = setupCard.findViewById(R.id.spinner_investigated_player);
+        investigatedSpinner.setAdapter(playerListadapter);
+        investigatedSpinner.setSelection(1); //Setting a different item on the investigated player spinner so they don't have the same name at the beginning
+
+        //Initialising all other important aspects
+        final ImageView iv_fascist = setupCard.findViewById(R.id.img_policy_fascist);
+        final ImageView iv_liberal = setupCard.findViewById(R.id.img_policy_liberal);
+        final FloatingActionButton fab_create = setupCard.findViewById(R.id.fab_create);
+        ImageView iv_cancel = setupCard.findViewById(R.id.img_cancel);
+
+        iv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearLayout.removeAllViews();
+            }
+        });
+
+        iv_liberal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                iv_liberal.setAlpha((float) 1);
+                iv_fascist.setAlpha((float) 0.2);
+
+                ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorLiberal));
+                fab_create.setBackgroundTintList(csl);
+            }
+        });
+
+        iv_fascist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                iv_fascist.setAlpha((float) 1);
+                iv_liberal.setAlpha((float) 0.2);
+
+                ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorFascist));
+                fab_create.setBackgroundTintList(csl);
+            }
+        });
+
+        fab_create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String president = (String) presSpinner.getSelectedItem();
+                String investigatedPlayer = (String) investigatedSpinner.getSelectedItem();
+                int claim = (iv_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL;
+
+                if(president.equals(investigatedPlayer)) {
+                    Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
+                } else {
+                    ExecutiveAction executiveAction = new LoyaltyInvestigationEvent(president, investigatedPlayer, claim, c);
+                    GameLog.addEvent(executiveAction);
+                    linearLayout.removeAllViews();
+                }
+            }
+        });
+
+        linearLayout.addView(setupCard);
+    }
 }
