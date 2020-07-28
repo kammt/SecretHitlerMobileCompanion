@@ -14,13 +14,13 @@ public class Claim {
 
     //Triple Policies
     public static final int BBB = 2;
-    public static final int BBR = 3;
-    public static final int BRR = 4;
+    public static final int RBB = 3;
+    public static final int RRB = 4;
     public static final int RRR = 5;
 
     //Double Policies
     public static final int BB = 6;
-    public static final int BR = 7;
+    public static final int RB = 7;
     public static final int RR = 8;
 
     public static final int NO_CLAIM = -1;
@@ -28,23 +28,23 @@ public class Claim {
     public static String getClaimString(Context context, int claimString) {
         switch(claimString){
             case BBB:
-                return "<font color='blue'>BBB</font>";
-            case BBR:
-                return "<font color='blue'>BB</font><font color='red'>R</font>";
-            case BRR:
-                return "<font color='blue'>B</font><font color='red'>RR</font>";
+                return "<font color='#387CB3'>BBB</font>";
+            case RBB:
+                return "<font color='red'>R</font><font color='#387CB3'>BB</font>";
+            case RRB:
+                return "<font color='red'>RR</font><font color='#387CB3'>B</font>";
             case RRR:
-                return "<font color='red'>RRR</font>";
+                return "<font color='#E23A12'>RRR</font>";
             case RR:
-                return "<font color='red'>RR</font>";
-            case BR:
-                return "<font color='blue'>B</font><font color='red'>R</font>";
+                return "<font color='#E23A12'>RR</font>";
+            case RB:
+                return "<font color='#E23A12'>R</font><font color='#387CB3'>B</font>";
             case BB:
-                return "<font color='blue'>BB</font>";
+                return "<font color='#387CB3'>BB</font>";
             case LIBERAL:
-                return "<font color='blue'>" + context.getString(R.string.liberal) + "</font>";
+                return "<font color='#387CB3'>" + context.getString(R.string.liberal) + "</font>";
             case FASCIST:
-                return "<font color='red'>" + context.getString(R.string.fascist) + "</font>";
+                return "<font color='#E23A12'>" + context.getString(R.string.fascist) + "</font>";
             default: return context.getString(R.string.claim_nothing); //Either no claim was made or the value is invalid
         }
     }
@@ -53,16 +53,16 @@ public class Claim {
         switch(claimString){
             case BBB:
                 return "BBB";
-            case BBR:
-                return "BBR";
-            case BRR:
-                return "BRR";
+            case RBB:
+                return "RBB";
+            case RRB:
+                return "RRB";
             case RRR:
                 return "RRR";
             case RR:
                 return "RR";
-            case BR:
-                return "BR";
+            case RB:
+                return "RB";
             case BB:
                 return "BB";
             case LIBERAL:
@@ -77,8 +77,8 @@ public class Claim {
         ArrayList<String> claims = new ArrayList<>();
 
         claims.add("RRR");
-        claims.add("BRR");
-        claims.add("BBR");
+        claims.add("RRB");
+        claims.add("RBB");
         claims.add("BBB");
 
         return claims;
@@ -88,7 +88,7 @@ public class Claim {
         ArrayList<String> claims = new ArrayList<>();
 
         claims.add("RR");
-        claims.add("BR");
+        claims.add("RB");
         claims.add("BB");
 
         return claims;
@@ -98,16 +98,16 @@ public class Claim {
         switch(claimString){
             case "BBB":
                 return BBB;
-            case "BBR":
-                return BBR;
-            case "BRR":
-                return BRR;
+            case "RBB":
+                return RBB;
+            case "RRB":
+                return RRB;
             case "RRR":
                 return RRR;
             case "RR":
                 return RR;
-            case "BR":
-                return BR;
+            case "RB":
+                return RB;
             case "BB":
                 return BB;
             default: return NO_CLAIM; //Either no claim was made or the value is invalid

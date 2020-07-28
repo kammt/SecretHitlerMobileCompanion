@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         GameLog.addEvent(new LegislativeSession(ve1, ce1, this));
 
         VoteEvent ve2 =new VoteEvent("Hildegunde", "Ferdinand", VoteEvent.VOTE_PASSED, MainActivity.this);
-        ClaimEvent ce2 = new ClaimEvent("Hildegunde", "Ferdinand", Claim.BRR, Claim.BR, Claim.LIBERAL, true, MainActivity.this);
+        ClaimEvent ce2 = new ClaimEvent("Hildegunde", "Ferdinand", Claim.RRB, Claim.RB, Claim.LIBERAL, true, MainActivity.this);
 
         GameLog.addEvent(new LegislativeSession(ve2, ce2, this));
 
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         GameLog.addEvent(new LegislativeSession(ve3, null, this));
 
         GameLog.addEvent(new ExecutionEvent("Ferdinand", "Mario", this));
-        GameLog.addEvent(new PolicyPeekEvent("Ferdinand", Claim.BBR, this));
+        GameLog.addEvent(new PolicyPeekEvent("Ferdinand", Claim.RBB, this));
         GameLog.addEvent(new LoyaltyInvestigationEvent("Ferdinand", "Mario", Claim.LIBERAL, this));
         GameLog.addEvent(new SpecialElectionEvent("Ferdinand", "Mario", this));
 
