@@ -1,5 +1,6 @@
 package de.tobias.secrethitlermobilecompanion.SHClasses;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -36,6 +37,7 @@ public class LegislativeSession extends GameEvent {
         c = context;
     }
 
+    @SuppressLint("SetTextI18n")
     public void setupCard(CardView cardLayout) {
         //We get the objects from the layout
         TextView title = cardLayout.findViewById(R.id.title);
@@ -98,12 +100,13 @@ public class LegislativeSession extends GameEvent {
         obj.put("num", sessionNumber);
         obj.put("president", voteEvent.getPresidentName());
         obj.put("chancellor", voteEvent.getChancellorName());
-        obj.put("rejected", voteEvent.getVotingResult() == VoteEvent.VOTE_PASSED ? false : true);
+        obj.put("rejected", voteEvent.getVotingResult() != VoteEvent.VOTE_PASSED);
 
         if(claimEvent != null) {
             obj.put("president_claim", Claim.getClaimStringForJSON(c, claimEvent.getPresidentClaim()));
             obj.put("chancellor_claim", Claim.getClaimStringForJSON(c, claimEvent.getChancellorClaim()));
             obj.put("veto", claimEvent.isVetoed());
+            obj.put("policy_played", Claim.getClaimStringForJSON(c, claimEvent.getPlayedPolicy()));
         }
 
         return obj;
