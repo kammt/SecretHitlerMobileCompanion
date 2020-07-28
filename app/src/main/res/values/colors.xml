@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimaryDark">#7e3431</color>
-    <color name="colorPrimary">#f2654a</color>
-    <color name="colorAccent">#f5e2c4</color>
+    <color name="colorPrimaryDark">#7F3632</color>
+    <color name="colorPrimary">#F2654B</color>
+    <color name="colorAccent">#F5E1C4</color>
     <color name="colorSpinner">#FFD5BC96</color>
+
+    <color name="red">#E23A12</color>
+    <color name="blue">#387CB3</color>
+
 
     <color name="colorLiberal">#5a9cc4</color>
     <color name="colorFascist">#c66851</color>
