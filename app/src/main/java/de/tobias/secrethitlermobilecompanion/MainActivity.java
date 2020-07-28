@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -93,6 +94,15 @@ public class MainActivity extends AppCompatActivity {
         cardList = (RecyclerView) findViewById(R.id.cardList);
         layoutManager = new LinearLayoutManager(this);
         cardList.setLayoutManager(layoutManager);
+        cardList.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 3)
+                    fab_main.hide();
+                else if (dy < -5)
+                    fab_main.show();
+            }
+        });
 
         playerCardList = findViewById(R.id.playerList);
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
@@ -194,6 +204,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 closeFabMenu();
                 CardSetupHelper.setupCard(setupLayout, getLayoutInflater(), CardSetupHelper.LEGISLATIVE_SESSION, MainActivity.this);
+            }
+        });
+
+        fab_investigation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeFabMenu();
+                CardSetupHelper.setupCard(setupLayout, getLayoutInflater(), CardSetupHelper.LOYALTY_INVESTIGATION, MainActivity.this);
             }
         });
     }
