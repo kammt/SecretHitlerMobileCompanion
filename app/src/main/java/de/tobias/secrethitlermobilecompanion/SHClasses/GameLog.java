@@ -1,13 +1,11 @@
 package de.tobias.secrethitlermobilecompanion.SHClasses;
 
-import android.content.Context;
 import android.view.View;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,22 +16,20 @@ public class GameLog {
 
     public static int legSessionNo = 1;
     static private RecyclerView cardList;
-    static private Context c;
-    static List<GameEvent> eventList = new ArrayList<GameEvent>();
+    static List<GameEvent> eventList;
 
     private static RecyclerView.Adapter cardListAdapter;
 
-    public static ArrayList<Integer> hiddenEventIndexes = new ArrayList<>();
+    public static ArrayList<Integer> hiddenEventIndexes;
 
-    public GameLog(RecyclerView cardList, Context context) {
-        this.cardList = cardList;
-        this.c = context;
+    public static void initialise(RecyclerView recyclerView) {
+        eventList = new ArrayList<>();
+        hiddenEventIndexes = new ArrayList<>();
 
-
+        cardList = recyclerView;
         cardListAdapter = new CardRecyclerViewAdapter(eventList);
         cardList.setAdapter(cardListAdapter);
     }
-
 
     public static void addEvent(GameEvent event) {
         eventList.add(event);
@@ -55,10 +51,6 @@ public class GameLog {
         hiddenEventIndexes = cardIndexesToBlur; //Update the static ArrayList, making it accessible to the RecyclerViewAdapter. When rendering a view (which was null before), it will look up if it has to be blurred or not
     }
 
-
-    public static GameEvent[] getAllEvents() {
-        return (GameEvent[]) eventList.toArray();
-    }
 
     public static JSONArray getEventsJSON() throws JSONException {
         JSONArray arr = new JSONArray();

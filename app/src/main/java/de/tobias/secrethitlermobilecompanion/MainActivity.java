@@ -35,7 +35,6 @@ import de.tobias.secrethitlermobilecompanion.SHClasses.VoteEvent;
 public class MainActivity extends AppCompatActivity {
 
     RecyclerView cardList, playerCardList;
-    private RecyclerView.LayoutManager layoutManager;
 
     private ServerSercive boundServerService;
 
@@ -75,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
         startAndBindServerService();
         setupFabMenu();
 
-        gameLog = new GameLog(cardList, MainActivity.this);
-        testGameLog(gameLog);
+        GameLog.initialise(cardList);
+        testGameLog();
     }
 
     @Override
@@ -90,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setupRecyclerViews() {
-        cardList = (RecyclerView) findViewById(R.id.cardList);
-        layoutManager = new LinearLayoutManager(this);
+        cardList = findViewById(R.id.cardList);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         cardList.setLayoutManager(layoutManager);
 
         playerCardList = findViewById(R.id.playerList);
@@ -127,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void testGameLog(GameLog gameLog) {
+    public void testGameLog() {
         PlayerList.addPlayer("Rüdiger");
         PlayerList.addPlayer("Hildegunde");
         PlayerList.addPlayer("Ferdinand");
@@ -137,23 +136,23 @@ public class MainActivity extends AppCompatActivity {
         VoteEvent ve1 = new VoteEvent("Rüdiger", "Hildegunde", VoteEvent.VOTE_PASSED, this);
         ClaimEvent ce1 = new ClaimEvent("Rüdiger", "Hildegunde", Claim.RRR, Claim.RR, Claim.FASCIST, false, this);
 
-        gameLog.addEvent(new LegislativeSession(ve1, ce1, this));
+        GameLog.addEvent(new LegislativeSession(ve1, ce1, this));
 
         VoteEvent ve2 =new VoteEvent("Hildegunde", "Ferdinand", VoteEvent.VOTE_PASSED, MainActivity.this);
         ClaimEvent ce2 = new ClaimEvent("Hildegunde", "Ferdinand", Claim.BRR, Claim.BR, Claim.LIBERAL, true, MainActivity.this);
 
-        gameLog.addEvent(new LegislativeSession(ve2, ce2, this));
+        GameLog.addEvent(new LegislativeSession(ve2, ce2, this));
 
 
         VoteEvent ve3 =new VoteEvent("Ferdinand", "Mario", VoteEvent.VOTE_FAILED, MainActivity.this);
-        gameLog.addEvent(new LegislativeSession(ve3, null, this));
+        GameLog.addEvent(new LegislativeSession(ve3, null, this));
 
-        gameLog.addEvent(new ExecutionEvent("Ferdinand", "Mario", this));
-        gameLog.addEvent(new PolicyPeekEvent("Ferdinand", Claim.BBR, this));
-        gameLog.addEvent(new LoyaltyInvestigationEvent("Ferdinand", "Mario", Claim.LIBERAL, this));
-        gameLog.addEvent(new SpecialElectionEvent("Ferdinand", "Mario", this));
+        GameLog.addEvent(new ExecutionEvent("Ferdinand", "Mario", this));
+        GameLog.addEvent(new PolicyPeekEvent("Ferdinand", Claim.BBR, this));
+        GameLog.addEvent(new LoyaltyInvestigationEvent("Ferdinand", "Mario", Claim.LIBERAL, this));
+        GameLog.addEvent(new SpecialElectionEvent("Ferdinand", "Mario", this));
 
-        gameLog.addEvent(new DeckShuffledEvent(6, 11));
+        GameLog.addEvent(new DeckShuffledEvent(6, 11));
     }
 
     public void setupFabMenu() {
@@ -166,21 +165,21 @@ public class MainActivity extends AppCompatActivity {
         fab_anticlock = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_rotate_anticlock);
 
         //Initialising FABs and TextViews
-        tv_legislative = (TextView) findViewById(R.id.tv_legislative_session);
-        tv_execution = (TextView) findViewById(R.id.tv_execution);
-        tv_specialelection = (TextView) findViewById(R.id.tv_special_election);
-        tv_investigation = (TextView) findViewById(R.id.tv_investigation);
-        tv_policypeek = (TextView) findViewById(R.id.tv_policy_peek);
-        tv_deckshuffled = (TextView) findViewById(R.id.tv_deck_shuffled);
+        tv_legislative = findViewById(R.id.tv_legislative_session);
+        tv_execution = findViewById(R.id.tv_execution);
+        tv_specialelection = findViewById(R.id.tv_special_election);
+        tv_investigation = findViewById(R.id.tv_investigation);
+        tv_policypeek = findViewById(R.id.tv_policy_peek);
+        tv_deckshuffled = findViewById(R.id.tv_deck_shuffled);
 
-        fab_legislative = (FloatingActionButton) findViewById(R.id.fab_legislative_session);
-        fab_execution = (FloatingActionButton) findViewById(R.id.fab_execution);
-        fab_specialelection = (FloatingActionButton) findViewById(R.id.fab_special_election);
-        fab_investigation = (FloatingActionButton) findViewById(R.id.fab_investigation);
-        fab_policypeek = (FloatingActionButton) findViewById(R.id.fab_policy_peek);
-        fab_deckshuffled = (FloatingActionButton) findViewById(R.id.fab_deck_shuffled);
+        fab_legislative = findViewById(R.id.fab_legislative_session);
+        fab_execution = findViewById(R.id.fab_execution);
+        fab_specialelection = findViewById(R.id.fab_special_election);
+        fab_investigation = findViewById(R.id.fab_investigation);
+        fab_policypeek = findViewById(R.id.fab_policy_peek);
+        fab_deckshuffled = findViewById(R.id.fab_deck_shuffled);
 
-        fab_main = (FloatingActionButton) findViewById(R.id.fab_main_add);
+        fab_main = findViewById(R.id.fab_main_add);
         fab_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -193,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 closeFabMenu();
-                CardSetupHelper.setupCard(setupLayout, getLayoutInflater(), CardSetupHelper.LEGISLATIVE_SESSION, MainActivity.this);
+                CardSetupHelper.setupCard(setupLayout, CardSetupHelper.LEGISLATIVE_SESSION, MainActivity.this);
             }
         });
 
@@ -201,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 closeFabMenu();
-                CardSetupHelper.setupCard(setupLayout, getLayoutInflater(), CardSetupHelper.LOYALTY_INVESTIGATION, MainActivity.this);
+                CardSetupHelper.setupCard(setupLayout, CardSetupHelper.LOYALTY_INVESTIGATION, MainActivity.this);
             }
         });
 
@@ -209,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 closeFabMenu();
-                CardSetupHelper.setupCard(setupLayout, getLayoutInflater(), CardSetupHelper.EXECUTION, MainActivity.this);
+                CardSetupHelper.setupCard(setupLayout, CardSetupHelper.EXECUTION, MainActivity.this);
             }
         });
 
@@ -217,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 closeFabMenu();
-                CardSetupHelper.setupCard(setupLayout, getLayoutInflater(), CardSetupHelper.DECK_SHUFFLED, MainActivity.this);
+                CardSetupHelper.setupCard(setupLayout, CardSetupHelper.DECK_SHUFFLED, MainActivity.this);
             }
         });
     }
