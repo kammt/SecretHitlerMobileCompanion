@@ -1,9 +1,5 @@
 <resources>
-    <string name="app_name">SecretHitler Mobile Companion</string>
-    <string name="new_claim">New Claim</string>
-    <string name="new_vote">New Vote</string>
-    <string name="New_Kill">New Kill</string>
-    <string name="play_sound">Play Sound</string>
+    <string name="app_name" translatable="false">SecretHitler Mobile Companion</string>
     <string name="vote_string">President %1$s proposed %2$s to be the next chancellor. %3$s</string>
     <string name="vote_passed">The vote was passed.</string>
     <string name="vote_rejected">The vote was rejected.</string>
@@ -43,7 +39,10 @@
     <string name="dialog_another_setup_title">Setup already in progress</string>
     <string name="dialog_another_setup_desc">Another Event Setup is in progress. Would you like to cancel and continue working on the old event or replace the old setup?</string>
     <string name="new_loyalty_investigation">New Loyalty Investigation</string>
-    <string name="party_membership">Party Membership:</string>
     <string name="president">President</string>
-    <string name="investigated">Investigated Player</string>
+    <string name="investigated">investigated</string>
+    <string name="claim">Claim:</string>
+    <string name="new_execution">New Execution</string>
+    <string name="executed">executed</string>
+    <string name="cannot_be_empty">This field cannot be empty</string>
 </resources>

@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -21,6 +22,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobias.secrethitlermobilecompanion.SHClasses.ClaimEvent;
+import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
+import de.tobias.secrethitlermobilecompanion.SHClasses.ExecutionEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.ExecutiveAction;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
@@ -34,6 +37,8 @@ public class CardSetupHelper {
      */
     public static final int LEGISLATIVE_SESSION = 101;
     public static final int LOYALTY_INVESTIGATION = 102;
+    public static final int EXECUTION = 103;
+    public static final int DECK_SHUFFLED = 104;
 
 
     public static void setupCard(final LinearLayout linearLayout, final LayoutInflater layoutInflater, final int cardType, final Context context) {
@@ -75,6 +80,12 @@ public class CardSetupHelper {
                 break;
             case LOYALTY_INVESTIGATION:
                 setupLoyaltyInvestigation(linearLayout, layoutInflater, context);
+                break;
+            case EXECUTION:
+                setupExecution(linearLayout, layoutInflater, context);
+                break;
+            case DECK_SHUFFLED:
+                setupDeckShuffled(linearLayout, layoutInflater, context);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown cardType specified!");
@@ -275,6 +286,94 @@ public class CardSetupHelper {
                 } else {
                     ExecutiveAction executiveAction = new LoyaltyInvestigationEvent(president, investigatedPlayer, claim, c);
                     GameLog.addEvent(executiveAction);
+                    linearLayout.removeAllViews();
+                }
+            }
+        });
+
+        linearLayout.addView(setupCard);
+    }
+
+
+    private static void setupExecution(final LinearLayout linearLayout, LayoutInflater layoutInflater, final Context c) {
+        CardView setupCard = (CardView) layoutInflater.from(c).inflate(R.layout.setup_card_execution, linearLayout, false);
+
+        //Setting up Spinners
+        final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
+        ArrayAdapter<String> playerListadapter = new ArrayAdapter<String>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
+        playerListadapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        presSpinner.setAdapter(playerListadapter);
+
+        final Spinner executedSpinner = setupCard.findViewById(R.id.spinner_investigated_player);
+        executedSpinner.setAdapter(playerListadapter);
+        executedSpinner.setSelection(1); //Setting a different item on the executed player spinner so they don't have the same name at the beginning
+
+        //Initialising all other important aspects
+        final FloatingActionButton fab_create = setupCard.findViewById(R.id.fab_create);
+        ImageView iv_cancel = setupCard.findViewById(R.id.img_cancel);
+
+        iv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearLayout.removeAllViews();
+            }
+        });
+
+        fab_create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String president = (String) presSpinner.getSelectedItem();
+                String executedPlayer = (String) executedSpinner.getSelectedItem();
+
+                if(president.equals(executedPlayer)) {
+                    Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
+                } else {
+                    ExecutiveAction executiveAction = new ExecutionEvent(president, executedPlayer, c);
+                    GameLog.addEvent(executiveAction);
+                    linearLayout.removeAllViews();
+                }
+            }
+        });
+
+        linearLayout.addView(setupCard);
+    }
+
+
+    private static void setupDeckShuffled(final LinearLayout linearLayout, LayoutInflater layoutInflater, final Context c) {
+        CardView setupCard = (CardView) layoutInflater.from(c).inflate(R.layout.setup_card_deck_shuffled, linearLayout, false);
+
+        FloatingActionButton fab_create = setupCard.findViewById(R.id.fab_create);
+        ImageView iv_cancel = setupCard.findViewById(R.id.img_cancel);
+        final EditText et_liberalp = setupCard.findViewById(R.id.et_lpolicies);
+        final EditText et_fascistp = setupCard.findViewById(R.id.et_fpolicies);
+
+        iv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearLayout.removeAllViews();
+            }
+        });
+
+        fab_create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean failed = false;
+
+                if(et_liberalp.getText().toString().equals("")) {
+                    et_liberalp.setError(c.getString(R.string.cannot_be_empty));
+                    failed = true;
+                }
+
+                if(et_fascistp.getText().toString().equals("")) {
+                    et_fascistp.setError(c.getString(R.string.cannot_be_empty));
+                    failed = true;
+                }
+
+                if(!failed) {
+                    int liberalPolicies = Integer.parseInt(et_liberalp.getText().toString());
+                    int fascistPolicies = Integer.parseInt(et_fascistp.getText().toString());
+                    GameLog.addEvent(new DeckShuffledEvent(liberalPolicies, fascistPolicies));
                     linearLayout.removeAllViews();
                 }
             }
