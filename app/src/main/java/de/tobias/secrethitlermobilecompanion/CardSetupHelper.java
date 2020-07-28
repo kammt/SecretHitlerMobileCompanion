@@ -1,6 +1,7 @@
 package de.tobias.secrethitlermobilecompanion;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -28,8 +30,52 @@ public class CardSetupHelper {
     /*
     This class is responsible for displaying the setup for each card. It is called from the onClickListeners in the MainActivity
      */
+    public static final int LEGISLATIVE_SESSION = 101;
 
-    public static void setupLegislativeSession(final Context c, LayoutInflater layoutInflater, final LinearLayout linearLayout) {
+
+    public static void setupCard(final LinearLayout linearLayout, final LayoutInflater layoutInflater, final int cardType, final Context context) {
+        /*
+        This function will check if there is another "Setup-Card" present and will ask the user to either replace the old one or cancel the operation.
+        This helps to keep the screen cleaner, as the LinearLayout is not scrollable and thus does not support multiple setup-Cards
+         */
+        if(linearLayout.getChildCount() > 0) {
+            new AlertDialog.Builder(context)
+                    .setTitle(context.getString(R.string.dialog_another_setup_title))
+                    .setMessage(context.getString(R.string.dialog_another_setup_desc))
+                    .setPositiveButton(context.getString(R.string.dialog_another_setup_btn_replace), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            linearLayout.removeAllViews();
+                            callSetupFunction(linearLayout, layoutInflater, cardType, context);
+                        }
+                    })
+                    .setNegativeButton(context.getString(R.string.dialog_another_setup_btn_cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Just do nothing
+                        }
+                    })
+                    .show();
+        } else callSetupFunction(linearLayout, layoutInflater, cardType, context); //The child count is 0 => Layout is empty
+    }
+
+    private static void callSetupFunction(LinearLayout linearLayout, LayoutInflater layoutInflater, int cardType, Context context) {
+        /*
+        This function is to save code, as this will be executed in two scenarios:
+            - layout is empty
+            - "Replace" button is clicked
+         */
+
+        switch(cardType) {
+            case LEGISLATIVE_SESSION:
+                setupLegislativeSession(linearLayout, layoutInflater, context);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown cardType specified!");
+        }
+    }
+
+    private static void setupLegislativeSession(final LinearLayout linearLayout, LayoutInflater layoutInflater, final Context c) {
         CardView setupCard = (CardView) layoutInflater.from(c).inflate(R.layout.setup_card_legislative_session, linearLayout, false);
 
         //Setting up Spinners

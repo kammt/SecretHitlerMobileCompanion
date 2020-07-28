@@ -38,4 +38,8 @@
     <string name="chancellor_name">Chancellor name</string>
     <string name="err_names_cannot_be_the_same">Players cannot be involved multiple times in an Event!</string>
     <string name="new_legislative_session">New Legislative Session</string>
+    <string name="dialog_another_setup_btn_replace">Replace</string>
+    <string name="dialog_another_setup_btn_cancel">Cancel</string>
+    <string name="dialog_another_setup_title">Warning</string>
+    <string name="dialog_another_setup_desc">Another Event Setup is in progress. Would you like to cancel and continue working on the old event or replace the old setup?</string>
 </resources>
