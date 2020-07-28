@@ -47,12 +47,15 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="32dp"
             android:background="#D5BC96"
             android:spinnerMode="dropdown"
             app:layout_constraintBottom_toBottomOf="@+id/img_president"
-            app:layout_constraintEnd_toStartOf="@+id/guideline_end_spinner"
+            app:layout_constraintEnd_toStartOf="@+id/spinner_pres_claim"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/img_president"
-            app:layout_constraintTop_toTopOf="@+id/img_president" />
+            app:layout_constraintTop_toTopOf="@+id/img_president"
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
             android:id="@+id/img_chancellor"
@@ -150,10 +153,14 @@
             android:id="@+id/switch_vote_outcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:checked="false"
             android:fontFamily="@font/comfortaa_light"
+            android:thumbTint="@color/colorFascist"
+            android:trackTint="@color/colorFascist"
             app:layout_constraintBottom_toTopOf="@+id/ll_policy_outcome"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_chancellor" />
+            app:layout_constraintTop_toBottomOf="@+id/spinner_chancellor"
+            tools:checked="true" />
 
         <TextView
             android:id="@+id/txt_passed"
@@ -185,42 +192,26 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.57" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_end_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.72" />
-
         <Spinner
             android:id="@+id/spinner_pres_claim"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginEnd="16dp"
             android:background="@color/colorSpinner"
             android:spinnerMode="dropdown"
             app:layout_constraintBottom_toBottomOf="@+id/spinner_president"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline_start_claimspinner"
             app:layout_constraintTop_toTopOf="@+id/spinner_president" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_start_claimspinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.78" />
 
         <Spinner
             android:id="@+id/spinner_chanc_claim"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginEnd="16dp"
             android:background="@color/colorSpinner"
             android:spinnerMode="dropdown"
             app:layout_constraintBottom_toBottomOf="@+id/spinner_chancellor"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline_start_claimspinner"
             app:layout_constraintTop_toTopOf="@+id/spinner_chancellor" />
 
         <ImageView
