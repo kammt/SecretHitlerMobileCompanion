@@ -23,6 +23,8 @@ public class GameLog {
 
     public static ArrayList<Integer> hiddenEventIndexes;
 
+    private static JSONArray arr;
+
     public static boolean isInitialised() {
         return initialised;
     }
@@ -30,6 +32,7 @@ public class GameLog {
     public static void initialise(RecyclerView recyclerView) {
         eventList = new ArrayList<>();
         hiddenEventIndexes = new ArrayList<>();
+        arr = new JSONArray();
 
         cardList = recyclerView;
         cardListAdapter = new CardRecyclerViewAdapter(eventList);
@@ -40,6 +43,11 @@ public class GameLog {
     public static void addEvent(GameEvent event) {
         eventList.add(event);
         cardListAdapter.notifyItemInserted(eventList.size() - 1);
+        try {
+            arr.put(event.getJSON());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void blurEventsInvolvingHiddenPlayers(ArrayList<String> hiddenPlayers) {
@@ -59,12 +67,6 @@ public class GameLog {
 
 
     public static JSONArray getEventsJSON() throws JSONException {
-        JSONArray arr = new JSONArray();
-
-        for(GameEvent event : eventList) {
-            arr.put(event.getJSON());
-        }
-
         return arr;
     }
 }
