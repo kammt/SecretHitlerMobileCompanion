@@ -57,7 +57,7 @@ public class ServerSercive extends Service {
                 if (intent != null) {
                     Toast.makeText(context, "Killing Server Service...", Toast.LENGTH_LONG).show();
                     //Server is intended to be killed
-                    server.stop();
+                    while(server.isAlive()) server.stop();
                     stopForeground(true);
                     stopSelf();
                 }
@@ -89,7 +89,7 @@ public class ServerSercive extends Service {
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) createChannel(notificationManager);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), notifChannelID)
-                .setSmallIcon(R.drawable.fascist_logo)
+                .setSmallIcon(R.drawable.ic_stat_name)
                 .setContentTitle(getString(R.string.title_server_notification))
                 .setContentText(getString(R.string.desc_server_notification))
                 .addAction(R.drawable.execution, getString(R.string.stop_server_notification),
