@@ -201,16 +201,9 @@ public class CardSetupHelper {
         fab_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //We now have to check a few things before creating the event. For this, we create the boolean pass. If it is false at the end of the check, we won't create the event
-                boolean pass = true;
-
-                //Firstly, the name of president and chancellor cannot be the same
                 if(presSpinner.getSelectedItem().equals(chancSpinner.getSelectedItem())) {
-                    pass = false;
                     Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
-                }
-
-                if(pass) {
+                } else {
                     boolean voteRejected = sw_votingoutcome.isChecked();
                     String presName = (String) presSpinner.getSelectedItem();
                     String chancName = (String) chancSpinner.getSelectedItem();
@@ -227,11 +220,10 @@ public class CardSetupHelper {
                         boolean vetoed = cb_vetoed.isChecked();
 
                         claimEvent = new ClaimEvent(presName, chancName, presClaim, chancClaim, playedPolicy, vetoed, c);
+                    }
 
-                        if(!Claim.doClaimsFit(presClaim, chancClaim, playedPolicy)) {
-                            pass = false;
-
-                            new AlertDialog.Builder(c)
+                    if(claimEvent != null && !Claim.doClaimsFit(claimEvent.getPresidentClaim(), claimEvent.getChancellorClaim(), claimEvent.getPlayedPolicy())) {
+                        new AlertDialog.Builder(c)
                                 .setTitle(c.getString(R.string.dialog_mismatching_claims_title))
                                 .setMessage(c.getString(R.string.dialog_mismatching_claims_desc))
                                 .setPositiveButton(c.getString(R.string.dialog_mismatching_claims_btn_continue), new DialogInterface.OnClickListener() {
@@ -244,10 +236,7 @@ public class CardSetupHelper {
                                 })
                                 .setNegativeButton(c.getString(R.string.dialog_mismatching_claims_btn_cancel), null)
                                 .show();
-                        }
-                    }
-
-                    if(pass) {//Checking again since the value could have changed from the "Mismatching claims" dialog
+                    } else {
                         LegislativeSession legislativeSession = new LegislativeSession(voteEvent, claimEvent, c);
                         GameLog.addEvent(legislativeSession);
                         linearLayout.removeAllViews();

@@ -1,10 +1,7 @@
 package de.tobias.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
-
-import androidx.cardview.widget.CardView;
-
-import java.util.ArrayList;
+import android.media.MediaPlayer;
 
 import de.tobias.secrethitlermobilecompanion.R;
 
@@ -29,6 +26,11 @@ public class ClaimEvent {
         this.vetoed = vetoed;
 
         c = context;
+
+        MediaPlayer mp;
+        if(playedPolicy == Claim.LIBERAL) mp = MediaPlayer.create(c, R.raw.enactpolicyl);
+        else mp = MediaPlayer.create(c, R.raw.enactpolicyf);
+        mp.start();
     }
 
     public int getChancellorClaim() {
