@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -30,6 +31,7 @@ import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
 import de.tobias.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
+import de.tobias.secrethitlermobilecompanion.SHClasses.SpecialElectionEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.VoteEvent;
 
 public class CardSetupHelper {
@@ -41,6 +43,7 @@ public class CardSetupHelper {
     public static final int EXECUTION = 103;
     public static final int DECK_SHUFFLED = 104;
     public static final int POLICY_PEEK = 105;
+    public static final int SPECIAL_ELECTION = 106;
 
 
     public static void setupCard(final LinearLayout linearLayout, final int cardType, final Context context) {
@@ -91,6 +94,9 @@ public class CardSetupHelper {
                 break;
             case POLICY_PEEK:
                 setupPolicyPeek(linearLayout, context);
+                break;
+            case SPECIAL_ELECTION:
+                setupSpecialElection(linearLayout, context);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown cardType specified!");
@@ -310,7 +316,7 @@ public class CardSetupHelper {
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
 
-        final Spinner executedSpinner = setupCard.findViewById(R.id.spinner_investigated_player);
+        final Spinner executedSpinner = setupCard.findViewById(R.id.spinner_executed_player);
         executedSpinner.setAdapter(playerListadapter);
         executedSpinner.setSelection(1); //Setting a different item on the executed player spinner so they don't have the same name at the beginning
 
@@ -344,6 +350,61 @@ public class CardSetupHelper {
         linearLayout.addView(setupCard);
     }
 
+
+    private static void setupSpecialElection(final LinearLayout linearLayout, final Context c) {
+        /*
+        As the layout we need is quite similar as this one for the execution event, we will use that one, but replace the textView texts to save storage and reduce the apk size
+         */
+
+        CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_execution, linearLayout, false);
+
+        //Changing the text
+        TextView title = setupCard.findViewById(R.id.title);
+        title.setText(c.getString(R.string.new_special_election));
+
+        TextView tvspecialelected = setupCard.findViewById(R.id.txt_executed_player);
+        tvspecialelected.setText(c.getString(R.string.elected));
+
+        //Setting up Spinners
+        final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
+        ArrayAdapter<String> playerListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
+        playerListadapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        presSpinner.setAdapter(playerListadapter);
+
+        final Spinner electedSpinner = setupCard.findViewById(R.id.spinner_executed_player);
+        electedSpinner.setAdapter(playerListadapter);
+        electedSpinner.setSelection(1); //Setting a different item on the elected player spinner so they don't have the same name at the beginning
+
+        //Initialising all other important aspects
+        final FloatingActionButton fab_create = setupCard.findViewById(R.id.fab_create);
+        ImageView iv_cancel = setupCard.findViewById(R.id.img_cancel);
+
+        iv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearLayout.removeAllViews();
+            }
+        });
+
+        fab_create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String president = (String) presSpinner.getSelectedItem();
+                String electedPlayer = (String) electedSpinner.getSelectedItem();
+
+                if(president.equals(electedPlayer)) {
+                    Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
+                } else {
+                    ExecutiveAction executiveAction = new SpecialElectionEvent(president, electedPlayer, c);
+                    GameLog.addEvent(executiveAction);
+                    linearLayout.removeAllViews();
+                }
+            }
+        });
+
+        linearLayout.addView(setupCard);
+    }
 
     private static void setupDeckShuffled(final LinearLayout linearLayout, final Context c) {
         CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_deck_shuffled, linearLayout, false);

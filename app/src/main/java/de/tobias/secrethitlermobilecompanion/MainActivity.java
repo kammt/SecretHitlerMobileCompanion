@@ -224,6 +224,14 @@ public class MainActivity extends AppCompatActivity {
                 CardSetupHelper.setupCard(setupLayout, CardSetupHelper.POLICY_PEEK, MainActivity.this);
             }
         });
+
+        fab_specialelection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeFabMenu();
+                CardSetupHelper.setupCard(setupLayout, CardSetupHelper.SPECIAL_ELECTION, MainActivity.this);
+            }
+        });
     }
 
     public void closeFabMenu() {
