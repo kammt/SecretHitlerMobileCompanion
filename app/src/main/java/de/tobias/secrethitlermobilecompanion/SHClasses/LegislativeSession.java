@@ -2,6 +2,7 @@ package de.tobias.secrethitlermobilecompanion.SHClasses;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
@@ -29,6 +30,7 @@ public class LegislativeSession extends GameEvent {
     private VoteEvent voteEvent;
     private ClaimEvent claimEvent;
     private Context c;
+    private static ColorStateList oldcolors;
 
     public LegislativeSession(VoteEvent voteEvent, ClaimEvent claimEvent, Context context) {
         sessionNumber = GameLog.legSessionNo++;
@@ -63,10 +65,20 @@ public class LegislativeSession extends GameEvent {
             playedPolicytv.setVisibility(View.GONE);
             playedPolicyLogo.setVisibility(View.GONE);
 
+            oldcolors =  chancName.getTextColors();
             chancName.setTextColor(Color.RED);
             chancName.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         } else {
             title.setText(c.getString(R.string.legislative_session)+ " #" + sessionNumber);
+
+            //Resetting the layout
+            chancClaim.setVisibility(View.VISIBLE);
+            presClaim.setVisibility(View.VISIBLE);
+            playedPolicytv.setVisibility(View.VISIBLE);
+            playedPolicyLogo.setVisibility(View.VISIBLE);
+
+            if(oldcolors != null) chancName.setTextColor(oldcolors);
+            chancName.setPaintFlags(chancName.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
 
             //The vote didn't fail, now we have to set the colored Claims. To do this, we parse the HTML <font> attribute (see Claim.java for more)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -77,7 +89,9 @@ public class LegislativeSession extends GameEvent {
                 presClaim.setText(Html.fromHtml(Claim.getClaimString(c, claimEvent.getPresidentClaim())), TextView.BufferType.SPANNABLE);
             }
 
-            if(claimEvent.getPlayedPolicy() == Claim.LIBERAL) playedPolicyLogo.setImageDrawable(c.getDrawable(R.drawable.liberal_logo));
+            if(claimEvent.getPlayedPolicy() == Claim.LIBERAL) {
+                playedPolicyLogo.setImageDrawable(c.getDrawable(R.drawable.liberal_logo));
+            } else playedPolicyLogo.setImageDrawable(c.getDrawable(R.drawable.fascist_logo));
         }
 
         if(claimEvent != null && claimEvent.isVetoed()) {
