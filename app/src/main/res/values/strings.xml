@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">SecretHitler Mobile Companion</string>
+    <string name="app_name" translatable="false">Secret Hitler Mobile Companion</string>
     <string name="vote_string">President %1$s proposed %2$s to be the next chancellor. %3$s</string>
     <string name="vote_passed">The vote was passed.</string>
     <string name="vote_rejected">The vote was rejected.</string>
