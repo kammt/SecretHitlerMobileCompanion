@@ -5,6 +5,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorLiberal</item>
+        <item name="android:fontFamily">@font/germania_one</item>
     </style>
 
 
