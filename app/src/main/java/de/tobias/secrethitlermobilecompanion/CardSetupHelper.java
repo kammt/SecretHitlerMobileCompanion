@@ -3,8 +3,10 @@ package de.tobias.secrethitlermobilecompanion;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -18,8 +20,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobias.secrethitlermobilecompanion.SHClasses.ClaimEvent;
@@ -108,7 +113,7 @@ public class CardSetupHelper {
 
         //Setting up Spinners
         final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
+        ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
@@ -118,13 +123,13 @@ public class CardSetupHelper {
         chancSpinner.setSelection(1); //Setting a different item on the chancellor spinner so they don't have the same name at the beginning
 
         final Spinner presClaimSpinner = setupCard.findViewById(R.id.spinner_pres_claim);
-        final ArrayAdapter<String> presClaimListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, Claim.getPresidentClaims());
+        final ArrayAdapter<String> presClaimListadapter = getClaimAdapter(c, Claim.getPresidentClaims());
         presClaimListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presClaimSpinner.setAdapter(presClaimListadapter);
 
         final Spinner chancClaimSpinner = setupCard.findViewById(R.id.spinner_chanc_claim);
-        ArrayAdapter<String> chancClaimListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, Claim.getChancellorClaims());
+        ArrayAdapter<String> chancClaimListadapter = getClaimAdapter(c, Claim.getPresidentClaims());
         chancClaimListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         chancClaimSpinner.setAdapter(chancClaimListadapter);
@@ -241,7 +246,7 @@ public class CardSetupHelper {
 
         //Setting up Spinners
         final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
+        ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
@@ -311,7 +316,7 @@ public class CardSetupHelper {
 
         //Setting up Spinners
         final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
+        ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
@@ -367,7 +372,7 @@ public class CardSetupHelper {
 
         //Setting up Spinners
         final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
+        ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
@@ -461,13 +466,13 @@ public class CardSetupHelper {
         });
 
         final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, PlayerList.getPlayerList());
+        ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
 
         final Spinner presClaimSpinner = setupCard.findViewById(R.id.spinner_pres_claim);
-        final ArrayAdapter<String> presClaimListadapter = new ArrayAdapter<>(c, android.R.layout.simple_spinner_item, Claim.getPresidentClaims());
+        final ArrayAdapter<String> presClaimListadapter = getClaimAdapter(c, Claim.getPresidentClaims());
         presClaimListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presClaimSpinner.setAdapter(presClaimListadapter);
@@ -481,5 +486,60 @@ public class CardSetupHelper {
         });
 
         linearLayout.addView(setupCard);
+    }
+
+
+    private static ArrayAdapter<String> getPlayerNameAdapter(final Context context) {
+        return new ArrayAdapter<String>(context,
+                android.R.layout.simple_spinner_item, PlayerList.getPlayerList()) {
+
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+
+                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
+                ((TextView) v).setTypeface(externalFont);
+
+                return v;
+            }
+
+
+            public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
+                View v =super.getDropDownView(position, convertView, parent);
+
+                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
+                ((TextView) v).setTypeface(externalFont);
+
+                return v;
+            }
+        };
+    }
+
+    private static ArrayAdapter<String> getClaimAdapter(final Context context, ArrayList<String> data) {
+        return new ArrayAdapter<String>(context,
+                android.R.layout.simple_spinner_item, data) {
+
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+
+                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
+                TextView tv = (TextView) v;
+                tv.setTypeface(externalFont);
+                tv.setText(Claim.colorClaim(tv.getText().toString()), TextView.BufferType.SPANNABLE);
+
+                return v;
+            }
+
+
+            public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
+                View v =super.getDropDownView(position, convertView, parent);
+
+                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
+                TextView tv = (TextView) v;
+                tv.setTypeface(externalFont);
+                tv.setText(Claim.colorClaim(tv.getText().toString()), TextView.BufferType.SPANNABLE);
+
+                return v;
+            }
+        };
     }
 }

@@ -1,6 +1,9 @@
 package de.tobias.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
+import android.os.Build;
+import android.text.Html;
+import android.text.Spanned;
 
 import java.util.ArrayList;
 
@@ -92,6 +95,17 @@ public class Claim {
         claims.add("BB");
 
         return claims;
+    }
+
+    public static Spanned colorClaim(String claim) {
+        String fascistReplace = claim.replace("R","<font color='#E23A12'>" + "R" + "</font>");
+        String liberalAndFascistReplace = fascistReplace.replace("B","<font color='#387CB3'>" + "B" + "</font>");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.fromHtml(liberalAndFascistReplace,  Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            return Html.fromHtml(liberalAndFascistReplace);
+        }
     }
 
     public static Integer getClaimInt(String claimString) {
