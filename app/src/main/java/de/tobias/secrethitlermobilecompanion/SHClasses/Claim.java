@@ -10,6 +10,12 @@ import java.util.ArrayList;
 import de.tobias.secrethitlermobilecompanion.R;
 
 public class Claim {
+    /*
+    This Class is responsible for everything surrounding Claims and Claim values. Some of its functions do things like
+    - color the Claim accordingly (red/blue)
+    - provide Claim values to communicate with GameEvents
+    - generate Claim values for JSON files
+     */
 
     //Single Policies
     public static final int FASCIST = 1;
@@ -74,6 +80,20 @@ public class Claim {
                 return "R";
             default: return context.getString(R.string.claim_nothing); //Either no claim was made or the value is invalid
         }
+    }
+
+    public static boolean doClaimsFit(int presidentClaim, int chancellorClaim, int playedPolicy) {
+        if (presidentClaim == RRR && chancellorClaim == RR && playedPolicy == FASCIST) return true;
+
+        else if (presidentClaim == RRB && chancellorClaim == RR && playedPolicy == FASCIST) return true;
+        else if (presidentClaim == RRB && chancellorClaim == RB) return true; //It doesn't matter what policy is played, not checking
+
+        else if (presidentClaim == RBB && chancellorClaim == BB && playedPolicy == LIBERAL) return true;
+        else if (presidentClaim == RBB && chancellorClaim == RB) return true;
+
+        else if (presidentClaim == BBB && chancellorClaim == BB && playedPolicy == LIBERAL) return true;
+
+        else return false;
     }
 
     public static ArrayList<String> getPresidentClaims() {

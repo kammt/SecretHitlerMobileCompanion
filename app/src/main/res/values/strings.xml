@@ -48,4 +48,8 @@
     <string name="new_policy_peek">New Policy Peek</string>
     <string name="elected">elected</string>
     <string name="new_special_election">New Special Election</string>
+    <string name="dialog_mismatching_claims_title">Mismatching claims</string>
+    <string name="dialog_mismatching_claims_desc">The specified claims and the played policy do not fit together. Continue anyway?</string>
+    <string name="dialog_mismatching_claims_btn_continue">Continue</string>
+    <string name="dialog_mismatching_claims_btn_cancel">Cancel</string>
 </resources>

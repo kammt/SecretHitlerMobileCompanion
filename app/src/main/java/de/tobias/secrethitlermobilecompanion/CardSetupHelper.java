@@ -129,7 +129,7 @@ public class CardSetupHelper {
         presClaimSpinner.setAdapter(presClaimListadapter);
 
         final Spinner chancClaimSpinner = setupCard.findViewById(R.id.spinner_chanc_claim);
-        ArrayAdapter<String> chancClaimListadapter = getClaimAdapter(c, Claim.getPresidentClaims());
+        ArrayAdapter<String> chancClaimListadapter = getClaimAdapter(c, Claim.getChancellorClaims());
         chancClaimListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         chancClaimSpinner.setAdapter(chancClaimListadapter);
@@ -210,14 +210,13 @@ public class CardSetupHelper {
                     Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
                 }
 
-                //Maybe add a check for claims in the future? E.g. RRR and BB should create an error
                 if(pass) {
                     boolean voteRejected = sw_votingoutcome.isChecked();
                     String presName = (String) presSpinner.getSelectedItem();
                     String chancName = (String) chancSpinner.getSelectedItem();
 
-                    VoteEvent voteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED, c);
-                    ClaimEvent claimEvent;
+                    final VoteEvent voteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED, c);
+                    final ClaimEvent claimEvent;
 
                     if(voteRejected) claimEvent = null;
                     else {
@@ -228,11 +227,31 @@ public class CardSetupHelper {
                         boolean vetoed = cb_vetoed.isChecked();
 
                         claimEvent = new ClaimEvent(presName, chancName, presClaim, chancClaim, playedPolicy, vetoed, c);
+
+                        if(!Claim.doClaimsFit(presClaim, chancClaim, playedPolicy)) {
+                            pass = false;
+
+                            new AlertDialog.Builder(c)
+                                .setTitle(c.getString(R.string.dialog_mismatching_claims_title))
+                                .setMessage(c.getString(R.string.dialog_mismatching_claims_desc))
+                                .setPositiveButton(c.getString(R.string.dialog_mismatching_claims_btn_continue), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        LegislativeSession legislativeSession = new LegislativeSession(voteEvent, claimEvent, c);
+                                        GameLog.addEvent(legislativeSession);
+                                        linearLayout.removeAllViews();
+                                    }
+                                })
+                                .setNegativeButton(c.getString(R.string.dialog_mismatching_claims_btn_cancel), null)
+                                .show();
+                        }
                     }
 
-                    LegislativeSession legislativeSession = new LegislativeSession(voteEvent, claimEvent, c);
-                    GameLog.addEvent(legislativeSession);
-                    linearLayout.removeAllViews();
+                    if(pass) {//Checking again since the value could have changed from the "Mismatching claims" dialog
+                        LegislativeSession legislativeSession = new LegislativeSession(voteEvent, claimEvent, c);
+                        GameLog.addEvent(legislativeSession);
+                        linearLayout.removeAllViews();
+                    }
                 }
             }
         });
