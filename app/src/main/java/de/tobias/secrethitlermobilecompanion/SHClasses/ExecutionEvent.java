@@ -2,6 +2,7 @@ package de.tobias.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +20,8 @@ public class ExecutionEvent extends ExecutiveAction {
         this.presidentName = presidentName;
         this.executedPlayerName = executedPlayerName;
         PlayerList.setAsDead(executedPlayerName);
+
+        MediaPlayer.create(context, R.raw.playershot).start();
     }
 
     @Override
