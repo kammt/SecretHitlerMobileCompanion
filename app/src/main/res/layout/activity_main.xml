@@ -5,235 +5,106 @@
     android:id="@+id/main_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
+    android:animateLayoutChanges="false"
     android:background="@color/colorPrimaryDark"
     android:focusable="true"
     tools:context=".MainActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/playerList"
-        android:layout_width="0dp"
-        android:layout_height="135dp"
-        android:layout_marginTop="16dp"
-        android:animateLayoutChanges="false"
-        android:orientation="horizontal"
-        android:scrollbars="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_game"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-    </androidx.recyclerview.widget.RecyclerView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/playerList"
+            android:layout_width="0dp"
+            android:layout_height="135dp"
+            android:layout_marginTop="16dp"
+            android:animateLayoutChanges="false"
+            android:orientation="horizontal"
+            android:scrollbars="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/guideline3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <LinearLayout
-        android:id="@+id/cardSetup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/playerList"
-        tools:layout_editor_absoluteX="0dp"></LinearLayout>
+        </androidx.recyclerview.widget.RecyclerView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cardList"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:scrollbars="vertical"
+        <LinearLayout
+            android:id="@+id/cardSetup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/playerList"
+            tools:layout_editor_absoluteX="0dp"></LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cardList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:scrollbars="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardSetup" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="143dp" />
+
+        <TextView
+            android:id="@+id/tv_nothing_here"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nothing_here"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/colorAccent"
+            android:text="@string/create_new_game"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_nothing_here" />
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include layout="@layout/bottom_sheet" />
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:background="@color/colorAccent"
+        app:itemBackground="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardSetup" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_main_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:backgroundTint="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_baseline_add_24" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_execution"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:clickable="false"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:visibility="invisible"
-        app:backgroundTint="@color/colorFascist"
-        app:layout_constraintBottom_toTopOf="@+id/fab_investigation"
-        app:layout_constraintEnd_toEndOf="@+id/fab_investigation"
-        app:layout_constraintStart_toStartOf="@+id/fab_investigation"
-        app:srcCompat="@drawable/execution" />
-
-    <TextView
-        android:id="@+id/tv_execution"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:background="#000000"
-        android:fontFamily="@font/comfortaa_light"
-        android:text="@string/fab_menu_execution"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/fab_execution"
-        app:layout_constraintEnd_toStartOf="@+id/fab_execution"
-        app:layout_constraintTop_toTopOf="@+id/fab_execution" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_investigation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/colorFascist"
-        android:clickable="false"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/fab_legislative_session"
-        app:layout_constraintEnd_toEndOf="@+id/fab_legislative_session"
-        app:layout_constraintStart_toStartOf="@+id/fab_legislative_session"
-        app:srcCompat="@drawable/investigate_loyalty" />
-
-    <TextView
-        android:id="@+id/tv_investigation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:background="#000000"
-        android:fontFamily="@font/comfortaa_light"
-        android:text="@string/fab_menu_investigation"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/fab_investigation"
-        app:layout_constraintEnd_toStartOf="@+id/fab_investigation"
-        app:layout_constraintTop_toTopOf="@+id/fab_investigation" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_legislative_session"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:clickable="false"
-        android:visibility="invisible"
-        app:backgroundTint="@color/colorFascist"
-        app:layout_constraintBottom_toTopOf="@+id/fab_main_add"
-        app:layout_constraintEnd_toEndOf="@+id/fab_main_add"
-        app:layout_constraintStart_toStartOf="@+id/fab_main_add"
-        app:srcCompat="@drawable/ic_baseline_how_to_vote_24" />
-
-    <TextView
-        android:id="@+id/tv_legislative_session"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:background="#000000"
-        android:fontFamily="@font/comfortaa_light"
-        android:text="@string/fab_menu_legislative_session"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/fab_legislative_session"
-        app:layout_constraintEnd_toStartOf="@+id/fab_legislative_session"
-        app:layout_constraintTop_toTopOf="@+id/fab_legislative_session" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_deck_shuffled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/colorFascist"
-        android:clickable="true"
-        android:focusable="true"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/fab_execution"
-        app:layout_constraintEnd_toEndOf="@+id/fab_execution"
-        app:layout_constraintStart_toStartOf="@+id/fab_execution"
-        app:srcCompat="@drawable/ic_baseline_shuffle_24" />
-
-    <TextView
-        android:id="@+id/tv_deck_shuffled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:background="#000000"
-        android:fontFamily="@font/comfortaa_light"
-        android:text="@string/deck_shuffled"
-        android:textColor="#FFFFFF"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/fab_deck_shuffled"
-        app:layout_constraintEnd_toStartOf="@+id/fab_deck_shuffled"
-        app:layout_constraintTop_toTopOf="@+id/fab_deck_shuffled" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_policy_peek"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/colorFascist"
-        android:clickable="false"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/fab_deck_shuffled"
-        app:layout_constraintEnd_toEndOf="@+id/fab_execution"
-        app:layout_constraintStart_toStartOf="@+id/fab_execution"
-        app:srcCompat="@drawable/policy_peek" />
-
-    <TextView
-        android:id="@+id/tv_policy_peek"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:background="#000000"
-        android:fontFamily="@font/comfortaa_light"
-        android:text="@string/fab_menu_policy_peek"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/fab_policy_peek"
-        app:layout_constraintEnd_toStartOf="@+id/fab_policy_peek"
-        app:layout_constraintTop_toTopOf="@+id/fab_policy_peek" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_special_election"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/colorFascist"
-        android:clickable="false"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/fab_policy_peek"
-        app:layout_constraintEnd_toEndOf="@+id/fab_policy_peek"
-        app:srcCompat="@drawable/special_election" />
-
-    <TextView
-        android:id="@+id/tv_special_election"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:background="#000000"
-        android:fontFamily="@font/comfortaa_light"
-        android:text="@string/fab_menu_special_election"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/fab_special_election"
-        app:layout_constraintEnd_toStartOf="@+id/fab_special_election"
-        app:layout_constraintTop_toTopOf="@+id/fab_special_election" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="143dp" />
+        app:menu="@menu/navigation" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

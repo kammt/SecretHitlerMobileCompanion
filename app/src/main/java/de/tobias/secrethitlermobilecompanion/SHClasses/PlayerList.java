@@ -68,6 +68,15 @@ public class PlayerList {
     public static ArrayList<String> getPlayerList() {
         return playerList;
     }
+
+    public static ArrayList<String> getAlivePlayerList() {
+        ArrayList<String> result = new ArrayList<>();
+        for(int i = 0; i < playerList.size(); i++) {
+            if(!isDead(i)) result.add(playerList.get(i));
+        }
+        return result;
+    }
+
     public static ArrayList<Integer> getMembershipClaims() {
         return claimList;
     }

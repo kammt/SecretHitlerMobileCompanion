@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_placeholder"
+        android:icon="@drawable/ic_baseline_screen_share_24"
+        android:title="PLACEHOLDER"/>
+
+    <item
+        android:id="@+id/navigation_server_status"
+        android:icon="@drawable/ic_baseline_screen_share_24"
+        android:title="@string/server_status"/>
+
+    <item
+        android:id="@+id/navigation_add_event"
+        android:icon="@drawable/ic_baseline_add_24"
+        android:title="@string/new_event"/>
+
+</menu>

@@ -14,7 +14,6 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -53,9 +52,7 @@ public class ServerSercive extends Service {
         killSignalReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                //UI update here
                 if (intent != null) {
-                    Toast.makeText(context, "Killing Server Service...", Toast.LENGTH_LONG).show();
                     //Server is intended to be killed
                     while(server.isAlive()) server.stop();
                     stopForeground(true);

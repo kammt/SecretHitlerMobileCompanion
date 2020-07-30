@@ -6,18 +6,24 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
@@ -43,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     private Animation fab_open, fab_close, fab_clock, fab_anticlock;
 
     private LinearLayout setupLayout;
+    private BottomNavigationView bottomNavigationMenu;
+    private ConstraintLayout bottomSheetAdd;
+    private BottomSheetBehavior bottomSheetBehaviorAdd;
 
     boolean isOpen = false;
     boolean serverConnected = false;
@@ -70,11 +79,152 @@ public class MainActivity extends AppCompatActivity {
 
         setupRecyclerViews();
         startAndBindServerService();
-        setupFabMenu();
 
         GameLog.initialise(cardList);
+        setupBottomMenu();
         testGameLog();
     }
+
+    public void deselectAllMenuItems() {
+        Menu menu = bottomNavigationMenu.getMenu();
+        menu.getItem(0).setVisible(false);
+        menu.getItem(0).setChecked(true);
+    }
+
+    public void setupBottomMenu() {
+        bottomNavigationMenu = findViewById(R.id.bottomNavigationView);
+        Menu menu = bottomNavigationMenu.getMenu();
+        menu.getItem(0).setVisible(false);
+        menu.getItem(0).setChecked(true); //As you cannot have no items selected, I created a third item, select that one and set it as hidden #Lifehack
+
+        //initialising the bottom Sheet
+        bottomSheetAdd = findViewById(R.id.bottom_sheet);
+        bottomSheetBehaviorAdd = BottomSheetBehavior.from(bottomSheetAdd);
+        bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        setupLayout = findViewById(R.id.cardSetup);
+        bottomSheetAdd.findViewById(R.id.legislative_session).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+                //As running both functions at the same time (Hence to animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        CardSetupHelper.setupCard(setupLayout, CardSetupHelper.LEGISLATIVE_SESSION, MainActivity.this);
+                    }
+                }, 180);
+            }
+        });
+
+        bottomSheetAdd.findViewById(R.id.loyalty_investigation).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+                //As running both functions at the same time (Hence to animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        CardSetupHelper.setupCard(setupLayout, CardSetupHelper.LOYALTY_INVESTIGATION, MainActivity.this);
+                    }
+                }, 180);
+            }
+        });
+
+        bottomSheetAdd.findViewById(R.id.execution).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+                //As running both functions at the same time (Hence to animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        CardSetupHelper.setupCard(setupLayout, CardSetupHelper.EXECUTION, MainActivity.this);
+                    }
+                }, 180);
+            }
+        });
+
+        bottomSheetAdd.findViewById(R.id.deck_shuffled).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+                //As running both functions at the same time (Hence to animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        CardSetupHelper.setupCard(setupLayout, CardSetupHelper.DECK_SHUFFLED, MainActivity.this);
+                    }
+                }, 180);
+            }
+        });
+
+        bottomSheetAdd.findViewById(R.id.policy_peek).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+                //As running both functions at the same time (Hence to animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        CardSetupHelper.setupCard(setupLayout, CardSetupHelper.POLICY_PEEK, MainActivity.this);
+                    }
+                }, 180);
+            }
+        });
+
+        bottomSheetAdd.findViewById(R.id.special_election).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+                //As running both functions at the same time (Hence to animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        CardSetupHelper.setupCard(setupLayout, CardSetupHelper.SPECIAL_ELECTION, MainActivity.this);
+                    }
+                }, 180);
+            }
+        });
+
+        BottomSheetBehavior.BottomSheetCallback callback = new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if(newState == BottomSheetBehavior.STATE_HIDDEN) { //If the state changed to hidden (i.e. the user closed the menu), the item should now be unselected
+                    deselectAllMenuItems();
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        };
+        bottomSheetBehaviorAdd.addBottomSheetCallback(callback);
+
+        bottomNavigationMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch(item.getItemId()) {
+                    case R.id.navigation_add_event:
+                        bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_EXPANDED);
+                        //TODO
+                        break;
+                    case R.id.navigation_server_status:
+                        //TODO
+                        break;
+                }
+                return true;
+            }
+        });
+    }
+
 
     @Override
     protected void onPause() {
@@ -85,6 +235,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
     }
+
+
 
     public void setupRecyclerViews() {
         cardList = findViewById(R.id.cardList);
@@ -153,145 +305,6 @@ public class MainActivity extends AppCompatActivity {
         GameLog.addEvent(new DeckShuffledEvent(6, 11));
     }
 
-    public void setupFabMenu() {
-        setupLayout = findViewById(R.id.cardSetup);
-
-        //Loading Animations
-        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
-        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
-        fab_clock = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_rotate_clock);
-        fab_anticlock = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_rotate_anticlock);
-
-        //Initialising FABs and TextViews
-        tv_legislative = findViewById(R.id.tv_legislative_session);
-        tv_execution = findViewById(R.id.tv_execution);
-        tv_specialelection = findViewById(R.id.tv_special_election);
-        tv_investigation = findViewById(R.id.tv_investigation);
-        tv_policypeek = findViewById(R.id.tv_policy_peek);
-        tv_deckshuffled = findViewById(R.id.tv_deck_shuffled);
-
-        fab_legislative = findViewById(R.id.fab_legislative_session);
-        fab_execution = findViewById(R.id.fab_execution);
-        fab_specialelection = findViewById(R.id.fab_special_election);
-        fab_investigation = findViewById(R.id.fab_investigation);
-        fab_policypeek = findViewById(R.id.fab_policy_peek);
-        fab_deckshuffled = findViewById(R.id.fab_deck_shuffled);
-
-        fab_main = findViewById(R.id.fab_main_add);
-        fab_main.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isOpen) closeFabMenu();
-                else openFabMenu();
-            }
-        });
-
-        fab_legislative.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                closeFabMenu();
-                CardSetupHelper.setupCard(setupLayout, CardSetupHelper.LEGISLATIVE_SESSION, MainActivity.this);
-            }
-        });
-
-        fab_investigation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                closeFabMenu();
-                CardSetupHelper.setupCard(setupLayout, CardSetupHelper.LOYALTY_INVESTIGATION, MainActivity.this);
-            }
-        });
-
-        fab_execution.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                closeFabMenu();
-                CardSetupHelper.setupCard(setupLayout, CardSetupHelper.EXECUTION, MainActivity.this);
-            }
-        });
-
-        fab_deckshuffled.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                closeFabMenu();
-                CardSetupHelper.setupCard(setupLayout, CardSetupHelper.DECK_SHUFFLED, MainActivity.this);
-            }
-        });
-
-        fab_policypeek.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                closeFabMenu();
-                CardSetupHelper.setupCard(setupLayout, CardSetupHelper.POLICY_PEEK, MainActivity.this);
-            }
-        });
-
-        fab_specialelection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                closeFabMenu();
-                CardSetupHelper.setupCard(setupLayout, CardSetupHelper.SPECIAL_ELECTION, MainActivity.this);
-            }
-        });
-    }
-
-    public void closeFabMenu() {
-        isOpen = false;
-        fab_main.startAnimation(fab_anticlock);
-
-        tv_legislative.setVisibility(View.INVISIBLE);
-        fab_legislative.startAnimation(fab_close);
-        fab_legislative.setClickable(false);
-
-        tv_execution.setVisibility(View.INVISIBLE);
-        fab_execution.startAnimation(fab_close);
-        fab_execution.setClickable(false);
-
-        tv_specialelection.setVisibility(View.INVISIBLE);
-        fab_specialelection.startAnimation(fab_close);
-        fab_specialelection.setClickable(false);
-
-        tv_investigation.setVisibility(View.INVISIBLE);
-        fab_investigation.startAnimation(fab_close);
-        fab_investigation.setClickable(false);
-
-        tv_policypeek.setVisibility(View.INVISIBLE);
-        fab_policypeek.startAnimation(fab_close);
-        fab_policypeek.setClickable(false);
-
-        tv_deckshuffled.setVisibility(View.INVISIBLE);
-        fab_deckshuffled.startAnimation(fab_close);
-        fab_deckshuffled.setClickable(false);
-    }
-
-    public void openFabMenu() {
-        isOpen = true;
-        fab_main.startAnimation(fab_clock);
-
-        tv_legislative.setVisibility(View.VISIBLE);
-        fab_legislative.startAnimation(fab_open);
-        fab_legislative.setClickable(true);
-
-        tv_execution.setVisibility(View.VISIBLE);
-        fab_execution.startAnimation(fab_open);
-        fab_execution.setClickable(true);
-
-        tv_specialelection.setVisibility(View.VISIBLE);
-        fab_specialelection.startAnimation(fab_open);
-        fab_specialelection.setClickable(true);
-
-        tv_investigation.setVisibility(View.VISIBLE);
-        fab_investigation.startAnimation(fab_open);
-        fab_investigation.setClickable(true);
-
-        tv_policypeek.setVisibility(View.VISIBLE);
-        fab_policypeek.startAnimation(fab_open);
-        fab_policypeek.setClickable(true);
-
-        tv_deckshuffled.setVisibility(View.VISIBLE);
-        fab_deckshuffled.startAnimation(fab_open);
-        fab_deckshuffled.setClickable(true);
-    }
 
     @Override
     protected void onResume() {

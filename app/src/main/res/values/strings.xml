@@ -19,7 +19,7 @@
     <string name="vetoed">" - Vetoed"</string>
     <string name="executed_string">President %1$s selects to execute %2$s.</string>
     <string name="title_server_notification">Secret Hitler Server running</string>
-    <string name="desc_server_notification">This notification is to improve the stability of the server</string>
+    <string name="desc_server_notification">Click to open the server status page</string>
     <string name="channel_title_server_notification">Sticky Server Notification</string>
     <string name="channel_desc_server_notification">A sticky notification that improves the stability of the server</string>
     <string name="stop_server_notification">Stop Server</string>
@@ -52,4 +52,9 @@
     <string name="dialog_mismatching_claims_desc">The specified claims and the played policy do not fit together. Continue anyway?</string>
     <string name="dialog_mismatching_claims_btn_continue">Continue</string>
     <string name="dialog_mismatching_claims_btn_cancel">Cancel</string>
+    <string name="title_server_status">Server Status Page</string>
+    <string name="nothing_here">Nothing here</string>
+    <string name="create_new_game">Create a new game</string>
+    <string name="new_event">New Event</string>
+    <string name="server_status">Server Status</string>
 </resources>
