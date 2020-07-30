@@ -19,7 +19,7 @@
     <string name="vetoed">" - Vetoed"</string>
     <string name="executed_string">President %1$s selects to execute %2$s.</string>
     <string name="title_server_notification">Secret Hitler Server running</string>
-    <string name="desc_server_notification">Click to open the server status page</string>
+    <string name="desc_server_notification">This notification is to improve the stability of the server.</string>
     <string name="channel_title_server_notification">Sticky Server Notification</string>
     <string name="channel_desc_server_notification">A sticky notification that improves the stability of the server</string>
     <string name="stop_server_notification">Stop Server</string>
@@ -52,9 +52,18 @@
     <string name="dialog_mismatching_claims_desc">The specified claims and the played policy do not fit together. Continue anyway?</string>
     <string name="dialog_mismatching_claims_btn_continue">Continue</string>
     <string name="dialog_mismatching_claims_btn_cancel">Cancel</string>
-    <string name="title_server_status">Server Status Page</string>
+    <string name="title_server_status">Server Status:</string>
     <string name="nothing_here">Nothing here</string>
     <string name="create_new_game">Create a new game</string>
     <string name="new_event">New Event</string>
     <string name="server_status">Server Status</string>
+    <string name="server_status_url">Please ask your friends to open %1$s in their browser. Make sure that they are in the same WiFi-network as you! Use the button below to stop the server.</string>
+    <string name="server_status_url_disabled">When using a server, other players in your WiFi-network have access to the same GameLog as you do. However, only you can create events and play game sounds. Use the button below to activate the server.</string>
+    <string name="server_running">Running</string>
+    <string name="server_stopped">Not Running</string>
+    <string name="share_server_url_string">Let\'s play SecretHitler together. Open my Server at %1$s and make sure you are in the same WiFi network as I am.</string>
+    <string name="share_server_url_title">Share Server URL via</string>
+    <string name="server_stopping">Stopping...</string>
+    <string name="server_starting">Starting...</string>
+    <string name="url_copied_to_clipboard">Server URL copied to clipboard</string>
 </resources>

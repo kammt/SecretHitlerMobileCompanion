@@ -26,6 +26,8 @@ public class ServerSercive extends Service {
 
     private BroadcastReceiver killSignalReceiver;
     public final static String ACTION_KILL_SERVER = "KILLSERVER";
+    public final static String ACTION_SERVER_STOPPED = "STOPPED";
+    public final static String ACTION_SERVER_STARTED = "STARTED";
 
     public class LocalBinder extends Binder {
         ServerSercive getService() {
@@ -54,9 +56,7 @@ public class ServerSercive extends Service {
             public void onReceive(Context context, Intent intent) {
                 if (intent != null) {
                     //Server is intended to be killed
-                    while(server.isAlive()) server.stop();
-                    stopForeground(true);
-                    stopSelf();
+                    killSelf();
                 }
             }
         };
@@ -65,6 +65,18 @@ public class ServerSercive extends Service {
         server = new Server(8080, this);
         server.startServer();
         Log.v("Server", "URL is " + server.getURL());
+
+        //Notify the MainActivity that the Server was started
+        Intent stoppedIntent = new Intent();
+        stoppedIntent.setAction(ACTION_SERVER_STARTED);
+        PendingIntent stoppedPendingIntent =
+                PendingIntent.getBroadcast(this, 0, stoppedIntent, 0);
+        try {
+            stoppedPendingIntent.send();
+        } catch (PendingIntent.CanceledException e) {
+            e.printStackTrace();
+        }
+
         startForeground(server.hashCode(), getForegroundNotification());
         return Service.START_STICKY;
     }
@@ -74,6 +86,25 @@ public class ServerSercive extends Service {
         super.onDestroy();
         while(server.isAlive()) server.stop();
         unregisterReceiver(killSignalReceiver);
+    }
+
+    public void killSelf() {
+        while(server.isAlive()) server.stop();
+        stopForeground(true);
+
+        //Notify the MainActivity that the Server was killed
+        Intent stoppedIntent = new Intent();
+        stoppedIntent.setAction(ACTION_SERVER_STOPPED);
+        PendingIntent stoppedPendingIntent =
+                PendingIntent.getBroadcast(this, 0, stoppedIntent, 0);
+        try {
+            stoppedPendingIntent.send();
+        } catch (PendingIntent.CanceledException e) {
+            e.printStackTrace();
+        }
+
+        //Finally, kill the entire Service
+        stopSelf();
     }
 
     private Notification getForegroundNotification() {

@@ -1,17 +1,23 @@
 package de.tobias.secrethitlermobilecompanion;
 
+import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +31,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import net.glxn.qrgen.android.QRCode;
 
 import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobias.secrethitlermobilecompanion.SHClasses.ClaimEvent;
@@ -44,29 +52,35 @@ public class MainActivity extends AppCompatActivity {
 
     private ServerSercive boundServerService;
 
-    private FloatingActionButton fab_main, fab_legislative, fab_execution, fab_policypeek, fab_specialelection, fab_investigation, fab_deckshuffled;
-    private TextView tv_legislative, tv_execution, tv_policypeek, tv_specialelection, tv_investigation, tv_deckshuffled;
-    private Animation fab_open, fab_close, fab_clock, fab_anticlock;
-
     private LinearLayout setupLayout;
     private BottomNavigationView bottomNavigationMenu;
     private ConstraintLayout bottomSheetAdd;
     private BottomSheetBehavior bottomSheetBehaviorAdd;
 
-    boolean isOpen = false;
-    boolean serverConnected = false;
+    private ConstraintLayout bottomSheetServer;
+    private BottomSheetBehavior bottomSheetBehaviorServer;
+    private String serverURL;
+    private TextView tv_server_desc, tv_server_title;
+    private FloatingActionButton fab_share, fab_copy, fab_toggle_server;
+    private ImageView qrImage;
+    private Bitmap qrBitmap;
 
-    private ServiceConnection serverServiceConnection = new ServiceConnection() { //TODO unused, remove?
+    boolean serverConnected = false;
+    private BroadcastReceiver serviceUpdateReceiver;
+
+    private ServiceConnection serverServiceConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             boundServerService = ((ServerSercive.LocalBinder)service).getService();
-            Toast.makeText(MainActivity.this, boundServerService.server.getURL(), Toast.LENGTH_LONG).show();
+            serverConnected = true;
+            setServerStatus();
         }
 
         @Override
-        public void onServiceDisconnected(ComponentName name) {
+        public void onServiceDisconnected(ComponentName name) { //Reminder: This is only called when the service crashes, NOT when the user hits the stop button
             boundServerService = null;
+            serverConnected = false;
         }
     };
 
@@ -76,6 +90,20 @@ public class MainActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ServerSercive.ACTION_SERVER_STOPPED);
+        filter.addAction(ServerSercive.ACTION_SERVER_STARTED);
+
+        serviceUpdateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent != null) {
+                    setServerStatus();
+                }
+            }
+        };
+        registerReceiver(serviceUpdateReceiver, filter);
 
         setupRecyclerViews();
         startAndBindServerService();
@@ -92,16 +120,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setupBottomMenu() {
+        //Setting up the Bottom Menu
         bottomNavigationMenu = findViewById(R.id.bottomNavigationView);
         Menu menu = bottomNavigationMenu.getMenu();
         menu.getItem(0).setVisible(false);
         menu.getItem(0).setChecked(true); //As you cannot have no items selected, I created a third item, select that one and set it as hidden #Lifehack
 
-        //initialising the bottom Sheet
-        bottomSheetAdd = findViewById(R.id.bottom_sheet);
+        //initialising the "Add Event" bottom Sheet
+        bottomSheetAdd = findViewById(R.id.bottom_sheet_add_event);
         bottomSheetBehaviorAdd = BottomSheetBehavior.from(bottomSheetAdd);
         bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
 
+        //Setting up the OnClickListeners
         setupLayout = findViewById(R.id.cardSetup);
         bottomSheetAdd.findViewById(R.id.legislative_session).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,10 +223,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        BottomSheetBehavior.BottomSheetCallback callback = new BottomSheetBehavior.BottomSheetCallback() {
+        //Setting Up the Server Status Page
+        bottomSheetServer = findViewById(R.id.bottom_sheet_server_status);
+        bottomSheetBehaviorServer = BottomSheetBehavior.from(bottomSheetServer);
+        bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN);
+        setupServerLayout();
+
+        //Setting up the BottomSheetCallback
+        BottomSheetBehavior.BottomSheetCallback callbackAdd = new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if(newState == BottomSheetBehavior.STATE_HIDDEN) { //If the state changed to hidden (i.e. the user closed the menu), the item should now be unselected
+                if(newState == BottomSheetBehavior.STATE_HIDDEN && bottomSheetBehaviorServer.getState() == BottomSheetBehavior.STATE_HIDDEN) { //If the state changed to hidden (i.e. the user closed the menu), the item should now be unselected
                     deselectAllMenuItems();
                 }
             }
@@ -206,23 +243,147 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
-        bottomSheetBehaviorAdd.addBottomSheetCallback(callback);
+        BottomSheetBehavior.BottomSheetCallback callbackServer = new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if(newState == BottomSheetBehavior.STATE_HIDDEN && bottomSheetBehaviorAdd.getState() == BottomSheetBehavior.STATE_HIDDEN) { //If the state changed to hidden (i.e. the user closed the menu), the item should now be unselected
+                    deselectAllMenuItems();
+                }
+            }
 
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        };
+        bottomSheetBehaviorAdd.addBottomSheetCallback(callbackAdd);
+        bottomSheetBehaviorServer.addBottomSheetCallback(callbackServer);
+
+        //Adding the Listener to the BottomNavigationMenu
         bottomNavigationMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch(item.getItemId()) {
                     case R.id.navigation_add_event:
-                        bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_EXPANDED);
-                        //TODO
+                        if(bottomSheetBehaviorAdd.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                            bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+                            //Check if Server page is open. If so, we close it
+                            if(bottomSheetBehaviorServer.getState() != BottomSheetBehavior.STATE_HIDDEN) bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+                        } else bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN); //If it is already open and the user clicks it again, it should hide
                         break;
                     case R.id.navigation_server_status:
-                        //TODO
+                        if(bottomSheetBehaviorServer.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                            setServerStatus();
+                            bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+                            //Check if Add page is open. If so, we close it
+                            if(bottomSheetBehaviorAdd.getState() != BottomSheetBehavior.STATE_HIDDEN) bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+                        } else bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN); //If it is already open and the user clicks it again, it should hide
                         break;
                 }
                 return true;
             }
         });
+    }
+
+
+
+    public void setupServerLayout() {
+        tv_server_desc = findViewById(R.id.tv_server_url_desc);
+        tv_server_title = findViewById(R.id.tv_title_server_status);
+
+        qrImage = findViewById(R.id.img_qr);
+
+        fab_share = findViewById(R.id.fab_share);
+        fab_copy = findViewById(R.id.fab_copy_address);
+        fab_toggle_server = findViewById(R.id.fab_toggle_server);
+
+        fab_copy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Server URL", serverURL);
+                clipboard.setPrimaryClip(clip);
+
+                Toast.makeText(MainActivity.this, getString(R.string.url_copied_to_clipboard), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        fab_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent share = new Intent(Intent.ACTION_SEND);
+                share.setType("text/plain");
+                share.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_server_url_string, serverURL));
+                startActivity(Intent.createChooser(share, getString(R.string.share_server_url_title)));
+            }
+        });
+
+        fab_toggle_server.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(serverConnected) {
+                    stopAndUnbindServerService();
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#ff9900'>" + getString(R.string.server_stopping) + "</font>",  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+                    } else {
+                        tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#ff9900'>" + getString(R.string.server_stopping) + "</font>"), TextView.BufferType.SPANNABLE);
+                    }
+                } else {
+                    startAndBindServerService();
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#ff9900'>" + getString(R.string.server_starting) + "</font>",  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+                    } else {
+                        tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#ff9900'>" + getString(R.string.server_starting) + "</font>"), TextView.BufferType.SPANNABLE);
+                    }
+                }
+            }
+        });
+    }
+
+    public void setServerStatus() {
+        if(boundServerService != null && boundServerService.server.isAlive()) { //ServerService is bound and Server is running
+
+            if(serverURL == null || !serverURL.equals(boundServerService.server.getURL())) {
+                serverURL = boundServerService.server.getURL();
+
+                qrBitmap = QRCode.from(serverURL).withSize(200,200).bitmap();
+            }
+
+            qrImage.setImageBitmap(qrBitmap);
+
+            tv_server_desc.setText(getString(R.string.server_status_url, serverURL));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#009933'>" + getString(R.string.server_running) + "</font>",  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+            } else {
+                tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#009933'>" + getString(R.string.server_running) + "</font>"), TextView.BufferType.SPANNABLE);
+            }
+
+            fab_copy.setClickable(true);
+            fab_share.setClickable(true);
+            fab_toggle_server.setImageDrawable(getDrawable(R.drawable.ic_baseline_stop_24));
+
+        } else {
+            tv_server_desc.setText(getString(R.string.server_status_url_disabled));
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#cc0000'>" + getString(R.string.server_stopped) + "</font>",  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+            } else {
+                tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#cc0000'>" + getString(R.string.server_stopped) + "</font>"), TextView.BufferType.SPANNABLE);
+            }
+
+            qrImage.setImageDrawable(getDrawable(R.drawable.qr_placeholder));
+
+            fab_copy.setClickable(false);
+            fab_share.setClickable(false);
+
+            fab_toggle_server.setImageDrawable(getDrawable(R.drawable.ic_baseline_play_arrow_24));
+        }
     }
 
 
@@ -250,7 +411,12 @@ public class MainActivity extends AppCompatActivity {
         PlayerList.setupPlayerList(playerCardList, this);
     }
 
-    void startAndBindServerService() {
+    private void startAndBindServerService() {
+        if(boundServerService != null && serverConnected) { //Don't start another service if a server is already running
+            if(!boundServerService.server.isAlive()) boundServerService.server.startServer(); //If it is stopped, then start it
+            return;
+        }
+
         //Starting with Android O, a ForeGroundService must be called using a different function
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(new Intent(this, ServerSercive.class));
@@ -266,13 +432,13 @@ public class MainActivity extends AppCompatActivity {
 
     void stopAndUnbindServerService() {
         if (serverConnected) {
+            //Stop server
+            boundServerService.killSelf();
+
             // Detach our existing connection.
             unbindService(serverServiceConnection);
             serverConnected = false;
-
-            Intent stopIntent = new Intent(MainActivity.this, ServerSercive.class);
-            stopIntent.setAction(ServerSercive.ACTION_KILL_SERVER);
-            startService(stopIntent);
+            boundServerService = null;
         }
     }
 
@@ -314,6 +480,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(serviceUpdateReceiver);
         stopAndUnbindServerService();
     }
 

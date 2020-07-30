@@ -3,3 +3,4 @@ An Android App intended to make the board game experience of Secret Hitler more 
 
 # Libraries used
 - NanoHttpd (https://github.com/NanoHttpd/nanohttpd)
+- QRGen (https://github.com/kenglxn/QRGen)
