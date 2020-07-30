@@ -10,7 +10,9 @@
 
     <color name="img_gray">#383633</color>
 
-    <color name="fab_disabled">#777777</color>
+    <color name="fab_disabled">#9f9f9f</color>
+    <color name="start_server">#009933</color>
+    <color name="stop_server">#cc0000</color>
 
     <color name="colorLiberal">#5a9cc4</color>
     <color name="colorFascist">#c66851</color>

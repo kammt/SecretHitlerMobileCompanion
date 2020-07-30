@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
@@ -366,8 +367,14 @@ public class MainActivity extends AppCompatActivity {
 
             fab_copy.setClickable(true);
             fab_share.setClickable(true);
-            fab_toggle_server.setImageDrawable(getDrawable(R.drawable.ic_baseline_stop_24));
 
+            ColorStateList colorEnabled = ColorStateList.valueOf(getColor(R.color.colorFascist));
+            fab_share.setBackgroundTintList(colorEnabled);
+            fab_copy.setBackgroundTintList(colorEnabled);
+
+            ColorStateList colorStopServer = ColorStateList.valueOf(getColor(R.color.stop_server));
+            fab_toggle_server.setImageDrawable(getDrawable(R.drawable.ic_baseline_stop_24));
+            fab_toggle_server.setBackgroundTintList(colorStopServer);
         } else {
             tv_server_desc.setText(getString(R.string.server_status_url_disabled));
 
@@ -382,7 +389,13 @@ public class MainActivity extends AppCompatActivity {
             fab_copy.setClickable(false);
             fab_share.setClickable(false);
 
+            ColorStateList colorDisabled = ColorStateList.valueOf(getColor(R.color.fab_disabled));
+            fab_share.setBackgroundTintList(colorDisabled);
+            fab_copy.setBackgroundTintList(colorDisabled);
+
+            ColorStateList colorStartServer = ColorStateList.valueOf(getColor(R.color.start_server));
             fab_toggle_server.setImageDrawable(getDrawable(R.drawable.ic_baseline_play_arrow_24));
+            fab_toggle_server.setBackgroundTintList(colorStartServer);
         }
     }
 
