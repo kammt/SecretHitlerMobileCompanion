@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -240,10 +241,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) { }
         };
+
         BottomSheetBehavior.BottomSheetCallback callbackServer = new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -253,9 +253,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-
-            }
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) { }
         };
         bottomSheetBehaviorAdd.addBottomSheetCallback(callbackAdd);
         bottomSheetBehaviorServer.addBottomSheetCallback(callbackServer);
@@ -323,6 +321,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        qrImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(serverURL));
+                startActivity(browserIntent);
+            }
+        });
+
         fab_toggle_server.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -357,6 +363,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             qrImage.setImageBitmap(qrBitmap);
+            qrImage.setClickable(true);
 
             tv_server_desc.setText(getString(R.string.server_status_url, serverURL));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -385,6 +392,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             qrImage.setImageDrawable(getDrawable(R.drawable.qr_placeholder));
+            qrImage.setClickable(false);
 
             fab_copy.setClickable(false);
             fab_share.setClickable(false);
