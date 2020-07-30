@@ -26,8 +26,7 @@ public class ServerSercive extends Service {
 
     private BroadcastReceiver killSignalReceiver;
     public final static String ACTION_KILL_SERVER = "KILLSERVER";
-    public final static String ACTION_SERVER_STOPPED = "STOPPED";
-    public final static String ACTION_SERVER_STARTED = "STARTED";
+    public final static String SERVER_STATE_CHANGED = "CHANGED";
 
     public class LocalBinder extends Binder {
         ServerSercive getService() {
@@ -68,7 +67,7 @@ public class ServerSercive extends Service {
 
         //Notify the MainActivity that the Server was started
         Intent stoppedIntent = new Intent();
-        stoppedIntent.setAction(ACTION_SERVER_STARTED);
+        stoppedIntent.setAction(SERVER_STATE_CHANGED);
         PendingIntent stoppedPendingIntent =
                 PendingIntent.getBroadcast(this, 0, stoppedIntent, 0);
         try {
@@ -94,7 +93,7 @@ public class ServerSercive extends Service {
 
         //Notify the MainActivity that the Server was killed
         Intent stoppedIntent = new Intent();
-        stoppedIntent.setAction(ACTION_SERVER_STOPPED);
+        stoppedIntent.setAction(SERVER_STATE_CHANGED);
         PendingIntent stoppedPendingIntent =
                 PendingIntent.getBroadcast(this, 0, stoppedIntent, 0);
         try {

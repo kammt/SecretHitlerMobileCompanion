@@ -94,8 +94,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ServerSercive.ACTION_SERVER_STOPPED);
-        filter.addAction(ServerSercive.ACTION_SERVER_STARTED);
+        filter.addAction(ServerSercive.SERVER_STATE_CHANGED);
 
         serviceUpdateReceiver = new BroadcastReceiver() {
             @Override
@@ -133,14 +132,14 @@ public class MainActivity extends AppCompatActivity {
         bottomSheetBehaviorAdd = BottomSheetBehavior.from(bottomSheetAdd);
         bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-        //Setting up the OnClickListeners
+        //Setting up the OnClickListeners. For this, we get each ConstraintLayout by using findViewById
         setupLayout = findViewById(R.id.cardSetup);
         bottomSheetAdd.findViewById(R.id.legislative_session).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-                //As running both functions at the same time (Hence to animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
+                //As running both functions at the same time (Hence two animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -155,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-                //As running both functions at the same time (Hence to animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
+                //As running both functions at the same time (Hence two animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -170,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-                //As running both functions at the same time (Hence to animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
+                //As running both functions at the same time (Hence two animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -185,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-                //As running both functions at the same time (Hence to animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
+                //As running both functions at the same time (Hence two animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -200,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-                //As running both functions at the same time (Hence to animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
+                //As running both functions at the same time (Hence two animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -215,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-                //As running both functions at the same time (Hence to animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
+                //As running both functions at the same time (Hence two animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
