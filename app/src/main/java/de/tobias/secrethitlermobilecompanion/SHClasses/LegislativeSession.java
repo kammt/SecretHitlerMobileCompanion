@@ -65,7 +65,7 @@ public class LegislativeSession extends GameEvent {
             playedPolicytv.setVisibility(View.GONE);
             playedPolicyLogo.setVisibility(View.GONE);
 
-            oldcolors =  chancName.getTextColors();
+            if(oldcolors == null) oldcolors =  chancName.getTextColors();
             chancName.setTextColor(Color.RED);
             chancName.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         } else {
