@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         unregisterReceiver(networkChangeReceiver);
         unregisterReceiver(serviceUpdateReceiver);
-        stopAndUnbindServerService();
     }
 
     @Override
@@ -157,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopAndUnbindServerService();
     }
 
     public void deselectAllMenuItems() {
