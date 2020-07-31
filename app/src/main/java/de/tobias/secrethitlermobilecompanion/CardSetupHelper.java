@@ -7,6 +7,8 @@ import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -114,7 +116,7 @@ public class CardSetupHelper {
     }
 
     private static void setupGame(final LinearLayout linearLayout, final Context c) {
-        CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_game_settings, linearLayout, false);
+        final CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_game_settings, linearLayout, false);
 
         final Switch sw_sounds_execution = setupCard.findViewById(R.id.switch_sounds_execution);
         final Switch sw_sounds_policy = setupCard.findViewById(R.id.switch_sounds_policy);
@@ -124,6 +126,23 @@ public class CardSetupHelper {
         fab_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final AlphaAnimation fadeoutAnimation = new AlphaAnimation((float) 1, (float) 0);
+                fadeoutAnimation.setDuration(500);
+                fadeoutAnimation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        linearLayout.removeAllViews();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+
                 final MainActivity mainActivity = ((MainActivity) c);
                 int playerCount = PlayerList.getPlayerList().size();
                 if(playerCount == 0) {
@@ -132,7 +151,13 @@ public class CardSetupHelper {
                             .setMessage(c.getString(R.string.no_players_added_msg))
                             .setPositiveButton(c.getString(R.string.btn_ok), null)
                             .show();
-                } else if (playerCount < 5) {
+                } else if (playerCount == 1) {
+                    new AlertDialog.Builder(c)
+                            .setTitle(c.getString(R.string.title_too_little_players))
+                            .setMessage(c.getString(R.string.no_players_added_msg))
+                            .setPositiveButton(c.getString(R.string.btn_ok), null)
+                            .show();
+                } else if (playerCount < 5 && playerCount >= 2) {
                     new AlertDialog.Builder(c)
                             .setMessage(c.getString(R.string.msg_too_little_players, playerCount))
                             .setTitle(c.getString(R.string.title_too_little_players))
@@ -141,18 +166,24 @@ public class CardSetupHelper {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     mainActivity.startGame(sw_sounds_execution.isChecked(), sw_sounds_policy.isChecked(), sw_server.isChecked());
-                                    linearLayout.removeAllViews();
+                                    setupCard.startAnimation(fadeoutAnimation);
                                 }
                             })
                             .show();
                 } else {
                     mainActivity.startGame(sw_sounds_execution.isChecked(), sw_sounds_policy.isChecked(), sw_server.isChecked());
-                    linearLayout.removeAllViews();
+                    setupCard.startAnimation(fadeoutAnimation);
+
                 }
             }
         });
 
         linearLayout.addView(setupCard);
+
+
+        AlphaAnimation alphaAnimation = new AlphaAnimation((float) 0, (float) 1);
+        alphaAnimation.setDuration(500);
+        setupCard.startAnimation(alphaAnimation);
     }
 
     private static void setupLegislativeSession(final LinearLayout linearLayout, final Context c) {

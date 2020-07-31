@@ -49,7 +49,7 @@
             android:id="@+id/cardSetup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="true"
+            android:animateLayoutChanges="false"
             android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@+id/playerList"
             tools:layout_editor_absoluteX="0dp"></LinearLayout>

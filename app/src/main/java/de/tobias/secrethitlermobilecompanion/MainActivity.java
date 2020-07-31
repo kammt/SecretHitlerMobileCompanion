@@ -23,6 +23,7 @@ import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -115,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
 
         setupNewGameCreation();
         setupRecyclerViews();
-        startAndBindServerService();
 
         setupBottomMenu();
         setGameMode(false);
@@ -190,7 +190,24 @@ public class MainActivity extends AppCompatActivity {
             cardList.setVisibility(View.VISIBLE);
             bottomNavigationMenu.setVisibility(View.VISIBLE);
             bottomNavigationMenu.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in_bottom));
-            btn_add_player.setVisibility(View.GONE);
+
+            AlphaAnimation fadeoutAnimation = new AlphaAnimation((float) 1, (float) 0);
+            fadeoutAnimation.setDuration(500);
+            fadeoutAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    btn_add_player.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            btn_add_player.startAnimation(fadeoutAnimation);
         }
     }
 
@@ -207,9 +224,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        AlphaAnimation fadeIn = new AlphaAnimation((float) 0, (float) 1);
+        fadeIn.setDuration(500);
+
         btn_add_player = findViewById(R.id.playerCard_add);
         btn_add_player.setClickable(true);
         btn_add_player.setFocusable(true);
+        btn_add_player.startAnimation(fadeIn);
         btn_add_player.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
