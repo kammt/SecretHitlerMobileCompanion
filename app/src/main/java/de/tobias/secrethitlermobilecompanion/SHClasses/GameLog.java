@@ -33,6 +33,7 @@ public class GameLog {
         eventList = new ArrayList<>();
         hiddenEventIndexes = new ArrayList<>();
         arr = new JSONArray();
+        legSessionNo = 1;
 
         cardList = recyclerView;
         cardListAdapter = new CardRecyclerViewAdapter(eventList);

@@ -102,6 +102,13 @@ public class MainActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        setupRecyclerViews();
+        startAndBindServerService();
+
+        GameLog.initialise(cardList);
+        setupBottomMenu();
+        testGameLog();
     }
 
     @Override
@@ -115,13 +122,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        setupRecyclerViews();
-        startAndBindServerService();
-
-        GameLog.initialise(cardList);
-        setupBottomMenu();
-        testGameLog();
     }
 
 

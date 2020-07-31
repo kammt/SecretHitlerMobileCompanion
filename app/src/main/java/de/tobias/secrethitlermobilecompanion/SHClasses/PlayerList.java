@@ -82,6 +82,10 @@ public class PlayerList {
     }
 
     public static void setupPlayerList(RecyclerView playerCardList, Context context) {
+        playerList = new ArrayList<>();
+        claimList = new ArrayList<>();
+        isDead = new ArrayList<>();
+
         playerRecyclerViewAdapter = new PlayerRecyclerViewAdapter(playerList, context);
         playerCardList.setAdapter(playerRecyclerViewAdapter);
 
