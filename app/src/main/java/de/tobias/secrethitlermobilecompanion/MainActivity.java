@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView qrImage;
     private Bitmap qrBitmap;
     private Animation fab_close, fab_open;
+    private boolean fabsVisible = true;
 
     boolean serverConnected = false;
     private BroadcastReceiver serviceUpdateReceiver;
@@ -157,8 +158,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
-
-
 
     public void deselectAllMenuItems() {
         Menu menu = bottomNavigationMenu.getMenu();
@@ -423,8 +422,7 @@ public class MainActivity extends AppCompatActivity {
                 qrImage.setImageDrawable(getDrawable(R.drawable.qr_placeholder));
                 qrImage.setClickable(false);
 
-                fab_share.startAnimation(fab_close);
-                fab_copy.startAnimation(fab_close);
+                startFABAnimation(false);
                 tv_server_desc.setText(getString(R.string.server_status_url_not_connected));
 
             } else if(isMobile && !usingHotspot && !isWifi) {//Only connected to mobile data
@@ -438,8 +436,7 @@ public class MainActivity extends AppCompatActivity {
                 qrImage.setImageDrawable(getDrawable(R.drawable.qr_placeholder));
                 qrImage.setClickable(false);
 
-                fab_share.startAnimation(fab_close);
-                fab_copy.startAnimation(fab_close);
+                startFABAnimation(false);
                 tv_server_desc.setText(getString(R.string.server_status_url_mobile_data));
 
             } else {//everything is fine
@@ -459,8 +456,7 @@ public class MainActivity extends AppCompatActivity {
                     tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#009933'>" + getString(R.string.server_running) + "</font>"), TextView.BufferType.SPANNABLE);
                 }
 
-                fab_share.startAnimation(fab_open);
-                fab_copy.startAnimation(fab_open);
+                startFABAnimation(true);
             }
 
             ColorStateList colorStopServer = ColorStateList.valueOf(getColor(R.color.stop_server));
@@ -479,12 +475,23 @@ public class MainActivity extends AppCompatActivity {
             qrImage.setImageDrawable(getDrawable(R.drawable.qr_placeholder));
             qrImage.setClickable(false);
 
-            fab_share.startAnimation(fab_close);
-            fab_copy.startAnimation(fab_close);
+            startFABAnimation(false);
 
             ColorStateList colorStartServer = ColorStateList.valueOf(getColor(R.color.start_server));
             fab_toggle_server.setImageDrawable(getDrawable(R.drawable.ic_baseline_play_arrow_24));
             fab_toggle_server.setBackgroundTintList(colorStartServer);
+        }
+    }
+
+    private void startFABAnimation(boolean open) {
+        if(!open && fabsVisible) {//Fabs are visible, hiding
+            fab_share.startAnimation(fab_close);
+            fab_copy.startAnimation(fab_close);
+            fabsVisible = false;
+        } else if(open && !fabsVisible){
+            fab_share.startAnimation(fab_open);
+            fab_copy.startAnimation(fab_open);
+            fabsVisible= true;
         }
     }
 
