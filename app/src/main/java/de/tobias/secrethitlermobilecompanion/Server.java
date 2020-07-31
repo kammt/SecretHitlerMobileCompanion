@@ -61,8 +61,20 @@ public class Server extends NanoHTTPD {
                 return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("images.js"));
             case "/PlayerPane.js":
                 return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("PlayerPane.js"));
+            case "/bootstrap.min.js":
+                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("bootstrap.min.js"));
+            case "/jquery-3.5.1.slim.min.js":
+                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("jquery-3.5.1.slim.min.js"));
+            case "/popper.min.js":
+                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("popper.min.js"));
             case "/css/style.css":
                 return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("style.css"));
+            case "/googlefonts.css":
+                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("googlefonts.css"));
+            case "/fontawesome.css":
+                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("fontawesome.css"));
+            case "/bootstrap.min.css":
+                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("bootstrap.min.css"));
             case "/getGameJSON":
                 if (GameLog.isInitialised()) {
                     JSONObject obj = new JSONObject();
