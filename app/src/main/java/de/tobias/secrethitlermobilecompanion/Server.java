@@ -132,7 +132,7 @@ public class Server extends NanoHTTPD {
     }
 
 
-    private boolean isUsingHotspot(WifiManager wifiManager) {
+    public boolean isUsingHotspot(WifiManager wifiManager) {
         int actualState = 0;
         try {
             java.lang.reflect.Method method = wifiManager.getClass().getDeclaredMethod("getWifiApState");

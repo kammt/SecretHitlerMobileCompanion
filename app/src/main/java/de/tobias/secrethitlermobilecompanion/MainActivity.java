@@ -12,6 +12,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +39,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import net.glxn.qrgen.android.QRCode;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
 
 import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobias.secrethitlermobilecompanion.SHClasses.ClaimEvent;
@@ -140,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         networkChangeReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-
+                setServerStatus();
             }
         };
         IntentFilter intentFilter = new IntentFilter();
@@ -397,33 +401,71 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setServerStatus() {
+
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        boolean isMobile = Objects.requireNonNull(manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE))
+                .isConnectedOrConnecting();
+        boolean isWifi = Objects.requireNonNull(manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI))
+                .isConnectedOrConnecting();
+        boolean usingHotspot = isUsingHotspot((WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE));
+
         if(boundServerService != null && boundServerService.server.isAlive()) { //ServerService is bound and Server is running
 
-            if(serverURL == null || !serverURL.equals(boundServerService.server.getURL())) {
-                serverURL = boundServerService.server.getURL();
+            if(!isMobile && !isWifi && !usingHotspot) {//Server is running but device is not connected to a network
 
-                qrBitmap = QRCode.from(serverURL).withSize(200,200).bitmap();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#ff9900'>" + getString(R.string.server_status_not_connected) + "</font>",  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+                } else {
+                    tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#ff9900'>" + getString(R.string.server_status_not_connected) + "</font>"), TextView.BufferType.SPANNABLE);
+                }
+
+                qrImage.setImageDrawable(getDrawable(R.drawable.qr_placeholder));
+                qrImage.setClickable(false);
+
+                fab_share.startAnimation(fab_close);
+                fab_copy.startAnimation(fab_close);
+                tv_server_desc.setText(getString(R.string.server_status_url_not_connected));
+
+            } else if(isMobile && !usingHotspot && !isWifi) {//Only connected to mobile data
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#ff9900'>" + getString(R.string.server_status_using_mobile_data) + "</font>",  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+                } else {
+                    tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#ff9900'>" + getString(R.string.server_status_using_mobile_data) + "</font>"), TextView.BufferType.SPANNABLE);
+                }
+
+                qrImage.setImageDrawable(getDrawable(R.drawable.qr_placeholder));
+                qrImage.setClickable(false);
+
+                fab_share.startAnimation(fab_close);
+                fab_copy.startAnimation(fab_close);
+                tv_server_desc.setText(getString(R.string.server_status_url_mobile_data));
+
+            } else {//everything is fine
+                if(serverURL == null || !serverURL.equals(boundServerService.server.getURL())) { //Only recreate the QR Code when the URL changed
+                    serverURL = boundServerService.server.getURL();
+
+                    qrBitmap = QRCode.from(serverURL).withSize(200,200).bitmap();
+                }
+
+                qrImage.setImageBitmap(qrBitmap);
+                qrImage.setClickable(true);
+
+                tv_server_desc.setText(getString(R.string.server_status_url, serverURL));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#009933'>" + getString(R.string.server_running) + "</font>",  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+                } else {
+                    tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#009933'>" + getString(R.string.server_running) + "</font>"), TextView.BufferType.SPANNABLE);
+                }
+
+                fab_share.startAnimation(fab_open);
+                fab_copy.startAnimation(fab_open);
             }
-
-            qrImage.setImageBitmap(qrBitmap);
-            qrImage.setClickable(true);
-
-            tv_server_desc.setText(getString(R.string.server_status_url, serverURL));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#009933'>" + getString(R.string.server_running) + "</font>",  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
-            } else {
-                tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#009933'>" + getString(R.string.server_running) + "</font>"), TextView.BufferType.SPANNABLE);
-            }
-
-            fab_copy.setClickable(true);
-            fab_share.setClickable(true);
-
-            fab_share.startAnimation(fab_open);
-            fab_copy.startAnimation(fab_open);
 
             ColorStateList colorStopServer = ColorStateList.valueOf(getColor(R.color.stop_server));
             fab_toggle_server.setImageDrawable(getDrawable(R.drawable.ic_baseline_stop_24));
             fab_toggle_server.setBackgroundTintList(colorStopServer);
+
         } else {
             tv_server_desc.setText(getString(R.string.server_status_url_disabled));
 
@@ -436,9 +478,6 @@ public class MainActivity extends AppCompatActivity {
             qrImage.setImageDrawable(getDrawable(R.drawable.qr_placeholder));
             qrImage.setClickable(false);
 
-            fab_copy.setClickable(false);
-            fab_share.setClickable(false);
-
             fab_share.startAnimation(fab_close);
             fab_copy.startAnimation(fab_close);
 
@@ -446,6 +485,18 @@ public class MainActivity extends AppCompatActivity {
             fab_toggle_server.setImageDrawable(getDrawable(R.drawable.ic_baseline_play_arrow_24));
             fab_toggle_server.setBackgroundTintList(colorStartServer);
         }
+    }
+
+    public boolean isUsingHotspot(WifiManager wifiManager) {
+        int actualState = 0;
+        try {
+            java.lang.reflect.Method method = wifiManager.getClass().getDeclaredMethod("getWifiApState");
+            method.setAccessible(true);
+            actualState = (Integer) method.invoke(wifiManager, (Object[]) null);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return actualState == 13; //public static int AP_STATE_ENABLED = 13;
     }
 
 

@@ -61,10 +61,13 @@
     <string name="server_status_url_disabled">When using a server, other players in your WiFi-network have access to the same GameLog as you do. However, only you can create events and play game sounds. Use the button below to activate the server.</string>
     <string name="server_running">Running</string>
     <string name="server_stopped">Not Running</string>
-    <string name="share_server_url_string">Let\'s play SecretHitler together. Open my Server at %1$s and make sure you are in the same WiFi network as I am.</string>
+    <string name="share_server_url_string">Let\'s play SecretHitler together! Open the game log by navigating to %1$s and make sure you are in the same WiFi network as I am.</string>
     <string name="share_server_url_title">Share Server URL via</string>
     <string name="server_stopping">Stopping...</string>
     <string name="server_starting">Starting...</string>
     <string name="url_copied_to_clipboard">Server URL copied to clipboard</string>
     <string name="server_status_not_connected">Not Connected</string>
+    <string name="server_status_using_mobile_data">Using Mobile Data</string>
+    <string name="server_status_url_not_connected">The server is running, but your device does not seem to be connected to any network. Once you have connected to WiFi or turned on mobile hotspot, this page will refresh. Use the button below to stop the server.</string>
+    <string name="server_status_url_mobile_data">When using mobile data, no device will be able to access your webserver. Please either use an available WiFi Network or create a mobile hotspot. This page will refresh automatically. Use the button below to stop the server.</string>
 </resources>
