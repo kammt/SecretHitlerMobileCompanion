@@ -66,4 +66,5 @@
     <string name="server_stopping">Stopping...</string>
     <string name="server_starting">Starting...</string>
     <string name="url_copied_to_clipboard">Server URL copied to clipboard</string>
+    <string name="server_status_not_connected">Not Connected</string>
 </resources>

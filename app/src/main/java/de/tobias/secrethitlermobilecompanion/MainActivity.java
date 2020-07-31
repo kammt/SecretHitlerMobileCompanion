@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -66,9 +69,11 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab_share, fab_copy, fab_toggle_server;
     private ImageView qrImage;
     private Bitmap qrBitmap;
+    private Animation fab_close, fab_open;
 
     boolean serverConnected = false;
     private BroadcastReceiver serviceUpdateReceiver;
+    private BroadcastReceiver networkChangeReceiver;
 
     private ServiceConnection serverServiceConnection = new ServiceConnection() {
 
@@ -92,6 +97,32 @@ public class MainActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(networkChangeReceiver);
+        unregisterReceiver(serviceUpdateReceiver);
+        stopAndUnbindServerService();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        setupRecyclerViews();
+        startAndBindServerService();
+
+        GameLog.initialise(cardList);
+        setupBottomMenu();
+        testGameLog();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(ServerSercive.SERVER_STATE_CHANGED);
@@ -106,13 +137,23 @@ public class MainActivity extends AppCompatActivity {
         };
         registerReceiver(serviceUpdateReceiver, filter);
 
-        setupRecyclerViews();
-        startAndBindServerService();
+        networkChangeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
 
-        GameLog.initialise(cardList);
-        setupBottomMenu();
-        testGameLog();
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkChangeReceiver, intentFilter);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+
 
     public void deselectAllMenuItems() {
         Menu menu = bottomNavigationMenu.getMenu();
@@ -299,6 +340,9 @@ public class MainActivity extends AppCompatActivity {
         fab_copy = findViewById(R.id.fab_copy_address);
         fab_toggle_server = findViewById(R.id.fab_toggle_server);
 
+        fab_close = AnimationUtils.loadAnimation(this, R.anim.fab_close);
+        fab_open = AnimationUtils.loadAnimation(this, R.anim.fab_open);
+
         fab_copy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -374,9 +418,8 @@ public class MainActivity extends AppCompatActivity {
             fab_copy.setClickable(true);
             fab_share.setClickable(true);
 
-            ColorStateList colorEnabled = ColorStateList.valueOf(getColor(R.color.colorFascist));
-            fab_share.setBackgroundTintList(colorEnabled);
-            fab_copy.setBackgroundTintList(colorEnabled);
+            fab_share.startAnimation(fab_open);
+            fab_copy.startAnimation(fab_open);
 
             ColorStateList colorStopServer = ColorStateList.valueOf(getColor(R.color.stop_server));
             fab_toggle_server.setImageDrawable(getDrawable(R.drawable.ic_baseline_stop_24));
@@ -396,27 +439,14 @@ public class MainActivity extends AppCompatActivity {
             fab_copy.setClickable(false);
             fab_share.setClickable(false);
 
-            ColorStateList colorDisabled = ColorStateList.valueOf(getColor(R.color.fab_disabled));
-            fab_share.setBackgroundTintList(colorDisabled);
-            fab_copy.setBackgroundTintList(colorDisabled);
+            fab_share.startAnimation(fab_close);
+            fab_copy.startAnimation(fab_close);
 
             ColorStateList colorStartServer = ColorStateList.valueOf(getColor(R.color.start_server));
             fab_toggle_server.setImageDrawable(getDrawable(R.drawable.ic_baseline_play_arrow_24));
             fab_toggle_server.setBackgroundTintList(colorStartServer);
         }
     }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
 
 
     public void setupRecyclerViews() {
@@ -491,17 +521,5 @@ public class MainActivity extends AppCompatActivity {
         GameLog.addEvent(new DeckShuffledEvent(6, 11));
     }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(serviceUpdateReceiver);
-        stopAndUnbindServerService();
-    }
 
 }
