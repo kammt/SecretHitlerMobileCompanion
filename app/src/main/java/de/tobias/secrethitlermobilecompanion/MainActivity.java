@@ -149,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
         };
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        intentFilter.addAction("android.net.wifi.WIFI_AP_STATE_CHANGED");
         registerReceiver(networkChangeReceiver, intentFilter);
     }
 
