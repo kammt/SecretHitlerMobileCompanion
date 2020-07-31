@@ -70,4 +70,24 @@
     <string name="server_status_using_mobile_data">Using Mobile Data</string>
     <string name="server_status_url_not_connected">The server is running, but your device does not seem to be connected to any network. Once you have connected to WiFi or turned on mobile hotspot, this page will refresh. Use the button below to stop the server.</string>
     <string name="server_status_url_mobile_data">When using mobile data, no device will be able to access your webserver. Please either use an available WiFi Network or create a mobile hotspot. This page will refresh automatically. Use the button below to stop the server.</string>
+    <string name="btn_add_player">New Player</string>
+    <string name="new_player">New</string>
+    <string name="btn_ok">Ok</string>
+    <string name="player_name">Player name</string>
+    <string name="title_input_player_name">Input Player Name</string>
+    <string name="error_player_already_exists">That name already exists</string>
+    <string name="new_game">New Game</string>
+    <string name="new_game_description">Tip: Use the button above to add players to your game and adjust the settings below to your liking. When you\'re ready, press the red button to start.</string>
+    <string name="switch_execution">Play a sound at player execution</string>
+    <string name="switch_sounds_policy">Play a sound when a policy is enacted</string>
+    <string name="switch_server">Start a Game Server</string>
+    <string name="switch_server_desc">A Game Server is a website accessible by everyone in your network that enables them to see the entire player and action list on their own device without installing the app.</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="delete_player_msg">This will delete player %1$s</string>
+    <string name="msg_too_little_players">You currently have %1$d players. The official game requires 5 or more players. Continue anyway?</string>
+    <string name="title_too_little_players">Too little players</string>
+    <string name="no_players_added">No players added</string>
+    <string name="no_players_added_msg">You can add players using the button on the top right.</string>
 </resources>

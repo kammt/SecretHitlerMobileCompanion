@@ -29,6 +29,19 @@ public class PlayerList {
         playerList.add(name);
         claimList.add(Claim.NO_CLAIM);
         isDead.add(false);
+        playerRecyclerViewAdapter.notifyItemInserted(playerList.size() - 1);
+    }
+
+    public static void removePlayer(String player) {
+        if(!GameLog.isGameStarted()) {
+            int index = playerList.indexOf(player);
+
+            playerList.remove(player);
+            claimList.remove(index);
+            isDead.remove(index);
+
+            playerRecyclerViewAdapter.notifyItemRemoved(index);
+        }
     }
 
     public static void setClaim(String player, int playerPartyMemberShip, Context context) {
@@ -39,6 +52,10 @@ public class PlayerList {
         if(playerCard != null) {
             setClaimImage(playerCard, playerPartyMemberShip);
         }
+    }
+
+    public static boolean playerAlreadyExists(String name) {
+        return playerList.contains(name);
     }
 
     public static void setClaimImage(CardView cardView, int playerPartyMemberShip) {

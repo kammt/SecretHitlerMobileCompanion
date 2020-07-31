@@ -50,6 +50,8 @@ public class CardSetupHelper {
     public static final int POLICY_PEEK = 105;
     public static final int SPECIAL_ELECTION = 106;
 
+    public static final int GAME_SETUP = 200;
+
 
     public static void setupCard(final LinearLayout linearLayout, final int cardType, final Context context) {
         /*
@@ -103,9 +105,54 @@ public class CardSetupHelper {
             case SPECIAL_ELECTION:
                 setupSpecialElection(linearLayout, context);
                 break;
+            case GAME_SETUP:
+                setupGame(linearLayout, context);
+                break;
             default:
                 throw new IllegalArgumentException("Unknown cardType specified!");
         }
+    }
+
+    private static void setupGame(final LinearLayout linearLayout, final Context c) {
+        CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_game_settings, linearLayout, false);
+
+        final Switch sw_sounds_execution = setupCard.findViewById(R.id.switch_sounds_execution);
+        final Switch sw_sounds_policy = setupCard.findViewById(R.id.switch_sounds_policy);
+        final Switch sw_server = setupCard.findViewById(R.id.switch_server);
+
+        FloatingActionButton fab_create = setupCard.findViewById(R.id.fab_create);
+        fab_create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final MainActivity mainActivity = ((MainActivity) c);
+                int playerCount = PlayerList.getPlayerList().size();
+                if(playerCount == 0) {
+                    new AlertDialog.Builder(c)
+                            .setTitle(c.getString(R.string.no_players_added))
+                            .setMessage(c.getString(R.string.no_players_added_msg))
+                            .setPositiveButton(c.getString(R.string.btn_ok), null)
+                            .show();
+                } else if (playerCount < 5) {
+                    new AlertDialog.Builder(c)
+                            .setMessage(c.getString(R.string.msg_too_little_players, playerCount))
+                            .setTitle(c.getString(R.string.title_too_little_players))
+                            .setNegativeButton(c.getString(R.string.dialog_mismatching_claims_btn_cancel), null)
+                            .setPositiveButton(c.getString(R.string.dialog_mismatching_claims_btn_continue), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mainActivity.startGame(sw_sounds_execution.isChecked(), sw_sounds_policy.isChecked(), sw_server.isChecked());
+                                    linearLayout.removeAllViews();
+                                }
+                            })
+                            .show();
+                } else {
+                    mainActivity.startGame(sw_sounds_execution.isChecked(), sw_sounds_policy.isChecked(), sw_server.isChecked());
+                    linearLayout.removeAllViews();
+                }
+            }
+        });
+
+        linearLayout.addView(setupCard);
     }
 
     private static void setupLegislativeSession(final LinearLayout linearLayout, final Context c) {

@@ -18,6 +18,7 @@ public class GameLog {
     static private RecyclerView cardList;
     static List<GameEvent> eventList;
     private static boolean initialised;
+    private static boolean gameStarted;
 
     private static RecyclerView.Adapter cardListAdapter;
 
@@ -25,8 +26,18 @@ public class GameLog {
 
     private static JSONArray arr;
 
+    public static boolean executionSounds, policySounds;
+
     public static boolean isInitialised() {
         return initialised;
+    }
+
+    public static boolean isGameStarted() {
+        return gameStarted;
+    }
+
+    public static void setGameStarted(boolean isGameStarted) {
+        gameStarted = gameStarted;
     }
 
     public static void initialise(RecyclerView recyclerView) {

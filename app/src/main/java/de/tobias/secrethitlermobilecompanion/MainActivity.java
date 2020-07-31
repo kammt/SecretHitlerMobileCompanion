@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -18,18 +19,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.text.Html;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView cardList, playerCardList;
 
     private ServerSercive boundServerService;
+
+    private TextView tv_nothingHere;
+    private Button btn_createNewGame;
+    private CardView btn_add_player;
 
     private LinearLayout setupLayout;
     private BottomNavigationView bottomNavigationMenu;
@@ -103,12 +113,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setupNewGameCreation();
         setupRecyclerViews();
         startAndBindServerService();
 
-        GameLog.initialise(cardList);
         setupBottomMenu();
-        testGameLog();
+        setGameMode(false);
+        //testGameLog();
     }
 
     @Override
@@ -157,6 +168,90 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopAndUnbindServerService();
+    }
+
+    public void startGame(boolean executionSounds, boolean policySounds, boolean server) {
+        setGameMode(true);
+        if(server) startAndBindServerService();
+        GameLog.policySounds = policySounds;
+        GameLog.executionSounds = executionSounds;
+    }
+
+    public void setGameMode(boolean gameMode) {
+        if(!gameMode) {
+            bottomNavigationMenu.setVisibility(View.GONE);
+            tv_nothingHere.setVisibility(View.VISIBLE);
+            btn_createNewGame.setVisibility(View.VISIBLE);
+            cardList.setVisibility(View.GONE);
+            GameLog.setGameStarted(false);
+        } else {
+            GameLog.initialise(cardList);
+            GameLog.setGameStarted(true);
+            cardList.setVisibility(View.VISIBLE);
+            bottomNavigationMenu.setVisibility(View.VISIBLE);
+            bottomNavigationMenu.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in_bottom));
+            btn_add_player.setVisibility(View.GONE);
+        }
+    }
+
+    public void setupNewGameCreation() {
+        tv_nothingHere = findViewById(R.id.tv_nothing_here);
+        btn_createNewGame = findViewById(R.id.btn_createGame);
+        btn_createNewGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tv_nothingHere.setVisibility(View.GONE);
+                btn_createNewGame.setVisibility(View.GONE);
+                btn_add_player.setVisibility(View.VISIBLE);
+                CardSetupHelper.setupCard(setupLayout, CardSetupHelper.GAME_SETUP, MainActivity.this);
+            }
+        });
+
+        btn_add_player = findViewById(R.id.playerCard_add);
+        btn_add_player.setClickable(true);
+        btn_add_player.setFocusable(true);
+        btn_add_player.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle(getString(R.string.title_input_player_name));
+
+                // Set up the input
+                final EditText input = new EditText(MainActivity.this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                input.setHint(getString(R.string.player_name));
+                builder.setView(input);
+
+                // Set up the buttons
+                builder.setPositiveButton(getText(R.string.btn_ok), null);
+                builder.setNegativeButton(getText(R.string.dialog_mismatching_claims_btn_cancel), null);
+
+                final AlertDialog dialog = builder.create();
+                dialog.show();
+
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {//We use this instead of the normal OnClickListener to prevent the dialog from closing when the button is pressed
+                    @Override
+                    public void onClick(View v) {
+                        String playerName = input.getText().toString();
+                        if(PlayerList.playerAlreadyExists(playerName)) {
+                            input.setError(getString(R.string.error_player_already_exists));
+                            return;
+                        }
+                        if(playerName.matches("")) {
+                            dialog.dismiss();
+                            return;
+                        }
+                        PlayerList.addPlayer(playerName);
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        TextView tv_plus = findViewById(R.id.tv_addplayer);
+        tv_plus.setVisibility(View.VISIBLE);
+        ImageView iv_symbol = findViewById(R.id.img_secretRole);
+        iv_symbol.setAlpha((float) 0.5);
     }
 
     public void deselectAllMenuItems() {

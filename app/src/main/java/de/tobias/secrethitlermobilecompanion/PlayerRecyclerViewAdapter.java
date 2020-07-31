@@ -1,12 +1,14 @@
 package de.tobias.secrethitlermobilecompanion;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -63,16 +65,39 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CardView cv = (CardView) v;
+                if(GameLog.isGameStarted()) {
+                    CardView cv = (CardView) v;
 
-                if(cv.getAlpha() == 1.0) { //if it is unselected, select it
-                    cv.setAlpha( (float) 0.5);
-                    hiddenPlayers.add(player); //add it to the list of hidden players
-                } else { //if it is selected (Alpha is smaller than 1), remove it from the list and reset alpha
-                    cv.setAlpha(1);
-                    hiddenPlayers.remove(player);
+                    if (cv.getAlpha() == 1.0) { //if it is unselected, select it
+                        cv.setAlpha((float) 0.5);
+                        hiddenPlayers.add(player); //add it to the list of hidden players
+                    } else { //if it is selected (Alpha is smaller than 1), remove it from the list and reset alpha
+                        cv.setAlpha(1);
+                        hiddenPlayers.remove(player);
+                    }
+                    GameLog.blurEventsInvolvingHiddenPlayers(hiddenPlayers); //Tell GameLog to update the list of which cards to blur
                 }
-                GameLog.blurEventsInvolvingHiddenPlayers(hiddenPlayers); //Tell GameLog to update the list of which cards to blur
+            }
+        });
+
+        cardView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if(!GameLog.isGameStarted()) {
+                    //In the setup phase, we want to give the user the option to remove a user
+                    new AlertDialog.Builder(context)
+                            .setTitle(context.getString(R.string.are_you_sure))
+                            .setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    PlayerList.removePlayer(player);
+                                }
+                            })
+                            .setNegativeButton(context.getString(R.string.no), null)
+                            .setMessage(context.getString(R.string.delete_player_msg, player))
+                            .show();
+                }
+                return false;
             }
         });
     }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardView"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -35,7 +34,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:fontFamily="@font/germania_one"
-            android:text="TextView"
+            android:text="@string/new_player"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/img_secretRole"
@@ -55,6 +54,20 @@
             app:layout_constraintEnd_toEndOf="@+id/img_secretRole"
             app:layout_constraintStart_toStartOf="@+id/img_secretRole"
             app:layout_constraintTop_toTopOf="@+id/img_secretRole" />
+
+        <TextView
+            android:id="@+id/tv_addplayer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:textColor="#000000"
+            android:textSize="70sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_questionmark"
+            app:layout_constraintEnd_toEndOf="@+id/img_secretRole"
+            app:layout_constraintStart_toStartOf="@+id/img_secretRole"
+            app:layout_constraintTop_toTopOf="@+id/tv_questionmark" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

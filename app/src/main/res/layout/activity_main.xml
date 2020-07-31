@@ -19,6 +19,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <include
+            android:id="@+id/playerCard_add"
+            layout="@layout/card_player_list_single_player"
+            android:layout_width="wrap_content"
+            android:layout_height="135dp"
+            android:layout_marginEnd="4dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/cardSetup"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/playerList" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/playerList"
             android:layout_width="0dp"
@@ -28,7 +39,7 @@
             android:orientation="horizontal"
             android:scrollbars="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/guideline3"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/playerCard_add"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -74,11 +85,11 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btn_createGame"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:backgroundTint="@color/colorAccent"
+            android:backgroundTint="@color/colorLiberal"
             android:text="@string/create_new_game"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
