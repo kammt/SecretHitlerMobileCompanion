@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
             cardList.setVisibility(View.GONE);
             GameLog.setGameStarted(false);
         } else {
-            GameLog.initialise(cardList);
+            GameLog.initialise(cardList, this);
             GameLog.setGameStarted(true);
             cardList.setVisibility(View.VISIBLE);
             bottomNavigationMenu.setVisibility(View.VISIBLE);

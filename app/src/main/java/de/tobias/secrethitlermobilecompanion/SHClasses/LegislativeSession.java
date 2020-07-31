@@ -52,6 +52,14 @@ public class LegislativeSession extends GameEvent {
         isSetup = setup;
     }
 
+    public void setSessionNumber(int sessionNumber) {
+        this.sessionNumber = sessionNumber;
+    }
+
+    public int getSessionNumber() {
+        return sessionNumber;
+    }
+
     @Override
     public void setupSetupCard(CardView cardView) {
         //Setting up Spinners

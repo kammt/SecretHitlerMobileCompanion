@@ -90,4 +90,6 @@
     <string name="title_too_little_players">Too little players</string>
     <string name="no_players_added">No players added</string>
     <string name="no_players_added_msg">You can add players using the button on the top right.</string>
+    <string name="snackbar_removed_message">Event has been deleted</string>
+    <string name="undo">Undo</string>
 </resources>
