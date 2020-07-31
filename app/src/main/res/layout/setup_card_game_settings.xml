@@ -55,8 +55,6 @@
             android:fontFamily="@font/comfortaa_light"
             android:text="@string/switch_execution"
             android:textSize="14sp"
-            android:thumbTint="@color/colorFascist"
-            android:trackTint="@color/colorFascist"
             app:layout_constraintEnd_toEndOf="@+id/switch_sounds_policy"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -68,8 +66,6 @@
             android:checked="true"
             android:fontFamily="@font/comfortaa_light"
             android:text="@string/switch_sounds_policy"
-            android:thumbTint="@color/colorFascist"
-            android:trackTint="@color/colorFascist"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/switch_sounds_execution" />
@@ -82,8 +78,6 @@
             android:checked="true"
             android:fontFamily="@font/comfortaa_light"
             android:text="@string/switch_server"
-            android:thumbTint="@color/colorFascist"
-            android:trackTint="@color/colorFascist"
             app:layout_constraintEnd_toEndOf="@+id/switch_sounds_policy"
             app:layout_constraintTop_toBottomOf="@+id/switch_sounds_policy" />
 
@@ -111,7 +105,7 @@
             android:layout_marginBottom="8dp"
             android:clickable="true"
             android:focusable="true"
-            app:backgroundTint="@color/colorFascist"
+            app:backgroundTint="@color/colorLiberal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView2"

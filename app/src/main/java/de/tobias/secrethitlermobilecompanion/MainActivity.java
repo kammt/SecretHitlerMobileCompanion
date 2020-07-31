@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.Transformation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -191,23 +192,31 @@ public class MainActivity extends AppCompatActivity {
             bottomNavigationMenu.setVisibility(View.VISIBLE);
             bottomNavigationMenu.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in_bottom));
 
-            AlphaAnimation fadeoutAnimation = new AlphaAnimation((float) 1, (float) 0);
-            fadeoutAnimation.setDuration(500);
-            fadeoutAnimation.setAnimationListener(new Animation.AnimationListener() {
+            Animation slideOutRight = AnimationUtils.loadAnimation(this, R.anim.slide_out_right);
+            slideOutRight.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
                 }
-
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     btn_add_player.setVisibility(View.GONE);
                 }
-
                 @Override
                 public void onAnimationRepeat(Animation animation) {
                 }
             });
-            btn_add_player.startAnimation(fadeoutAnimation);
+            btn_add_player.startAnimation(slideOutRight);
+
+            final int newRightMargin = 0;
+            Animation setMarginBack = new Animation() {
+                @Override
+                protected void applyTransformation(float interpolatedTime, Transformation t) {
+                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) playerCardList.getLayoutParams();
+                    params.rightMargin = (int)(newRightMargin * interpolatedTime);
+                    playerCardList.setLayoutParams(params);
+                }
+            };
+            playerCardList.startAnimation(setMarginBack);
         }
     }
 
@@ -217,20 +226,48 @@ public class MainActivity extends AppCompatActivity {
         btn_createNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tv_nothingHere.setVisibility(View.GONE);
-                btn_createNewGame.setVisibility(View.GONE);
                 btn_add_player.setVisibility(View.VISIBLE);
                 CardSetupHelper.setupCard(setupLayout, CardSetupHelper.GAME_SETUP, MainActivity.this);
+
+
+
+                Animation slideInRight = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_right);
+                slideInRight.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) playerCardList.getLayoutParams();
+                        params.rightMargin = btn_add_player.getWidth() + 8;
+                        playerCardList.setLayoutParams(params);
+                    }
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+                btn_add_player.startAnimation(slideInRight);
+
+                AlphaAnimation fadeOut = new AlphaAnimation((float) 1, (float) 0);
+                fadeOut.setDuration(100);
+                tv_nothingHere.startAnimation(fadeOut);
+                btn_createNewGame.startAnimation(fadeOut);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        tv_nothingHere.setVisibility(View.GONE);
+                        btn_createNewGame.setVisibility(View.GONE);
+                    }
+                }, 50);
             }
         });
 
-        AlphaAnimation fadeIn = new AlphaAnimation((float) 0, (float) 1);
-        fadeIn.setDuration(500);
 
         btn_add_player = findViewById(R.id.playerCard_add);
         btn_add_player.setClickable(true);
         btn_add_player.setFocusable(true);
-        btn_add_player.startAnimation(fadeIn);
         btn_add_player.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

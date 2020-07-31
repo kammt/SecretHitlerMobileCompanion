@@ -77,7 +77,7 @@
     <string name="title_input_player_name">Input Player Name</string>
     <string name="error_player_already_exists">That name already exists</string>
     <string name="new_game">New Game</string>
-    <string name="new_game_description">Tip: Use the button above to add players to your game and adjust the settings below to your liking. When you\'re ready, press the red button to start.</string>
+    <string name="new_game_description">Tip: Use the button above to add players to your game and adjust the settings below to your liking. When you\'re ready, press the blue button to start.</string>
     <string name="switch_execution">Play a sound at player execution</string>
     <string name="switch_sounds_policy">Play a sound when a policy is enacted</string>
     <string name="switch_server">Start a Game Server</string>

@@ -79,7 +79,7 @@
         android:clickable="true"
         android:focusable="true"
         app:backgroundTint="@color/stop_server"
-        app:fabSize="normal"
+        app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/fab_copy_address"
         app:layout_constraintStart_toEndOf="@+id/fab_share"

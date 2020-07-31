@@ -577,7 +577,7 @@ public class CardSetupHelper {
 
     private static ArrayAdapter<String> getPlayerNameAdapter(final Context context) {
         return new ArrayAdapter<String>(context,
-                android.R.layout.simple_spinner_item, PlayerList.getPlayerList()) {
+                android.R.layout.simple_spinner_item, PlayerList.getAlivePlayerList()) {
 
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
