@@ -27,10 +27,12 @@ public class ClaimEvent {
 
         c = context;
 
-        MediaPlayer mp;
-        if(playedPolicy == Claim.LIBERAL) mp = MediaPlayer.create(c, R.raw.enactpolicyl);
-        else mp = MediaPlayer.create(c, R.raw.enactpolicyf);
-        mp.start();
+        if(GameLog.policySounds) {
+            MediaPlayer mp;
+            if (playedPolicy == Claim.LIBERAL) mp = MediaPlayer.create(c, R.raw.enactpolicyl);
+            else mp = MediaPlayer.create(c, R.raw.enactpolicyf);
+            mp.start();
+        }
     }
 
     public int getChancellorClaim() {

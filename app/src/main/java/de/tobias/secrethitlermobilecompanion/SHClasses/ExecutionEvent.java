@@ -21,7 +21,7 @@ public class ExecutionEvent extends ExecutiveAction {
         this.executedPlayerName = executedPlayerName;
         PlayerList.setAsDead(executedPlayerName);
 
-        MediaPlayer.create(context, R.raw.playershot).start();
+        if(GameLog.executionSounds) MediaPlayer.create(context, R.raw.playershot).start();
     }
 
     @Override
