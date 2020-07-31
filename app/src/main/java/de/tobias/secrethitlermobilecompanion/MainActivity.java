@@ -173,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void startGame(boolean executionSounds, boolean policySounds, boolean server) {
         setGameMode(true);
+        GameLog.setGameStarted(true);
         if(server) startAndBindServerService();
         GameLog.policySounds = policySounds;
         GameLog.executionSounds = executionSounds;
