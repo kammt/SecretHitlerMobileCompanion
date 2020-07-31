@@ -2,7 +2,6 @@ package de.tobias.secrethitlermobilecompanion;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +9,9 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
@@ -29,29 +22,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobias.secrethitlermobilecompanion.SHClasses.ClaimEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.ExecutionEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.ExecutiveAction;
-import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
-import de.tobias.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
-import de.tobias.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.SpecialElectionEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.VoteEvent;
 
 public class CardSetupHelper {
     /*
     This class is responsible for displaying the setup for each card. It is called from the onClickListeners in the MainActivity
      */
-    public static final int LEGISLATIVE_SESSION = 101;
-    public static final int LOYALTY_INVESTIGATION = 102;
-    public static final int EXECUTION = 103;
-    public static final int DECK_SHUFFLED = 104;
-    public static final int POLICY_PEEK = 105;
-    public static final int SPECIAL_ELECTION = 106;
-
     public static final int GAME_SETUP = 200;
 
 
@@ -89,24 +65,6 @@ public class CardSetupHelper {
          */
 
         switch(cardType) {
-            case LEGISLATIVE_SESSION:
-                setupLegislativeSession(linearLayout, context);
-                break;
-            case LOYALTY_INVESTIGATION:
-                setupLoyaltyInvestigation(linearLayout, context);
-                break;
-            case EXECUTION:
-                setupExecution(linearLayout, context);
-                break;
-            case DECK_SHUFFLED:
-                setupDeckShuffled(linearLayout, context);
-                break;
-            case POLICY_PEEK:
-                setupPolicyPeek(linearLayout, context);
-                break;
-            case SPECIAL_ELECTION:
-                setupSpecialElection(linearLayout, context);
-                break;
             case GAME_SETUP:
                 setupGame(linearLayout, context);
                 break;
@@ -186,396 +144,8 @@ public class CardSetupHelper {
         setupCard.startAnimation(alphaAnimation);
     }
 
-    private static void setupLegislativeSession(final LinearLayout linearLayout, final Context c) {
-        CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_legislative_session, linearLayout, false);
 
-        //Setting up Spinners
-        final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);
-        playerListadapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-        presSpinner.setAdapter(playerListadapter);
-
-        final Spinner chancSpinner = setupCard.findViewById(R.id.spinner_chancellor);
-        chancSpinner.setAdapter(playerListadapter);
-        chancSpinner.setSelection(1); //Setting a different item on the chancellor spinner so they don't have the same name at the beginning
-
-        final Spinner presClaimSpinner = setupCard.findViewById(R.id.spinner_pres_claim);
-        final ArrayAdapter<String> presClaimListadapter = getClaimAdapter(c, Claim.getPresidentClaims());
-        presClaimListadapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-        presClaimSpinner.setAdapter(presClaimListadapter);
-
-        final Spinner chancClaimSpinner = setupCard.findViewById(R.id.spinner_chanc_claim);
-        ArrayAdapter<String> chancClaimListadapter = getClaimAdapter(c, Claim.getChancellorClaims());
-        chancClaimListadapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-        chancClaimSpinner.setAdapter(chancClaimListadapter);
-
-
-        //Initialise all other important bits
-        final LinearLayout ll_policyplayed = setupCard.findViewById(R.id.ll_policy_outcome);
-        final CheckBox cb_vetoed = setupCard.findViewById(R.id.checkBox_policy_vetoed);
-        final Switch sw_votingoutcome = setupCard.findViewById(R.id.switch_vote_outcome);
-        final ImageView iv_fascist = setupCard.findViewById(R.id.img_policy_fascist);
-        final ImageView iv_liberal = setupCard.findViewById(R.id.img_policy_liberal);
-        final FloatingActionButton fab_create = setupCard.findViewById(R.id.fab_create);
-        ImageView iv_cancel = setupCard.findViewById(R.id.img_cancel);
-
-        iv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linearLayout.removeAllViews();
-            }
-        });
-
-        sw_votingoutcome.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    ll_policyplayed.setVisibility(View.GONE);
-                    cb_vetoed.setVisibility(View.GONE);
-                    chancClaimSpinner.setVisibility(View.GONE);
-                    presClaimSpinner.setVisibility(View.GONE);
-                } else {
-                    ll_policyplayed.setVisibility(View.VISIBLE);
-                    cb_vetoed.setVisibility(View.VISIBLE);
-                    chancClaimSpinner.setVisibility(View.VISIBLE);
-                    presClaimSpinner.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-        iv_liberal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                iv_liberal.setAlpha((float) 1);
-                iv_fascist.setAlpha((float) 0.2);
-
-                ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorLiberal));
-                fab_create.setBackgroundTintList(csl);
-                cb_vetoed.setButtonTintList(csl);
-
-                sw_votingoutcome.setThumbTintList(csl);
-                sw_votingoutcome.setTrackTintList(csl);
-            }
-        });
-
-        iv_fascist.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                iv_fascist.setAlpha((float) 1);
-                iv_liberal.setAlpha((float) 0.2);
-
-                ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorFascist));
-                fab_create.setBackgroundTintList(csl);
-                cb_vetoed.setButtonTintList(csl);
-
-                sw_votingoutcome.setThumbTintList(csl);
-                sw_votingoutcome.setTrackTintList(csl);
-            }
-        });
-
-        fab_create.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(presSpinner.getSelectedItem().equals(chancSpinner.getSelectedItem())) {
-                    Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
-                } else {
-                    boolean voteRejected = sw_votingoutcome.isChecked();
-                    String presName = (String) presSpinner.getSelectedItem();
-                    String chancName = (String) chancSpinner.getSelectedItem();
-
-                    final VoteEvent voteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED, c);
-                    final ClaimEvent claimEvent;
-
-                    if(voteRejected) claimEvent = null;
-                    else {
-                        int presClaim = Claim.getClaimInt((String) presClaimSpinner.getSelectedItem());
-                        int chancClaim = Claim.getClaimInt((String) chancClaimSpinner.getSelectedItem());
-
-                        int playedPolicy = (iv_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL;
-                        boolean vetoed = cb_vetoed.isChecked();
-
-                        claimEvent = new ClaimEvent(presName, chancName, presClaim, chancClaim, playedPolicy, vetoed, c);
-                    }
-
-                    if(claimEvent != null && !Claim.doClaimsFit(claimEvent.getPresidentClaim(), claimEvent.getChancellorClaim(), claimEvent.getPlayedPolicy())) {
-                        new AlertDialog.Builder(c)
-                                .setTitle(c.getString(R.string.dialog_mismatching_claims_title))
-                                .setMessage(c.getString(R.string.dialog_mismatching_claims_desc))
-                                .setPositiveButton(c.getString(R.string.dialog_mismatching_claims_btn_continue), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        LegislativeSession legislativeSession = new LegislativeSession(voteEvent, claimEvent, c);
-                                        GameLog.addEvent(legislativeSession);
-                                        linearLayout.removeAllViews();
-                                    }
-                                })
-                                .setNegativeButton(c.getString(R.string.dialog_mismatching_claims_btn_cancel), null)
-                                .show();
-                    } else {
-                        LegislativeSession legislativeSession = new LegislativeSession(voteEvent, claimEvent, c);
-                        GameLog.addEvent(legislativeSession);
-                        linearLayout.removeAllViews();
-                    }
-                }
-            }
-        });
-
-        linearLayout.addView(setupCard);
-    }
-
-
-    private static void setupLoyaltyInvestigation(final LinearLayout linearLayout, final Context c) {
-        CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_loyalty_investigation, linearLayout, false);
-
-        //Setting up Spinners
-        final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);
-        playerListadapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-        presSpinner.setAdapter(playerListadapter);
-
-        final Spinner investigatedSpinner = setupCard.findViewById(R.id.spinner_investigated_player);
-        investigatedSpinner.setAdapter(playerListadapter);
-        investigatedSpinner.setSelection(1); //Setting a different item on the investigated player spinner so they don't have the same name at the beginning
-
-        //Initialising all other important aspects
-        final ImageView iv_fascist = setupCard.findViewById(R.id.img_policy_fascist);
-        final ImageView iv_liberal = setupCard.findViewById(R.id.img_policy_liberal);
-        final FloatingActionButton fab_create = setupCard.findViewById(R.id.fab_create);
-        ImageView iv_cancel = setupCard.findViewById(R.id.img_cancel);
-
-        iv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linearLayout.removeAllViews();
-            }
-        });
-
-        iv_liberal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                iv_liberal.setAlpha((float) 1);
-                iv_fascist.setAlpha((float) 0.2);
-
-                ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorLiberal));
-                fab_create.setBackgroundTintList(csl);
-            }
-        });
-
-        iv_fascist.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                iv_fascist.setAlpha((float) 1);
-                iv_liberal.setAlpha((float) 0.2);
-
-                ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorFascist));
-                fab_create.setBackgroundTintList(csl);
-            }
-        });
-
-        fab_create.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String president = (String) presSpinner.getSelectedItem();
-                String investigatedPlayer = (String) investigatedSpinner.getSelectedItem();
-                int claim = (iv_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL;
-
-                if(president.equals(investigatedPlayer)) {
-                    Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
-                } else {
-                    ExecutiveAction executiveAction = new LoyaltyInvestigationEvent(president, investigatedPlayer, claim, c);
-                    GameLog.addEvent(executiveAction);
-                    linearLayout.removeAllViews();
-                }
-            }
-        });
-
-        linearLayout.addView(setupCard);
-    }
-
-
-    private static void setupExecution(final LinearLayout linearLayout, final Context c) {
-        CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_execution, linearLayout, false);
-
-        //Setting up Spinners
-        final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);
-        playerListadapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-        presSpinner.setAdapter(playerListadapter);
-
-        final Spinner executedSpinner = setupCard.findViewById(R.id.spinner_executed_player);
-        executedSpinner.setAdapter(playerListadapter);
-        executedSpinner.setSelection(1); //Setting a different item on the executed player spinner so they don't have the same name at the beginning
-
-        //Initialising all other important aspects
-        final FloatingActionButton fab_create = setupCard.findViewById(R.id.fab_create);
-        ImageView iv_cancel = setupCard.findViewById(R.id.img_cancel);
-
-        iv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linearLayout.removeAllViews();
-            }
-        });
-
-        fab_create.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String president = (String) presSpinner.getSelectedItem();
-                String executedPlayer = (String) executedSpinner.getSelectedItem();
-
-                if(president.equals(executedPlayer)) {
-                    Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
-                } else {
-                    ExecutiveAction executiveAction = new ExecutionEvent(president, executedPlayer, c);
-                    GameLog.addEvent(executiveAction);
-                    linearLayout.removeAllViews();
-                }
-            }
-        });
-
-        linearLayout.addView(setupCard);
-    }
-
-
-    private static void setupSpecialElection(final LinearLayout linearLayout, final Context c) {
-        /*
-        As the layout we need is quite similar as this one for the execution event, we will use that one, but replace the textView texts to save storage and reduce the apk size
-         */
-
-        CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_execution, linearLayout, false);
-
-        //Changing the text
-        TextView title = setupCard.findViewById(R.id.title);
-        title.setText(c.getString(R.string.new_special_election));
-
-        TextView tvspecialelected = setupCard.findViewById(R.id.txt_executed_player);
-        tvspecialelected.setText(c.getString(R.string.elected));
-
-        //Setting up Spinners
-        final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);
-        playerListadapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-        presSpinner.setAdapter(playerListadapter);
-
-        final Spinner electedSpinner = setupCard.findViewById(R.id.spinner_executed_player);
-        electedSpinner.setAdapter(playerListadapter);
-        electedSpinner.setSelection(1); //Setting a different item on the elected player spinner so they don't have the same name at the beginning
-
-        //Initialising all other important aspects
-        final FloatingActionButton fab_create = setupCard.findViewById(R.id.fab_create);
-        ImageView iv_cancel = setupCard.findViewById(R.id.img_cancel);
-
-        iv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linearLayout.removeAllViews();
-            }
-        });
-
-        fab_create.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String president = (String) presSpinner.getSelectedItem();
-                String electedPlayer = (String) electedSpinner.getSelectedItem();
-
-                if(president.equals(electedPlayer)) {
-                    Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
-                } else {
-                    ExecutiveAction executiveAction = new SpecialElectionEvent(president, electedPlayer, c);
-                    GameLog.addEvent(executiveAction);
-                    linearLayout.removeAllViews();
-                }
-            }
-        });
-
-        linearLayout.addView(setupCard);
-    }
-
-    private static void setupDeckShuffled(final LinearLayout linearLayout, final Context c) {
-        CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_deck_shuffled, linearLayout, false);
-
-        FloatingActionButton fab_create = setupCard.findViewById(R.id.fab_create);
-        ImageView iv_cancel = setupCard.findViewById(R.id.img_cancel);
-        final EditText et_liberalp = setupCard.findViewById(R.id.et_lpolicies);
-        final EditText et_fascistp = setupCard.findViewById(R.id.et_fpolicies);
-
-        iv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linearLayout.removeAllViews();
-            }
-        });
-
-        fab_create.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean failed = false;
-
-                if(et_liberalp.getText().toString().equals("")) {
-                    et_liberalp.setError(c.getString(R.string.cannot_be_empty));
-                    failed = true;
-                }
-
-                if(et_fascistp.getText().toString().equals("")) {
-                    et_fascistp.setError(c.getString(R.string.cannot_be_empty));
-                    failed = true;
-                }
-
-                if(!failed) {
-                    int liberalPolicies = Integer.parseInt(et_liberalp.getText().toString());
-                    int fascistPolicies = Integer.parseInt(et_fascistp.getText().toString());
-                    GameLog.addEvent(new DeckShuffledEvent(liberalPolicies, fascistPolicies));
-                    linearLayout.removeAllViews();
-                }
-            }
-        });
-
-        linearLayout.addView(setupCard);
-    }
-
-    private static void setupPolicyPeek(final LinearLayout linearLayout, final Context c) {
-        CardView setupCard = (CardView) LayoutInflater.from(c).inflate(R.layout.setup_card_policy_peek, linearLayout, false);
-
-        FloatingActionButton fab_create = setupCard.findViewById(R.id.fab_create);
-        ImageView iv_cancel = setupCard.findViewById(R.id.img_cancel);
-        iv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linearLayout.removeAllViews();
-            }
-        });
-
-        final Spinner presSpinner = setupCard.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);
-        playerListadapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-        presSpinner.setAdapter(playerListadapter);
-
-        final Spinner presClaimSpinner = setupCard.findViewById(R.id.spinner_pres_claim);
-        final ArrayAdapter<String> presClaimListadapter = getClaimAdapter(c, Claim.getPresidentClaims());
-        presClaimListadapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-        presClaimSpinner.setAdapter(presClaimListadapter);
-
-        fab_create.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GameLog.addEvent(new PolicyPeekEvent(presSpinner.getSelectedItem().toString(), Claim.getClaimInt(presClaimSpinner.getSelectedItem().toString()), c));
-                linearLayout.removeAllViews();
-            }
-        });
-
-        linearLayout.addView(setupCard);
-    }
-
-
-    private static ArrayAdapter<String> getPlayerNameAdapter(final Context context) {
+    public static ArrayAdapter<String> getPlayerNameAdapter(final Context context) {
         return new ArrayAdapter<String>(context,
                 android.R.layout.simple_spinner_item, PlayerList.getAlivePlayerList()) {
 
@@ -600,7 +170,7 @@ public class CardSetupHelper {
         };
     }
 
-    private static ArrayAdapter<String> getClaimAdapter(final Context context, ArrayList<String> data) {
+    public static ArrayAdapter<String> getClaimAdapter(final Context context, ArrayList<String> data) {
         return new ArrayAdapter<String>(context,
                 android.R.layout.simple_spinner_item, data) {
 

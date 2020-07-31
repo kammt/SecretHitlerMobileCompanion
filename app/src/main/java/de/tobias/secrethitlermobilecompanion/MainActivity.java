@@ -52,7 +52,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobias.secrethitlermobilecompanion.SHClasses.ClaimEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.ExecutionEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
@@ -61,7 +60,6 @@ import de.tobias.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent
 import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
 import de.tobias.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.SpecialElectionEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.VoteEvent;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -337,14 +335,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-                //As running both functions at the same time (Hence two animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        CardSetupHelper.setupCard(setupLayout, CardSetupHelper.LEGISLATIVE_SESSION, MainActivity.this);
-                    }
-                }, 180);
+                GameLog.addEvent(new LegislativeSession(null, null , MainActivity.this, true));
             }
         });
 
@@ -352,14 +343,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-                //As running both functions at the same time (Hence two animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        CardSetupHelper.setupCard(setupLayout, CardSetupHelper.LOYALTY_INVESTIGATION, MainActivity.this);
-                    }
-                }, 180);
+                GameLog.addEvent(new LoyaltyInvestigationEvent(null, null , Claim.NO_CLAIM, MainActivity.this, true));
             }
         });
 
@@ -367,14 +351,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-                //As running both functions at the same time (Hence two animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        CardSetupHelper.setupCard(setupLayout, CardSetupHelper.EXECUTION, MainActivity.this);
-                    }
-                }, 180);
+                GameLog.addEvent(new ExecutionEvent(null, null, MainActivity.this, true));
             }
         });
 
@@ -382,14 +359,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-                //As running both functions at the same time (Hence two animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        CardSetupHelper.setupCard(setupLayout, CardSetupHelper.DECK_SHUFFLED, MainActivity.this);
-                    }
-                }, 180);
+                GameLog.addEvent(new DeckShuffledEvent(0, 0, MainActivity.this, true));
             }
         });
 
@@ -397,14 +367,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-                //As running both functions at the same time (Hence two animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        CardSetupHelper.setupCard(setupLayout, CardSetupHelper.POLICY_PEEK, MainActivity.this);
-                    }
-                }, 180);
+                GameLog.addEvent(new PolicyPeekEvent(null, Claim.NO_CLAIM, MainActivity.this, true));
             }
         });
 
@@ -412,14 +375,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-                //As running both functions at the same time (Hence two animations) would lead to lag, the function to create and display the card is executed after the sheet is gone
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        CardSetupHelper.setupCard(setupLayout, CardSetupHelper.SPECIAL_ELECTION, MainActivity.this);
-                    }
-                }, 180);
+                GameLog.addEvent(new SpecialElectionEvent(null, null, MainActivity.this, true));
             }
         });
 
@@ -705,34 +661,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void testGameLog() {
-        PlayerList.addPlayer("Rüdiger");
-        PlayerList.addPlayer("Hildegunde");
-        PlayerList.addPlayer("Ferdinand");
-        PlayerList.addPlayer("Mario");
-
-
-        VoteEvent ve1 = new VoteEvent("Rüdiger", "Hildegunde", VoteEvent.VOTE_PASSED, this);
-        ClaimEvent ce1 = new ClaimEvent("Rüdiger", "Hildegunde", Claim.RRR, Claim.RR, Claim.FASCIST, false, this);
-
-        GameLog.addEvent(new LegislativeSession(ve1, ce1, this));
-
-        VoteEvent ve2 =new VoteEvent("Hildegunde", "Ferdinand", VoteEvent.VOTE_PASSED, MainActivity.this);
-        ClaimEvent ce2 = new ClaimEvent("Hildegunde", "Ferdinand", Claim.RRB, Claim.RB, Claim.LIBERAL, true, MainActivity.this);
-
-        GameLog.addEvent(new LegislativeSession(ve2, ce2, this));
-
-
-        VoteEvent ve3 =new VoteEvent("Ferdinand", "Mario", VoteEvent.VOTE_FAILED, MainActivity.this);
-        GameLog.addEvent(new LegislativeSession(ve3, null, this));
-
-        GameLog.addEvent(new ExecutionEvent("Ferdinand", "Mario", this));
-        GameLog.addEvent(new PolicyPeekEvent("Ferdinand", Claim.RBB, this));
-        GameLog.addEvent(new LoyaltyInvestigationEvent("Ferdinand", "Mario", Claim.LIBERAL, this));
-        GameLog.addEvent(new SpecialElectionEvent("Ferdinand", "Mario", this));
-
-        GameLog.addEvent(new DeckShuffledEvent(6, 11));
-    }
 
 
 }

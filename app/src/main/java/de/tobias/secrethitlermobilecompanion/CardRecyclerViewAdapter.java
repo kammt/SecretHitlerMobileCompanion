@@ -14,6 +14,8 @@ import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
+import de.tobias.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent;
+import de.tobias.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
 
 public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerViewAdapter.CardViewHolder> {
 
@@ -21,6 +23,13 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
     private static final int EXECUTIVE_ACTION = 1;
     private static final int LEGISLATIVE_SESSION = 0;
     private static final int DECK_SHUFFLED = 2;
+
+    private static final int LEGISLATIVE_SESSION_SETUP = 3;
+    private static final int LOYALTY_INVESTIGATION_SETUP = 4;
+    private static final int EXECUTION_SETUP = 5;
+    private static final int DECK_SHUFFLED_SETUP = 6;
+    private static final int POLICY_PEEK_SETUP = 7;
+
 
     public CardRecyclerViewAdapter(List<GameEvent> events){
         this.events = events;
@@ -43,14 +52,23 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
         //The card can use two layouts - Legislative session or Executive Action. Thus we check to which class the Event belongs
-        View v;
+        View v = null;
         if(type == LEGISLATIVE_SESSION) {
-            //It is a legislative session - then we inflate the correct layout
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_legislative_session, viewGroup, false);
+        } else if (type == LEGISLATIVE_SESSION_SETUP) {
+            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_legislative_session, viewGroup, false);
         } else if (type == EXECUTIVE_ACTION) {
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_executive_action, viewGroup, false);
-        } else {
+        } else if (type == DECK_SHUFFLED){
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_deck_shuffled, viewGroup, false);
+        } else if (type == LOYALTY_INVESTIGATION_SETUP) {
+            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_loyalty_investigation, viewGroup, false);
+        } else if (type == EXECUTION_SETUP) {
+            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_execution, viewGroup, false);
+        } else if (type == DECK_SHUFFLED_SETUP) {
+            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_deck_shuffled, viewGroup, false);
+        } else if (type == POLICY_PEEK_SETUP) {
+            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_policy_peek, viewGroup, false);
         }
         CardViewHolder cardViewHolder = new CardViewHolder(v);
         return cardViewHolder;
@@ -60,7 +78,8 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
     public void onBindViewHolder(CardViewHolder cardViewHolder, int i) {
         CardView cv = cardViewHolder.cv;
         GameEvent event = events.get(i);
-        event.setupCard(cv);
+        if(event.isSetup) event.setupSetupCard(cv);
+        else event.setupCard(cv);
     }
 
 
@@ -71,9 +90,17 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
         View v;
         if(event.getClass().isAssignableFrom(LegislativeSession.class)) {
             //It is a legislative session - then we inflate the correct layout
-            return LEGISLATIVE_SESSION;
+            if(event.isSetup) return LEGISLATIVE_SESSION_SETUP;
+            else return LEGISLATIVE_SESSION;
         } else if(event.getClass() == DeckShuffledEvent.class) {
-            return DECK_SHUFFLED;
+            if(event.isSetup) return DECK_SHUFFLED_SETUP;
+            else return DECK_SHUFFLED;
+        } else if(event.isSetup) {
+
+            if(event.getClass() == LoyaltyInvestigationEvent.class) return LOYALTY_INVESTIGATION_SETUP;
+            else if(event.getClass() == PolicyPeekEvent.class) return POLICY_PEEK_SETUP;
+            else return EXECUTION_SETUP;
+
         } else return EXECUTIVE_ACTION;
     }
 

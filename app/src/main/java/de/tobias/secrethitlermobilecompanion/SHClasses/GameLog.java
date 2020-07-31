@@ -36,8 +36,25 @@ public class GameLog {
         return gameStarted;
     }
 
+    public static void notifySetupPhaseLeft() {
+        int position = eventList.size() - 1;
+        GameEvent event = eventList.get(position);
+
+        try {
+            arr.put(event.getJSON());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        cardListAdapter.notifyItemChanged(position);
+    }
+
+    public static void remove(GameEvent event) {
+        eventList.remove(event);
+        cardListAdapter.notifyItemRemoved(eventList.size());
+    }
+
     public static void setGameStarted(boolean isGameStarted) {
-        gameStarted = gameStarted;
+        gameStarted = isGameStarted;
     }
 
     public static void initialise(RecyclerView recyclerView) {
@@ -56,10 +73,12 @@ public class GameLog {
         eventList.add(event);
         cardListAdapter.notifyItemInserted(eventList.size() - 1);
         try {
-            arr.put(event.getJSON());
+            if(!event.isSetup) arr.put(event.getJSON());
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        if(event.isSetup) cardList.smoothScrollToPosition(eventList.size() - 1);
     }
 
     public static void blurEventsInvolvingHiddenPlayers(ArrayList<String> hiddenPlayers) {
@@ -67,7 +86,7 @@ public class GameLog {
 
         for(int i = 0; i < eventList.size(); i++) {
             View card = cardList.getLayoutManager().findViewByPosition(i);
-            if(eventList.get(i).allInvolvedPlayersAreUnselected(hiddenPlayers)) {
+            if(!eventList.get(i).isSetup && eventList.get(i).allInvolvedPlayersAreUnselected(hiddenPlayers)) {
                 cardIndexesToBlur.add(i);
                 if(card != null) card.setAlpha((float) 0.5);    //When the Card is not in view, the view returned will be null. Hence, we have to check
             } else if (card != null && card.getAlpha() < 1) {   //If it shouldn't be blurred, we have to check if it is in view (not null) and is still blurred. If so, we have to un-blur it

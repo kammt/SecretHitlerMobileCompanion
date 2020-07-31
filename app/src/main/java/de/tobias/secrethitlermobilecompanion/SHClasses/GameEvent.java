@@ -13,6 +13,9 @@ public abstract class GameEvent {
         This simplifies the handling of different event types by the GameLog class.
      */
 
+    public boolean isSetup = false;
+    public abstract void setupSetupCard(CardView cardView);
+
     public abstract void setupCard(CardView cardView); //Called by the RecyclerViewAdapter. The classes have to set up the card e.g. insert the President and Chancellor names
     public abstract boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers); //Should return true if all involved Players are unselected. Necessary for event blurring, see GameLog.java for usage
 

@@ -2,22 +2,34 @@ package de.tobias.secrethitlermobilecompanion.SHClasses;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
 import android.text.Html;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import de.tobias.secrethitlermobilecompanion.CardSetupHelper;
 import de.tobias.secrethitlermobilecompanion.R;
 
 public class LegislativeSession extends GameEvent {
@@ -32,11 +44,156 @@ public class LegislativeSession extends GameEvent {
     private Context c;
     private static ColorStateList oldcolors;
 
-    public LegislativeSession(VoteEvent voteEvent, ClaimEvent claimEvent, Context context) {
+    public LegislativeSession(VoteEvent voteEvent, ClaimEvent claimEvent, Context context, boolean setup) {
         sessionNumber = GameLog.legSessionNo++;
         this.voteEvent = voteEvent;
         this.claimEvent = claimEvent;
         c = context;
+        isSetup = setup;
+    }
+
+    @Override
+    public void setupSetupCard(CardView cardView) {
+        //Setting up Spinners
+        final Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
+        ArrayAdapter<String> playerListadapter = CardSetupHelper.getPlayerNameAdapter(c);
+        playerListadapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        presSpinner.setAdapter(playerListadapter);
+
+        final Spinner chancSpinner = cardView.findViewById(R.id.spinner_chancellor);
+        chancSpinner.setAdapter(playerListadapter);
+        chancSpinner.setSelection(1); //Setting a different item on the chancellor spinner so they don't have the same name at the beginning
+
+        final Spinner presClaimSpinner = cardView.findViewById(R.id.spinner_pres_claim);
+        final ArrayAdapter<String> presClaimListadapter = CardSetupHelper.getClaimAdapter(c, Claim.getPresidentClaims());
+        presClaimListadapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        presClaimSpinner.setAdapter(presClaimListadapter);
+
+        final Spinner chancClaimSpinner = cardView.findViewById(R.id.spinner_chanc_claim);
+        ArrayAdapter<String> chancClaimListadapter = CardSetupHelper.getClaimAdapter(c, Claim.getChancellorClaims());
+        chancClaimListadapter.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        chancClaimSpinner.setAdapter(chancClaimListadapter);
+
+
+        //Initialise all other important bits
+        final LinearLayout ll_policyplayed = cardView.findViewById(R.id.ll_policy_outcome);
+        final CheckBox cb_vetoed = cardView.findViewById(R.id.checkBox_policy_vetoed);
+        final Switch sw_votingoutcome = cardView.findViewById(R.id.switch_vote_outcome);
+        final ImageView iv_fascist = cardView.findViewById(R.id.img_policy_fascist);
+        final ImageView iv_liberal = cardView.findViewById(R.id.img_policy_liberal);
+        final FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
+        ImageView iv_cancel = cardView.findViewById(R.id.img_cancel);
+
+        iv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GameLog.remove(GameLog.eventList.get(GameLog.eventList.size() - 1));
+            }
+        });
+
+        //When the switch is changed, we want certain UI elements to disappear
+        sw_votingoutcome.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    ll_policyplayed.setVisibility(View.GONE);
+                    cb_vetoed.setVisibility(View.GONE);
+                    chancClaimSpinner.setVisibility(View.GONE);
+                    presClaimSpinner.setVisibility(View.GONE);
+                } else {
+                    ll_policyplayed.setVisibility(View.VISIBLE);
+                    cb_vetoed.setVisibility(View.VISIBLE);
+                    chancClaimSpinner.setVisibility(View.VISIBLE);
+                    presClaimSpinner.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        //Changing the color scheme to liberal blue
+        iv_liberal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                iv_liberal.setAlpha((float) 1);
+                iv_fascist.setAlpha((float) 0.2);
+
+                ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorLiberal));
+                fab_create.setBackgroundTintList(csl);
+                cb_vetoed.setButtonTintList(csl);
+
+                sw_votingoutcome.setThumbTintList(csl);
+                sw_votingoutcome.setTrackTintList(csl);
+            }
+        });
+
+        //Changing the color scheme to fascist red
+        iv_fascist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                iv_fascist.setAlpha((float) 1);
+                iv_liberal.setAlpha((float) 0.2);
+
+                ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorFascist));
+                fab_create.setBackgroundTintList(csl);
+                cb_vetoed.setButtonTintList(csl);
+
+                sw_votingoutcome.setThumbTintList(csl);
+                sw_votingoutcome.setTrackTintList(csl);
+            }
+        });
+
+
+        fab_create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(presSpinner.getSelectedItem().equals(chancSpinner.getSelectedItem())) {
+
+                    Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
+
+                } else {
+
+                    boolean voteRejected = sw_votingoutcome.isChecked();
+                    String presName = (String) presSpinner.getSelectedItem();
+                    String chancName = (String) chancSpinner.getSelectedItem();
+
+                    voteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED, c);
+
+                    if(voteRejected) {
+                        claimEvent = null;
+                    } else {
+                        int presClaim = Claim.getClaimInt((String) presClaimSpinner.getSelectedItem());
+                        int chancClaim = Claim.getClaimInt((String) chancClaimSpinner.getSelectedItem());
+
+                        int playedPolicy = (iv_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL;
+                        boolean vetoed = cb_vetoed.isChecked();
+
+                        claimEvent = new ClaimEvent(presName, chancName, presClaim, chancClaim, playedPolicy, vetoed, c);
+                    }
+
+                    if(claimEvent != null && !Claim.doClaimsFit(claimEvent.getPresidentClaim(), claimEvent.getChancellorClaim(), claimEvent.getPlayedPolicy())) {
+                        new AlertDialog.Builder(c)
+                                .setTitle(c.getString(R.string.dialog_mismatching_claims_title))
+                                .setMessage(c.getString(R.string.dialog_mismatching_claims_desc))
+                                .setPositiveButton(c.getString(R.string.dialog_mismatching_claims_btn_continue), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        isSetup = false;
+                                        GameLog.notifySetupPhaseLeft();
+                                    }
+                                })
+                                .setNegativeButton(c.getString(R.string.dialog_mismatching_claims_btn_cancel), null)
+                                .show();
+                    } else {
+                        isSetup = false;
+                        GameLog.notifySetupPhaseLeft();
+                    }
+
+                }
+            }
+        });
     }
 
     @SuppressLint("SetTextI18n")
