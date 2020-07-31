@@ -26,7 +26,6 @@
             android:layout_height="135dp"
             android:layout_marginEnd="4dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/cardSetup"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/playerList" />
 
@@ -69,25 +68,15 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
-        <LinearLayout
-            android:id="@+id/cardSetup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:animateLayoutChanges="false"
-            android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@+id/playerList"
-            tools:layout_editor_absoluteX="0dp"></LinearLayout>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/cardList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardSetup" />
+            app:layout_constraintTop_toBottomOf="@+id/playerList" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline3"
@@ -97,10 +86,12 @@
             app:layout_constraintGuide_begin="143dp" />
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/coordinatorLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <include layout="@layout/bottom_sheet_add_event" />
+
             <include layout="@layout/bottom_sheet_server_status" />
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

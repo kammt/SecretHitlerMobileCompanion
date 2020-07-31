@@ -182,12 +182,10 @@ public class MainActivity extends AppCompatActivity {
             bottomNavigationMenu.setVisibility(View.GONE);
             tv_nothingHere.setVisibility(View.VISIBLE);
             btn_createNewGame.setVisibility(View.VISIBLE);
-            cardList.setVisibility(View.GONE);
             GameLog.setGameStarted(false);
         } else {
             GameLog.initialise(cardList, this);
             GameLog.setGameStarted(true);
-            cardList.setVisibility(View.VISIBLE);
             bottomNavigationMenu.setVisibility(View.VISIBLE);
             bottomNavigationMenu.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in_bottom));
 
@@ -226,9 +224,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 btn_add_player.setVisibility(View.VISIBLE);
-                CardSetupHelper.setupCard(setupLayout, CardSetupHelper.GAME_SETUP, MainActivity.this);
-
-
+                GameLog.initialise(cardList, MainActivity.this);
+                GameLog.addEvent(new GameSetup(MainActivity.this));
 
                 Animation slideInRight = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_right);
                 slideInRight.setAnimationListener(new Animation.AnimationListener() {
@@ -330,7 +327,6 @@ public class MainActivity extends AppCompatActivity {
         bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
 
         //Setting up the OnClickListeners. For this, we get each ConstraintLayout by using findViewById
-        setupLayout = findViewById(R.id.cardSetup);
         bottomSheetAdd.findViewById(R.id.legislative_session).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

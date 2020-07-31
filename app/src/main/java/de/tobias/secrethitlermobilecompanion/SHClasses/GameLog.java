@@ -77,6 +77,7 @@ public class GameLog {
 
     public static void setGameStarted(boolean isGameStarted) {
         gameStarted = isGameStarted;
+        if(isGameStarted) setupSwipeToDelete();
     }
 
     public static void initialise(RecyclerView recyclerView, Context context) {
@@ -90,7 +91,6 @@ public class GameLog {
         cardList = recyclerView;
         cardListAdapter = new CardRecyclerViewAdapter(eventList);
         cardList.setAdapter(cardListAdapter);
-        setupSwipeToDelete();
         initialised = true;
     }
 

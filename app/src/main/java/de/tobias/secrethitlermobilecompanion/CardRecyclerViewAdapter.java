@@ -30,6 +30,8 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
     private static final int DECK_SHUFFLED_SETUP = 6;
     private static final int POLICY_PEEK_SETUP = 7;
 
+    private static final int GAME_SETUP = 8;
+
 
     public CardRecyclerViewAdapter(List<GameEvent> events){
         this.events = events;
@@ -69,6 +71,8 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_deck_shuffled, viewGroup, false);
         } else if (type == POLICY_PEEK_SETUP) {
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_policy_peek, viewGroup, false);
+        } else if (type == GAME_SETUP) {
+            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_game_settings, viewGroup, false);
         }
         CardViewHolder cardViewHolder = new CardViewHolder(v);
         return cardViewHolder;
@@ -99,6 +103,7 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
 
             if(event.getClass() == LoyaltyInvestigationEvent.class) return LOYALTY_INVESTIGATION_SETUP;
             else if(event.getClass() == PolicyPeekEvent.class) return POLICY_PEEK_SETUP;
+            else if (event.getClass() == GameSetup.class) return GAME_SETUP;
             else return EXECUTION_SETUP;
 
         } else return EXECUTIVE_ACTION;
