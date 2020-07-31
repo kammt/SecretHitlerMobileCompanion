@@ -2,6 +2,8 @@ package de.tobias.secrethitlermobilecompanion;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,9 +48,20 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
     @Override
     public PlayerCardViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
         //We have to differentiate between the first player and other players, as the first player need extra margin_left on his card. This has been solved using two layouts
-        View v;
-        if(type == 0) v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_player_list_single_player_first_entry, viewGroup, false);
-        else v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_player_list_single_player, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_player_list_single_player, viewGroup, false);
+
+        if(type == 0) {
+            Resources r = context.getResources();
+            int px = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    16,
+                    r.getDisplayMetrics()
+            );
+
+            RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) v.getLayoutParams();
+            params.leftMargin = px;
+            v.setLayoutParams(params);
+        }
 
         PlayerCardViewHolder cardViewHolder = new PlayerCardViewHolder(v);
         return cardViewHolder;
