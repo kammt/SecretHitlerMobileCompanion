@@ -32,9 +32,17 @@ public class ExecutionEvent extends ExecutiveAction {
         isSetup = setup;
 
         if(!setup) {
-            PlayerList.setAsDead(executedPlayerName);
+            PlayerList.setAsDead(executedPlayerName, true);
             if(GameLog.executionSounds) MediaPlayer.create(context, R.raw.playershot).start();
         }
+    }
+
+    public void resetOnRemoval() {
+        PlayerList.setAsDead(executedPlayerName, false);
+    }
+
+    public void undoRemoval() {
+        PlayerList.setAsDead(executedPlayerName, true);
     }
 
     @Override
@@ -80,7 +88,7 @@ public class ExecutionEvent extends ExecutiveAction {
                 if(presidentName.equals(executedPlayerName)) {
                     Toast.makeText(context, context.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
                 } else {
-                    PlayerList.setAsDead(executedPlayerName);
+                    PlayerList.setAsDead(executedPlayerName, true);
                     if(GameLog.executionSounds) MediaPlayer.create(context, R.raw.playershot).start();
                     isSetup = false;
                     GameLog.notifySetupPhaseLeft();

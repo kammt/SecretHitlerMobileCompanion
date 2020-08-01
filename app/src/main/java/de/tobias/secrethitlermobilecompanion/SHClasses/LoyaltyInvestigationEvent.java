@@ -33,8 +33,16 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
         this.playerName = playerName;
         this.claim = claim;
         this.c = context;
-        if(!setup) PlayerList.setClaim(playerName, claim, context);
+        if(!setup) PlayerList.setClaim(playerName, claim);
         isSetup = setup;
+    }
+
+    public void resetOnRemoval() {
+        PlayerList.setClaim(playerName, Claim.NO_CLAIM);
+    }
+
+    public void undoRemoval() {
+        PlayerList.setClaim(playerName, claim);
     }
 
     @Override
@@ -106,7 +114,7 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
                     Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
                 } else {
                     isSetup = false;
-                    PlayerList.setClaim(playerName, claim, c);
+                    PlayerList.setClaim(playerName, claim);
                     GameLog.notifySetupPhaseLeft();
                 }
             }

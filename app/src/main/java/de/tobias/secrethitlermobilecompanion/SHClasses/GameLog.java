@@ -56,11 +56,14 @@ public class GameLog {
     }
 
     public static void remove(GameEvent event) {
+        int position = eventList.indexOf(event);
         if(!event.isSetup) arr.remove(eventList.indexOf(event));
-        eventList.remove(event);
-        cardListAdapter.notifyItemRemoved(eventList.size());
+        eventList.remove(position);
+        cardListAdapter.notifyItemRemoved(position);
 
-        if(event.getClass() == LegislativeSession.class) reSetSessionNumber();
+        if(event.getClass() == ExecutionEvent.class && !event.isSetup) ((ExecutionEvent) event).resetOnRemoval();
+        if(event.getClass() == LoyaltyInvestigationEvent.class && !event.isSetup) ((LoyaltyInvestigationEvent) event).resetOnRemoval();
+        if(event.getClass() == LegislativeSession.class && !event.isSetup) reSetSessionNumber();
     }
 
     public static void undoRemoval(GameEvent event, int oldPosition) {
@@ -72,7 +75,9 @@ public class GameLog {
         eventList.add(oldPosition, event);
         cardListAdapter.notifyItemInserted(oldPosition);
 
-        if(event.getClass() == LegislativeSession.class) reSetSessionNumber();
+        if(event.getClass() == ExecutionEvent.class && !event.isSetup) ((ExecutionEvent) event).undoRemoval();
+        if(event.getClass() == LoyaltyInvestigationEvent.class && !event.isSetup) ((LoyaltyInvestigationEvent) event).undoRemoval();
+        if(event.getClass() == LegislativeSession.class && !event.isSetup) reSetSessionNumber();
     }
 
     public static void setGameStarted(boolean isGameStarted) {

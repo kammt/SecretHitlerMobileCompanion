@@ -44,14 +44,10 @@ public class PlayerList {
         }
     }
 
-    public static void setClaim(String player, int playerPartyMemberShip, Context context) {
+    public static void setClaim(String player, int playerPartyMemberShip) {
         int position = playerList.indexOf(player);
-        claimList.add(position, playerPartyMemberShip);
-
-        CardView playerCard = (CardView) playerListRecyclerView.getLayoutManager().findViewByPosition(position);
-        if(playerCard != null) {
-            setClaimImage(playerCard, playerPartyMemberShip);
-        }
+        claimList.set(position, playerPartyMemberShip);
+        playerRecyclerViewAdapter.notifyItemChanged(position);
     }
 
     public static boolean playerAlreadyExists(String name) {
@@ -110,14 +106,10 @@ public class PlayerList {
         c = context;
     }
 
-    public static void setAsDead(String playerName) {
+    public static void setAsDead(String playerName, boolean dead) {
         int position = playerList.indexOf(playerName);
-        isDead.add(position, true);
-
-        CardView playerCard = (CardView) playerListRecyclerView.getLayoutManager().findViewByPosition(position);
-        if(playerCard != null) {
-            setDeadSymbol(playerCard);
-        }
+        isDead.set(position, dead);
+        playerRecyclerViewAdapter.notifyItemChanged(position);
     }
 
     public static boolean isDead(int playerPosition) {
