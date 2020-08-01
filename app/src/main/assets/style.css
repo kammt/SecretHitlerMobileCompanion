@@ -39,10 +39,6 @@ body {
     font-size: 1.3rem;
 }
 
-.fa-bars {
-    color: var(--beige);
-}
-
 /* Player pane */
 #player-pane {
     /* Leave this value here (see index.js constructor of player pane) */
