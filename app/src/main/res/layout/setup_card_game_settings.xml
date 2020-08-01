@@ -79,7 +79,7 @@
             android:fontFamily="@font/comfortaa_light"
             android:text="@string/switch_server"
             app:layout_constraintEnd_toEndOf="@+id/switch_sounds_policy"
-            app:layout_constraintTop_toBottomOf="@+id/switch_sounds_policy" />
+            app:layout_constraintTop_toBottomOf="@+id/switch_sounds_end" />
 
         <TextView
             android:id="@+id/textView2"
@@ -110,6 +110,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView2"
             app:srcCompat="@drawable/ic_baseline_check_24" />
+
+        <Switch
+            android:id="@+id/switch_sounds_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:checked="true"
+            android:fontFamily="@font/comfortaa_light"
+            android:text="@string/sounds_end"
+            app:layout_constraintEnd_toEndOf="@+id/switch_sounds_policy"
+            app:layout_constraintTop_toBottomOf="@+id/switch_sounds_policy" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
