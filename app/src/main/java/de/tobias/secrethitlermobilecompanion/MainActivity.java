@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         setGameMode(false);
 
         autoCreateGame();
-        displayEndGameOptions();
+        //displayEndGameOptions();
     }
 
     @Override
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
         bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
 
         GameLog.addEvent(new GameEndCard(this));
-        GameLog.disableSwipeToDelete();
+        GameLog.swipeEnabled = false;
     }
 
     public void endGame() {

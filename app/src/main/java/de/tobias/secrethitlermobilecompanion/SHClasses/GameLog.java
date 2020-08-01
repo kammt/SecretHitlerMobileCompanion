@@ -3,7 +3,6 @@ package de.tobias.secrethitlermobilecompanion.SHClasses;
 import android.content.Context;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,6 +35,8 @@ public class GameLog {
 
     private static int liberalPolicies = 0;
     private static int fascistPolicies = 0;
+
+    public static boolean swipeEnabled = false;
 
     public static boolean executionSounds, policySounds, endSounds;
 
@@ -86,6 +87,7 @@ public class GameLog {
 
     public static void setGameStarted(boolean isGameStarted) {
         gameStarted = isGameStarted;
+        swipeEnabled = isGameStarted;
         if(isGameStarted) setupSwipeToDelete();
     }
 
@@ -175,22 +177,12 @@ public class GameLog {
                 }).show();
             }
 
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return swipeEnabled;
+            }
         };
 
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(cardList);
-    }
-
-    public static void disableSwipeToDelete() {
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, 0) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
-            }
-        }).attachToRecyclerView(cardList);
     }
 }
