@@ -122,7 +122,7 @@ public class PlayerList {
         isDead.set(position, dead);
         playerRecyclerViewAdapter.notifyItemChanged(position);
 
-        if(getAlivePlayerCount() == 2) {
+        if(getAlivePlayerCount() <= 2) {
             ((MainActivity) c).displayEndGameOptions();
         }
     }

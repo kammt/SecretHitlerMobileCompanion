@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         setGameMode(false);
 
         autoCreateGame();
-        //displayEndGameOptions();
+        displayEndGameOptions();
     }
 
     @Override
