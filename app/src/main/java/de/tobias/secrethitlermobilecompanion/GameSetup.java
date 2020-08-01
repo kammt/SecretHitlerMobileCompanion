@@ -35,6 +35,7 @@ public class GameSetup extends GameEvent {
         final Switch sw_sounds_execution = cardView.findViewById(R.id.switch_sounds_execution);
         final Switch sw_sounds_policy = cardView.findViewById(R.id.switch_sounds_policy);
         final Switch sw_server = cardView.findViewById(R.id.switch_server);
+        final Switch sw_sounds_end = cardView.findViewById(R.id.switch_sounds_end);
 
         FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
         fab_create.setOnClickListener(new View.OnClickListener() {
@@ -79,15 +80,14 @@ public class GameSetup extends GameEvent {
                             .setPositiveButton(c.getString(R.string.dialog_mismatching_claims_btn_continue), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    mainActivity.startGame(sw_sounds_execution.isChecked(), sw_sounds_policy.isChecked(), sw_server.isChecked());
+                                    mainActivity.startGame(sw_sounds_execution.isChecked(), sw_sounds_policy.isChecked(), sw_sounds_end.isChecked(), sw_server.isChecked());
                                     cardView.startAnimation(fadeoutAnimation);
                                 }
                             })
                             .show();
                 } else {
-                    mainActivity.startGame(sw_sounds_execution.isChecked(), sw_sounds_policy.isChecked(), sw_server.isChecked());
+                    mainActivity.startGame(sw_sounds_execution.isChecked(), sw_sounds_policy.isChecked(), sw_sounds_end.isChecked(), sw_server.isChecked());
                     cardView.startAnimation(fadeoutAnimation);
-
                 }
             }
         });

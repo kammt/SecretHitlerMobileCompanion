@@ -3,6 +3,7 @@ package de.tobias.secrethitlermobilecompanion.SHClasses;
 import android.content.Context;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,7 +34,10 @@ public class GameLog {
     private static JSONArray arr;
     private static Context c;
 
-    public static boolean executionSounds, policySounds;
+    private static int liberalPolicies = 0;
+    private static int fascistPolicies = 0;
+
+    public static boolean executionSounds, policySounds, endSounds;
 
     public static boolean isInitialised() {
         return initialised;
@@ -96,6 +100,11 @@ public class GameLog {
         cardList = recyclerView;
         cardListAdapter = new CardRecyclerViewAdapter(eventList);
         cardList.setAdapter(cardListAdapter);
+
+        //Reset the policy-count
+        liberalPolicies = 0;
+        fascistPolicies = 0;
+
         initialised = true;
     }
 
@@ -141,7 +150,7 @@ public class GameLog {
         legSessionNo = currentSessionNumber; //Update the global variable
     }
 
-    public static JSONArray getEventsJSON() throws JSONException {
+    public static JSONArray getEventsJSON() {
         return arr;
     }
 
@@ -169,5 +178,19 @@ public class GameLog {
         };
 
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(cardList);
+    }
+
+    public static void disableSwipeToDelete() {
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, 0) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+            }
+        }).attachToRecyclerView(cardList);
     }
 }

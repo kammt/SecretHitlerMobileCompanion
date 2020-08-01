@@ -92,4 +92,12 @@
     <string name="no_players_added_msg">You can add players using the button on the top right.</string>
     <string name="snackbar_removed_message">Event has been deleted</string>
     <string name="undo">Undo</string>
+    <string name="game_ended_title">Game Ended</string>
+    <string name="game_ended_save">Save Game Events</string>
+    <string name="game_ended_who_won">To contribute to your statistics and to play the correct sound, please specify who has won and how.</string>
+    <string name="fascists_win_policies">5 fascist policies enacted</string>
+    <string name="fascists_won_hitler">Hitler elected chancellor</string>
+    <string name="liberals_won_policies">4 liberal policies enacted</string>
+    <string name="liberals_won_hitler">Hitler shot</string>
+    <string name="sounds_end">Play a sound when the game ends</string>
 </resources>

@@ -27,6 +27,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -115,11 +116,12 @@ public class MainActivity extends AppCompatActivity {
 
         setupNewGameCreation();
         setupRecyclerViews();
-
         setupBottomMenu();
+
         setGameMode(false);
 
         autoCreateGame();
+        //displayEndGameOptions();
     }
 
     @Override
@@ -143,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         PlayerList.addPlayer("Björn");
         PlayerList.addPlayer("Knut");
         GameLog.initialise(cardList, this);
-        startGame(true, true, true);
+        startGame(true, true, true, true);
     }
 
     @Override
@@ -181,12 +183,64 @@ public class MainActivity extends AppCompatActivity {
         stopAndUnbindServerService();
     }
 
-    public void startGame(boolean executionSounds, boolean policySounds, boolean server) {
+    public void startGame(boolean executionSounds, boolean policySounds, boolean endSounds, boolean server) {
+        setupBottomMenu();
         setGameMode(true);
         GameLog.setGameStarted(true);
         if(server) startAndBindServerService();
         GameLog.policySounds = policySounds;
         GameLog.executionSounds = executionSounds;
+        GameLog.endSounds = endSounds;
+    }
+
+    public void displayEndGameOptions() {
+        //Make the Menu infunctional
+        bottomNavigationMenu.getMenu().getItem(2).setCheckable(false);
+        bottomNavigationMenu.getMenu().getItem(1).setCheckable(false);
+        bottomNavigationMenu.setOnNavigationItemSelectedListener(null);
+        deselectAllMenuItems();
+        //Hide the BottomSheets
+        bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN);
+        bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        GameLog.addEvent(new GameEndCard(this));
+        GameLog.disableSwipeToDelete();
+    }
+
+    public void endGame() {
+        GameLog.setGameStarted(false);
+        stopAndUnbindServerService();
+
+        Animation swipeOutBottom = new TranslateAnimation(0, 0, 0, 200);
+        swipeOutBottom.setDuration(500);
+        swipeOutBottom.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                //This is that the elements are not hidden until the animations are done
+                setGameMode(false);
+                GameLog.initialise(cardList, MainActivity.this);
+                PlayerList.initialise(playerCardList, MainActivity.this);
+                cardList.setVisibility(View.GONE);
+                playerCardList.setVisibility(View.GONE);
+
+                Animation fadeIn = new AlphaAnimation((float) 0, (float) 1);
+                fadeIn.setDuration(500);
+                tv_nothingHere.startAnimation(fadeIn);
+                btn_createNewGame.startAnimation(fadeIn);
+            }
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        bottomNavigationMenu.startAnimation(swipeOutBottom);
+
+        Animation fadeOut = new AlphaAnimation((float) 1, (float) 0);
+        fadeOut.setDuration(500);
+        cardList.startAnimation(fadeOut);
+        playerCardList.startAnimation(fadeOut);
     }
 
     public void setGameMode(boolean gameMode) {
@@ -196,6 +250,7 @@ public class MainActivity extends AppCompatActivity {
             btn_createNewGame.setVisibility(View.VISIBLE);
             GameLog.setGameStarted(false);
         } else {
+            bottomNavigationMenu.setClickable(true);
             tv_nothingHere.setVisibility(View.GONE);
             btn_createNewGame.setVisibility(View.GONE);
 
@@ -239,6 +294,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 btn_add_player.setVisibility(View.VISIBLE);
+                cardList.setVisibility(View.VISIBLE);
+                playerCardList.setVisibility(View.VISIBLE);
                 GameLog.initialise(cardList, MainActivity.this);
                 GameLog.addEvent(new GameSetup(MainActivity.this));
 
@@ -335,6 +392,10 @@ public class MainActivity extends AppCompatActivity {
         Menu menu = bottomNavigationMenu.getMenu();
         menu.getItem(0).setVisible(false);
         menu.getItem(0).setChecked(true); //As you cannot have no items selected, I created a third item, select that one and set it as hidden #Lifehack
+
+        //When the game ends, the Menu items are disabled. Hence, we enable them again just in case
+        bottomNavigationMenu.getMenu().getItem(2).setCheckable(true);
+        bottomNavigationMenu.getMenu().getItem(1).setCheckable(true);
 
         //initialising the "Add Event" bottom Sheet
         bottomSheetAdd = findViewById(R.id.bottom_sheet_add_event);
@@ -638,7 +699,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
         layoutManager2.setOrientation(RecyclerView.HORIZONTAL);
         playerCardList.setLayoutManager(layoutManager2);
-        PlayerList.setupPlayerList(playerCardList, this);
+        PlayerList.initialise(playerCardList, this);
     }
 
     private void startAndBindServerService() {
