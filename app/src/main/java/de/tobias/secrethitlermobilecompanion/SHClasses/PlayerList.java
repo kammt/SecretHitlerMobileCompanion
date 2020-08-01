@@ -13,6 +13,7 @@ import org.json.JSONArray;
 
 import java.util.ArrayList;
 
+import de.tobias.secrethitlermobilecompanion.MainActivity;
 import de.tobias.secrethitlermobilecompanion.PlayerRecyclerViewAdapter;
 import de.tobias.secrethitlermobilecompanion.R;
 
@@ -55,6 +56,10 @@ public class PlayerList {
     }
 
     public static void setClaimImage(CardView cardView, int playerPartyMemberShip) {
+        /*
+        Receives the Player-card as an input and then adds the claim-symbol to it. Is called by the RecyclerViewAdapter
+         */
+
         Drawable membershipDrawable;
         if(playerPartyMemberShip == Claim.LIBERAL) membershipDrawable = c.getDrawable(R.drawable.membership_liberal);
         else if (playerPartyMemberShip == Claim.FASCIST) membershipDrawable = c.getDrawable(R.drawable.membership_fascist);
@@ -70,6 +75,9 @@ public class PlayerList {
     }
 
     public static void setDeadSymbol(CardView cardView) {
+        /*
+        Receives the Player-card as an input and then adds the dead-symbol to it. Is called by the RecyclerViewAdapter
+         */
         ImageView ivmembership = cardView.findViewById(R.id.img_secretRole);
         ivmembership.setImageDrawable(c.getDrawable(R.drawable.dead));
         ivmembership.setAlpha((float) 1);
@@ -83,6 +91,9 @@ public class PlayerList {
     }
 
     public static ArrayList<String> getAlivePlayerList() {
+        /*
+        Returns a list of all alive players. Is used by the Spinners in the setup cards, as no dead players should be selectable.
+         */
         ArrayList<String> result = new ArrayList<>();
         for(int i = 0; i < playerList.size(); i++) {
             if(!isDead(i)) result.add(playerList.get(i));
@@ -94,7 +105,7 @@ public class PlayerList {
         return claimList;
     }
 
-    public static void setupPlayerList(RecyclerView playerCardList, Context context) {
+    public static void initialise(RecyclerView playerCardList, Context context) {
         playerList = new ArrayList<>();
         claimList = new ArrayList<>();
         isDead = new ArrayList<>();
@@ -110,10 +121,25 @@ public class PlayerList {
         int position = playerList.indexOf(playerName);
         isDead.set(position, dead);
         playerRecyclerViewAdapter.notifyItemChanged(position);
+
+        if(getAlivePlayerCount() == 2) {
+            ((MainActivity) c).displayEndGameOptions();
+        }
+    }
+
+    public static int getAlivePlayerCount() {
+        return getAlivePlayerList().size();
     }
 
     public static boolean isDead(int playerPosition) {
         return isDead.get(playerPosition);
+    }
+
+    public static void reset() {
+        playerList = new ArrayList<>();
+        claimList = new ArrayList<>();
+        isDead = new ArrayList<>();
+        playerRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     public static JSONArray getPlayerListJSON() {
