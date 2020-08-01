@@ -118,7 +118,8 @@ public class MainActivity extends AppCompatActivity {
 
         setupBottomMenu();
         setGameMode(false);
-        //testGameLog();
+
+        autoCreateGame();
     }
 
     @Override
@@ -133,6 +134,17 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
     }
 
+    private void autoCreateGame() {
+        PlayerList.addPlayer("Rüdiger");
+        PlayerList.addPlayer("Markus");
+        PlayerList.addPlayer("Friedrich");
+        PlayerList.addPlayer("Leonard");
+        PlayerList.addPlayer("Anke");
+        PlayerList.addPlayer("Björn");
+        PlayerList.addPlayer("Knut");
+        GameLog.initialise(cardList, this);
+        startGame(true, true, true);
+    }
 
     @Override
     protected void onResume() {
@@ -184,6 +196,9 @@ public class MainActivity extends AppCompatActivity {
             btn_createNewGame.setVisibility(View.VISIBLE);
             GameLog.setGameStarted(false);
         } else {
+            tv_nothingHere.setVisibility(View.GONE);
+            btn_createNewGame.setVisibility(View.GONE);
+
             GameLog.initialise(cardList, this);
             GameLog.setGameStarted(true);
             bottomNavigationMenu.setVisibility(View.VISIBLE);
