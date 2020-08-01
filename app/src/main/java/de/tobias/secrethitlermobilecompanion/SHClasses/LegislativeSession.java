@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.text.Html;
 import android.view.View;
@@ -190,6 +191,7 @@ public class LegislativeSession extends GameEvent {
                                     public void onClick(DialogInterface dialog, int which) {
                                         isSetup = false;
                                         GameLog.notifySetupPhaseLeft();
+                                        playSound();
                                     }
                                 })
                                 .setNegativeButton(c.getString(R.string.dialog_mismatching_claims_btn_cancel), null)
@@ -197,11 +199,21 @@ public class LegislativeSession extends GameEvent {
                     } else {
                         isSetup = false;
                         GameLog.notifySetupPhaseLeft();
+                        playSound();
                     }
 
                 }
             }
         });
+    }
+
+    private void playSound() {
+        if(GameLog.policySounds) {
+            MediaPlayer mp;
+            if (claimEvent.getPlayedPolicy() == Claim.LIBERAL) mp = MediaPlayer.create(c, R.raw.enactpolicyl);
+            else mp = MediaPlayer.create(c, R.raw.enactpolicyf);
+            mp.start();
+        }
     }
 
     @SuppressLint("SetTextI18n")
