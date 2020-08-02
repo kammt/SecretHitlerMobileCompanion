@@ -12,6 +12,7 @@ import android.content.ServiceConnection;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -50,7 +51,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import net.glxn.qrgen.android.QRCode;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Objects;
 
 import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
@@ -604,12 +604,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setServerStatus() {
+        boolean isMobile = false, isWifi = false;
 
-        ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        boolean isMobile = Objects.requireNonNull(manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE))
-                .isConnectedOrConnecting();
-        boolean isWifi = Objects.requireNonNull(manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI))
-                .isConnectedOrConnecting();
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null) {
+            // connected to the internet
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                // connected to wifi
+                isWifi = true;
+            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                // connected to mobile data
+                isMobile = true;
+            }
+        }
         boolean usingHotspot = isUsingHotspot((WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE));
 
         if(boundServerService != null && boundServerService.server.isAlive()) { //ServerService is bound and Server is running
