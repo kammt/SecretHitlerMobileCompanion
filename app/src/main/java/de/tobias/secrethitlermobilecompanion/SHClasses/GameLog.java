@@ -1,8 +1,10 @@
 package de.tobias.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.tobias.secrethitlermobilecompanion.CardRecyclerViewAdapter;
+import de.tobias.secrethitlermobilecompanion.MainActivity;
 import de.tobias.secrethitlermobilecompanion.R;
 
 public class GameLog {
@@ -48,6 +51,10 @@ public class GameLog {
         return gameStarted;
     }
 
+    public static int getLiberalPolicies() {
+        return liberalPolicies;
+    }
+
     public static void notifySetupPhaseLeft() {
         int position = eventList.size() - 1;
         GameEvent event = eventList.get(position);
@@ -58,6 +65,7 @@ public class GameLog {
             e.printStackTrace();
         }
         cardListAdapter.notifyItemChanged(position);
+        if(event.getClass() == LegislativeSession.class) processPolicyChange((LegislativeSession) event, false);
     }
 
     public static void remove(GameEvent event) {
@@ -68,7 +76,10 @@ public class GameLog {
 
         if(event.getClass() == ExecutionEvent.class && !event.isSetup) ((ExecutionEvent) event).resetOnRemoval();
         if(event.getClass() == LoyaltyInvestigationEvent.class && !event.isSetup) ((LoyaltyInvestigationEvent) event).resetOnRemoval();
-        if(event.getClass() == LegislativeSession.class && !event.isSetup) reSetSessionNumber();
+        if(event.getClass() == LegislativeSession.class && !event.isSetup) {
+            reSetSessionNumber();
+            processPolicyChange((LegislativeSession) event, true);
+        }
     }
 
     public static void undoRemoval(GameEvent event, int oldPosition) {
@@ -82,7 +93,10 @@ public class GameLog {
 
         if(event.getClass() == ExecutionEvent.class && !event.isSetup) ((ExecutionEvent) event).undoRemoval();
         if(event.getClass() == LoyaltyInvestigationEvent.class && !event.isSetup) ((LoyaltyInvestigationEvent) event).undoRemoval();
-        if(event.getClass() == LegislativeSession.class && !event.isSetup) reSetSessionNumber();
+        if(event.getClass() == LegislativeSession.class && !event.isSetup) {
+            reSetSessionNumber();
+            processPolicyChange((LegislativeSession) event, false);
+        }
     }
 
     public static void setGameStarted(boolean isGameStarted) {
@@ -119,6 +133,7 @@ public class GameLog {
             e.printStackTrace();
         }
 
+        if(event.getClass() == LegislativeSession.class && !event.isSetup) processPolicyChange((LegislativeSession) event, false);
         if(event.isSetup) cardList.smoothScrollToPosition(eventList.size() - 1);
     }
 
@@ -135,6 +150,44 @@ public class GameLog {
             }
         }
         hiddenEventIndexes = cardIndexesToBlur; //Update the static ArrayList, making it accessible to the RecyclerViewAdapter. When rendering a view (which was null before), it will look up if it has to be blurred or not
+    }
+
+    public static void processPolicyChange(LegislativeSession legislativeSession, boolean removed) {
+        boolean fascist = legislativeSession.getClaimEvent().getPlayedPolicy() == Claim.FASCIST;
+
+        if(removed && fascist) {
+            fascistPolicies--;
+        } else if (removed) {
+            liberalPolicies--;
+        } else if (fascist) {
+            fascistPolicies++;
+        } else liberalPolicies++;
+
+        if(liberalPolicies == 4 && !removed) {
+            new AlertDialog.Builder(c)
+                    .setTitle(c.getString(R.string.title_end_game_policies))
+                    .setMessage(c.getString(R.string.msg_end_game_policies_l))
+                    .setNegativeButton(c.getString(R.string.no), null)
+                    .setPositiveButton(c.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ((MainActivity) c).displayEndGameOptions();
+                        }
+                    })
+                    .show();
+        } else if (fascistPolicies == 5 && !removed) {
+            new AlertDialog.Builder(c)
+                    .setTitle(c.getString(R.string.title_end_game_policies))
+                    .setMessage(c.getString(R.string.msg_end_game_policies_f))
+                    .setNegativeButton(c.getString(R.string.no), null)
+                    .setPositiveButton(c.getString(R.string.yes), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ((MainActivity) c).displayEndGameOptions();
+                        }
+                    })
+                    .show();
+        }
     }
 
     public static void reSetSessionNumber() {

@@ -100,4 +100,7 @@
     <string name="liberals_won_policies">4 liberal policies enacted</string>
     <string name="liberals_won_hitler">Hitler shot</string>
     <string name="sounds_end">Play a sound when the game ends</string>
+    <string name="title_end_game_policies">End Game?</string>
+    <string name="msg_end_game_policies_l">Four liberal policies have been played</string>
+    <string name="msg_end_game_policies_f">5 fascist policies have been played</string>
 </resources>

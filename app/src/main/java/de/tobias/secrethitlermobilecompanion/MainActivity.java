@@ -297,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
                 cardList.setVisibility(View.VISIBLE);
                 playerCardList.setVisibility(View.VISIBLE);
                 GameLog.initialise(cardList, MainActivity.this);
-                GameLog.addEvent(new GameSetup(MainActivity.this));
+                GameLog.addEvent(new GameSetupCard(MainActivity.this));
 
                 Animation slideInRight = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_right);
                 slideInRight.setAnimationListener(new Animation.AnimationListener() {

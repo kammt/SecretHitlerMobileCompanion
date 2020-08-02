@@ -39,6 +39,19 @@ public class GameEndCard extends GameEvent {
         final RadioButton rb_hitler = cardView.findViewById(R.id.rb_win_option_hitler);
         final RadioButton rb_policy = cardView.findViewById(R.id.rb_win_option_policy);
 
+        if(GameLog.getLiberalPolicies() == 4) {
+            iv_liberal.setAlpha((float) 1);
+            iv_fascist.setAlpha((float) 0.2);
+
+            ColorStateList csl = ColorStateList.valueOf(context.getColor(R.color.colorLiberal));
+            fab_end.setBackgroundTintList(csl);
+            rb_hitler.setButtonTintList(csl);
+            rb_policy.setButtonTintList(csl);
+
+            rb_hitler.setText(context.getString(R.string.liberals_won_hitler));
+            rb_policy.setText(context.getString(R.string.liberals_won_policies));
+        }
+
         iv_liberal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -106,7 +106,7 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
 
             if(event.getClass() == LoyaltyInvestigationEvent.class) return LOYALTY_INVESTIGATION_SETUP;
             else if(event.getClass() == PolicyPeekEvent.class) return POLICY_PEEK_SETUP;
-            else if (event.getClass() == GameSetup.class) return GAME_SETUP;
+            else if (event.getClass() == GameSetupCard.class) return GAME_SETUP;
             else if (event.getClass() == GameEndCard.class) return GAME_END;
             else return EXECUTION_SETUP;
 

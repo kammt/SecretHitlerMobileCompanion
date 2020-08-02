@@ -207,6 +207,10 @@ public class LegislativeSession extends GameEvent {
         });
     }
 
+    public ClaimEvent getClaimEvent() {
+        return claimEvent;
+    }
+
     private void playSound() {
         if(GameLog.policySounds) {
             MediaPlayer mp;
