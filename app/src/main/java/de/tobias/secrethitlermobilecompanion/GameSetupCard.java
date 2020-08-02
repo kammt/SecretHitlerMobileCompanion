@@ -21,11 +21,11 @@ import de.tobias.secrethitlermobilecompanion.SHClasses.GameEvent;
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
 
-public class GameSetup extends GameEvent {
+public class GameSetupCard extends GameEvent {
 
     Context c;
 
-    public GameSetup(Context context) {
+    public GameSetupCard(Context context) {
         isSetup = true;
         this.c = context;
     }
@@ -50,7 +50,7 @@ public class GameSetup extends GameEvent {
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        GameLog.remove(GameSetup.this);
+                        GameLog.remove(GameSetupCard.this);
                     }
 
                     @Override
