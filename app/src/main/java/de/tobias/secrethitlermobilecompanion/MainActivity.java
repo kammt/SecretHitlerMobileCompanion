@@ -125,6 +125,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if(GameLog.isGameStarted()) { //Game is currently running, we ask the user if he wants to end the game
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.title_end_game_policies))
+                    .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            displayEndGameOptions();
+                        }
+                    })
+                    .setNegativeButton(getString(R.string.no), null)
+                    .show();
+        } else { //User is in the empty screen, end the activity
+            finish();
+        }
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(networkChangeReceiver);
