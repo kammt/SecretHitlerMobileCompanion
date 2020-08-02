@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
         setGameMode(false);
 
+        //TODO These methods are for testing purposes only and should be removed from the onCreate function after testing
         autoCreateGame();
         //displayEndGameOptions();
     }
@@ -127,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if(GameLog.isGameStarted()) { //Game is currently running, we ask the user if he wants to end the game
+            if(!GameLog.swipeEnabled) return; //This means that the "Game Ended" Screen is currently showing, we do not want to show the dialog during this
+
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.title_end_game_policies))
                     .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
@@ -137,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                     })
                     .setNegativeButton(getString(R.string.no), null)
                     .show();
-        } else { //User is in the empty screen, end the activity
+        } else{ //User is in the empty screen, end the activity
             finish();
         }
     }
