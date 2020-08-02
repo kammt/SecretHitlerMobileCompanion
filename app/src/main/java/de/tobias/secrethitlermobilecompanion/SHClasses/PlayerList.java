@@ -55,6 +55,8 @@ public class PlayerList {
         return playerList.contains(name);
     }
 
+    public static int getPlayerPosition(String name) { return playerList.indexOf(name); }
+
     public static void setClaimImage(CardView cardView, int playerPartyMemberShip) {
         /*
         Receives the Player-card as an input and then adds the claim-symbol to it. Is called by the RecyclerViewAdapter

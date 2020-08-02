@@ -28,6 +28,8 @@ public class GameSetupCard extends GameEvent {
     public GameSetupCard(Context context) {
         isSetup = true;
         this.c = context;
+
+        permitEditing = false;
     }
 
     @Override
@@ -96,6 +98,11 @@ public class GameSetupCard extends GameEvent {
         AlphaAnimation alphaAnimation = new AlphaAnimation((float) 0, (float) 1);
         alphaAnimation.setDuration(500);
         cardView.startAnimation(alphaAnimation);
+    }
+
+    @Override
+    public void setupEditCard(CardView cardView) {
+
     }
 
     @Override

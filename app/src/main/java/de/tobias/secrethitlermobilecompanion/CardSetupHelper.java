@@ -68,4 +68,31 @@ public class CardSetupHelper {
             }
         };
     }
+
+    public static ArrayAdapter<String> getPlayerNameAdapterWithDeadPlayer(final Context context, String deadPlayer) {
+        ArrayList<String> playerList = PlayerList.getAlivePlayerList();
+        playerList.add(deadPlayer);
+        return new ArrayAdapter<String>(context,
+                android.R.layout.simple_spinner_item, playerList) {
+
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+
+                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
+                ((TextView) v).setTypeface(externalFont);
+
+                return v;
+            }
+
+
+            public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
+                View v =super.getDropDownView(position, convertView, parent);
+
+                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
+                ((TextView) v).setTypeface(externalFont);
+
+                return v;
+            }
+        };
+    }
 }

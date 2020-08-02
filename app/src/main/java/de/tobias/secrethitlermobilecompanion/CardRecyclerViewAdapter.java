@@ -3,6 +3,7 @@ package de.tobias.secrethitlermobilecompanion;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -77,16 +78,47 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
         } else if (type == GAME_END) {
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_game_end, viewGroup, false);
         }
-        CardViewHolder cardViewHolder = new CardViewHolder(v);
-        return cardViewHolder;
+        return new CardViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(CardViewHolder cardViewHolder, int i) {
-        CardView cv = cardViewHolder.cv;
-        GameEvent event = events.get(i);
-        if(event.isSetup) event.setupSetupCard(cv);
-        else event.setupCard(cv);
+    public void onBindViewHolder(CardViewHolder cardViewHolder, final int i) {
+        final CardView cv = cardViewHolder.cv;
+        final GameEvent event = events.get(i);
+        if(event.isSetup) {
+            event.setupSetupCard(cv);
+            if(event.isEditing) event.setupEditCard(cv);
+
+            if(event.getClass() != GameEndCard.class && event.getClass() != GameSetupCard.class) { //Checking, since both those cards are marked as setup but do not have cancel buttons
+                //The Cancel button is visible on every card, hence we initialise it here to save code
+                ImageView iv_cancel = cv.findViewById(R.id.img_cancel);
+                iv_cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(!event.isEditing) GameLog.remove(event);
+                        else {
+                            event.isEditing = false;
+                            event.isSetup = false;
+                            GameLog.getCardListAdapter().notifyItemChanged(i);
+                        }
+                    }
+                });
+            }
+
+        } else {
+            event.setupCard(cv);
+            if(event.permitEditing) {
+                cv.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        event.isEditing = true;
+                        event.isSetup = true;
+                        notifyItemChanged(events.indexOf(event));
+                        return false;
+                    }
+                });
+            }
+        }
     }
 
 
@@ -94,14 +126,19 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
     public int getItemViewType(int position) {
         GameEvent event = events.get(position);
         //The card can use three layouts - Legislative session, Deck shuffled or Executive Action. Thus we check to which class the Event belongs
+        //Additionally, there is the possibility that the card is a setup card - requiring a different layout
         View v;
         if(event.getClass().isAssignableFrom(LegislativeSession.class)) {
+
             //It is a legislative session - then we inflate the correct layout
             if(event.isSetup) return LEGISLATIVE_SESSION_SETUP;
             else return LEGISLATIVE_SESSION;
+
         } else if(event.getClass() == DeckShuffledEvent.class) {
+
             if(event.isSetup) return DECK_SHUFFLED_SETUP;
             else return DECK_SHUFFLED;
+
         } else if(event.isSetup) {
 
             if(event.getClass() == LoyaltyInvestigationEvent.class) return LOYALTY_INVESTIGATION_SETUP;

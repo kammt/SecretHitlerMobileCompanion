@@ -36,8 +36,8 @@ public class GameLog {
     private static JSONArray arr;
     private static Context c;
 
-    private static int liberalPolicies = 0;
-    private static int fascistPolicies = 0;
+    public static int liberalPolicies = 0;
+    public static int fascistPolicies = 0;
 
     public static boolean swipeEnabled = false;
 
@@ -55,18 +55,39 @@ public class GameLog {
         return liberalPolicies;
     }
 
-    public static void notifySetupPhaseLeft() {
-        int position = eventList.size() - 1;
-        GameEvent event = eventList.get(position);
+    public static RecyclerView.Adapter getCardListAdapter() {
+        return cardListAdapter;
+    }
 
-        try {
-            arr.put(event.getJSON());
-        } catch (JSONException e) {
-            e.printStackTrace();
+    public static void notifySetupPhaseLeft(GameEvent event) {
+        int position;
+        //We have to differentiate between two separate scenarios. If the event left the Editing phase, we want to change the JSON data at a specific position. If it left setup phase, we just want to add it to the array
+        if(event.isEditing) {
+
+            position = eventList.indexOf(event);
+            event.isEditing = false;
+            try {
+                arr.put(eventList.indexOf(event), event.getJSON());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+
+            position = eventList.size();
+            try {
+                arr.put(event.getJSON());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
+        //Nevertheless, we need to update the RecyclerViewItem
         cardListAdapter.notifyItemChanged(position);
         if(event.getClass() == LegislativeSession.class) processPolicyChange((LegislativeSession) event, false);
+
     }
+
 
     public static void remove(GameEvent event) {
         int position = eventList.indexOf(event);
@@ -153,6 +174,7 @@ public class GameLog {
     }
 
     public static void processPolicyChange(LegislativeSession legislativeSession, boolean removed) {
+        if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_FAILED) return;
         boolean fascist = legislativeSession.getClaimEvent().getPlayedPolicy() == Claim.FASCIST;
 
         if(removed && fascist) {

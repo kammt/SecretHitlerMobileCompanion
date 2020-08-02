@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.Spinner;
 
 import androidx.cardview.widget.CardView;
@@ -47,13 +46,6 @@ public class PolicyPeekEvent extends ExecutiveAction {
     @Override
     public void setupSetupCard(CardView cardView) {
         FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
-        ImageView iv_cancel = cardView.findViewById(R.id.img_cancel);
-        iv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GameLog.remove(GameLog.eventList.get(GameLog.eventList.size() - 1));
-            }
-        });
 
         final Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
         ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);
@@ -73,9 +65,18 @@ public class PolicyPeekEvent extends ExecutiveAction {
                 presidentName = presSpinner.getSelectedItem().toString();
                 claim = Claim.getClaimInt(presClaimSpinner.getSelectedItem().toString());
                 isSetup = false;
-                GameLog.notifySetupPhaseLeft();
+                GameLog.notifySetupPhaseLeft(PolicyPeekEvent.this);
             }
         });
+    }
+
+    @Override
+    public void setupEditCard(CardView cardView) {
+        Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
+        Spinner presClaimSpinner = cardView.findViewById(R.id.spinner_pres_claim);
+
+        presClaimSpinner.setSelection( Claim.getPresidentClaims().indexOf( Claim.getClaimStringForJSON(c, claim)) );
+        presSpinner.setSelection(PlayerList.getPlayerPosition( presidentName ));
     }
 
     @Override

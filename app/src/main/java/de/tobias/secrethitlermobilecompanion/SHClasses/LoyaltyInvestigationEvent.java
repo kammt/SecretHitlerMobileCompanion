@@ -28,6 +28,9 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
     private String presidentName, playerName;
     private int claim;
 
+    //Defining the OnClickListeners outside of the function to call them separately in the setupEditCard() function
+    private View.OnClickListener iv_fascistListener, iv_liberalListener;
+
     public LoyaltyInvestigationEvent(String presidentName, String playerName, int claim, Context context, boolean setup) {
         this.presidentName = presidentName;
         this.playerName = playerName;
@@ -72,16 +75,9 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
         final ImageView iv_fascist = cardView.findViewById(R.id.img_policy_fascist);
         final ImageView iv_liberal = cardView.findViewById(R.id.img_policy_liberal);
         final FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
-        ImageView iv_cancel = cardView.findViewById(R.id.img_cancel);
 
-        iv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GameLog.remove(GameLog.eventList.get(GameLog.eventList.size() - 1));
-            }
-        });
 
-        iv_liberal.setOnClickListener(new View.OnClickListener() {
+        iv_liberalListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 iv_liberal.setAlpha((float) 1);
@@ -90,9 +86,10 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
                 ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorLiberal));
                 fab_create.setBackgroundTintList(csl);
             }
-        });
+        };
+        iv_liberal.setOnClickListener(iv_liberalListener);
 
-        iv_fascist.setOnClickListener(new View.OnClickListener() {
+        iv_fascistListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 iv_fascist.setAlpha((float) 1);
@@ -101,11 +98,16 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
                 ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorFascist));
                 fab_create.setBackgroundTintList(csl);
             }
-        });
+        };
+        iv_fascist.setOnClickListener(iv_fascistListener);
 
         fab_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(isEditing) {
+                    resetOnRemoval(); //Undo the old values (i.e. un-setting the claim image)
+                }
+
                 presidentName = (String) presSpinner.getSelectedItem();
                 playerName = (String) investigatedSpinner.getSelectedItem();
                 claim = (iv_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL;
@@ -115,10 +117,22 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
                 } else {
                     isSetup = false;
                     PlayerList.setClaim(playerName, claim);
-                    GameLog.notifySetupPhaseLeft();
+                    GameLog.notifySetupPhaseLeft(LoyaltyInvestigationEvent.this);
                 }
             }
         });
+    }
+
+    @Override
+    public void setupEditCard(CardView cardView) {
+        Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
+        Spinner investigatedSpinner = cardView.findViewById(R.id.spinner_investigated_player);
+
+        if(claim == Claim.LIBERAL) iv_liberalListener.onClick(null);
+        else iv_fascistListener.onClick(null);
+
+        presSpinner.setSelection(PlayerList.getPlayerPosition( presidentName ));
+        investigatedSpinner.setSelection(PlayerList.getPlayerPosition( playerName ));
     }
 
     @Override

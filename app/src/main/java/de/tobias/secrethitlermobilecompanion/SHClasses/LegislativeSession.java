@@ -45,12 +45,19 @@ public class LegislativeSession extends GameEvent {
     private Context c;
     private static ColorStateList oldcolors;
 
+    //Defining the OnClickListeners outside of the function to call them separately in the setupEditCard() function
+    private View.OnClickListener iv_fascistListener, iv_liberalListener;
+
     public LegislativeSession(VoteEvent voteEvent, ClaimEvent claimEvent, Context context, boolean setup) {
         sessionNumber = GameLog.legSessionNo++;
         this.voteEvent = voteEvent;
         this.claimEvent = claimEvent;
         c = context;
         isSetup = setup;
+    }
+
+    public VoteEvent getVoteEvent() {
+        return voteEvent;
     }
 
     public void setSessionNumber(int sessionNumber) {
@@ -94,14 +101,6 @@ public class LegislativeSession extends GameEvent {
         final ImageView iv_fascist = cardView.findViewById(R.id.img_policy_fascist);
         final ImageView iv_liberal = cardView.findViewById(R.id.img_policy_liberal);
         final FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
-        ImageView iv_cancel = cardView.findViewById(R.id.img_cancel);
-
-        iv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GameLog.remove(GameLog.eventList.get(GameLog.eventList.size() - 1));
-            }
-        });
 
         //When the switch is changed, we want certain UI elements to disappear
         sw_votingoutcome.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
@@ -122,7 +121,7 @@ public class LegislativeSession extends GameEvent {
         });
 
         //Changing the color scheme to liberal blue
-        iv_liberal.setOnClickListener(new View.OnClickListener() {
+        iv_liberalListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 iv_liberal.setAlpha((float) 1);
@@ -135,10 +134,11 @@ public class LegislativeSession extends GameEvent {
                 sw_votingoutcome.setThumbTintList(csl);
                 sw_votingoutcome.setTrackTintList(csl);
             }
-        });
+        };
+        iv_liberal.setOnClickListener(iv_liberalListener);
 
         //Changing the color scheme to fascist red
-        iv_fascist.setOnClickListener(new View.OnClickListener() {
+        iv_fascistListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 iv_fascist.setAlpha((float) 1);
@@ -151,7 +151,8 @@ public class LegislativeSession extends GameEvent {
                 sw_votingoutcome.setThumbTintList(csl);
                 sw_votingoutcome.setTrackTintList(csl);
             }
-        });
+        };
+        iv_fascist.setOnClickListener(iv_fascistListener);
 
 
         fab_create.setOnClickListener(new View.OnClickListener() {
@@ -179,6 +180,11 @@ public class LegislativeSession extends GameEvent {
                         int playedPolicy = (iv_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL;
                         boolean vetoed = cb_vetoed.isChecked();
 
+                        if(isEditing) { //We are editing the card, we need to process the changes (i.e. update the policy count)
+                            if(claimEvent.getPlayedPolicy() == Claim.LIBERAL) GameLog.liberalPolicies--;
+                            else GameLog.fascistPolicies--;
+                        }
+
                         claimEvent = new ClaimEvent(presName, chancName, presClaim, chancClaim, playedPolicy, vetoed, c);
                     }
 
@@ -190,7 +196,7 @@ public class LegislativeSession extends GameEvent {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         isSetup = false;
-                                        GameLog.notifySetupPhaseLeft();
+                                        GameLog.notifySetupPhaseLeft(LegislativeSession.this);
                                         playSound();
                                     }
                                 })
@@ -198,7 +204,7 @@ public class LegislativeSession extends GameEvent {
                                 .show();
                     } else {
                         isSetup = false;
-                        GameLog.notifySetupPhaseLeft();
+                        GameLog.notifySetupPhaseLeft(LegislativeSession.this);
                         playSound();
                     }
 
@@ -207,12 +213,40 @@ public class LegislativeSession extends GameEvent {
         });
     }
 
+    @Override
+    public void setupEditCard(CardView cardView) {
+        CheckBox cb_vetoed = cardView.findViewById(R.id.checkBox_policy_vetoed);
+        Switch sw_votingoutcome = cardView.findViewById(R.id.switch_vote_outcome);
+
+        Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
+        Spinner chancSpinner = cardView.findViewById(R.id.spinner_chancellor);
+        Spinner presClaimSpinner = cardView.findViewById(R.id.spinner_pres_claim);
+        Spinner chancClaimSpinner = cardView.findViewById(R.id.spinner_chanc_claim);
+
+
+        if(voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED) {
+            sw_votingoutcome.setChecked(true);
+        } else {
+            sw_votingoutcome.setChecked(false);
+            if(claimEvent.getPlayedPolicy() == Claim.LIBERAL) iv_liberalListener.onClick(null);
+            else iv_fascistListener.onClick(null);
+
+            presClaimSpinner.setSelection( Claim.getPresidentClaims().indexOf( Claim.getClaimStringForJSON(c, claimEvent.getPresidentClaim())) );
+            chancClaimSpinner.setSelection( Claim.getChancellorClaims().indexOf( Claim.getClaimStringForJSON(c, claimEvent.getChancellorClaim())) );
+
+            if(claimEvent.isVetoed()) cb_vetoed.setChecked(true);
+        }
+
+        presSpinner.setSelection(PlayerList.getPlayerPosition( voteEvent.getPresidentName() ));
+        chancSpinner.setSelection(PlayerList.getPlayerPosition( voteEvent.getChancellorName() ));
+    }
+
     public ClaimEvent getClaimEvent() {
         return claimEvent;
     }
 
     private void playSound() {
-        if(GameLog.policySounds) {
+        if(GameLog.policySounds && voteEvent.getVotingResult() == VoteEvent.VOTE_PASSED) {
             MediaPlayer mp;
             if (claimEvent.getPlayedPolicy() == Claim.LIBERAL) mp = MediaPlayer.create(c, R.raw.enactpolicyl);
             else mp = MediaPlayer.create(c, R.raw.enactpolicyf);

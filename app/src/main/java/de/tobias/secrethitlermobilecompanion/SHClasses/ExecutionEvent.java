@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -70,18 +69,11 @@ public class ExecutionEvent extends ExecutiveAction {
 
         //Initialising all other important aspects
         final FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
-        ImageView iv_cancel = cardView.findViewById(R.id.img_cancel);
-
-        iv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GameLog.remove(GameLog.eventList.get(GameLog.eventList.size() - 1));
-            }
-        });
 
         fab_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(isEditing) resetOnRemoval(); //Undo actions made by the old content (i.e. removing the dead-image set before)
                 presidentName = (String) presSpinner.getSelectedItem();
                 executedPlayerName = (String) executedSpinner.getSelectedItem();
 
@@ -91,10 +83,25 @@ public class ExecutionEvent extends ExecutiveAction {
                     PlayerList.setAsDead(executedPlayerName, true);
                     if(GameLog.executionSounds) MediaPlayer.create(context, R.raw.playershot).start();
                     isSetup = false;
-                    GameLog.notifySetupPhaseLeft();
+                    GameLog.notifySetupPhaseLeft(ExecutionEvent.this);
                 }
             }
         });
+    }
+
+    @Override
+    public void setupEditCard(CardView cardView) {
+        Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
+        Spinner executedSpinner = cardView.findViewById(R.id.spinner_executed_player);
+
+        presSpinner.setSelection(PlayerList.getPlayerPosition( presidentName ));
+
+        //Here we face a problem. We cannot just set the selection before, as the player was marked as dead, thus not being in the selection anymore. To mitigate this, we add the player name temporarily to a new adapter and set it. See the function in CardSetupHelper for details
+        ArrayAdapter<String> playerListadapterWithDeadPlayer = CardSetupHelper.getPlayerNameAdapterWithDeadPlayer(context, executedPlayerName);
+        playerListadapterWithDeadPlayer.setDropDownViewResource(android.R.layout
+                .simple_spinner_dropdown_item);
+        executedSpinner.setAdapter(playerListadapterWithDeadPlayer);
+        executedSpinner.setSelection(PlayerList.getAlivePlayerCount() );
     }
 
     @Override

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,17 +61,7 @@ public class SpecialElectionEvent extends ExecutiveAction {
         electedSpinner.setAdapter(playerListadapter);
         electedSpinner.setSelection(1); //Setting a different item on the elected player spinner so they don't have the same name at the beginning
 
-        //Initialising all other important aspects
         final FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
-        ImageView iv_cancel = cardView.findViewById(R.id.img_cancel);
-
-        iv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GameLog.remove(GameLog.eventList.get(GameLog.eventList.size() - 1));
-            }
-        });
-
         fab_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,10 +72,19 @@ public class SpecialElectionEvent extends ExecutiveAction {
                     Toast.makeText(context, context.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
                 } else {
                     isSetup = false;
-                    GameLog.notifySetupPhaseLeft();
+                    GameLog.notifySetupPhaseLeft(SpecialElectionEvent.this);
                 }
             }
         });
+    }
+
+    @Override
+    public void setupEditCard(CardView cardView) {
+        Spinner electedSpinner = cardView.findViewById(R.id.spinner_executed_player);
+        Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
+
+        presSpinner.setSelection(PlayerList.getPlayerPosition( presidentName ));
+        electedSpinner.setSelection(PlayerList.getPlayerPosition( electedPlayerName ));
     }
 
     @Override

@@ -28,6 +28,8 @@ public class GameEndCard extends GameEvent {
         isSetup = true;
         this.context = context;
         mainActivity = (MainActivity) context; //To access the setGameMode function later on
+
+        permitEditing = false;
     }
 
     @Override
@@ -87,7 +89,6 @@ public class GameEndCard extends GameEvent {
         fab_end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO do something with the selected data
                 boolean fascistsWon = (iv_fascist.getAlpha() == (float) 1);
                 if(fascistsWon && rb_hitler.isChecked()) {
                     //Fascists won, hitler elected
@@ -105,6 +106,11 @@ public class GameEndCard extends GameEvent {
                 mainActivity.endGame();
             }
         });
+    }
+
+    @Override
+    public void setupEditCard(CardView cardView) {
+
     }
 
     @Override
