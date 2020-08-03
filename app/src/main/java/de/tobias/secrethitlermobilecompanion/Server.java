@@ -7,9 +7,6 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,7 +18,6 @@ import java.util.Enumeration;
 import java.util.Map;
 
 import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
 import fi.iki.elonen.NanoHTTPD;
 
 import static android.content.Context.WIFI_SERVICE;
@@ -77,19 +73,9 @@ public class Server extends NanoHTTPD {
                 return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("bootstrap.min.css"));
             case "/getGameJSON":
                 if (GameLog.isInitialised()) {
-                    JSONObject obj = new JSONObject();
-                    JSONObject game = new JSONObject();
-
-                    try {
-                        game.put("players", PlayerList.getPlayerListJSON());
-                        game.put("plays", GameLog.getEventsJSON());
-                        obj.put("game", game);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, "application/json", "");
-                    }
-                    Log.v("/getGameJSON: JSON: ", obj.toString());
-                    return newFixedLengthResponse(Response.Status.OK, "application/json", obj.toString());
+                    String response = JSONManager.getJSON();
+                    Log.v("/getGameJSON: JSON: ", response);
+                    return newFixedLengthResponse(Response.Status.OK, "application/json", response);
                 }
                 return newFixedLengthResponse(Response.Status.SERVICE_UNAVAILABLE, "application/json", "");
             default:

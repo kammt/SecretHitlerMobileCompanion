@@ -144,6 +144,10 @@ public class Claim {
                 return RB;
             case "BB":
                 return BB;
+            case "B":
+                return LIBERAL;
+            case "R":
+                return FASCIST;
             default: return NO_CLAIM; //Either no claim was made or the value is invalid
         }
     }

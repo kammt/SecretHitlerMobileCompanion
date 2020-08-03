@@ -169,7 +169,7 @@ public class LegislativeSession extends GameEvent {
                     String presName = (String) presSpinner.getSelectedItem();
                     String chancName = (String) chancSpinner.getSelectedItem();
 
-                    voteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED, c);
+                    voteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED);
 
                     if(voteRejected) {
                         claimEvent = null;
@@ -185,7 +185,7 @@ public class LegislativeSession extends GameEvent {
                             else GameLog.fascistPolicies--;
                         }
 
-                        claimEvent = new ClaimEvent(presName, chancName, presClaim, chancClaim, playedPolicy, vetoed, c);
+                        claimEvent = new ClaimEvent(presClaim, chancClaim, playedPolicy, vetoed);
                     }
 
                     if(claimEvent != null && !Claim.doClaimsFit(claimEvent.getPresidentClaim(), claimEvent.getChancellorClaim(), claimEvent.getPlayedPolicy())) {

@@ -119,6 +119,28 @@ public class MainActivity extends AppCompatActivity {
         setupBottomMenu();
 
         setGameMode(false);
+        GameLog.initialise(cardList, this);
+        PlayerList.initialise(playerCardList, this);
+        if(GameLog.backupPresent()) {
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.dialog_restore_title))
+                    .setMessage(getString(R.string.dialog_restore_msg))
+                    .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            setGameMode(true);
+                            GameLog.restoreBackup();
+                            GameLog.deleteBackup();
+                        }
+                    })
+                    .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            GameLog.deleteBackup();
+                        }
+                    })
+                    .show();
+        }
 
         //TODO These methods are for testing purposes only and should be removed from the onCreate function after testing
         autoCreateGame();
@@ -165,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
         PlayerList.addPlayer("Anke");
         PlayerList.addPlayer("Björn");
         PlayerList.addPlayer("Knut");
-        GameLog.initialise(cardList, this);
         startGame(true, true, true, true);
     }
 
@@ -231,6 +252,8 @@ public class MainActivity extends AppCompatActivity {
     public void endGame() {
         GameLog.setGameStarted(false);
         stopAndUnbindServerService();
+
+        GameLog.deleteBackup();
 
         Animation swipeOutBottom = new TranslateAnimation(0, 0, 0, 200);
         swipeOutBottom.setDuration(500);

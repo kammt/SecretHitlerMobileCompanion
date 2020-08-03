@@ -103,4 +103,6 @@
     <string name="title_end_game_policies">End Game?</string>
     <string name="msg_end_game_policies_l">Four liberal policies have been played</string>
     <string name="msg_end_game_policies_f">5 fascist policies have been played</string>
+    <string name="dialog_restore_title">Backup found</string>
+    <string name="dialog_restore_msg">Would you like to restore it?</string>
 </resources>

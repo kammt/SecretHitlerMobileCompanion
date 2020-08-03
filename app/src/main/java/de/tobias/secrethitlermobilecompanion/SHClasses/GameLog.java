@@ -13,11 +13,21 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.tobias.secrethitlermobilecompanion.CardRecyclerViewAdapter;
+import de.tobias.secrethitlermobilecompanion.JSONManager;
 import de.tobias.secrethitlermobilecompanion.MainActivity;
 import de.tobias.secrethitlermobilecompanion.R;
 
@@ -59,6 +69,10 @@ public class GameLog {
         return cardListAdapter;
     }
 
+    public static void setContext(Context c) {
+        GameLog.c = c;
+    }
+
     public static void notifySetupPhaseLeft(GameEvent event) {
         int position;
         //We have to differentiate between two separate scenarios. If the event left the Editing phase, we want to change the JSON data at a specific position. If it left setup phase, we just want to add it to the array
@@ -86,6 +100,12 @@ public class GameLog {
         cardListAdapter.notifyItemChanged(position);
         if(event.getClass() == LegislativeSession.class) processPolicyChange((LegislativeSession) event, false);
 
+        //Something changed - it's backup time!
+        try {
+            backupToCache();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -260,4 +280,86 @@ public class GameLog {
 
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(cardList);
     }
+
+    private static void restoreGameFromJSON(JSONObject object) throws JSONException {
+        JSONObject game = object.getJSONObject("game");
+        JSONArray players = game.getJSONArray("players");
+        JSONArray plays = game.getJSONArray("plays");
+        arr = plays;
+
+        for(int j = 0; j < players.length(); j++) {
+            PlayerList.addPlayer(players.getString(j));
+        }
+
+        //Restore plays
+        for(int i = 0; i < plays.length(); i++) {
+            eventList.add(JSONManager.createGameEventFromJSON((JSONObject) plays.get(i), c));
+        }
+    }
+
+    public static void backupToCache() throws IOException {
+        eventListToFile(true, "backup.json");
+    }
+
+    public static boolean backupPresent() {
+        return new File(c.getCacheDir(), "backup.json").exists();
+    }
+
+    public static void restoreBackup() {
+        try {
+            eventListFromFile(true, "backup.json");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteBackup() {
+        deleteFile(true, "backup.json");
+    }
+
+    public static void eventListToFile(boolean cache, String fileName) throws IOException {
+        File file;
+        if(cache) file = new File(c.getCacheDir(), fileName);
+        else file = null;//TODO
+
+        FileWriter fw = new FileWriter(file.getAbsoluteFile());
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.write(JSONManager.getJSON());
+        bw.close();
+    }
+
+    public static void eventListFromFile(boolean cache, String fileName) throws JSONException {
+        File file;
+        if(cache) file = new File(c.getCacheDir(), fileName);
+        else file = null;//TODO
+
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            InputStreamReader inputStreamReader =
+                    new InputStreamReader(fis, StandardCharsets.UTF_8);
+
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+            String line = reader.readLine();
+            while (line != null) {
+                stringBuilder.append(line).append('\n');
+                line = reader.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            String contents = stringBuilder.toString();
+            JSONObject object = new JSONObject(contents);
+            restoreGameFromJSON(object);
+        }
+    }
+
+    public static void deleteFile(boolean cache, String fileName) {
+        File file;
+        if(cache) file = new File(c.getCacheDir(), fileName);
+        else file = null;//TODO
+
+        if(file.exists()) file.delete();
+    }
+
 }

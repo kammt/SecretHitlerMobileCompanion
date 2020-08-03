@@ -46,16 +46,14 @@ public class PlayerList {
         /*
         This function adds a player from the player list
          */
-        if(!GameLog.isGameStarted()) { //As the player list shouldn't be changed once the game starts, we check here
-            playerList.add(name);
+        playerList.add(name);
 
-            //Also add an additional entry to our claim- and dead-lists
-            claimList.add(Claim.NO_CLAIM);
-            isDead.add(false);
+        //Also add an additional entry to our claim- and dead-lists
+        claimList.add(Claim.NO_CLAIM);
+        isDead.add(false);
 
-            //Notify the adapter
-            playerRecyclerViewAdapter.notifyItemInserted(playerList.size() - 1);
-        }
+        //Notify the adapter
+        playerRecyclerViewAdapter.notifyItemInserted(playerList.size() - 1);
     }
 
     public static void removePlayer(String player) {
