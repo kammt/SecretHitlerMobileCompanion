@@ -79,7 +79,7 @@ public class SpecialElectionEvent extends ExecutiveAction {
     }
 
     @Override
-    public void setupEditCard(CardView cardView) {
+    public void setCurrentValues(CardView cardView) {
         Spinner electedSpinner = cardView.findViewById(R.id.spinner_executed_player);
         Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
 

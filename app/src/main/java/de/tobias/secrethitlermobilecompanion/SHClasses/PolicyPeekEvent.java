@@ -71,7 +71,7 @@ public class PolicyPeekEvent extends ExecutiveAction {
     }
 
     @Override
-    public void setupEditCard(CardView cardView) {
+    public void setCurrentValues(CardView cardView) {
         Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
         Spinner presClaimSpinner = cardView.findViewById(R.id.spinner_pres_claim);
 

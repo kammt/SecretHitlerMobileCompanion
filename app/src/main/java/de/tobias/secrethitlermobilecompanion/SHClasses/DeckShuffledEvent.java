@@ -59,7 +59,7 @@ public class DeckShuffledEvent extends GameEvent {
     }
 
     @Override
-    public void setupEditCard(CardView cardView) {
+    public void setCurrentValues(CardView cardView) {
         EditText et_liberalp = cardView.findViewById(R.id.et_lpolicies);
         EditText et_fascistp = cardView.findViewById(R.id.et_fpolicies);
 

@@ -87,7 +87,7 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
         final GameEvent event = events.get(i);
         if(event.isSetup) {
             event.setupSetupCard(cv);
-            if(event.isEditing) event.setupEditCard(cv);
+            if(event.isEditing) event.setCurrentValues(cv);
 
             if(event.getClass() != GameEndCard.class && event.getClass() != GameSetupCard.class) { //Checking, since both those cards are marked as setup but do not have cancel buttons
                 //The Cancel button is visible on every card, hence we initialise it here to save code

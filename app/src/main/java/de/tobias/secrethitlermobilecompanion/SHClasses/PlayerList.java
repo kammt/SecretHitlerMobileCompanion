@@ -26,16 +26,44 @@ public class PlayerList {
     private static PlayerRecyclerViewAdapter playerRecyclerViewAdapter;
     private static RecyclerView playerListRecyclerView;
 
+    public static void initialise(RecyclerView playerCardList, Context context) {
+        /*
+        Called when pushing the "Create Game" Button. Initialises and resets all variables used
+         */
+        playerList = new ArrayList<>();
+        claimList = new ArrayList<>();
+        isDead = new ArrayList<>();
+
+        playerRecyclerViewAdapter = new PlayerRecyclerViewAdapter(playerList, context);
+        playerCardList.setAdapter(playerRecyclerViewAdapter);
+
+        playerListRecyclerView = playerCardList;
+        c = context;
+    }
+
+
     public static void addPlayer(String name) {
-        playerList.add(name);
-        claimList.add(Claim.NO_CLAIM);
-        isDead.add(false);
-        playerRecyclerViewAdapter.notifyItemInserted(playerList.size() - 1);
+        /*
+        This function adds a player from the player list
+         */
+        if(!GameLog.isGameStarted()) { //As the player list shouldn't be changed once the game starts, we check here
+            playerList.add(name);
+
+            //Also add an additional entry to our claim- and dead-lists
+            claimList.add(Claim.NO_CLAIM);
+            isDead.add(false);
+
+            //Notify the adapter
+            playerRecyclerViewAdapter.notifyItemInserted(playerList.size() - 1);
+        }
     }
 
     public static void removePlayer(String player) {
-        if(!GameLog.isGameStarted()) {
-            int index = playerList.indexOf(player);
+        /*
+        This function removes a player from the player list
+         */
+        if(!GameLog.isGameStarted()) { //As the player list shouldn't be changed once the game starts, we check here
+            int index = getPlayerPosition(player);
 
             playerList.remove(player);
             claimList.remove(index);
@@ -46,7 +74,7 @@ public class PlayerList {
     }
 
     public static void setClaim(String player, int playerPartyMemberShip) {
-        int position = playerList.indexOf(player);
+        int position = getPlayerPosition(player);
         claimList.set(position, playerPartyMemberShip);
         playerRecyclerViewAdapter.notifyItemChanged(position);
     }
@@ -107,17 +135,6 @@ public class PlayerList {
         return claimList;
     }
 
-    public static void initialise(RecyclerView playerCardList, Context context) {
-        playerList = new ArrayList<>();
-        claimList = new ArrayList<>();
-        isDead = new ArrayList<>();
-
-        playerRecyclerViewAdapter = new PlayerRecyclerViewAdapter(playerList, context);
-        playerCardList.setAdapter(playerRecyclerViewAdapter);
-
-        playerListRecyclerView = playerCardList;
-        c = context;
-    }
 
     public static void setAsDead(String playerName, boolean dead) {
         int position = playerList.indexOf(playerName);

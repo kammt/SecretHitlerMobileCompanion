@@ -36,7 +36,7 @@ import de.tobias.secrethitlermobilecompanion.R;
 public class LegislativeSession extends GameEvent {
 
     /*
-    To simplify creating a Legislative Session, it is divided into two sub-events: VoteEvent and ClaimEvent. This is so that when a vote is rejected, no ClaimEvent has to be initialised (which would involve using a lot of null objects in the constructor
+    To simplify creating a Legislative Session, it is divided into two sub-events: VoteEvent and ClaimEvent. This is so that when a vote is rejected, no ClaimEvent has to be initialised (which would involve using a lot of null objects in the constructor)
      */
 
     private int sessionNumber;
@@ -214,7 +214,7 @@ public class LegislativeSession extends GameEvent {
     }
 
     @Override
-    public void setupEditCard(CardView cardView) {
+    public void setCurrentValues(CardView cardView) {
         CheckBox cb_vetoed = cardView.findViewById(R.id.checkBox_policy_vetoed);
         Switch sw_votingoutcome = cardView.findViewById(R.id.switch_vote_outcome);
 

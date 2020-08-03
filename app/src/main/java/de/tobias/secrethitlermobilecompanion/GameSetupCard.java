@@ -101,8 +101,8 @@ public class GameSetupCard extends GameEvent {
     }
 
     @Override
-    public void setupEditCard(CardView cardView) {
-
+    public void setCurrentValues(CardView cardView) {
+        //This will never be called
     }
 
     @Override

@@ -90,7 +90,7 @@ public class ExecutionEvent extends ExecutiveAction {
     }
 
     @Override
-    public void setupEditCard(CardView cardView) {
+    public void setCurrentValues(CardView cardView) {
         Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
         Spinner executedSpinner = cardView.findViewById(R.id.spinner_executed_player);
 
