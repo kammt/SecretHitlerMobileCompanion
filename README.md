@@ -8,8 +8,7 @@ An Android App intended to make the board game experience of Secret Hitler more 
 - **Free and open Source**
 
 # Screenshots
-<img src="/project-images/gamelog.png" width="40%">
-<img src="/project-images/webserver.png" width="40%">
+<img src="/project-images/gamelog.png" width="40%"> <img src="/project-images/webserver.png" width="40%">
 
 # Libraries used
 - NanoHttpd (https://github.com/NanoHttpd/nanohttpd)
