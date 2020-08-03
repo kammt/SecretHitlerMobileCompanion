@@ -3,7 +3,6 @@ package de.tobias.secrethitlermobilecompanion.SHClasses;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.Html;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,6 +11,10 @@ import androidx.cardview.widget.CardView;
 import de.tobias.secrethitlermobilecompanion.R;
 
 public abstract class ExecutiveAction extends GameEvent {
+    /*
+    Every Executive action uses the same card layout in its normal state. Because of this, the setupCard function is implemented here. However, the image on the top right of the card and the info text is handled by the events themselves.
+    This class retrieves them using getInfoText() and getDrawable()
+     */
     public abstract String getInfoText();
     public abstract Drawable getDrawable();
 
@@ -23,7 +26,6 @@ public abstract class ExecutiveAction extends GameEvent {
             tvInfo.setText(Html.fromHtml(getInfoText()), TextView.BufferType.SPANNABLE);
         }
 
-        ImageView ivIcon = cardLayout.findViewById(R.id.img_action);
-        ivIcon.setImageDrawable(getDrawable());
+        ((ImageView) cardLayout.findViewById(R.id.img_action)).setImageDrawable(getDrawable());
     }
 }

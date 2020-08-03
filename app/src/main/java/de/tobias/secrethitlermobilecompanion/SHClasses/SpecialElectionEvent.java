@@ -33,7 +33,7 @@ public class SpecialElectionEvent extends ExecutiveAction {
 
     @Override
     public String getInfoText() {
-        return context.getString(R.string.specialElection_string, presidentName, electedPlayerName);
+        return context.getString(R.string.specialElection_string, PlayerList.boldPlayerName(presidentName), PlayerList.boldPlayerName(electedPlayerName));
     }
 
     @Override

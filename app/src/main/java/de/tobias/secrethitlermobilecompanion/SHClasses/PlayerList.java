@@ -154,11 +154,8 @@ public class PlayerList {
         return isDead.get(playerPosition);
     }
 
-    public static void reset() {
-        playerList = new ArrayList<>();
-        claimList = new ArrayList<>();
-        isDead = new ArrayList<>();
-        playerRecyclerViewAdapter.notifyDataSetChanged();
+    public static String boldPlayerName(String name) {
+        return "<b>" + name + "</b>";
     }
 
     public static JSONArray getPlayerListJSON() {

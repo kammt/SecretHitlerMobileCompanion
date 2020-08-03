@@ -46,7 +46,7 @@ public class ExecutionEvent extends ExecutiveAction {
 
     @Override
     public String getInfoText() {
-        return context.getString(R.string.executed_string, presidentName, executedPlayerName);
+        return context.getString(R.string.executed_string, PlayerList.boldPlayerName(presidentName), PlayerList.boldPlayerName(executedPlayerName));
     }
 
     @Override

@@ -50,7 +50,7 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
 
     @Override
     public String getInfoText() {
-        return c.getString(R.string.investigation_string, presidentName, playerName, Claim.getClaimString(c, claim));
+        return c.getString(R.string.investigation_string, PlayerList.boldPlayerName(presidentName), PlayerList.boldPlayerName(playerName), Claim.getClaimString(c, claim));
     }
 
     @Override

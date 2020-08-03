@@ -35,7 +35,7 @@ public class PolicyPeekEvent extends ExecutiveAction {
 
     @Override
     public String getInfoText() {
-        return c.getString(R.string.policypeek_string, presidentName, Claim.getClaimString(c, claim));
+        return c.getString(R.string.policypeek_string, PlayerList.boldPlayerName(presidentName), Claim.getClaimString(c, claim));
     }
 
     @Override
