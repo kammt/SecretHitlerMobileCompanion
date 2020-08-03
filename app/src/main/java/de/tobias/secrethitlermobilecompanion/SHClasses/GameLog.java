@@ -320,7 +320,7 @@ public class GameLog {
     public static void eventListToFile(boolean cache, String fileName) throws IOException {
         File file;
         if(cache) file = new File(c.getCacheDir(), fileName);
-        else file = null;//TODO
+        else file = new File(c.getFilesDir(), fileName);
 
         FileWriter fw = new FileWriter(file.getAbsoluteFile());
         BufferedWriter bw = new BufferedWriter(fw);
@@ -331,7 +331,7 @@ public class GameLog {
     public static void eventListFromFile(boolean cache, String fileName) throws JSONException {
         File file;
         if(cache) file = new File(c.getCacheDir(), fileName);
-        else file = null;//TODO
+        else file = new File(c.getFilesDir(), fileName);
 
         StringBuilder stringBuilder = new StringBuilder();
         try {
@@ -357,7 +357,7 @@ public class GameLog {
     public static void deleteFile(boolean cache, String fileName) {
         File file;
         if(cache) file = new File(c.getCacheDir(), fileName);
-        else file = null;//TODO
+        else file = new File(c.getFilesDir(), fileName);
 
         if(file.exists()) file.delete();
     }
