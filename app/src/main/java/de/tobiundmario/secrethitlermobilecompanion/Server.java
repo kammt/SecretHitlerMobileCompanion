@@ -72,7 +72,7 @@ public class Server extends NanoHTTPD {
             case "/bootstrap.min.css":
                 return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("bootstrap.min.css"));
             case "/getGameJSON":
-                if (GameLog.isInitialised()) {
+                if (GameLog.isGameStarted()) {
                     String response = JSONManager.getJSON();
                     Log.v("/getGameJSON: JSON: ", response);
                     return newFixedLengthResponse(Response.Status.OK, "application/json", response);

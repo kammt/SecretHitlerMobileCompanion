@@ -88,8 +88,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean fabsVisible = true;
 
     boolean serverConnected = false;
-    private BroadcastReceiver serviceUpdateReceiver;
-    private BroadcastReceiver networkChangeReceiver;
+    private BroadcastReceiver serverPageUpdateReceiver;
 
     private ServiceConnection serverServiceConnection = new ServiceConnection() {
 
@@ -152,8 +151,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(networkChangeReceiver);
-        unregisterReceiver(serviceUpdateReceiver);
+        unregisterReceiver(serverPageUpdateReceiver);
     }
 
     @Override
@@ -177,9 +175,11 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ServerSercive.SERVER_STATE_CHANGED);
+        filter.addAction(ServerSercive.SERVER_STATE_CHANGED); //This action is used by the server to send updates to the MainActivity: When it is started or when it is killed
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION); //This action is used when a network change has taken place (e.g. disconnected from WiFi) It however does not send updates when the user enables/disables mobile hotspot
+        filter.addAction("android.net.wifi.WIFI_AP_STATE_CHANGED"); //This action is used when the mobile hotspot state changes
 
-        serviceUpdateReceiver = new BroadcastReceiver() {
+        serverPageUpdateReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent != null) {
@@ -187,18 +187,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(serviceUpdateReceiver, filter);
-
-        networkChangeReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                setServerStatus();
-            }
-        };
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        intentFilter.addAction("android.net.wifi.WIFI_AP_STATE_CHANGED");
-        registerReceiver(networkChangeReceiver, intentFilter);
+        registerReceiver(serverPageUpdateReceiver, filter);
     }
 
     @Override
@@ -792,7 +781,5 @@ public class MainActivity extends AppCompatActivity {
             boundServerService = null;
         }
     }
-
-
 
 }

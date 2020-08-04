@@ -37,7 +37,6 @@ public class GameLog {
     public static int legSessionNo = 1;
     static private RecyclerView cardList;
     static List<GameEvent> eventList;
-    private static boolean initialised;
     private static boolean gameStarted;
 
     private static RecyclerView.Adapter cardListAdapter;
@@ -53,10 +52,6 @@ public class GameLog {
     public static boolean swipeEnabled = false;
 
     public static boolean executionSounds, policySounds, endSounds;
-
-    public static boolean isInitialised() {
-        return initialised;
-    }
 
     public static boolean isGameStarted() {
         return gameStarted;
@@ -164,8 +159,6 @@ public class GameLog {
         //Reset the policy-count
         liberalPolicies = 0;
         fascistPolicies = 0;
-
-        initialised = true;
     }
 
     public static void addEvent(GameEvent event) {
