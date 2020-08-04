@@ -16,7 +16,8 @@ An Android App intended to make the board game experience of Secret Hitler more 
 <img src="/project-images/gamelog.png" width="40%"> <img src="/project-images/addevent.png" width="40%">
 <img src="/project-images/addLegSession.png" width="40%"> <img src="/project-images/webserver.png" width="40%">
 
-# Libraries used
+# Libraries and assets used
 - NanoHttpd (https://github.com/NanoHttpd/nanohttpd, licensed under the BSD 3-Clause license)
 - QRGen (https://github.com/kenglxn/QRGen, licensed under the Apache 2.0 license)
+- LeakCanary (https://github.com/square/leakcanary, licensed under the Apache 2.0 license)
 - Additionally, image and sound files have been used from the SecretHitlerIO project (https://github.com/cozuya/secret-hitler, licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License)
