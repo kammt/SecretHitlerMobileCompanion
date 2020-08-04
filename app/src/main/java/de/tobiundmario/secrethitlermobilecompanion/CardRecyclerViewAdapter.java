@@ -44,7 +44,7 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
 
         CardViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView)itemView.findViewById(R.id.cardView);
+            cv = itemView.findViewById(R.id.cardView);
         }
     }
 
@@ -53,8 +53,9 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
         return events.size();
     }
 
+    @NonNull
     @Override
-    public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
+    public CardViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int type) {
         //The card can use two layouts - Legislative session or Executive Action. Thus we check to which class the Event belongs
         View v = null;
         if(type == LEGISLATIVE_SESSION) {

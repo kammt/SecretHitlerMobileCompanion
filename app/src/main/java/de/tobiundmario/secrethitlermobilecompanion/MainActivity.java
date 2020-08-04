@@ -205,6 +205,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopAndUnbindServerService();
+
+        //These functions set references to MainActivity to null, as not doing this would result in a memory leak
+        GameLog.destroy();
+        PlayerList.destroy();
     }
 
     public void checkForBackups() {

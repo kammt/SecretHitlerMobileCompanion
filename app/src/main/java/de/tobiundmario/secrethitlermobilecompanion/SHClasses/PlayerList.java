@@ -24,7 +24,6 @@ public class PlayerList {
 
     private static Context c;
     private static PlayerRecyclerViewAdapter playerRecyclerViewAdapter;
-    private static RecyclerView playerListRecyclerView;
 
     public static void initialise(RecyclerView playerCardList, Context context) {
         /*
@@ -37,8 +36,12 @@ public class PlayerList {
         playerRecyclerViewAdapter = new PlayerRecyclerViewAdapter(playerList, context);
         playerCardList.setAdapter(playerRecyclerViewAdapter);
 
-        playerListRecyclerView = playerCardList;
         c = context;
+    }
+
+    public static void destroy() {
+        c = null;
+        playerRecyclerViewAdapter = null;
     }
 
 
