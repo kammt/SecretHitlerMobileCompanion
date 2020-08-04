@@ -1,4 +1,4 @@
-package de.tobias.secrethitlermobilecompanion;
+package de.tobiundmario.secrethitlermobilecompanion;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
@@ -17,7 +17,7 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.Map;
 
-import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import fi.iki.elonen.NanoHTTPD;
 
 import static android.content.Context.WIFI_SERVICE;

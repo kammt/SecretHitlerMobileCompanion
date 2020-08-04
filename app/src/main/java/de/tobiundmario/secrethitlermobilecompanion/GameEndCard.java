@@ -1,4 +1,4 @@
-package de.tobias.secrethitlermobilecompanion;
+package de.tobiundmario.secrethitlermobilecompanion;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -16,8 +16,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import de.tobias.secrethitlermobilecompanion.SHClasses.GameEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 
 public class GameEndCard extends GameEvent {
 

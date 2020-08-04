@@ -1,22 +1,22 @@
-package de.tobias.secrethitlermobilecompanion;
+package de.tobiundmario.secrethitlermobilecompanion;
 
 import android.content.Context;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobias.secrethitlermobilecompanion.SHClasses.ClaimEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.ExecutionEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.GameEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
-import de.tobias.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
-import de.tobias.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.SpecialElectionEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.VoteEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.ClaimEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.ExecutionEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.LegislativeSession;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SpecialElectionEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.VoteEvent;
 
 public class JSONManager {
     public static String getJSON() {

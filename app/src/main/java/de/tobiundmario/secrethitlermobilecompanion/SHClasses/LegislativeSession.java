@@ -1,4 +1,4 @@
-package de.tobias.secrethitlermobilecompanion.SHClasses;
+package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -30,8 +30,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import de.tobias.secrethitlermobilecompanion.CardSetupHelper;
-import de.tobias.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.CardSetupHelper;
+import de.tobiundmario.secrethitlermobilecompanion.R;
 
 public class LegislativeSession extends GameEvent {
 

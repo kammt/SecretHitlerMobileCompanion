@@ -1,4 +1,4 @@
-package de.tobias.secrethitlermobilecompanion;
+package de.tobiundmario.secrethitlermobilecompanion;
 
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
@@ -52,15 +52,15 @@ import net.glxn.qrgen.android.QRCode;
 
 import java.lang.reflect.InvocationTargetException;
 
-import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobias.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.ExecutionEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobias.secrethitlermobilecompanion.SHClasses.LegislativeSession;
-import de.tobias.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
-import de.tobias.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.SpecialElectionEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.ExecutionEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.LegislativeSession;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SpecialElectionEvent;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -121,26 +121,8 @@ public class MainActivity extends AppCompatActivity {
         setGameMode(false);
         GameLog.initialise(cardList, this);
         PlayerList.initialise(playerCardList, this);
-        if(GameLog.backupPresent()) {
-            new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.dialog_restore_title))
-                    .setMessage(getString(R.string.dialog_restore_msg))
-                    .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            setGameMode(true);
-                            GameLog.restoreBackup();
-                            GameLog.deleteBackup();
-                        }
-                    })
-                    .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            GameLog.deleteBackup();
-                        }
-                    })
-                    .show();
-        }
+
+        checkForBackups();
 
         //TODO These methods are for testing purposes only and should be removed from the onCreate function after testing
         autoCreateGame();
@@ -223,6 +205,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopAndUnbindServerService();
+    }
+
+    public void checkForBackups() {
+        if(GameLog.backupPresent()) {
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.dialog_restore_title))
+                    .setMessage(getString(R.string.dialog_restore_msg))
+                    .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            setGameMode(true);
+                            GameLog.restoreBackup();
+                        }
+                    })
+                    .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            GameLog.deleteBackup();
+                        }
+                    })
+                    .show();
+        }
     }
 
     public void startGame(boolean executionSounds, boolean policySounds, boolean endSounds, boolean server) {

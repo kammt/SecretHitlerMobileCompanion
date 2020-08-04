@@ -1,4 +1,4 @@
-package de.tobias.secrethitlermobilecompanion.SHClasses;
+package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
 

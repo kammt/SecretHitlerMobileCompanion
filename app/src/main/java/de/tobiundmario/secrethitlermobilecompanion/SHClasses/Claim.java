@@ -1,4 +1,4 @@
-package de.tobias.secrethitlermobilecompanion.SHClasses;
+package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
 import android.os.Build;
@@ -7,7 +7,7 @@ import android.text.Spanned;
 
 import java.util.ArrayList;
 
-import de.tobias.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.R;
 
 public class Claim {
     /*

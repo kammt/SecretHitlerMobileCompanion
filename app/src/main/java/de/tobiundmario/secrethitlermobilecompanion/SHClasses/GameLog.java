@@ -1,4 +1,4 @@
-package de.tobias.secrethitlermobilecompanion.SHClasses;
+package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,10 +26,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.tobias.secrethitlermobilecompanion.CardRecyclerViewAdapter;
-import de.tobias.secrethitlermobilecompanion.JSONManager;
-import de.tobias.secrethitlermobilecompanion.MainActivity;
-import de.tobias.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.CardRecyclerViewAdapter;
+import de.tobiundmario.secrethitlermobilecompanion.JSONManager;
+import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
+import de.tobiundmario.secrethitlermobilecompanion.R;
 
 public class GameLog {
 

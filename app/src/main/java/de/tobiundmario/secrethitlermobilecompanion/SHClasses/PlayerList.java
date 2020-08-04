@@ -1,4 +1,4 @@
-package de.tobias.secrethitlermobilecompanion.SHClasses;
+package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -13,9 +13,9 @@ import org.json.JSONArray;
 
 import java.util.ArrayList;
 
-import de.tobias.secrethitlermobilecompanion.MainActivity;
-import de.tobias.secrethitlermobilecompanion.PlayerRecyclerViewAdapter;
-import de.tobias.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
+import de.tobiundmario.secrethitlermobilecompanion.PlayerRecyclerViewAdapter;
+import de.tobiundmario.secrethitlermobilecompanion.R;
 
 public class PlayerList {
     private static ArrayList<String> playerList = new ArrayList<>();

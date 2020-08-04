@@ -1,4 +1,4 @@
-package de.tobias.secrethitlermobilecompanion.SHClasses;
+package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
 
-import de.tobias.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.R;
 
 public abstract class ExecutiveAction extends GameEvent {
     /*

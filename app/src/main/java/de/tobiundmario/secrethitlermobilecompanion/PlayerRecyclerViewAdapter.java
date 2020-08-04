@@ -1,4 +1,4 @@
-package de.tobias.secrethitlermobilecompanion;
+package de.tobiundmario.secrethitlermobilecompanion;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 
 public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecyclerViewAdapter.PlayerCardViewHolder> {
 

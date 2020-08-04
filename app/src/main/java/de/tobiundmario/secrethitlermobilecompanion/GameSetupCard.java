@@ -1,4 +1,4 @@
-package de.tobias.secrethitlermobilecompanion;
+package de.tobiundmario.secrethitlermobilecompanion;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,9 +17,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import de.tobias.secrethitlermobilecompanion.SHClasses.GameEvent;
-import de.tobias.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 
 public class GameSetupCard extends GameEvent {
 

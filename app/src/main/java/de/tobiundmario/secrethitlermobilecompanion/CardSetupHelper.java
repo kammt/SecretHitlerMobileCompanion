@@ -1,4 +1,4 @@
-package de.tobias.secrethitlermobilecompanion;
+package de.tobiundmario.secrethitlermobilecompanion;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -11,8 +11,8 @@ import androidx.core.content.res.ResourcesCompat;
 
 import java.util.ArrayList;
 
-import de.tobias.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobias.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 
 public class CardSetupHelper {
     public static ArrayAdapter<String> getPlayerNameAdapter(final Context context) {

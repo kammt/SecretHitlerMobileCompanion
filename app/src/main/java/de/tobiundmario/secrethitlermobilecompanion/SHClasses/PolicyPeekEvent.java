@@ -1,4 +1,4 @@
-package de.tobias.secrethitlermobilecompanion.SHClasses;
+package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -15,10 +15,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import de.tobias.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.R;
 
-import static de.tobias.secrethitlermobilecompanion.CardSetupHelper.getClaimAdapter;
-import static de.tobias.secrethitlermobilecompanion.CardSetupHelper.getPlayerNameAdapter;
+import static de.tobiundmario.secrethitlermobilecompanion.CardSetupHelper.getClaimAdapter;
+import static de.tobiundmario.secrethitlermobilecompanion.CardSetupHelper.getPlayerNameAdapter;
 
 public class PolicyPeekEvent extends ExecutiveAction {
 
