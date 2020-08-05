@@ -37,11 +37,19 @@ const loadPage = (gameData) => {
 
 	//console.log(prevGameData);
 
+	if (gameData.reloadWebsite === true) {
+    	$('#player-pane').empty();
+    	$('#game-log').empty();
+    	prevGameData = null;
+    }
+
 	if (playerPane === null || gameData.reloadWebsite === true) {
 		//console.log("PlayerPane");
 		$('#player-pane').empty();
 		playerPane = new PlayerPane(gameData.game.players);
 	}
+
+
 
 	console.log(gameData.reloadWebsite);
 
@@ -50,7 +58,7 @@ const loadPage = (gameData) => {
 	}
 
 	for (
-		let i = prevPlays != null && gameData.reloadWebsite === false ? prevPlays.length  : 0;
+		let i = prevPlays != null ? prevPlays.length  : 0;
 		i < plays.length;
 		i++
 	) {
