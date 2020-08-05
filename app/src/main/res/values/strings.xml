@@ -1,24 +1,15 @@
 <resources>
     <string name="app_name" translatable="false">Secret Hitler Mobile Companion</string>
-    <string name="vote_string">President %1$s proposed %2$s to be the next chancellor. %3$s</string>
-    <string name="vote_passed">The vote was passed.</string>
-    <string name="vote_rejected">The vote was rejected.</string>
-    <string name="claim_string">A %1$s policy was played, while President %2$s claims %3$s and Chancellor %4$s claims %5$s</string>
     <string name="fascist">fascist</string>
     <string name="liberal">liberal</string>
     <string name="claim_nothing">nothing</string>
     <string name="legislative_session">Legislative Session</string>
     <string name="executive_action">Executive Action</string>
     <string name="policy_played">Policy Played:</string>
-    <string name="fab_menu_investigation">Loyalty investigation</string>
-    <string name="fab_menu_legislative_session">Legislative session</string>
-    <string name="fab_menu_execution">Execution</string>
-    <string name="fab_menu_policy_peek">Policy Peek</string>
-    <string name="fab_menu_special_election">Special Election</string>
     <string name="rejected">" - Rejected"</string>
     <string name="vetoed">" - Vetoed"</string>
-    <string name="executed_string">President %1$s selects to execute %2$s.</string>
-    <string name="title_server_notification">Secret Hitler Server running</string>
+    <string name="executed_string">President %1$s entschied sich dazu, %2$s umzubringen.</string>
+    <string name="title_server_notification">Secret Hitler Web Server running</string>
     <string name="desc_server_notification">This notification is to improve the stability of the server.</string>
     <string name="channel_title_server_notification">Sticky Server Notification</string>
     <string name="channel_desc_server_notification">A sticky notification that improves the stability of the server</string>
@@ -30,14 +21,8 @@
     <string name="CheckBox_vetoed">Policy was vetoed</string>
     <string name="vote_passed_short">Vote passed</string>
     <string name="vote_rejected_short">Vote Rejected</string>
-    <string name="president_name">President name</string>
-    <string name="chancellor_name">Chancellor name</string>
     <string name="err_names_cannot_be_the_same">Players cannot be involved multiple times in an Event!</string>
     <string name="new_legislative_session">New Legislative Session</string>
-    <string name="dialog_another_setup_btn_replace">Replace</string>
-    <string name="dialog_another_setup_btn_cancel">Cancel</string>
-    <string name="dialog_another_setup_title">Setup already in progress</string>
-    <string name="dialog_another_setup_desc">Another Event Setup is in progress. Would you like to cancel and continue working on the old event or replace the old setup?</string>
     <string name="new_loyalty_investigation">New Loyalty Investigation</string>
     <string name="president">President</string>
     <string name="investigated">investigated</string>
@@ -70,7 +55,6 @@
     <string name="server_status_using_mobile_data">Using Mobile Data</string>
     <string name="server_status_url_not_connected">The server is running, but your device does not seem to be connected to any network. Once you have connected to WiFi or turned on mobile hotspot, this page will refresh. Use the button below to stop the server.</string>
     <string name="server_status_url_mobile_data">When using mobile data, no device will be able to access your webserver. Please either use an available WiFi Network or create a mobile hotspot. This page will refresh automatically. Use the button below to stop the server.</string>
-    <string name="btn_add_player">New Player</string>
     <string name="new_player">New</string>
     <string name="btn_ok">Ok</string>
     <string name="player_name">Player name</string>
@@ -92,4 +76,16 @@
     <string name="no_players_added_msg">You can add players using the button on the top right.</string>
     <string name="snackbar_removed_message">Event has been deleted</string>
     <string name="undo">Undo</string>
+    <string name="game_ended_title">Game Ended</string>
+    <string name="game_ended_who_won">To play the correct sound, please specify who has won and how.</string>
+    <string name="fascists_win_policies">5 fascist policies enacted</string>
+    <string name="fascists_won_hitler">Hitler elected chancellor</string>
+    <string name="liberals_won_policies">4 liberal policies enacted</string>
+    <string name="liberals_won_hitler">Hitler shot</string>
+    <string name="sounds_end">Play a sound when the game ends</string>
+    <string name="title_end_game_policies">End Game?</string>
+    <string name="msg_end_game_policies_l">Four liberal policies have been played</string>
+    <string name="msg_end_game_policies_f">5 fascist policies have been played</string>
+    <string name="dialog_restore_title">Backup found</string>
+    <string name="dialog_restore_msg">Would you like to restore it?</string>
 </resources>
