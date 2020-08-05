@@ -51,6 +51,8 @@ public class GameLog {
 
     public static boolean swipeEnabled = false;
 
+    public static boolean reloadWebsite = false;
+
     public static boolean executionSounds, policySounds, endSounds;
 
     public static boolean isGameStarted() {
@@ -119,6 +121,8 @@ public class GameLog {
             reSetSessionNumber();
             processPolicyChange((LegislativeSession) event, true);
         }
+
+        reloadWebsite = true;
     }
 
     public static void undoRemoval(GameEvent event, int oldPosition) {

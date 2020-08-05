@@ -27,6 +27,8 @@ public class JSONManager {
             game.put("players", PlayerList.getPlayerListJSON());
             game.put("plays", GameLog.getEventsJSON());
             obj.put("game", game);
+            obj.put("reloadWebsite", GameLog.reloadWebsite);
+            GameLog.reloadWebsite = false;
         } catch (JSONException e) {
             e.printStackTrace();
         }
