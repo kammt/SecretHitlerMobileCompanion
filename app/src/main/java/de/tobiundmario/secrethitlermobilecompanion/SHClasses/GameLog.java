@@ -71,6 +71,9 @@ public class GameLog {
         c = null;
         cardList = null;
         cardListAdapter = null;
+        eventList = null;
+        hiddenEventIndexes = null;
+        arr = null;
     }
 
     public static void notifySetupPhaseLeft(GameEvent event) {
