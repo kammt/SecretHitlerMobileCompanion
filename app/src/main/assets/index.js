@@ -286,4 +286,4 @@ const createPolicyCard = (play, type) => {
 
 getGameJSON();
 
-setInterval(getGameJSON, 2000);
+setInterval(() => getGameJSON(getCompleteGameRoute),  2000);
