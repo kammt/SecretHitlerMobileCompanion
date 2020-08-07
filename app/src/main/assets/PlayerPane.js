@@ -185,71 +185,75 @@ class PlayerPane {
 
 		$("#player-pane").append(this.pane);
 
-		$(document).mouseleave((e) => {
-			$(document).unbind('mousemove');
-		});
+		$(document).ready(() => {
+			this.pane = $('.player-pane');
 
-		// Mouse events
+			$(document).mouseleave((e) => {
+				$(document).unbind('mousemove');
+			});
 
-		this.pane.on('mousedown touchstart', (e) => {
-			this.mouseDownAt = performance.now();
+			// Mouse events
 
-			if(e.handleObj.type === 'mousedown') {
-				// console.log('Mousedown: ' + e.originalEvent.x);
+			this.pane.on('mousedown touchstart', (e) => {
+				this.mouseDownAt = performance.now();
 
-				this.xPos = e.originalEvent.x;
+				if(e.handleObj.type === 'mousedown') {
+					// console.log('Mousedown: ' + e.originalEvent.x);
 
-				this.pane.on('mousemove', (e) => {
-					// console.log('Mousemove: ' + e.originalEvent.x);
+					this.xPos = e.originalEvent.x;
 
-					this.offset(e.originalEvent.x);
-				});
+					this.pane.on('mousemove', (e) => {
+						// console.log('Mousemove: ' + e.originalEvent.x);
 
-			} else {
-				// console.log('Touchstart: ' + e.originalEvent.touches[0].clientX);
+						this.offset(e.originalEvent.x);
+					});
 
-				this.xPos = e.originalEvent.touches[0].clientX;
+				} else {
+					// console.log('Touchstart: ' + e.originalEvent.touches[0].clientX);
 
-				$('body').addClass('stop-scrolling');
+					this.xPos = e.originalEvent.touches[0].clientX;
 
-				this.pane.on('touchmove', (e) => {
-					// console.log('Touchmove: ' + e.originalEvent.touches[0].clientX);
+					$('body').addClass('stop-scrolling');
 
-					this.offset(e.originalEvent.touches[0].clientX);
-				});
+					this.pane.on('touchmove', (e) => {
+						// console.log('Touchmove: ' + e.originalEvent.touches[0].clientX);
 
-			}
-		});
+						this.offset(e.originalEvent.touches[0].clientX);
+					});
+
+				}
+			});
 
 
-		this.pane.on('mouseup touchend', (e) => {
-			// console.log(e.handleObj.type);
-			// console.log(e);
+			this.pane.on('mouseup touchend', (e) => {
+				// console.log(e.handleObj.type);
+				// console.log(e);
 
-			let timeElapsed = performance.now() - this.mouseDownAt;
+				let timeElapsed = performance.now() - this.mouseDownAt;
 
-			if (timeElapsed > 70) {
-				this.allowPlayerClick = false;
+				if (timeElapsed > 70) {
+					this.allowPlayerClick = false;
 
-				setTimeout(() => {
-					this.allowPlayerClick = true;
-				}, 10);
-			}
+					setTimeout(() => {
+						this.allowPlayerClick = true;
+					}, 10);
+				}
 
-			if(e.handleObj.type === 'touchend') {
-				$('body').removeClass('stop-scrolling');
+				if(e.handleObj.type === 'touchend') {
+					$('body').removeClass('stop-scrolling');
 
-				// console.log('	Unbinding touchmove');
-				$(this.pane).unbind("touchmove");
-			} else {
-				// console.log('	Unbinding mousemove');
-				$(this.pane).unbind("mousemove");
-			}
-		});
+					// console.log('	Unbinding touchmove');
+					$(this.pane).unbind("touchmove");
+				} else {
+					// console.log('	Unbinding mousemove');
+					$(this.pane).unbind("mousemove");
+				}
+			});
 
-		//console.log(`Width of the pane: ${this.pane[0].scrollWidth}px`);
-		//console.log(`Width of the viewport: ${$(window).width()}px`);
+			//console.log(`Width of the pane: ${this.pane[0].scrollWidth}px`);
+			//console.log(`Width of the viewport: ${$(window).width()}px`);
 
-		this.maxOffset = this.pane[0].scrollWidth - $(window).width() + $('#player-pane').css('padding-left').split('p')[0] * 2;
+			this.maxOffset = this.pane[0].scrollWidth - $(window).width() + $('#player-pane').css('padding-left').split('p')[0] * 2;
+		})
 	}
 }
