@@ -42,6 +42,9 @@ public class PlayerList {
     public static void destroy() {
         c = null;
         playerRecyclerViewAdapter = null;
+        playerList = null;
+        claimList = null;
+        isDead = null;
     }
 
 

@@ -8,7 +8,7 @@
     <string name="policy_played">Policy Played:</string>
     <string name="rejected">" - Rejected"</string>
     <string name="vetoed">" - Vetoed"</string>
-    <string name="executed_string">President %1$s entschied sich dazu, %2$s umzubringen.</string>
+    <string name="executed_string">President %1$s selects to execute %2$s.</string>
     <string name="title_server_notification">Secret Hitler Web Server running</string>
     <string name="desc_server_notification">This notification is to improve the stability of the server.</string>
     <string name="channel_title_server_notification">Sticky Server Notification</string>
