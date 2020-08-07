@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public abstract class GameEvent {
     /*
@@ -44,9 +45,13 @@ public abstract class GameEvent {
     public boolean isEditing = false;
     public abstract void setCurrentValues(CardView cardView); //This function will be called when the user long presses on a card to edit it. It is called in after setupSetupCard() and will fill in the fields with the current values that the card has
 
+    //Generate a unique ID for every GameEvent
+    public String id = UUID.randomUUID().toString();
+
     //Normal state related
     public abstract void setupCard(CardView cardView); //Called by the RecyclerViewAdapter. The classes have to set up the card e.g. insert the President and Chancellor names
     public abstract boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers); //Should return true if all involved Players are unselected (i.e. if their player card is not blurred). Necessary for event blurring, see GameLog.java for usage
 
     public abstract JSONObject getJSON() throws JSONException; //This function returns the JSON code of the event that is readable by the Website. This is sent over to all devices that have the website open. It is then parsed locally and displayed.
+
 }

@@ -325,6 +325,7 @@ public class LegislativeSession extends GameEvent {
     public JSONObject getJSON() throws JSONException {
         JSONObject obj = new JSONObject();
 
+        obj.put("id", id);
         obj.put("type", "legislative-session");
         obj.put("num", sessionNumber);
         obj.put("president", voteEvent.getPresidentName());
