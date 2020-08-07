@@ -16,16 +16,13 @@ const getGameJSON = () => {
 };
 
 const loadPage = (gameData) => {
-	// Make an HTTP request to the server to receive the current game state
-	//const gameData = getGameJSON();
-
-	// gameData = JSON.parse(
-	// 	'{"game":{"id":"758439574802","players":["Mario","Tobi","David","Felix","Eva","Niclas","Leander"],"plays":[{"type":"legislative-session","num":1,"president":"David","chancellor":"Tobi","rejected":false,"president_claim":"RRB","chancellor_claim":"RB","policy_played":"B","veto":false},{"type":"legislative-session","num":2,"president":"Felix","chancellor":"David","rejected":false,"president_claim":"RBB","chancellor_claim":"RR","policy_played":"R","veto":false},{"type":"legislative-session","num":3,"president":"Felix","chancellor":"David","rejected":true},{"type":"legislative-session","num":4,"president":"Felix","chancellor":"David","rejected":false,"president_claim":"RBB","chancellor_claim":"RR","policy_played":"R","veto":true},{"type":"executive-action","executive_action_type":"execution","president":"Felix","target":"David"},{"type":"executive-action","executive_action_type":"investigate_loyalty","president":"Felix","target":"David","claim":"B"},{"type":"executive-action","executive_action_type":"policy_peek","president":"Felix","claim":"RRR"},{"type":"executive-action","executive_action_type":"special_election","president":"Felix","target":"David"},{"type":"shuffle","fascist_policies":11,"liberal_policies":6}]}}'
-	// );
-
-	// gameData = JSON.parse(getGameJSON());
-
 	console.log(gameData);
+
+	if (gameData.reloadWebsite === true) {
+        	$('#player-pane').empty();
+        	$('#game-log').empty();
+        	prevGameData = null;
+    }
 
 	let prevPlays = prevGameData == null ? null : prevGameData.game.plays;
 	let plays = gameData.game.plays;
@@ -33,23 +30,13 @@ const loadPage = (gameData) => {
 	//console.log(prevPlays);
 	//console.log(plays);
 
-	// console.log(prevPlays != null ? prevPlays.length - 1 : 0);
-
 	//console.log(prevGameData);
-
-	if (gameData.reloadWebsite === true) {
-    	$('#player-pane').empty();
-    	$('#game-log').empty();
-    	prevGameData = null;
-    }
 
 	if (playerPane === null || gameData.reloadWebsite === true) {
 		//console.log("PlayerPane");
 		$('#player-pane').empty();
 		playerPane = new PlayerPane(gameData.game.players);
 	}
-
-
 
 	console.log(gameData.reloadWebsite);
 
