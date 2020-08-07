@@ -102,6 +102,7 @@ public class GameLog {
                 e.printStackTrace();
             }
 
+            JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.NEW_EVENT));
         }
         //Nevertheless, we need to update the RecyclerViewItem
         cardListAdapter.notifyItemChanged(position);
@@ -181,8 +182,6 @@ public class GameLog {
 
         if(event.getClass() == LegislativeSession.class && !event.isSetup) processPolicyChange((LegislativeSession) event, false);
         if(event.isSetup) cardList.smoothScrollToPosition(eventList.size() - 1);
-
-        JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.NEW_EVENT));
     }
 
     public static void blurEventsInvolvingHiddenPlayers(ArrayList<String> hiddenPlayers) {
