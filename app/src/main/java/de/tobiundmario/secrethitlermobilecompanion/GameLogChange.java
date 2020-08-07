@@ -41,4 +41,8 @@ public class GameLogChange {
     public void addClientServedTo(String clientIP) {
         servedTo.add(clientIP);
     }
+
+    public GameEvent getEvent() {
+        return event;
+    }
 }
