@@ -2,8 +2,12 @@ package de.tobiundmario.secrethitlermobilecompanion;
 
 import android.content.Context;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.ClaimEvent;
@@ -19,20 +23,59 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SpecialElectionEven
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.VoteEvent;
 
 public class JSONManager {
-    public static String getJSON() {
+    public static ArrayList<GameLogChange> gameLogChanges = new ArrayList<GameLogChange>();
+    private static HashSet<String> clientIPs = new HashSet<String>();
+
+    public static void setClientIPsSet(HashSet<String> clientIPsIn) {
+        clientIPs = clientIPsIn;
+    }
+
+    public static String getCompleteGameJSON(String clientIP) {
         JSONObject obj = new JSONObject();
         JSONObject game = new JSONObject();
+
+        if (clientIP != null) {
+            for (GameLogChange change : gameLogChanges) {
+                change.addClientServedTo(clientIP);
+            }
+        }
 
         try {
             game.put("players", PlayerList.getPlayerListJSON());
             game.put("plays", GameLog.getEventsJSON());
             obj.put("game", game);
-            obj.put("reloadWebsite", GameLog.reloadWebsite);
-            GameLog.reloadWebsite = false;
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return obj.toString();
+    }
+
+    public static String getCompleteGameJSON() {
+        return getCompleteGameJSON(null);
+    }
+
+    public static String getGameChangesJSON(String clientIP)  {
+        JSONArray changesJSON = new JSONArray();
+
+        try {
+            for (GameLogChange change : gameLogChanges) {
+                if (!change.getServedTo().contains(clientIP)) {
+                    changesJSON.put(change.serve(clientIP));
+
+                    if(change.getServedTo().equals(clientIPs)) {
+                        gameLogChanges.remove(change);
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return changesJSON.toString();
+    }
+
+    public static void addGameLogChange(GameLogChange change) {
+        gameLogChanges.add(change);
     }
 
     public static GameEvent createGameEventFromJSON (JSONObject jsonObject, Context c) throws JSONException {
