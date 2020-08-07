@@ -2,9 +2,12 @@ package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.CardRecyclerViewAdapter;
+import de.tobiundmario.secrethitlermobilecompanion.GameLogChange;
 import de.tobiundmario.secrethitlermobilecompanion.JSONManager;
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
@@ -86,6 +90,8 @@ public class GameLog {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.EVENT_UPDATE));
 
         } else {
 
@@ -175,6 +181,8 @@ public class GameLog {
 
         if(event.getClass() == LegislativeSession.class && !event.isSetup) processPolicyChange((LegislativeSession) event, false);
         if(event.isSetup) cardList.smoothScrollToPosition(eventList.size() - 1);
+
+        JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.NEW_EVENT));
     }
 
     public static void blurEventsInvolvingHiddenPlayers(ArrayList<String> hiddenPlayers) {
@@ -257,18 +265,32 @@ public class GameLog {
                 return false;
             }
 
+
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 final int position = viewHolder.getAdapterPosition();
                 final GameEvent event = eventList.get(position);
 
                 remove(event);
-                Snackbar.make(cardList, c.getString(R.string.snackbar_removed_message), BaseTransientBottomBar.LENGTH_LONG).setAction(c.getString(R.string.undo), new View.OnClickListener() {
+                Snackbar snackbar = Snackbar.make(cardList, c.getString(R.string.snackbar_removed_message), BaseTransientBottomBar.LENGTH_LONG);
+
+                snackbar.setAction(c.getString(R.string.undo), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         undoRemoval(event, position);
                     }
                 }).show();
+
+                snackbar.addCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar transientBottomBar, int e) {
+                        if (e == 2) {
+                            JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.EVENT_DELETE));
+                        }
+
+                        super.onDismissed(transientBottomBar, e);
+                    }
+                });
             }
 
             @Override
