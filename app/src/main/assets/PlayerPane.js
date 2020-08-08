@@ -1,4 +1,15 @@
 class PlayerPane {
+    removeClassesStartingWith(element, startStr) {
+        let elementClassList = element.attr('class').split(/\s+/);
+
+        for(let i = 0; i < elementClassList.length; i++) {
+            if (elementClassList[i].startsWith(startStr)) {
+                element.removeClass(elementClassList[i]);
+            }
+        }
+    }
+
+
 	// Method used to create the divs inside the pane containing the image and the names of the players
 	addPlayers() {
 		// For each player
@@ -14,6 +25,9 @@ class PlayerPane {
 
 			// Add css classes
 			playerDiv.addClass("player-pane-player-div");
+
+			//Add id
+			playerDiv.attr('id', player);
 
 			// Create a div containing the image. This is needed in order to centre the question mark, in case of accusation,
 			// at the center of the image not the entire player div
@@ -141,12 +155,9 @@ class PlayerPane {
 
 	displayAccusation(player, claim) {
 		// console.log(player + ' is allegedly ' + claim);
-		let playerDiv = this.playerDivs[player].find('.img-container');
+		let imageContainer = this.playerDivs[player].find('.img-container');
 
-		// console.log(playerDiv);
-		// console.log(playerDiv.find('img'))
-
-		let membershipImg = playerDiv.find('img');
+		let membershipImg = imageContainer.find('img');
 		membershipImg.attr('src', images[claim.toLowerCase() === 'b' ? 'membership_liberal' : 'membership_fascist']);
 		membershipImg.addClass('low-opacity');
 
@@ -155,23 +166,80 @@ class PlayerPane {
 
 		questionMark.addClass('question-mark');
 
-		playerDiv.append(questionMark);
-
-		// playerDiv.css('background-image', 'none');
+		imageContainer.append(questionMark);
 	}
 
 	displayDead(player) {
 		let playerDiv = this.playerDivs[player].find('.img-container');
 
 		let membershipImg = playerDiv.find('img');
-		membershipImg.removeClass('low-opacity');
-		playerDiv.find('.question-mark').remove();
+
+		if (this.flags[player][1] === true) {
+			membershipImg.removeClass('low-opacity');
+			playerDiv.find('.question-mark').remove();
+		}
+
 		membershipImg.attr('src', images.dead_player);
+	}
+
+	// Index indicates whether
+	setInvLoyaltyFlag(player, claim, playID) {
+		this.flags[player][1] = true;
+
+		this.flags[player][2] = claim;
+
+		this.playerDivs[player].addClass(`inv_loyalty_${playID}`);
+
+		this.displayAccusation(player, claim);
+	}
+
+	setDeadFlag(player, playID) {
+		this.flags[player][0] = true;
+
+		this.playerDivs[player].addClass(`dead_${playID}`);
+
+		this.displayDead(player);
+	}
+
+	removeDeadFlag(player) {
+		this.flags[player][0] = true;
+
+		this.playerDivs[player].find('.img-container').find('img').attr('src', images.secret_role);
+		this.removeClassesStartingWith(this.playerDivs[player], 'dead_');
+
+		if (this.flags[player][1] == true) {
+			this.displayAccusation(player, this.flags[player][2]);
+		}
+	}
+
+	removeInvLoyaltyFlag(player) {
+		this.flags[player][1] = false;
+		this.flags[player][2] = '';
+
+		let imageContainer = this.playerDivs[player].find('.img-container');
+		let img = imageContainer.find('img');
+		img.removeClass('low-opacity');
+		img.attr('src', images.secret_role);
+		imageContainer.find('.question-mark').remove();
+
+		this.removeClassesStartingWith(this.playerDivs[player], 'inv_loyalty_');
+
+
+		if (this.flags[player][0] == true) {
+			this.displayDead(player);
+		}
 	}
 
 	//Constructor function takes in the players as array
 	constructor(players) {
 		this.players = players;
+
+		this.flags = [];
+
+		for(let i = 0; i < players.length; i++) {
+			this.flags[players[i]] = [false, false, ''];
+		}
+
 		//console.log(players);
 		this.selected = [];
 		players.forEach((player) => this.selected.push(player));
@@ -191,57 +259,57 @@ class PlayerPane {
 			$(document).mouseleave((e) => {
 				$(document).unbind('mousemove');
 			});
-
+	
 			// Mouse events
-
+	
 			this.pane.on('mousedown touchstart', (e) => {
 				this.mouseDownAt = performance.now();
-
+	
 				if(e.handleObj.type === 'mousedown') {
 					// console.log('Mousedown: ' + e.originalEvent.x);
-
+	
 					this.xPos = e.originalEvent.x;
-
+	
 					this.pane.on('mousemove', (e) => {
 						// console.log('Mousemove: ' + e.originalEvent.x);
-
+	
 						this.offset(e.originalEvent.x);
 					});
-
+	
 				} else {
 					// console.log('Touchstart: ' + e.originalEvent.touches[0].clientX);
-
+	
 					this.xPos = e.originalEvent.touches[0].clientX;
-
+	
 					$('body').addClass('stop-scrolling');
-
+	
 					this.pane.on('touchmove', (e) => {
 						// console.log('Touchmove: ' + e.originalEvent.touches[0].clientX);
-
+	
 						this.offset(e.originalEvent.touches[0].clientX);
 					});
-
+	
 				}
 			});
-
-
+	
+	
 			this.pane.on('mouseup touchend', (e) => {
 				// console.log(e.handleObj.type);
 				// console.log(e);
-
+	
 				let timeElapsed = performance.now() - this.mouseDownAt;
-
+	
 				if (timeElapsed > 70) {
 					this.allowPlayerClick = false;
-
+	
 					setTimeout(() => {
 						this.allowPlayerClick = true;
 					}, 10);
 				}
-
+	
 				if(e.handleObj.type === 'touchend') {
 					$('body').removeClass('stop-scrolling');
-
+	
 					// console.log('	Unbinding touchmove');
 					$(this.pane).unbind("touchmove");
 				} else {
@@ -249,10 +317,10 @@ class PlayerPane {
 					$(this.pane).unbind("mousemove");
 				}
 			});
-
+	
 			//console.log(`Width of the pane: ${this.pane[0].scrollWidth}px`);
 			//console.log(`Width of the viewport: ${$(window).width()}px`);
-
+	
 			this.maxOffset = this.pane[0].scrollWidth - $(window).width() + $('#player-pane').css('padding-left').split('p')[0] * 2;
 		})
 	}
