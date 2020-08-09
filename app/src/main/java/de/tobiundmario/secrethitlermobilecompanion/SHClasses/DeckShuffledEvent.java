@@ -85,6 +85,7 @@ public class DeckShuffledEvent extends GameEvent {
     public JSONObject getJSON() throws JSONException {
         JSONObject obj = new JSONObject();
 
+        obj.put("id", id);
         obj.put("type", "shuffle");
         obj.put("fascist_policies", fascistPolicies);
         obj.put("liberal_policies", liberalPolicies);

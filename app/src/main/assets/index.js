@@ -1,69 +1,130 @@
-let prevGameData = null;
-let playerPane = null;
+let playerPane;
 
-const getGameJSON = () => {
+const getCompleteGameRoute = 'getGameJSON';
+const getGameChangesRoute = 'getGameChangesJSON';
+
+const getJSON = (route) => {
 	const Http = new XMLHttpRequest();
-	const url = `http://${location.host}/getGameJSON`;
+	const url = `http://${location.host}/${route}`;
 	Http.open("GET", url);
 	Http.send();
 
 	Http.onreadystatechange = (e) => {
 	    if(Http.readyState === 4) {
-	        //console.log('HTTP response text: ' + Http.responseText);
-        	loadPage(JSON.parse(Http.responseText));
+			//console.log('HTTP response text: ' + Http.responseText);
+			if(route === getCompleteGameRoute) {
+				loadPage(JSON.parse(Http.responseText));
+			} else if (route === getGameChangesRoute) {
+				updatePage(JSON.parse(Http.responseText));
+			}
+
 	    }
 	};
 };
 
+const generateEventElement = (event) => {
+	let eventDiv;
+	console.log(event);
+
+	if (event.type === "legislative-session") {
+		eventDiv = generateLegislativeSession(event);
+	} else if (event.type === "executive-action") {
+		eventDiv = generateExecutiveAction(event);
+	} else if (event.type === "shuffle") {
+		eventDiv = generateShuffle(event);
+	}
+
+	eventDiv.addClass(event.id);
+
+	return eventDiv;
+}
+
+const updatePage = (changes) => {
+	// public static String EVENT_UPDATE = "event_update";
+    // public static String EVENT_DELETE = "event_delete";
+	// public static String NEW_EVENT = "new_event";
+
+	console.log(changes);
+
+	changes.forEach((change) => {
+		console.log(change);
+		if (change.change_type === 'event_update') {
+			$(`.${change.event.id}`).replaceWith(generateEventElement(change.event));
+
+			if (change.event.type === 'executive-action') {
+				if (change.event.executive_action_type === 'execution') {
+					let oldTarget = $(`.dead_${change.event.id}`);
+					console.log(oldTarget);
+
+					if (oldTarget.length != 0) {
+						console.log(oldTarget.attr('id'));
+						playerPane.removeDeadFlag(oldTarget.attr('id'));
+					}
+
+					playerPane.setDeadFlag(change.event.target, change.event.id);
+				} else if (change.event.executive_action_type === 'investigate_loyalty') {
+					let oldTarget = $(`.inv_loyalty_${change.event.id}`);
+					console.log(oldTarget);
+
+					if (oldTarget.length != 0) {
+						console.log(oldTarget.attr('id'));
+						playerPane.removeInvLoyaltyFlag(oldTarget.attr('id'));
+					}
+
+					playerPane.setInvLoyaltyFlag(change.event.target, change.event.claim, change.event.id);
+				}
+			}
+
+		} else if (change.change_type === 'event_delete') {
+			$(`.${change.event.id}`).remove();
+
+			if (change.event.type === 'executive-action') {
+				if (change.event.executive_action_type === 'execution') {
+					playerPane.removeDeadFlag(change.event.target);
+				} else if (change.event.executive_action_type === 'investigate_loyalty') {
+					playerPane.removeInvLoyaltyFlag(change.event.target);
+				}
+			}
+
+		} else if (change.change_type === 'new_event') {
+			$('#game-log').append(generateEventElement(change.event));
+
+			if (change.event.type === 'executive-action') {
+				if (change.event.executive_action_type === 'execution') {
+					playerPane.setDeadFlag(change.event.target, change.event.id);
+				} else if (change.event.executive_action_type === 'investigate_loyalty') {
+					playerPane.setInvLoyaltyFlag(change.event.target, change.event.claim, change.event.id);
+				}
+			}
+		} else {
+			console.log('Unknown change type');
+		}
+	})
+
+}
+
+
 const loadPage = (gameData) => {
 	console.log(gameData);
 
-	if (gameData.reloadWebsite === true) {
-        	$('#player-pane').empty();
-        	$('#game-log').empty();
-        	prevGameData = null;
-    }
+	let events = gameData.game.plays;
 
-	let prevPlays = prevGameData == null ? null : prevGameData.game.plays;
-	let plays = gameData.game.plays;
+	playerPane = new PlayerPane(gameData.game.players);
 
-	//console.log(prevPlays);
-	//console.log(plays);
+	for (let i = 0; i < events.length; i++) {
+		$("#game-log").append(generateEventElement(events[i]));
 
-	//console.log(prevGameData);
-
-	if (playerPane === null || gameData.reloadWebsite === true) {
-		//console.log("PlayerPane");
-		$('#player-pane').empty();
-		playerPane = new PlayerPane(gameData.game.players);
-	}
-
-	console.log(gameData.reloadWebsite);
-
-	if(gameData.reloadWebsite === true) {
-	    $('#game-log').empty();
-	}
-
-	for (
-		let i = prevPlays != null ? prevPlays.length  : 0;
-		i < plays.length;
-		i++
-	) {
-		let play = plays[i];
-		//console.log(play.type);
-		if (play.type === "legislative-session") {
-			addLegislativeSession(play);
-		} else if (play.type === "executive-action") {
-			addExecutiveAction(play);
-		} else if (play.type === "shuffle") {
-			addShuffle(play);
+		if(events[i].type === 'executive-action') {
+			if (events[i].executive_action_type === 'execution') {
+				playerPane.setDeadFlag(events[i].target, events[i].id);
+			} else if (events[i].executive_action_type === 'investigate_loyalty') {
+				playerPane.setInvLoyaltyFlag(events[i].target, events[i].claim, events[i].id);
+			}
 		}
 	}
-
-	prevGameData = gameData;
 };
 
-const addLegislativeSession = (play) => {
+const generateLegislativeSession = (play) => {
 	// Create the main div that contains all of the legislative session html
 	let lsDiv = $(document.createElement("div"));
 	lsDiv.addClass("game-action legislative-session");
@@ -113,8 +174,7 @@ const addLegislativeSession = (play) => {
 		lsDiv.append(polPlayedDiv);
 	}
 
-	$("#game-log").append(lsDiv);
-	//console.log(lsDiv.html());
+	return lsDiv;
 };
 
 const getLeaderDiv = (play, type) => {
@@ -148,7 +208,7 @@ const getLeaderDiv = (play, type) => {
 	return leaderDiv;
 };
 
-const addExecutiveAction = (play) => {
+const generateExecutiveAction = (play) => {
 	let executiveActionHTML = "";
 
 	// Get HTML code that highlights the players names using the getPlayerHTML function
@@ -158,13 +218,11 @@ const addExecutiveAction = (play) => {
 	switch (play.executive_action_type) {
 		case "execution":
 			executiveActionHTML = `President ${presidentHTML} selects to execute ${targetHTML}.`;
-			playerPane.displayDead(play.target);
 			break;
 		case "investigate_loyalty":
 			executiveActionHTML = `President ${presidentHTML} sees the party membership of ${targetHTML} and claims to see a member of the ${
-				play.claim === "B" ? "liberal" : "fascist"
+				play.claim === "B" ? '<span class="claim-span-blue">liberal</span>' : '<span class="claim-span-red">fascist</span>'
 				} team.`;
-			playerPane.displayAccusation(play.target, play.claim);
 			break;
 		case "policy_peek":
 			executiveActionHTML = `President ${presidentHTML} peeks at the next three policies and claims to see ${getColouredClaim(
@@ -214,7 +272,7 @@ const addExecutiveAction = (play) => {
 
 	execActDiv.append(execActText);
 
-	$("#game-log").append(execActDiv);
+	return execActDiv;
 };
 
 // Function that returns HTML code that highlights the name of players
@@ -237,7 +295,7 @@ const getColouredClaim = (claim) => {
 	return result;
 };
 
-const addShuffle = (play) => {
+const generateShuffle = (play) => {
 	// Create the main container
 	let shuffleDiv = $(document.createElement("div"));
 	shuffleDiv.addClass("game-action shuffle-div");
@@ -258,7 +316,7 @@ const addShuffle = (play) => {
 	shuffleDivBody.append(createPolicyCard(play, "liberal"));
 
 	// Append the shuffle div to the game-log section
-	$("#game-log").append(shuffleDiv);
+	return shuffleDiv;
 };
 
 const createPolicyCard = (play, type) => {
@@ -284,6 +342,6 @@ const createPolicyCard = (play, type) => {
 	return policyDiv;
 };
 
-getGameJSON();
+getJSON(getCompleteGameRoute);
 
-setInterval(getGameJSON, 2000);
+setInterval(() => getJSON(getGameChangesRoute), 2000);

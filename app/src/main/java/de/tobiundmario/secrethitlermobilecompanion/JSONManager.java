@@ -1,9 +1,19 @@
 package de.tobiundmario.secrethitlermobilecompanion;
 
 import android.content.Context;
+import android.os.Build;
+import android.util.Log;
 
+import androidx.annotation.RequiresApi;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.ClaimEvent;
@@ -18,21 +28,68 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SpecialElectionEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.VoteEvent;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class JSONManager {
-    public static String getJSON() {
+    public static ConcurrentHashMap<GameLogChange, Boolean> gameLogChangesMap = new ConcurrentHashMap<GameLogChange, Boolean>();
+    public static Set<GameLogChange> gameLogChanges = gameLogChangesMap.newKeySet();
+
+    private static HashSet<String> clientIPs = new HashSet<String>();
+
+    public static void setClientIPsSet(HashSet<String> clientIPsIn) {
+        clientIPs = clientIPsIn;
+    }
+
+    public static String getCompleteGameJSON(String clientIP) {
         JSONObject obj = new JSONObject();
         JSONObject game = new JSONObject();
+
+        if (clientIP != null) {
+            for (GameLogChange change : gameLogChanges) {
+                change.addClientServedTo(clientIP);
+            }
+        }
 
         try {
             game.put("players", PlayerList.getPlayerListJSON());
             game.put("plays", GameLog.getEventsJSON());
             obj.put("game", game);
-            obj.put("reloadWebsite", GameLog.reloadWebsite);
-            GameLog.reloadWebsite = false;
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return obj.toString();
+    }
+
+    public static String getCompleteGameJSON() {
+        return getCompleteGameJSON(null);
+    }
+
+    public static String getGameChangesJSON(String clientIP)  {
+        // Log.v("Size gameLogChanges<>", String.valueOf(gameLogChanges.size()));
+        JSONArray changesJSON = new JSONArray();
+
+        try {
+            for (GameLogChange change : gameLogChanges) {
+                if (!change.getServedTo().contains(clientIP)) {
+                    // Log.v("Serving change", change.getEvent().getJSON().toString());
+                    changesJSON.put(change.serve(clientIP));
+                }
+
+                if (change.getServedTo().equals(clientIPs)) {
+                    gameLogChanges.remove(change);
+                    // Log.v("Removed change", change.getServedTo().toString() + "; " + change.getEvent().getJSON().toString());
+                }
+
+                // Log.v("Change served to", change.getServedTo().toString() + "; " + change.getEvent().getJSON().toString());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return changesJSON.toString();
+    }
+
+    public static void addGameLogChange(GameLogChange change) {
+        gameLogChanges.add(change);
     }
 
     public static GameEvent createGameEventFromJSON (JSONObject jsonObject, Context c) throws JSONException {

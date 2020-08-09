@@ -14,7 +14,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
@@ -26,10 +29,15 @@ public class Server extends NanoHTTPD {
     private Context c;
     private int port;
 
+    private HashSet<String> clientIPs;
+
     public Server(int port, Context c) {
         super(port);
         this.c = c;
         this.port = port;
+
+        this.clientIPs = new HashSet<String>();
+        JSONManager.setClientIPsSet(this.clientIPs);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -37,6 +45,13 @@ public class Server extends NanoHTTPD {
     public Response serve(IHTTPSession session) {
         Log.v(" Server request URI", session.getUri());
         Log.v("Server request method", session.getMethod().toString());
+        Log.v("Remote address", session.getRemoteIpAddress());
+
+        String clientIP = session.getRemoteIpAddress();
+
+        if(!clientIPs.contains(clientIP)) {
+            clientIPs.add(clientIP);
+        }
 
         StringBuilder sb = new StringBuilder();
         for(Map.Entry<String, String> k : session.getHeaders().entrySet()) {
@@ -73,8 +88,15 @@ public class Server extends NanoHTTPD {
                 return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("bootstrap.min.css"));
             case "/getGameJSON":
                 if (GameLog.isGameStarted()) {
-                    String response = JSONManager.getJSON();
+                    String response = JSONManager.getCompleteGameJSON(clientIP);
                     Log.v("/getGameJSON: JSON: ", response);
+                    return newFixedLengthResponse(Response.Status.OK, "application/json", response);
+                }
+                return newFixedLengthResponse(Response.Status.SERVICE_UNAVAILABLE, "application/json", "");
+            case "/getGameChangesJSON":
+                if (GameLog.isGameStarted()) {
+                    String response = JSONManager.getGameChangesJSON(clientIP);
+                    Log.v("/getGameChanges: JSON: ", response);
                     return newFixedLengthResponse(Response.Status.OK, "application/json", response);
                 }
                 return newFixedLengthResponse(Response.Status.SERVICE_UNAVAILABLE, "application/json", "");

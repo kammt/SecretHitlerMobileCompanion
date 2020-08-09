@@ -144,6 +144,7 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
     public JSONObject getJSON() throws JSONException {
         JSONObject obj = new JSONObject();
 
+        obj.put("id", id);
         obj.put("type", "executive-action");
         obj.put("executive_action_type", "investigate_loyalty");
         obj.put("president", presidentName);
