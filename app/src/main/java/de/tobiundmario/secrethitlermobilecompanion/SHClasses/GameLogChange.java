@@ -1,11 +1,11 @@
-package de.tobiundmario.secrethitlermobilecompanion;
+package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashSet;
 
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
 
 public class GameLogChange {
     public static String EVENT_UPDATE = "event_update";

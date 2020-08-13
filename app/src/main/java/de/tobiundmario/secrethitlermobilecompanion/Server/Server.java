@@ -1,4 +1,4 @@
-package de.tobiundmario.secrethitlermobilecompanion;
+package de.tobiundmario.secrethitlermobilecompanion.Server;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
@@ -14,13 +14,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.JSONManager;
 import fi.iki.elonen.NanoHTTPD;
 
 import static android.content.Context.WIFI_SERVICE;

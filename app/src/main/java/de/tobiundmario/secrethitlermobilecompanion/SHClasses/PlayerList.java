@@ -14,8 +14,8 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
-import de.tobiundmario.secrethitlermobilecompanion.PlayerRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.PlayerRecyclerViewAdapter;
 
 public class PlayerList {
     private static ArrayList<String> playerList = new ArrayList<>();

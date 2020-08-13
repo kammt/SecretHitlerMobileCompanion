@@ -1,4 +1,4 @@
-package de.tobiundmario.secrethitlermobilecompanion;
+package de.tobiundmario.secrethitlermobilecompanion.Server;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
@@ -18,6 +18,8 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import de.tobiundmario.secrethitlermobilecompanion.R;
+
 public class ServerSercive extends Service {
 
     private final IBinder mBinder = new LocalBinder();
@@ -29,7 +31,7 @@ public class ServerSercive extends Service {
     public final static String SERVER_STATE_CHANGED = "CHANGED";
 
     public class LocalBinder extends Binder {
-        ServerSercive getService() {
+        public ServerSercive getService() {
             return ServerSercive.this;
         }
     }

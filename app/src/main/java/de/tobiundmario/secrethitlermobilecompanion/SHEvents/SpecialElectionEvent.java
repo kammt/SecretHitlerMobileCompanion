@@ -1,4 +1,4 @@
-package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
+package de.tobiundmario.secrethitlermobilecompanion.SHEvents;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -17,8 +17,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import de.tobiundmario.secrethitlermobilecompanion.CardSetupHelper;
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 
 public class SpecialElectionEvent extends ExecutiveAction {
     Context context;

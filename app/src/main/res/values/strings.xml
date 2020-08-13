@@ -78,14 +78,14 @@
     <string name="undo">Undo</string>
     <string name="game_ended_title">Game Ended</string>
     <string name="game_ended_who_won">To play the correct sound, please specify who has won and how.</string>
-    <string name="fascists_win_policies">5 fascist policies enacted</string>
+    <string name="fascists_win_policies">6 fascist policies enacted</string>
     <string name="fascists_won_hitler">Hitler elected chancellor</string>
-    <string name="liberals_won_policies">4 liberal policies enacted</string>
+    <string name="liberals_won_policies">5 liberal policies enacted</string>
     <string name="liberals_won_hitler">Hitler shot</string>
     <string name="sounds_end">Play a sound when the game ends</string>
     <string name="title_end_game_policies">End Game?</string>
-    <string name="msg_end_game_policies_l">Four liberal policies have been played</string>
-    <string name="msg_end_game_policies_f">5 fascist policies have been played</string>
+    <string name="msg_end_game_policies_l">Five liberal policies have been played</string>
+    <string name="msg_end_game_policies_f">Six fascist policies have been played</string>
     <string name="dialog_restore_title">Backup found</string>
     <string name="dialog_restore_msg">Would you like to restore it?</string>
 </resources>

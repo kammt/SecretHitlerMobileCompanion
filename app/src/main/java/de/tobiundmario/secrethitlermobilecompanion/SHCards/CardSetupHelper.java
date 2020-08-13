@@ -1,4 +1,4 @@
-package de.tobiundmario.secrethitlermobilecompanion;
+package de.tobiundmario.secrethitlermobilecompanion.SHCards;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -11,6 +11,7 @@ import androidx.core.content.res.ResourcesCompat;
 
 import java.util.ArrayList;
 
+import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 

@@ -1,4 +1,4 @@
-package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
+package de.tobiundmario.secrethitlermobilecompanion.SHEvents;
 
 import android.content.Context;
 import android.view.View;
@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 
 public class DeckShuffledEvent extends GameEvent {
 

@@ -1,4 +1,4 @@
-package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
+package de.tobiundmario.secrethitlermobilecompanion.SHEvents;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -19,8 +19,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 
-import static de.tobiundmario.secrethitlermobilecompanion.CardSetupHelper.getPlayerNameAdapter;
+import static de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper.getPlayerNameAdapter;
 
 public class LoyaltyInvestigationEvent extends ExecutiveAction {
 

@@ -52,15 +52,18 @@ import net.glxn.qrgen.android.QRCode;
 
 import java.lang.reflect.InvocationTargetException;
 
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameSetupCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.ExecutionEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.LegislativeSession;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SpecialElectionEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LoyaltyInvestigationEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.PolicyPeekEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.SpecialElectionEvent;
+import de.tobiundmario.secrethitlermobilecompanion.Server.ServerSercive;
 
 public class MainActivity extends AppCompatActivity {
 

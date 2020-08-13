@@ -1,4 +1,4 @@
-package de.tobiundmario.secrethitlermobilecompanion;
+package de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 

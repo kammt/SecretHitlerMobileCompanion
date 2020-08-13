@@ -1,4 +1,4 @@
-package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
+package de.tobiundmario.secrethitlermobilecompanion.SHEvents;
 
 import android.graphics.drawable.Drawable;
 import android.os.Build;

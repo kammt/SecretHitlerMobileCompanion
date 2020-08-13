@@ -2,12 +2,9 @@ package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,11 +27,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.tobiundmario.secrethitlermobilecompanion.CardRecyclerViewAdapter;
-import de.tobiundmario.secrethitlermobilecompanion.GameLogChange;
-import de.tobiundmario.secrethitlermobilecompanion.JSONManager;
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CardRecyclerViewAdapter;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LoyaltyInvestigationEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.VoteEvent;
 
 public class GameLog {
 
@@ -201,6 +201,7 @@ public class GameLog {
 
     public static void processPolicyChange(LegislativeSession legislativeSession, boolean removed) {
         if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_FAILED) return;
+        if(legislativeSession.getClaimEvent().isVetoed()) return;
         boolean fascist = legislativeSession.getClaimEvent().getPlayedPolicy() == Claim.FASCIST;
 
         if(removed && fascist) {
@@ -211,7 +212,7 @@ public class GameLog {
             fascistPolicies++;
         } else liberalPolicies++;
 
-        if(liberalPolicies == 4 && !removed) {
+        if(liberalPolicies == 5 && !removed) {
             new AlertDialog.Builder(c)
                     .setTitle(c.getString(R.string.title_end_game_policies))
                     .setMessage(c.getString(R.string.msg_end_game_policies_l))
@@ -223,7 +224,7 @@ public class GameLog {
                         }
                     })
                     .show();
-        } else if (fascistPolicies == 5 && !removed) {
+        } else if (fascistPolicies == 6 && !removed) {
             new AlertDialog.Builder(c)
                     .setTitle(c.getString(R.string.title_end_game_policies))
                     .setMessage(c.getString(R.string.msg_end_game_policies_f))

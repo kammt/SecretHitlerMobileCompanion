@@ -1,8 +1,7 @@
-package de.tobiundmario.secrethitlermobilecompanion;
+package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -10,23 +9,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.ClaimEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.ExecutionEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.LegislativeSession;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SpecialElectionEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.VoteEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ClaimEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LoyaltyInvestigationEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.PolicyPeekEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.SpecialElectionEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.VoteEvent;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class JSONManager {

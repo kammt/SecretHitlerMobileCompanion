@@ -1,4 +1,4 @@
-package de.tobiundmario.secrethitlermobilecompanion;
+package de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.DeckShuffledEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameEvent;
+import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameSetupCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.LegislativeSession;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.LoyaltyInvestigationEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PolicyPeekEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LoyaltyInvestigationEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.PolicyPeekEvent;
 
 public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerViewAdapter.CardViewHolder> {
 
