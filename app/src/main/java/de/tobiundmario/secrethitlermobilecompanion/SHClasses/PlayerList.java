@@ -89,6 +89,10 @@ public class PlayerList {
 
     public static int getPlayerPosition(String name) { return playerList.indexOf(name); }
 
+    public static PlayerRecyclerViewAdapter getPlayerRecyclerViewAdapter() {
+        return playerRecyclerViewAdapter;
+    }
+
     public static void setClaimImage(CardView cardView, int playerPartyMemberShip) {
         /*
         Receives the Player-card as an input and then adds the claim-symbol to it. Is called by the RecyclerViewAdapter

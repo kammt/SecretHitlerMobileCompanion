@@ -88,4 +88,9 @@
     <string name="msg_end_game_policies_f">Six fascist policies have been played</string>
     <string name="dialog_restore_title">Backup found</string>
     <string name="dialog_restore_msg">Would you like to restore it?</string>
+    <string name="menu_setup_players">Players</string>
+    <string name="menu_setup_track">Custom Tracks</string>
+    <string name="menu_setup_sounds">Sounds</string>
+    <string name="menu_setup_server">Server</string>
+    <string name="hint_player_name">Player Name</string>
 </resources>
