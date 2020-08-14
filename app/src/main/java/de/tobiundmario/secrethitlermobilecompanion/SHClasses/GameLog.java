@@ -1,11 +1,9 @@
 package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,6 +28,7 @@ import java.util.List;
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CardRecyclerViewAdapter;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
@@ -213,29 +212,19 @@ public class GameLog {
         } else liberalPolicies++;
 
         if(liberalPolicies == 5 && !removed) {
-            new AlertDialog.Builder(c)
-                    .setTitle(c.getString(R.string.title_end_game_policies))
-                    .setMessage(c.getString(R.string.msg_end_game_policies_l))
-                    .setNegativeButton(c.getString(R.string.no), null)
-                    .setPositiveButton(c.getString(R.string.yes), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ((MainActivity) c).displayEndGameOptions();
-                        }
-                    })
-                    .show();
+            CardDialog.showMessageDialog(c, c.getString(R.string.title_end_game_policies), c.getString(R.string.msg_end_game_policies_l), c.getString(R.string.yes), new Runnable() {
+                @Override
+                public void run() {
+                    ((MainActivity) c).displayEndGameOptions();
+                }
+            }, c.getString(R.string.no), null);
         } else if (fascistPolicies == 6 && !removed) {
-            new AlertDialog.Builder(c)
-                    .setTitle(c.getString(R.string.title_end_game_policies))
-                    .setMessage(c.getString(R.string.msg_end_game_policies_f))
-                    .setNegativeButton(c.getString(R.string.no), null)
-                    .setPositiveButton(c.getString(R.string.yes), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ((MainActivity) c).displayEndGameOptions();
-                        }
-                    })
-                    .show();
+            CardDialog.showMessageDialog(c, c.getString(R.string.title_end_game_policies), c.getString(R.string.msg_end_game_policies_f), c.getString(R.string.yes), new Runnable() {
+                @Override
+                public void run() {
+                    ((MainActivity) c).displayEndGameOptions();
+                }
+            }, c.getString(R.string.no), null);
         }
     }
 
@@ -264,7 +253,6 @@ public class GameLog {
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
             }
-
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
@@ -303,6 +291,7 @@ public class GameLog {
     }
 
     private static void restoreGameFromJSON(JSONObject object) throws JSONException {
+        //TODO also restore game settings
         JSONObject game = object.getJSONObject("game");
         JSONArray players = game.getJSONArray("players");
         JSONArray plays = game.getJSONArray("plays");
@@ -314,7 +303,9 @@ public class GameLog {
 
         //Restore plays
         for(int i = 0; i < plays.length(); i++) {
-            eventList.add(JSONManager.createGameEventFromJSON((JSONObject) plays.get(i), c));
+            GameEvent event = JSONManager.createGameEventFromJSON((JSONObject) plays.get(i), c);
+            eventList.add(event);
+            if(event.getClass() == LegislativeSession.class) processPolicyChange((LegislativeSession) event, false);
         }
     }
 

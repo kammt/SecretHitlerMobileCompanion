@@ -5,7 +5,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -20,26 +19,20 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.text.Html;
-import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -50,13 +43,17 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import net.glxn.qrgen.android.QRCode;
 
+import org.json.JSONException;
+
 import java.lang.reflect.InvocationTargetException;
 
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameSetupCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PreferencesManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
@@ -73,9 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tv_nothingHere;
     private Button btn_createNewGame;
-    private CardView btn_add_player;
 
-    private LinearLayout setupLayout;
     private BottomNavigationView bottomNavigationMenu;
     private ConstraintLayout bottomSheetAdd;
     private BottomSheetBehavior bottomSheetBehaviorAdd;
@@ -127,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         checkForBackups();
 
         //TODO These methods are for testing purposes only and should be removed from the onCreate function after testing
-        autoCreateGame();
+        //autoCreateGame();
         //displayEndGameOptions();
     }
 
@@ -136,16 +131,12 @@ public class MainActivity extends AppCompatActivity {
         if(GameLog.isGameStarted()) { //Game is currently running, we ask the user if he wants to end the game
             if(!GameLog.swipeEnabled) return; //This means that the "Game Ended" Screen is currently showing, we do not want to show the dialog during this
 
-            new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.title_end_game_policies))
-                    .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            displayEndGameOptions();
-                        }
-                    })
-                    .setNegativeButton(getString(R.string.no), null)
-                    .show();
+            CardDialog.showMessageDialog(this, getString(R.string.title_end_game_policies), null, getString(R.string.yes), new Runnable() {
+                @Override
+                public void run() {
+                    displayEndGameOptions();
+                }
+            }, getString(R.string.no), null);
         } else{ //User is in the empty screen, end the activity
             finish();
         }
@@ -205,23 +196,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void checkForBackups() {
         if(GameLog.backupPresent()) {
-            new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.dialog_restore_title))
-                    .setMessage(getString(R.string.dialog_restore_msg))
-                    .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            setGameMode(true);
-                            GameLog.restoreBackup();
-                        }
-                    })
-                    .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            GameLog.deleteBackup();
-                        }
-                    })
-                    .show();
+            CardDialog.showMessageDialog(this, getString(R.string.dialog_restore_title), getString(R.string.dialog_restore_msg), getString(R.string.yes), new Runnable() {
+                @Override
+                public void run() {
+                    setGameMode(true);
+                    GameLog.restoreBackup();
+                }
+            }, getString(R.string.no), new Runnable() {
+                @Override
+                public void run() {
+                    GameLog.deleteBackup();
+                }
+            });
         }
     }
 
@@ -300,34 +286,16 @@ public class MainActivity extends AppCompatActivity {
 
             GameLog.initialise(cardList, this);
             GameLog.setGameStarted(true);
+            try {
+                PreferencesManager.writeCurrentPlayerListIfNew(this);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            PlayerList.getPlayerRecyclerViewAdapter().notifyDataSetChanged(); //When a game starts, the add Player button will not be added to the RecyclerView anymore. As this would result in a mismatch between the ItemCount and the amount of items that are actually there, a IndexOutOfBoundsException would be thrown. This refresh fixes this
+
             bottomNavigationMenu.setVisibility(View.VISIBLE);
             bottomNavigationMenu.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in_bottom));
-
-            Animation slideOutRight = AnimationUtils.loadAnimation(this, R.anim.slide_out_right);
-            slideOutRight.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    btn_add_player.setVisibility(View.GONE);
-                }
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-            });
-            btn_add_player.startAnimation(slideOutRight);
-
-            final int newRightMargin = 0;
-            Animation setMarginBack = new Animation() {
-                @Override
-                protected void applyTransformation(float interpolatedTime, Transformation t) {
-                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) playerCardList.getLayoutParams();
-                    params.rightMargin = (int)(newRightMargin * interpolatedTime);
-                    playerCardList.setLayoutParams(params);
-                }
-            };
-            playerCardList.startAnimation(setMarginBack);
         }
     }
 
@@ -337,29 +305,10 @@ public class MainActivity extends AppCompatActivity {
         btn_createNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btn_add_player.setVisibility(View.VISIBLE);
                 cardList.setVisibility(View.VISIBLE);
                 playerCardList.setVisibility(View.VISIBLE);
                 GameLog.initialise(cardList, MainActivity.this);
                 GameLog.addEvent(new GameSetupCard(MainActivity.this));
-
-                Animation slideInRight = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_right);
-                slideInRight.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-
-                    }
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) playerCardList.getLayoutParams();
-                        params.rightMargin = btn_add_player.getWidth() + 8;
-                        playerCardList.setLayoutParams(params);
-                    }
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                });
-                btn_add_player.startAnimation(slideInRight);
 
                 AlphaAnimation fadeOut = new AlphaAnimation((float) 1, (float) 0);
                 fadeOut.setDuration(100);
@@ -375,53 +324,6 @@ public class MainActivity extends AppCompatActivity {
                 }, 50);
             }
         });
-
-
-        btn_add_player = findViewById(R.id.playerCard_add);
-        btn_add_player.setClickable(true);
-        btn_add_player.setFocusable(true);
-        btn_add_player.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle(getString(R.string.title_input_player_name));
-
-                // Set up the input
-                final EditText input = new EditText(MainActivity.this);
-                input.setInputType(InputType.TYPE_CLASS_TEXT);
-                input.setHint(getString(R.string.player_name));
-                builder.setView(input);
-
-                // Set up the buttons
-                builder.setPositiveButton(getText(R.string.btn_ok), null);
-                builder.setNegativeButton(getText(R.string.dialog_mismatching_claims_btn_cancel), null);
-
-                final AlertDialog dialog = builder.create();
-                dialog.show();
-
-                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {//We use this instead of the normal OnClickListener to prevent the dialog from closing when the button is pressed
-                    @Override
-                    public void onClick(View v) {
-                        String playerName = input.getText().toString();
-                        if(PlayerList.playerAlreadyExists(playerName)) {
-                            input.setError(getString(R.string.error_player_already_exists));
-                            return;
-                        }
-                        if(playerName.matches("")) {
-                            dialog.dismiss();
-                            return;
-                        }
-                        PlayerList.addPlayer(playerName);
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
-
-        TextView tv_plus = findViewById(R.id.tv_addplayer);
-        tv_plus.setVisibility(View.VISIBLE);
-        ImageView iv_symbol = findViewById(R.id.img_secretRole);
-        iv_symbol.setAlpha((float) 0.5);
     }
 
     public void deselectAllMenuItems() {
@@ -432,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setupBottomMenu() {
         //Setting up the Bottom Menu
-        bottomNavigationMenu = findViewById(R.id.bottomNavigationView);
+        bottomNavigationMenu = findViewById(R.id.bottomNavigationView_game);
         Menu menu = bottomNavigationMenu.getMenu();
         menu.getItem(0).setVisible(false);
         menu.getItem(0).setChecked(true); //As you cannot have no items selected, I created a third item, select that one and set it as hidden #Lifehack
