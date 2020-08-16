@@ -73,7 +73,7 @@
     <string name="msg_too_little_players">You currently have %1$d players. The official game requires 5 or more players. Continue anyway?</string>
     <string name="title_too_little_players">Too little players</string>
     <string name="no_players_added">No players added</string>
-    <string name="no_players_added_msg">You can add players using the button on the top right.</string>
+    <string name="no_players_added_msg">You can add more players using the button above</string>
     <string name="snackbar_removed_message">Event has been deleted</string>
     <string name="undo">Undo</string>
     <string name="game_ended_title">Game Ended</string>

@@ -43,6 +43,7 @@
         android:animateLayoutChanges="false"
         android:orientation="horizontal"
         android:scrollbars="horizontal"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -96,9 +97,10 @@
         app:menu="@menu/navigation" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/container_players"
+        android:id="@+id/container_add_players"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView_SetupSteps"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -145,13 +147,42 @@
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:background="@color/colorAccent"
+        android:visibility="gone"
         app:itemBackground="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/setup_steps" >
+        app:menu="@menu/setup_steps">
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_setup_forward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/colorLiberal"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView_SetupSteps"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_baseline_arrow_forward_24" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_setup_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/colorLiberal"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView_SetupSteps"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_baseline_arrow_back_24" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

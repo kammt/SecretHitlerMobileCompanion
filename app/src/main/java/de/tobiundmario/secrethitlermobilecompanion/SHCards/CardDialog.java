@@ -50,6 +50,7 @@ public class CardDialog {
         TextView tvDesc = dialogView.findViewById(R.id.tv_description);
         TextView tvPositive = dialogView.findViewById(R.id.tv_positive);
         TextView tvNegative = dialogView.findViewById(R.id.tv_negative);
+        View buttonSeparator = dialogView.findViewById(R.id.line_separator_buttons);
         final EditText dialogInput = dialogView.findViewById(R.id.dialog_input);
 
         if(input) {
@@ -69,7 +70,15 @@ public class CardDialog {
         }
 
         tvPositive.setText(positive);
-        tvNegative.setText(negative);
+        if(negative != null) {
+            tvNegative.setText(negative);
+            tvNegative.setVisibility(View.VISIBLE);
+            buttonSeparator.setVisibility(View.VISIBLE);
+        }
+        else {
+            tvNegative.setVisibility(View.GONE);
+            buttonSeparator.setVisibility(View.GONE);
+        }
 
         //Set the listeners
         tvNegative.setOnClickListener(new View.OnClickListener() {

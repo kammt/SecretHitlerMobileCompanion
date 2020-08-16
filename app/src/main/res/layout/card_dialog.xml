@@ -80,7 +80,7 @@
                 android:visibility="visible" />
 
             <View
-                android:id="@+id/line_seperator_buttons"
+                android:id="@+id/line_separator_buttons"
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="#000000" />

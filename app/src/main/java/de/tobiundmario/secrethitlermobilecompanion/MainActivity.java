@@ -49,7 +49,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
-import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameSetupCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
@@ -71,7 +70,15 @@ public class MainActivity extends AppCompatActivity {
     private TextView tv_nothingHere;
     private Button btn_createNewGame;
 
-    private BottomNavigationView bottomNavigationMenu;
+    private FloatingActionButton fab_forward;
+    private FloatingActionButton fab_back;
+    private ConstraintLayout container_new_player;
+    private BottomNavigationView bottomNavigationMenu_setupSteps;
+
+    private View.OnClickListener listener_forward_players;
+    private View.OnClickListener listener_backward_tracks;
+
+    private BottomNavigationView bottomNavigationMenu_game;
     private ConstraintLayout bottomSheetAdd;
     private BottomSheetBehavior bottomSheetBehaviorAdd;
 
@@ -223,9 +230,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void displayEndGameOptions() {
         //Make the Menu infunctional
-        bottomNavigationMenu.getMenu().getItem(2).setCheckable(false);
-        bottomNavigationMenu.getMenu().getItem(1).setCheckable(false);
-        bottomNavigationMenu.setOnNavigationItemSelectedListener(null);
+        bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(false);
+        bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(false);
+        bottomNavigationMenu_game.setOnNavigationItemSelectedListener(null);
         deselectAllMenuItems();
         //Hide the BottomSheets
         bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN);
@@ -265,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
             public void onAnimationRepeat(Animation animation) {
             }
         });
-        bottomNavigationMenu.startAnimation(swipeOutBottom);
+        bottomNavigationMenu_game.startAnimation(swipeOutBottom);
 
         Animation fadeOut = new AlphaAnimation((float) 1, (float) 0);
         fadeOut.setDuration(500);
@@ -275,12 +282,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void setGameMode(boolean gameMode) {
         if(!gameMode) {
-            bottomNavigationMenu.setVisibility(View.GONE);
+            bottomNavigationMenu_game.setVisibility(View.GONE);
             tv_nothingHere.setVisibility(View.VISIBLE);
             btn_createNewGame.setVisibility(View.VISIBLE);
             GameLog.setGameStarted(false);
         } else {
-            bottomNavigationMenu.setClickable(true);
+            bottomNavigationMenu_game.setClickable(true);
             tv_nothingHere.setVisibility(View.GONE);
             btn_createNewGame.setVisibility(View.GONE);
 
@@ -294,26 +301,47 @@ public class MainActivity extends AppCompatActivity {
 
             PlayerList.getPlayerRecyclerViewAdapter().notifyDataSetChanged(); //When a game starts, the add Player button will not be added to the RecyclerView anymore. As this would result in a mismatch between the ItemCount and the amount of items that are actually there, a IndexOutOfBoundsException would be thrown. This refresh fixes this
 
-            bottomNavigationMenu.setVisibility(View.VISIBLE);
-            bottomNavigationMenu.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in_bottom));
+            bottomNavigationMenu_game.setVisibility(View.VISIBLE);
+            bottomNavigationMenu_game.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in_bottom));
         }
     }
 
     public void setupNewGameCreation() {
         tv_nothingHere = findViewById(R.id.tv_nothing_here);
         btn_createNewGame = findViewById(R.id.btn_createGame);
+
+        fab_forward = findViewById(R.id.fab_setup_forward);
+        fab_back = findViewById(R.id.fab_setup_back);
+        container_new_player = findViewById(R.id.container_add_players);
+
+        bottomNavigationMenu_setupSteps = findViewById(R.id.bottomNavigationView_SetupSteps);
+        Menu menu = bottomNavigationMenu_setupSteps.getMenu();
+        for (int i = 0; i < menu.size(); i++) {
+            menu.getItem(i).setEnabled(false);
+        }
+
         btn_createNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cardList.setVisibility(View.VISIBLE);
-                playerCardList.setVisibility(View.VISIBLE);
                 GameLog.initialise(cardList, MainActivity.this);
-                GameLog.addEvent(new GameSetupCard(MainActivity.this));
 
                 AlphaAnimation fadeOut = new AlphaAnimation((float) 1, (float) 0);
-                fadeOut.setDuration(100);
+                fadeOut.setDuration(500);
                 tv_nothingHere.startAnimation(fadeOut);
                 btn_createNewGame.startAnimation(fadeOut);
+
+                AlphaAnimation fadeIn = new AlphaAnimation((float) 0, (float) 1);
+                fadeIn.setDuration(1000);
+                playerCardList.setVisibility(View.VISIBLE);
+                playerCardList.startAnimation(fadeIn);
+                fab_forward.setVisibility(View.VISIBLE);
+                fab_forward.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.fab_open));
+                container_new_player.setVisibility(View.VISIBLE);
+                container_new_player.startAnimation(fadeIn);
+                bottomNavigationMenu_setupSteps.setVisibility(View.VISIBLE);
+                bottomNavigationMenu_setupSteps.startAnimation(fadeIn);
+
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -324,24 +352,94 @@ public class MainActivity extends AppCompatActivity {
                 }, 50);
             }
         });
+
+        listener_forward_players = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Runnable continueSetup = new Runnable() {
+                    @Override
+                    public void run() {
+                        fab_back.setVisibility(View.VISIBLE);
+                        fab_back.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.fab_open));
+                        fab_back.setOnClickListener(listener_backward_tracks);
+
+                        Animation slideOutLeft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_left);
+                        container_new_player.startAnimation(slideOutLeft);
+                        playerCardList.startAnimation(slideOutLeft);
+
+                        slideOutLeft.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                container_new_player.setVisibility(View.GONE);
+                                playerCardList.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+                            }
+                        });
+
+                        bottomNavigationMenu_setupSteps.getMenu().getItem(1).setChecked(true);
+                    }
+                };
+
+                int playerCount = PlayerList.getPlayerList().size();
+                if(playerCount <= 2) {
+                    String title = (playerCount == 0) ? getString(R.string.no_players_added) : getString(R.string.title_too_little_players);
+                    CardDialog.showMessageDialog(MainActivity.this, title, getString(R.string.no_players_added_msg), getString(R.string.btn_ok), null, null, null);
+                } else if (playerCount < 5) {
+                    CardDialog.showMessageDialog(MainActivity.this, getString(R.string.title_too_little_players), getString(R.string.msg_too_little_players, playerCount), getString(R.string.dialog_mismatching_claims_btn_continue), continueSetup, getString(R.string.dialog_mismatching_claims_btn_cancel), null);
+                } else continueSetup.run();
+            }
+        };
+
+        listener_backward_tracks = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO make views invisible
+                fab_back.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.fab_close));
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        fab_back.setVisibility(View.GONE);
+                    }
+                }, 500);
+
+                Animation slideInLeft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_left);
+                container_new_player.setVisibility(View.VISIBLE);
+                container_new_player.startAnimation(slideInLeft);
+                playerCardList.setVisibility(View.VISIBLE);
+                playerCardList.startAnimation(slideInLeft);
+
+                bottomNavigationMenu_setupSteps.getMenu().getItem(0).setChecked(true);
+                fab_forward.setOnClickListener(listener_forward_players);
+            }
+        };
+
+
+        fab_forward.setOnClickListener(listener_forward_players);
     }
 
     public void deselectAllMenuItems() {
-        Menu menu = bottomNavigationMenu.getMenu();
+        Menu menu = bottomNavigationMenu_game.getMenu();
         menu.getItem(0).setVisible(false);
         menu.getItem(0).setChecked(true);
     }
 
     public void setupBottomMenu() {
         //Setting up the Bottom Menu
-        bottomNavigationMenu = findViewById(R.id.bottomNavigationView_game);
-        Menu menu = bottomNavigationMenu.getMenu();
+        bottomNavigationMenu_game = findViewById(R.id.bottomNavigationView_game);
+        Menu menu = bottomNavigationMenu_game.getMenu();
         menu.getItem(0).setVisible(false);
         menu.getItem(0).setChecked(true); //As you cannot have no items selected, I created a third item, select that one and set it as hidden #Lifehack
 
         //When the game ends, the Menu items are disabled. Hence, we enable them again just in case
-        bottomNavigationMenu.getMenu().getItem(2).setCheckable(true);
-        bottomNavigationMenu.getMenu().getItem(1).setCheckable(true);
+        bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(true);
+        bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(true);
 
         //initialising the "Add Event" bottom Sheet
         bottomSheetAdd = findViewById(R.id.bottom_sheet_add_event);
@@ -431,7 +529,7 @@ public class MainActivity extends AppCompatActivity {
         bottomSheetBehaviorServer.addBottomSheetCallback(callbackServer);
 
         //Adding the Listener to the BottomNavigationMenu
-        bottomNavigationMenu.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        bottomNavigationMenu_game.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch(item.getItemId()) {

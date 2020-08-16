@@ -94,7 +94,10 @@ public class PreferencesManager {
 
     public static void setPlayerListName(String name, int position, Context context) throws JSONException {
         JSONArray newArray = getPastPlayerLists(context);
-        newArray.getJSONObject(position).put("name", name);
+        JSONObject object = newArray.getJSONObject(position);
+
+        if(!name.matches("")) object.put("name", name);
+        else if(object.has("name")) object.remove("name");
         writePastPlayerLists(newArray, context);
     }
 

@@ -78,7 +78,7 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
                 players.add(playerName);
 
                 stringBuilder.append(playerName);
-                if(j != object.length()) stringBuilder.append(", ");
+                if(j != object.length() - 1) stringBuilder.append(", ");
             }
             oldPlayerListViewHolder.players = players;
             String playerListAsString = stringBuilder.toString();
@@ -96,6 +96,8 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
             });
 
             if(groupName != null)tv_rename.setText(groupName);
+            else tv_rename.setText(context.getString(R.string.unnamed_player_list));
+
             tv_rename.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -103,10 +105,6 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
                         @Override
                         public void onInputDialogSubmitted(EditText inputField, Dialog rootDialog) {
                             String groupName = inputField.getText().toString();
-                            if(groupName.matches("")) {
-                                rootDialog.dismiss();
-                                return;
-                            }
 
                             try {
                                 PreferencesManager.setPlayerListName(groupName, pos, context);
