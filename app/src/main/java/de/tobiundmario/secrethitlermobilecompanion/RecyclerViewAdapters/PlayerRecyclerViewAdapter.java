@@ -16,7 +16,6 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
@@ -25,17 +24,21 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 
 public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecyclerViewAdapter.PlayerCardViewHolder> {
 
-    List<String> players;
+    ArrayList<String> players;
     Context context;
     private ArrayList<String> hiddenPlayers = new ArrayList<>();
 
+    private boolean isOldPlayerList;
+
     private static int ADD_BUTTON = 2;
+    private static int USE_BUTTON = 3;
     private static int NORMAL = 1;
     private static int FIRST_CARD = 0;
 
-    public PlayerRecyclerViewAdapter(List<String> players, Context context){
+    public PlayerRecyclerViewAdapter(ArrayList<String> players, Context context, boolean isOldPlayerList) {
         this.players = players;
         this.context = context;
+        this.isOldPlayerList = isOldPlayerList;
     }
 
     public static class PlayerCardViewHolder extends RecyclerView.ViewHolder {
@@ -55,7 +58,7 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
 
     @Override
     public PlayerCardViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_player_list_single_player, viewGroup, false);;
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_player_list_single_player, viewGroup, false);
 
         if(type == ADD_BUTTON) {
             v.setClickable(true);
@@ -87,7 +90,25 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
 
             ImageView iv_symbol = v.findViewById(R.id.img_secretRole);
             iv_symbol.setAlpha((float) 0.5);
-        } else if(type == FIRST_CARD) {
+
+            TextView tvPlayerName = v.findViewById(R.id.tv_playerName);
+            tvPlayerName.setText(context.getString(R.string.new_player));
+        }  if(type == USE_BUTTON) {
+            v.setClickable(true);
+            v.setFocusable(true);
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PlayerList.setPlayerList(players);
+                }
+            });
+
+            ImageView iv_symbol = v.findViewById(R.id.img_secretRole);
+            iv_symbol.setAlpha((float) 0.5);
+
+            TextView tvPlayerName = v.findViewById(R.id.tv_playerName);
+            tvPlayerName.setText(context.getString(R.string.use));
+        }else if(type == FIRST_CARD) {
             Resources r = context.getResources();
             int px = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,
@@ -106,13 +127,15 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
 
     @Override
     public void onBindViewHolder(PlayerCardViewHolder cardViewHolder, int i) {
-        if(cardViewHolder.getItemViewType() == ADD_BUTTON) return;
+        if(cardViewHolder.getItemViewType() == ADD_BUTTON || cardViewHolder.getItemViewType() == USE_BUTTON) return;
+        if(isOldPlayerList) i--;
 
         CardView cardView = cardViewHolder.cv;
 
         final String player = players.get(i);
         TextView tvPlayerName = cardView.findViewById(R.id.tv_playerName);
         tvPlayerName.setText(player);
+
 
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,14 +175,15 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
 
     @Override
     public int getItemViewType(int position) {
-        if(position >= players.size()) return ADD_BUTTON;
+        if(position >= players.size() && !isOldPlayerList) return ADD_BUTTON;
+        else if (isOldPlayerList && position == 0) return USE_BUTTON;
         else return (position == 0) ? FIRST_CARD : NORMAL;
     }
 
     @Override
     public void onViewAttachedToWindow(@NonNull PlayerCardViewHolder holder) {
         super.onViewAttachedToWindow(holder);
-        if(holder.getItemViewType() == ADD_BUTTON) return;
+        if(holder.getItemViewType() == ADD_BUTTON || !GameLog.isGameStarted()) return;
 
         int position = holder.getLayoutPosition();
         int claim = PlayerList.getMembershipClaims().get(position);

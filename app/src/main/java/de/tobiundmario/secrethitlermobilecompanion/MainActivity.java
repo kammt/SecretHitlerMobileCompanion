@@ -654,6 +654,9 @@ public class MainActivity extends AppCompatActivity {
         layoutManager2.setOrientation(RecyclerView.HORIZONTAL);
         playerCardList.setLayoutManager(layoutManager2);
         PlayerList.initialise(playerCardList, this);
+
+        RecyclerView pastPlayerLists = findViewById(R.id.oldPlayerLists);
+        PreferencesManager.setupOldPlayerListRecyclerView(pastPlayerLists, this);
     }
 
     private void startAndBindServerService() {

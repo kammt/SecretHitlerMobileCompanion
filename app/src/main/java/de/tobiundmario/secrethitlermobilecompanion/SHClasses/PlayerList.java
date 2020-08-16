@@ -24,6 +24,7 @@ public class PlayerList {
 
     private static Context c;
     private static PlayerRecyclerViewAdapter playerRecyclerViewAdapter;
+    private static RecyclerView playerRecyclerView;
 
     public static void initialise(RecyclerView playerCardList, Context context) {
         /*
@@ -33,8 +34,9 @@ public class PlayerList {
         claimList = new ArrayList<>();
         isDead = new ArrayList<>();
 
-        playerRecyclerViewAdapter = new PlayerRecyclerViewAdapter(playerList, context);
+        playerRecyclerViewAdapter = new PlayerRecyclerViewAdapter(playerList, context, false);
         playerCardList.setAdapter(playerRecyclerViewAdapter);
+        playerRecyclerView = playerCardList;
 
         c = context;
     }
@@ -156,6 +158,14 @@ public class PlayerList {
 
     public static int getAlivePlayerCount() {
         return getAlivePlayerList().size();
+    }
+
+    public static void setPlayerList(ArrayList<String> playerList) {
+        initialise(playerRecyclerView, c);
+
+        for(String player: playerList) {
+            addPlayer(player);
+        }
     }
 
     public static boolean isDead(int playerPosition) {

@@ -3,11 +3,16 @@ package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.OldPlayerListRecyclerViewAdapter;
 
 public class PreferencesManager {
 
@@ -22,6 +27,8 @@ public class PreferencesManager {
         return context.getSharedPreferences("past-values", Context.MODE_PRIVATE);
     }
 
+
+    //Old Player Lists related
     public static JSONArray getPastPlayerLists(Context context) throws JSONException {
         SharedPreferences preferences = getSharedPreferences(context);
         String pastPlayers = preferences.getString("old-players", null);
@@ -38,7 +45,7 @@ public class PreferencesManager {
     public static void writeCurrentPlayerListIfNew(Context context) throws JSONException {
         JSONObject playerListAsJSON = playerListtoJSON();
 
-        if(!playerListAlreadyPresent(playerListAsJSON, context)) return;
+        if(playerListAlreadyPresent(playerListAsJSON, context)) return;
 
         JSONArray array = getPastPlayerLists(context);
         array.put(playerListAsJSON);
@@ -56,6 +63,7 @@ public class PreferencesManager {
 
     private static boolean playerListAlreadyPresent(JSONObject playerJSON, Context context) throws JSONException {
         JSONArray array = getPastPlayerLists(context);
+
         for(int i = 0; i < array.length(); i++) {
             JSONObject object = array.getJSONObject(i);
 
@@ -67,7 +75,7 @@ public class PreferencesManager {
         return false; //No objects match
     }
 
-    public static JSONObject playerListtoJSON() throws JSONException {
+    private static JSONObject playerListtoJSON() throws JSONException {
         ArrayList<String> playerList = PlayerList.getPlayerList();
 
         JSONObject object = new JSONObject();
@@ -75,6 +83,15 @@ public class PreferencesManager {
             object.put("" + i, playerList.get(i));
         }
         return object;
+    }
+
+    public static void setupOldPlayerListRecyclerView(RecyclerView recyclerView, Context context) {
+        try {
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            recyclerView.setAdapter(new OldPlayerListRecyclerViewAdapter(getPastPlayerLists(context), context));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 }

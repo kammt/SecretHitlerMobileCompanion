@@ -93,4 +93,7 @@
     <string name="menu_setup_sounds">Sounds</string>
     <string name="menu_setup_server">Server</string>
     <string name="hint_player_name">Player Name</string>
+    <string name="add_players_explanation">Add new players using the button above</string>
+    <string name="choose_from_previous_games">Or choose from previous games:</string>
+    <string name="use">Use</string>
 </resources>
