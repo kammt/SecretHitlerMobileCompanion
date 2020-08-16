@@ -34,7 +34,7 @@ public class PlayerList {
         claimList = new ArrayList<>();
         isDead = new ArrayList<>();
 
-        playerRecyclerViewAdapter = new PlayerRecyclerViewAdapter(playerList, context, false);
+        playerRecyclerViewAdapter = new PlayerRecyclerViewAdapter(playerList, context);
         playerCardList.setAdapter(playerRecyclerViewAdapter);
         playerRecyclerView = playerCardList;
 

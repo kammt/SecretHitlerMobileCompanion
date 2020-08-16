@@ -96,4 +96,8 @@
     <string name="add_players_explanation">Add new players using the button above</string>
     <string name="choose_from_previous_games">Or choose from previous games:</string>
     <string name="use">Use</string>
+    <string name="unnamed_player_list">[Tap to rename]</string>
+    <string name="includes_players">Includes the following players:</string>
+    <string name="input_group_name">Input Group name</string>
+    <string name="hint_player_List_name">Player List Name</string>
 </resources>

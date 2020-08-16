@@ -16,6 +16,8 @@ import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.OldPlaye
 
 public class PreferencesManager {
 
+    private static OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter;
+
     private static boolean JSONObjectsTheSame(JSONObject one, JSONObject two) throws JSONException {
         for(int i = 0; i < one.length(); i++) {
             if(!two.has(one.getString("" + i))) return false;
@@ -59,6 +61,11 @@ public class PreferencesManager {
         object.put("players", array);
 
         preferences.edit().putString("old-players", object.toString()).apply();
+
+        if(oldPlayerListRecyclerViewAdapter != null) {
+            oldPlayerListRecyclerViewAdapter.oldPlayers = array;
+            oldPlayerListRecyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 
     private static boolean playerListAlreadyPresent(JSONObject playerJSON, Context context) throws JSONException {
@@ -85,10 +92,17 @@ public class PreferencesManager {
         return object;
     }
 
+    public static void setPlayerListName(String name, int position, Context context) throws JSONException {
+        JSONArray newArray = getPastPlayerLists(context);
+        newArray.getJSONObject(position).put("name", name);
+        writePastPlayerLists(newArray, context);
+    }
+
     public static void setupOldPlayerListRecyclerView(RecyclerView recyclerView, Context context) {
         try {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new OldPlayerListRecyclerViewAdapter(getPastPlayerLists(context), context));
+            oldPlayerListRecyclerViewAdapter = new OldPlayerListRecyclerViewAdapter(getPastPlayerLists(context), context);
+            recyclerView.setAdapter(oldPlayerListRecyclerViewAdapter);
         } catch (JSONException e) {
             e.printStackTrace();
         }

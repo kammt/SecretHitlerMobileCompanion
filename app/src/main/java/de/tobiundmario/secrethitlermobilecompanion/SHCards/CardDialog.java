@@ -15,12 +15,13 @@ import de.tobiundmario.secrethitlermobilecompanion.R;
 
 public class CardDialog {
 
-    public static void showInputDialog (Context c, String title, String positive, final InputDialogSubmittedListener positiveListener, final String negative, final Runnable negativeListener) {
+    public static void showInputDialog (Context c, String title, String hint, String positive, final InputDialogSubmittedListener positiveListener, final String negative, final Runnable negativeListener) {
         final CustomDialog customDialog = createDialog(c, title, null, positive, null, negative, negativeListener, true);
         final Dialog dialog = customDialog.getDialog();
         final View contentView = customDialog.getContent();
 
         final EditText dialogInput = contentView.findViewById(R.id.dialog_input);
+        dialogInput.setHint(hint);
         TextView positiveButton = contentView.findViewById(R.id.tv_positive);
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override

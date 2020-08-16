@@ -1,10 +1,15 @@
 package de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
@@ -13,9 +18,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PreferencesManager;
+
 public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPlayerListRecyclerViewAdapter.OldPlayerListViewHolder> {
 
-    JSONArray oldPlayers;
+    public JSONArray oldPlayers;
     Context context;
 
     public OldPlayerListRecyclerViewAdapter(JSONArray oldPlayers, Context context){
@@ -24,13 +34,12 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
     }
 
     public static class OldPlayerListViewHolder extends RecyclerView.ViewHolder {
-        RecyclerView rv;
-        PlayerRecyclerViewAdapter adapter;
+        CardView cv;
         ArrayList<String> players;
 
         OldPlayerListViewHolder(View itemView) {
             super(itemView);
-            rv = (RecyclerView) itemView;
+            cv = (CardView) itemView;
         }
     }
 
@@ -41,30 +50,76 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
 
     @Override
     public OldPlayerListViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
-        RecyclerView recyclerView = new RecyclerView(context);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false));
-        RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.bottomMargin = 30;
-        recyclerView.setLayoutParams(params);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_old_player_list, viewGroup, false);
 
-        OldPlayerListViewHolder cardViewHolder = new OldPlayerListViewHolder(recyclerView);
+        OldPlayerListViewHolder cardViewHolder = new OldPlayerListViewHolder(v);
         return cardViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(OldPlayerListViewHolder oldPlayerListViewHolder, int pos) {
+    public void onBindViewHolder(OldPlayerListViewHolder oldPlayerListViewHolder, final int pos) {
         try {
             JSONObject object = oldPlayers.getJSONObject(pos);
             final ArrayList<String> players = new ArrayList<>();
+            StringBuilder stringBuilder = new StringBuilder();
 
-            for (int j = 0; j < object.length(); j++) {
-                players.add( object.getString("" + j) );
+            int listLength;
+            String groupName;
+            if(object.has("name")) {
+                groupName = object.getString("name");
+                listLength = object.length() - 1;
+            } else {
+                groupName = null;
+                listLength = object.length();
+            }
+
+            for (int j = 0; j < listLength; j++) {
+                String playerName = object.getString("" + j);
+                players.add(playerName);
+
+                stringBuilder.append(playerName);
+                if(j != object.length()) stringBuilder.append(", ");
             }
             oldPlayerListViewHolder.players = players;
+            String playerListAsString = stringBuilder.toString();
 
-            RecyclerView recyclerView = oldPlayerListViewHolder.rv;
-            oldPlayerListViewHolder.adapter = new PlayerRecyclerViewAdapter(players, context, true);
-            recyclerView.setAdapter(oldPlayerListViewHolder.adapter);
+            CardView cardView = oldPlayerListViewHolder.cv;
+            TextView tv_rename = cardView.findViewById(R.id.tv_rename_player_list);
+            TextView tv_playerNames = cardView.findViewById(R.id.tv_playerNames);
+            Button btn_use = cardView.findViewById(R.id.btn_use);
+
+            btn_use.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PlayerList.setPlayerList(players);
+                }
+            });
+
+            if(groupName != null)tv_rename.setText(groupName);
+            tv_rename.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CardDialog.showInputDialog(context, context.getString(R.string.input_group_name), context.getString(R.string.hint_player_List_name), context.getString(R.string.btn_ok), new CardDialog.InputDialogSubmittedListener() {
+                        @Override
+                        public void onInputDialogSubmitted(EditText inputField, Dialog rootDialog) {
+                            String groupName = inputField.getText().toString();
+                            if(groupName.matches("")) {
+                                rootDialog.dismiss();
+                                return;
+                            }
+
+                            try {
+                                PreferencesManager.setPlayerListName(groupName, pos, context);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            rootDialog.dismiss();
+                        }
+                    }, context.getString(R.string.dialog_mismatching_claims_btn_cancel), null);
+                }
+            });
+
+            tv_playerNames.setText(playerListAsString);
         } catch (JSONException e) {
             e.printStackTrace();
         }
