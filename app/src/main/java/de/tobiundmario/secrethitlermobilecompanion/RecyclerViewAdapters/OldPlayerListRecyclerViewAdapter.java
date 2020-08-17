@@ -78,7 +78,7 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
                 players.add(playerName);
 
                 stringBuilder.append(playerName);
-                if(j != object.length() - 1) stringBuilder.append(", ");
+                if(j != listLength - 1) stringBuilder.append(", ");
             }
             oldPlayerListViewHolder.players = players;
             String playerListAsString = stringBuilder.toString();
