@@ -3,6 +3,7 @@ package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.OldPlayerListRecyclerViewAdapter;
 
@@ -135,6 +137,16 @@ public class PreferencesManager {
 
         writePastPlayerLists(array, context);
         oldPlayerListRecyclerViewAdapter.notifyItemInserted(position);
+
+        setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context);
+    }
+
+    public static void setCorrectPlayerListExplanationText(TextView tv, Context context) throws JSONException {
+        if(getPastPlayerLists(context).length() == 0) {
+            tv.setText(context.getString(R.string.choose_from_previous_games_empty));
+        } else {
+            tv.setText(context.getString(R.string.choose_from_previous_games));
+        }
     }
 
     public static JSONObject removePlayerList(int position, Context context) throws JSONException {
@@ -143,6 +155,8 @@ public class PreferencesManager {
         array.remove(position);
         writePastPlayerLists(array, context);
         oldPlayerListRecyclerViewAdapter.notifyItemRemoved(position);
+
+        setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context);
 
         return removed;
     }
@@ -186,6 +200,8 @@ public class PreferencesManager {
                 }
             };
             new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+
+            setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context);
         } catch (JSONException e) {
             e.printStackTrace();
         }

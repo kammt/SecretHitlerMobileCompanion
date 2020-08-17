@@ -74,7 +74,10 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton fab_forward;
     private FloatingActionButton fab_back;
+
     private ConstraintLayout container_new_player;
+    public TextView tv_choose_from_previous_games_players;
+
     private ProgressBar progressBar_setupSteps;
 
     private View.OnClickListener listener_forward_players;
@@ -316,6 +319,7 @@ public class MainActivity extends AppCompatActivity {
         fab_forward = findViewById(R.id.fab_setup_forward);
         fab_back = findViewById(R.id.fab_setup_back);
         container_new_player = findViewById(R.id.container_add_players);
+        tv_choose_from_previous_games_players = findViewById(R.id.tv_choose_old_players);
 
         progressBar_setupSteps = findViewById(R.id.progressBar_setupProgress);
         progressBar_setupSteps.setMax(1000);
