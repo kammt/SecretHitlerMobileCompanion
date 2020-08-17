@@ -27,7 +27,12 @@ public class PreferencesManager {
 
     private static boolean JSONObjectsTheSame(JSONObject one, JSONObject two) throws JSONException {
         for(int i = 0; i < one.length(); i++) {
-            if(!two.has(one.getString("" + i))) return false;
+            String name = (String) one.get("" + i);
+            for (int j = 0; j < two.length(); j++) {
+                if(two.get("" + j).equals(name)) break;
+
+                if(j == two.length()) return false; //We just checked the last value and the name is not there, they cannot be the same
+            }
         }
         return true;
     }
@@ -82,7 +87,6 @@ public class PreferencesManager {
             JSONObject object = array.getJSONObject(i);
 
             if(object.length() != playerJSON.length()) continue; //They cannot be the same, skipping
-            if(object.equals(playerJSON)) return true; //They are exactly the same
 
             if(JSONObjectsTheSame(playerJSON, object)) return true;
         }
@@ -112,7 +116,7 @@ public class PreferencesManager {
         JSONArray array = getPastPlayerLists(context);
 
         JSONObject objectToInsert = null;
-        JSONObject objectAtPos = null;
+        JSONObject objectAtPos;
         int originalLength = array.length();
 
         for(int i = position; i < originalLength + 1; i++) {
