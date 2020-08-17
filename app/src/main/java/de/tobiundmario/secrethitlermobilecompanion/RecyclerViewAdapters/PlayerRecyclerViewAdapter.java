@@ -29,6 +29,7 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
     private ArrayList<String> hiddenPlayers = new ArrayList<>();
 
     private static int ADD_BUTTON = 2;
+    private static int ADD_BUTTON_POSITION_ONE = 3;
     private static int NORMAL = 1;
     private static int FIRST_CARD = 0;
 
@@ -89,7 +90,9 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
 
             TextView tvPlayerName = v.findViewById(R.id.tv_playerName);
             tvPlayerName.setText(context.getString(R.string.new_player));
-        }  else if(type == FIRST_CARD) {
+        }
+
+        if(type == FIRST_CARD || type == ADD_BUTTON_POSITION_ONE) {
             Resources r = context.getResources();
             int px = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,
@@ -108,7 +111,7 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
 
     @Override
     public void onBindViewHolder(PlayerCardViewHolder cardViewHolder, int i) {
-        if(cardViewHolder.getItemViewType() == ADD_BUTTON) return;
+        if(cardViewHolder.getItemViewType() == ADD_BUTTON || cardViewHolder.getItemViewType() == ADD_BUTTON_POSITION_ONE) return;
 
         CardView cardView = cardViewHolder.cv;
 
@@ -155,7 +158,7 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
 
     @Override
     public int getItemViewType(int position) {
-        if(position >= players.size()) return ADD_BUTTON;
+        if(position >= players.size()) return (position == 0) ? ADD_BUTTON_POSITION_ONE : ADD_BUTTON;
         else return (position == 0) ? FIRST_CARD : NORMAL;
     }
 
