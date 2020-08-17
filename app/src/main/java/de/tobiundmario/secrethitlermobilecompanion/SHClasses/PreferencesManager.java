@@ -2,9 +2,15 @@ package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,6 +18,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.OldPlayerListRecyclerViewAdapter;
 
 public class PreferencesManager {
@@ -101,11 +108,80 @@ public class PreferencesManager {
         writePastPlayerLists(newArray, context);
     }
 
-    public static void setupOldPlayerListRecyclerView(RecyclerView recyclerView, Context context) {
+    private static void addPlayerList(JSONObject playerList, int position, Context context) throws JSONException {
+        JSONArray array = getPastPlayerLists(context);
+
+        JSONObject objectToInsert = null;
+        JSONObject objectAtPos = null;
+        int originalLength = array.length();
+
+        for(int i = position; i < originalLength + 1; i++) {
+            if(objectToInsert == null) objectToInsert = playerList; //We are at the insertion point, so we want to insert the list here
+
+            if(i == originalLength) { //When it is in the last list item, we just want to insert the item from before and end the loop
+                array.put(i, objectToInsert);
+                break;
+            }
+
+            objectAtPos = array.getJSONObject(i); //Before inserting, we get the current object to move it to the next position later on
+            array.put(i, objectToInsert);
+
+            objectToInsert = objectAtPos;
+        }
+
+        writePastPlayerLists(array, context);
+        oldPlayerListRecyclerViewAdapter.notifyItemInserted(position);
+    }
+
+    public static JSONObject removePlayerList(int position, Context context) throws JSONException {
+        JSONArray array = getPastPlayerLists(context);
+        JSONObject removed = array.getJSONObject(position);
+        array.remove(position);
+        writePastPlayerLists(array, context);
+        oldPlayerListRecyclerViewAdapter.notifyItemRemoved(position);
+
+        return removed;
+    }
+
+    public static void setupOldPlayerListRecyclerView(final RecyclerView recyclerView, final Context context) {
         try {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             oldPlayerListRecyclerViewAdapter = new OldPlayerListRecyclerViewAdapter(getPastPlayerLists(context), context);
             recyclerView.setAdapter(oldPlayerListRecyclerViewAdapter);
+
+            ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+                @Override
+                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                    return false;
+                }
+
+                @Override
+                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                    final int position = viewHolder.getAdapterPosition();
+                    try {
+                        final JSONObject removed = removePlayerList(position, context);
+
+                        Snackbar snackbar = Snackbar.make(recyclerView, context.getString(R.string.snackbar_playerList_removed_message), BaseTransientBottomBar.LENGTH_LONG);
+
+                        snackbar.setAction(context.getString(R.string.undo), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    addPlayerList(removed, position, context);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            };
+            new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
         } catch (JSONException e) {
             e.printStackTrace();
         }

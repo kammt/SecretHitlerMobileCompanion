@@ -74,7 +74,7 @@
     <string name="title_too_little_players">Too little players</string>
     <string name="no_players_added">No players added</string>
     <string name="no_players_added_msg">You can add more players using the button above</string>
-    <string name="snackbar_removed_message">Event has been deleted</string>
+    <string name="snackbar_GameEvent_removed_message">Event has been deleted</string>
     <string name="undo">Undo</string>
     <string name="game_ended_title">Game Ended</string>
     <string name="game_ended_who_won">To play the correct sound, please specify who has won and how.</string>
@@ -100,4 +100,5 @@
     <string name="includes_players">Includes the following players:</string>
     <string name="input_group_name">Input Group name</string>
     <string name="hint_player_List_name">Player List Name</string>
+    <string name="snackbar_playerList_removed_message">Player List has been removed</string>
 </resources>
