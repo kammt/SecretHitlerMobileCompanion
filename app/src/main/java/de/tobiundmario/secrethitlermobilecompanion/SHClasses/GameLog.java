@@ -260,7 +260,7 @@ public class GameLog {
                 final GameEvent event = eventList.get(position);
 
                 remove(event);
-                Snackbar snackbar = Snackbar.make(cardList, c.getString(R.string.snackbar_removed_message), BaseTransientBottomBar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(cardList, c.getString(R.string.snackbar_GameEvent_removed_message), BaseTransientBottomBar.LENGTH_LONG);
 
                 snackbar.setAction(c.getString(R.string.undo), new View.OnClickListener() {
                     @Override

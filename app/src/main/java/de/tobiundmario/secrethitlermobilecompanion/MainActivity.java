@@ -25,9 +25,11 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab_forward;
     private FloatingActionButton fab_back;
     private ConstraintLayout container_new_player;
-    private BottomNavigationView bottomNavigationMenu_setupSteps;
+    private ProgressBar progressBar_setupSteps;
 
     private View.OnClickListener listener_forward_players;
     private View.OnClickListener listener_backward_tracks;
@@ -168,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
         PlayerList.addPlayer("Anke");
         PlayerList.addPlayer("Björn");
         PlayerList.addPlayer("Knut");
+        PlayerList.addPlayer("Richard");
         startGame(true, true, true, true);
     }
 
@@ -314,11 +317,8 @@ public class MainActivity extends AppCompatActivity {
         fab_back = findViewById(R.id.fab_setup_back);
         container_new_player = findViewById(R.id.container_add_players);
 
-        bottomNavigationMenu_setupSteps = findViewById(R.id.bottomNavigationView_SetupSteps);
-        Menu menu = bottomNavigationMenu_setupSteps.getMenu();
-        for (int i = 0; i < menu.size(); i++) {
-            menu.getItem(i).setEnabled(false);
-        }
+        progressBar_setupSteps = findViewById(R.id.progressBar_setupProgress);
+        progressBar_setupSteps.setMax(1000);
 
         btn_createNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -339,9 +339,13 @@ public class MainActivity extends AppCompatActivity {
                 fab_forward.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.fab_open));
                 container_new_player.setVisibility(View.VISIBLE);
                 container_new_player.startAnimation(fadeIn);
-                bottomNavigationMenu_setupSteps.setVisibility(View.VISIBLE);
-                bottomNavigationMenu_setupSteps.startAnimation(fadeIn);
 
+                progressBar_setupSteps.setVisibility(View.VISIBLE);
+                progressBar_setupSteps.startAnimation(fadeIn);
+
+                Animation progressBarAnimation = new ProgressBarAnimation(progressBar_setupSteps, 0, 250);
+                progressBarAnimation.setDuration(500);
+                progressBar_setupSteps.startAnimation(progressBarAnimation);
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -383,7 +387,9 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
-                        bottomNavigationMenu_setupSteps.getMenu().getItem(1).setChecked(true);
+                        Animation progressBarAnimation = new ProgressBarAnimation(progressBar_setupSteps, 250, 500);
+                        progressBarAnimation.setDuration(500);
+                        progressBar_setupSteps.startAnimation(progressBarAnimation);
                     }
                 };
 
@@ -415,7 +421,9 @@ public class MainActivity extends AppCompatActivity {
                 playerCardList.setVisibility(View.VISIBLE);
                 playerCardList.startAnimation(slideInLeft);
 
-                bottomNavigationMenu_setupSteps.getMenu().getItem(0).setChecked(true);
+                Animation progressBarAnimation = new ProgressBarAnimation(progressBar_setupSteps, 500, 250);
+                progressBarAnimation.setDuration(500);
+                progressBar_setupSteps.startAnimation(progressBarAnimation);
                 fab_forward.setOnClickListener(listener_forward_players);
             }
         };
@@ -788,4 +796,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public class ProgressBarAnimation extends Animation{
+        private ProgressBar progressBar;
+        private float from;
+        private float  to;
+
+        public ProgressBarAnimation(ProgressBar progressBar, float from, float to) {
+            super();
+            this.progressBar = progressBar;
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            super.applyTransformation(interpolatedTime, t);
+            float value = from + (to - from) * interpolatedTime;
+            progressBar.setProgress((int) value);
+        }
+
+    }
 }
