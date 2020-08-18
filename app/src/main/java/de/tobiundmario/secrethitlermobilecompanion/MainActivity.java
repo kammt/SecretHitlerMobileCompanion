@@ -29,12 +29,14 @@ import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -52,6 +54,7 @@ import java.lang.reflect.InvocationTargetException;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PreferencesManager;
@@ -77,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout container_setup_buttons;
 
     private ConstraintLayout container_new_player;
+    private ConstraintLayout container_select_track;
+    private ConstraintLayout container_sound_settings;
+    private ConstraintLayout container_server;
     public TextView tv_choose_from_previous_games_players;
 
     private ProgressBar progressBar_setupSteps;
@@ -322,11 +328,32 @@ public class MainActivity extends AppCompatActivity {
         btn_setup_forward = findViewById(R.id.btn_setup_forward);
         container_setup_buttons = findViewById(R.id.setup_buttons);
 
-        container_new_player = findViewById(R.id.container_add_players);
+        container_new_player = findViewById(R.id.container_setup_add_players);
         tv_choose_from_previous_games_players = findViewById(R.id.tv_choose_old_players);
+
+        container_select_track = findViewById(R.id.container_setup_set_Track);
+        container_sound_settings = findViewById(R.id.container_setup_sound_settings);
+        container_server = findViewById(R.id.container_setup_server);
 
         progressBar_setupSteps = findViewById(R.id.progressBar_setupProgress);
         progressBar_setupSteps.setMax(1000);
+
+        //Adding the official tracks to the LinearLayout
+        LinearLayout ll_official_tracks = findViewById(R.id.container_official_tracks);
+        //For 5-6 players
+        CardView cv_56 = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, ll_official_tracks, false);
+        FascistTrack.setupOfficialCard(cv_56, FascistTrack.TRACK_TYPE_5_TO_6, this);
+        ll_official_tracks.addView(cv_56);
+
+        //For 7-8 players
+        CardView cv_78 = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, ll_official_tracks, false);
+        FascistTrack.setupOfficialCard(cv_78, FascistTrack.TRACK_TYPE_7_TO_8, this);
+        ll_official_tracks.addView(cv_78);
+
+        //For 9-10 players
+        CardView cv_910 = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, ll_official_tracks, false);
+        FascistTrack.setupOfficialCard(cv_910, FascistTrack.TRACK_TYPE_9_TO_10, this);
+        ll_official_tracks.addView(cv_910);
 
         btn_createNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -410,8 +437,30 @@ public class MainActivity extends AppCompatActivity {
                 Runnable continueSetup = new Runnable() {
                     @Override
                     public void run() {
+                        //Check if there is a recommended track available
+                        LinearLayout container_recommended_track = findViewById(R.id.container_recommended_track);
+                        if(PlayerList.getPlayerList().size() >=5 && PlayerList.getPlayerList().size() <=10) {//Recommended track available
+                            container_recommended_track.setVisibility(View.VISIBLE);
+                            if(container_recommended_track.getChildCount() > 1) container_recommended_track.removeViewAt(1); //If there is already a recommended track in there, we remove it.
+
+                            CardView cv_recommended_track = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, container_recommended_track, false);
+                            if(PlayerList.getPlayerList().size() == 5 || PlayerList.getPlayerList().size() == 6) {
+                                FascistTrack.setupOfficialCard(cv_recommended_track, FascistTrack.TRACK_TYPE_5_TO_6, MainActivity.this);
+                            } else if(PlayerList.getPlayerList().size() == 7 || PlayerList.getPlayerList().size() == 8) {
+                                FascistTrack.setupOfficialCard(cv_recommended_track, FascistTrack.TRACK_TYPE_7_TO_8, MainActivity.this);
+                            } else if(PlayerList.getPlayerList().size() == 9 || PlayerList.getPlayerList().size() ==10) {
+                                FascistTrack.setupOfficialCard(cv_recommended_track, FascistTrack.TRACK_TYPE_9_TO_10, MainActivity.this);
+                            }
+                            container_recommended_track.addView(cv_recommended_track);
+
+                        } else {
+                            container_recommended_track.setVisibility(View.GONE);
+                        }
+
+                        //Change the back listener
                         btn_setup_back.setOnClickListener(listener_backward_tracks);
 
+                        //Animations
                         Animation slideOutLeft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_left);
                         container_new_player.startAnimation(slideOutLeft);
                         playerCardList.startAnimation(slideOutLeft);
@@ -435,6 +484,10 @@ public class MainActivity extends AppCompatActivity {
                         Animation progressBarAnimation = new ProgressBarAnimation(progressBar_setupSteps, 250, 500);
                         progressBarAnimation.setDuration(500);
                         progressBar_setupSteps.startAnimation(progressBarAnimation);
+
+                        Animation slideInRight = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_right);
+                        container_select_track.setVisibility(View.VISIBLE);
+                        container_select_track.startAnimation(slideInRight);
                     }
                 };
 
@@ -451,7 +504,23 @@ public class MainActivity extends AppCompatActivity {
         listener_backward_tracks = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO make views invisible
+                Animation slideOutRight = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_right);
+                container_select_track.startAnimation(slideOutRight);
+
+                slideOutRight.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        container_select_track.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
 
                 Animation slideInLeft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_left);
                 container_new_player.setVisibility(View.VISIBLE);

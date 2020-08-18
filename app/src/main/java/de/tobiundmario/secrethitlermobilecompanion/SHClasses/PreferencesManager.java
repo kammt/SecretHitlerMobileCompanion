@@ -43,6 +43,28 @@ public class PreferencesManager {
         return context.getSharedPreferences("past-values", Context.MODE_PRIVATE);
     }
 
+    private static JSONArray addJSONObjectToArray(JSONObject jsonObject, JSONArray jsonArray, int position) throws JSONException {
+        JSONObject objectToInsert = null;
+        JSONObject objectAtPos;
+        int originalLength = jsonArray.length();
+
+        for(int i = position; i < originalLength + 1; i++) {//We start at the insertion point, we don't need to do anything before that point
+            if(objectToInsert == null) objectToInsert = jsonObject; //We are at the insertion point, so we want to insert the list here
+
+            if(i == originalLength) { //When it is in the last list item, we just want to insert the item from before and end the loop
+                jsonArray.put(i, objectToInsert);
+                break;
+            }
+
+            objectAtPos = jsonArray.getJSONObject(i); //Before inserting, we get the current object to move it to the next position later on
+            jsonArray.put(i, objectToInsert);
+
+            objectToInsert = objectAtPos;
+        }
+
+        return jsonArray;
+    }
+
 
     //Old Player Lists related
     public static JSONArray getPastPlayerLists(Context context) throws JSONException {
@@ -114,32 +136,6 @@ public class PreferencesManager {
         writePastPlayerLists(newArray, context);
     }
 
-    private static void addPlayerList(JSONObject playerList, int position, Context context) throws JSONException {
-        JSONArray array = getPastPlayerLists(context);
-
-        JSONObject objectToInsert = null;
-        JSONObject objectAtPos;
-        int originalLength = array.length();
-
-        for(int i = position; i < originalLength + 1; i++) {
-            if(objectToInsert == null) objectToInsert = playerList; //We are at the insertion point, so we want to insert the list here
-
-            if(i == originalLength) { //When it is in the last list item, we just want to insert the item from before and end the loop
-                array.put(i, objectToInsert);
-                break;
-            }
-
-            objectAtPos = array.getJSONObject(i); //Before inserting, we get the current object to move it to the next position later on
-            array.put(i, objectToInsert);
-
-            objectToInsert = objectAtPos;
-        }
-
-        writePastPlayerLists(array, context);
-        oldPlayerListRecyclerViewAdapter.notifyItemInserted(position);
-
-        setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context);
-    }
 
     public static void setCorrectPlayerListExplanationText(TextView tv, Context context) throws JSONException {
         if(getPastPlayerLists(context).length() == 0) {
@@ -186,7 +182,14 @@ public class PreferencesManager {
                             @Override
                             public void onClick(View v) {
                                 try {
-                                    addPlayerList(removed, position, context);
+                                    JSONArray playerListsArray = getPastPlayerLists(context);
+
+                                    addJSONObjectToArray(removed, playerListsArray, position);
+
+                                    writePastPlayerLists(playerListsArray, context);
+                                    oldPlayerListRecyclerViewAdapter.notifyItemInserted(position);
+
+                                    setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }

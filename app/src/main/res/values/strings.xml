@@ -103,4 +103,12 @@
     <string name="snackbar_playerList_removed_message">Player List has been removed</string>
     <string name="choose_from_previous_games_empty">Player combinations from previous games will appear below</string>
     <string name="back">Back</string>
+    <string name="recommended_title">Recommended Track:</string>
+    <string name="official_tracks_title">Official Tracks:</string>
+    <string name="custom_tracks_title">Custom Tracks:</string>
+    <string name="track_56">5 - 6 players</string>
+    <string name="track_910">9 - 10 players</string>
+    <string name="track_78">7 - 8 players</string>
+    <string name="explanation_trackSelection">Select a Fascist Track from the list below or use the Button to create a custom one.</string>
+    <string name="in_use">In Use</string>
 </resources>
