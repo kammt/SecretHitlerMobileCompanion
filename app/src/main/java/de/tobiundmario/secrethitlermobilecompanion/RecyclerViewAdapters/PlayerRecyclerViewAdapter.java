@@ -57,7 +57,7 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
     public PlayerCardViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_player_list_single_player, viewGroup, false);
 
-        if(type == ADD_BUTTON) {
+        if(type == ADD_BUTTON || type == ADD_BUTTON_POSITION_ONE) {
             v.setClickable(true);
             v.setFocusable(true);
             v.setOnClickListener(new View.OnClickListener() {
@@ -105,8 +105,7 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
             v.setLayoutParams(params);
         }
 
-        PlayerCardViewHolder cardViewHolder = new PlayerCardViewHolder(v);
-        return cardViewHolder;
+        return new PlayerCardViewHolder(v);
     }
 
     @Override
