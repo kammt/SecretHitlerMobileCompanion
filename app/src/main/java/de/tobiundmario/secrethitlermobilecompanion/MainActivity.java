@@ -54,7 +54,7 @@ import java.lang.reflect.InvocationTargetException;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PreferencesManager;
@@ -80,7 +80,9 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout container_setup_buttons;
 
     private ConstraintLayout container_new_player;
+
     private ConstraintLayout container_select_track;
+
     private ConstraintLayout container_sound_settings;
     private ConstraintLayout container_server;
     public TextView tv_choose_from_previous_games_players;
@@ -342,18 +344,21 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout ll_official_tracks = findViewById(R.id.container_official_tracks);
         //For 5-6 players
         CardView cv_56 = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, ll_official_tracks, false);
-        FascistTrack.setupOfficialCard(cv_56, FascistTrack.TRACK_TYPE_5_TO_6, this);
+        FascistTrackSelectionManager.setupOfficialCard(cv_56, FascistTrackSelectionManager.TRACK_TYPE_5_TO_6, this);
         ll_official_tracks.addView(cv_56);
+        FascistTrackSelectionManager.fasTracks.add(0, cv_56);
 
         //For 7-8 players
         CardView cv_78 = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, ll_official_tracks, false);
-        FascistTrack.setupOfficialCard(cv_78, FascistTrack.TRACK_TYPE_7_TO_8, this);
+        FascistTrackSelectionManager.setupOfficialCard(cv_78, FascistTrackSelectionManager.TRACK_TYPE_7_TO_8, this);
         ll_official_tracks.addView(cv_78);
+        FascistTrackSelectionManager.fasTracks.add(1, cv_78);
 
         //For 9-10 players
         CardView cv_910 = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, ll_official_tracks, false);
-        FascistTrack.setupOfficialCard(cv_910, FascistTrack.TRACK_TYPE_9_TO_10, this);
+        FascistTrackSelectionManager.setupOfficialCard(cv_910, FascistTrackSelectionManager.TRACK_TYPE_9_TO_10, this);
         ll_official_tracks.addView(cv_910);
+        FascistTrackSelectionManager.fasTracks.add(2, cv_910);
 
         btn_createNewGame.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -361,7 +366,9 @@ public class MainActivity extends AppCompatActivity {
                 cardList.setVisibility(View.VISIBLE);
                 GameLog.initialise(cardList, MainActivity.this);
 
+                //Resetting values in case there has been a setup before which was cancelled
                 PlayerList.initialise(playerCardList, MainActivity.this);
+                FascistTrackSelectionManager.selectedTrackIndex = -1;
 
                 AlphaAnimation fadeOut = new AlphaAnimation((float) 1, (float) 0);
                 fadeOut.setDuration(500);
@@ -439,22 +446,41 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         //Check if there is a recommended track available
                         LinearLayout container_recommended_track = findViewById(R.id.container_recommended_track);
+
                         if(PlayerList.getPlayerList().size() >=5 && PlayerList.getPlayerList().size() <=10) {//Recommended track available
                             container_recommended_track.setVisibility(View.VISIBLE);
-                            if(container_recommended_track.getChildCount() > 1) container_recommended_track.removeViewAt(1); //If there is already a recommended track in there, we remove it.
 
-                            CardView cv_recommended_track = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, container_recommended_track, false);
+                            int recommendation = -10;
                             if(PlayerList.getPlayerList().size() == 5 || PlayerList.getPlayerList().size() == 6) {
-                                FascistTrack.setupOfficialCard(cv_recommended_track, FascistTrack.TRACK_TYPE_5_TO_6, MainActivity.this);
+                                recommendation = 0;
                             } else if(PlayerList.getPlayerList().size() == 7 || PlayerList.getPlayerList().size() == 8) {
-                                FascistTrack.setupOfficialCard(cv_recommended_track, FascistTrack.TRACK_TYPE_7_TO_8, MainActivity.this);
+                                recommendation = 1;
                             } else if(PlayerList.getPlayerList().size() == 9 || PlayerList.getPlayerList().size() ==10) {
-                                FascistTrack.setupOfficialCard(cv_recommended_track, FascistTrack.TRACK_TYPE_9_TO_10, MainActivity.this);
+                                recommendation = 2;
                             }
-                            container_recommended_track.addView(cv_recommended_track);
 
+                            //Only change the layout if the recommendation changed
+                            if(recommendation != FascistTrackSelectionManager.recommendedTrackIndex) {
+                                CardView cv_recommended_track = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, container_recommended_track, false);
+
+                                if (recommendation == 0) {
+                                    FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_5_TO_6, MainActivity.this);
+                                } else if (recommendation == 1) {
+                                    FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_7_TO_8, MainActivity.this);
+                                } else if (recommendation == 2) {
+                                    FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_9_TO_10, MainActivity.this);
+                                }
+
+                                if (container_recommended_track.getChildCount() > 1)
+                                    container_recommended_track.removeViewAt(1); //If there is already a recommended track in there, we remove it.
+
+                                container_recommended_track.addView(cv_recommended_track);
+                                FascistTrackSelectionManager.changeRecommendedCard(recommendation, cv_recommended_track, MainActivity.this);
+                            }
                         } else {
                             container_recommended_track.setVisibility(View.GONE);
+                            FascistTrackSelectionManager.recommendedTrackIndex = -1;
+                            FascistTrackSelectionManager.recommendedCard = null;
                         }
 
                         //Change the back listener

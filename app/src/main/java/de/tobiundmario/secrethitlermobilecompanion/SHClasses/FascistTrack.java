@@ -1,18 +1,5 @@
 package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import de.tobiundmario.secrethitlermobilecompanion.R;
-
 public class FascistTrack {
 
     public static final int NO_POWER = 0;
@@ -21,16 +8,10 @@ public class FascistTrack {
     public static final int DECK_PEEK = 3;
     public static final int SPECIAL_ELECTION = 4;
 
-    public static final int TRACK_TYPE_5_TO_6 = 5;
-    public static final int TRACK_TYPE_7_TO_8 = 6;
-    public static final int TRACK_TYPE_9_TO_10 = 7;
 
     private int[] actions = new int[6];
     private int fasPolicies = 6;
     private int libPolicies = 5;
-
-    private boolean isOfficial = false;
-    private Drawable officialTrackImage = null;
 
     private int minPlayers;
     private int maxPlayers;
@@ -91,22 +72,6 @@ public class FascistTrack {
         this.maxPlayers = maxPlayers;
     }
 
-    public boolean isOfficial() {
-        return isOfficial;
-    }
-
-    public void setOfficial(boolean official) {
-        isOfficial = official;
-    }
-
-    public void setOfficialTrackImage(Drawable officialTrackImage) {
-        this.officialTrackImage = officialTrackImage;
-    }
-
-    public Drawable getOfficialTrackImage() {
-        return officialTrackImage;
-    }
-
     public void setLibPolicies(int libPolicies) {
         this.libPolicies = libPolicies;
     }
@@ -135,55 +100,5 @@ public class FascistTrack {
         return fasPolicies;
     }
 
-    public JSONObject writeToJSON() throws JSONException {
-        JSONObject object = new JSONObject();
-
-        object.put("actions", actions);
-
-        object.put("hz", hzStartingPolicy);
-        object.put("veto", vetoStartingPolicy);
-
-        object.put("min", minPlayers);
-        object.put("max", maxPlayers);
-
-        object.put("official", isOfficial);
-        if(isOfficial) object.put("trackImage", officialTrackImage);
-
-        return object;
-    }
-
-    public static FascistTrack restoreFromJSON(JSONObject object) throws JSONException {
-        FascistTrack track = new FascistTrack(object.getInt("min"), object.getInt("max"));
-
-        track.setActions((int[]) object.get("actions"));
-
-        track.setHZStartingPolicy(object.getInt("hz"));
-        track.setVetoStartingPolicy(object.getInt("veto"));
-
-        track.setOfficial(object.getBoolean("official"));
-        if(track.isOfficial()) track.setOfficialTrackImage((Drawable) object.get("trackImage"));
-
-        return track;
-    }
-
-    public static void setupOfficialCard(CardView cardView, int trackType, Context context) {
-        TextView title_players = cardView.findViewById(R.id.tv_officialTrack_players);
-        ImageView iv_trackImage = cardView.findViewById(R.id.iv_trackDrawable);
-
-        switch (trackType) {
-            case TRACK_TYPE_5_TO_6:
-                title_players.setText(context.getString(R.string.track_56));
-                iv_trackImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.fascisttrack56));
-                break;
-            case TRACK_TYPE_7_TO_8:
-                title_players.setText(context.getString(R.string.track_78));
-                iv_trackImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.fascisttrack78));
-                break;
-            case TRACK_TYPE_9_TO_10:
-                title_players.setText(context.getString(R.string.track_910));
-                iv_trackImage.setImageDrawable(ContextCompat.getDrawable(context,  R.drawable.fascisttrack910));
-                break;
-        }
-    }
 
 }

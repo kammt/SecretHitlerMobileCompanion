@@ -169,4 +169,27 @@ public class JSONManager {
 
         return new SpecialElectionEvent(presidentName, target, c, false);
     }
+
+    public JSONObject writeFascistTrackToJSON(FascistTrack fascistTrack) throws JSONException {
+        JSONObject object = new JSONObject();
+
+        object.put("actions", fascistTrack.getActions());
+
+        object.put("hz", fascistTrack.getHzStartingPolicy());
+        object.put("veto", fascistTrack.getVetoStartingPolicy());
+
+        object.put("min", fascistTrack.getMinPlayers());
+        object.put("max", fascistTrack.getMaxPlayers());
+        return object;
+    }
+
+    public static FascistTrack restoreFascistTrackFromJSON(JSONObject object) throws JSONException {
+        FascistTrack track = new FascistTrack(object.getInt("min"), object.getInt("max"));
+
+        track.setActions((int[]) object.get("actions"));
+
+        track.setHZStartingPolicy(object.getInt("hz"));
+        track.setVetoStartingPolicy(object.getInt("veto"));
+        return track;
+    }
 }
