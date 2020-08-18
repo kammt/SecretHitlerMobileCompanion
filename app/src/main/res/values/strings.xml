@@ -102,4 +102,5 @@
     <string name="hint_player_List_name">Player List Name</string>
     <string name="snackbar_playerList_removed_message">Player List has been removed</string>
     <string name="choose_from_previous_games_empty">Player combinations from previous games will appear below</string>
+    <string name="back">Back</string>
 </resources>

@@ -13,7 +13,6 @@ import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
-import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameSetupCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
@@ -34,7 +33,6 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
     private static final int DECK_SHUFFLED_SETUP = 6;
     private static final int POLICY_PEEK_SETUP = 7;
 
-    private static final int GAME_SETUP = 8;
     private static final int GAME_END = 9;
 
 
@@ -77,8 +75,6 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_deck_shuffled, viewGroup, false);
         } else if (type == POLICY_PEEK_SETUP) {
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_policy_peek, viewGroup, false);
-        } else if (type == GAME_SETUP) {
-            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_game_settings, viewGroup, false);
         } else if (type == GAME_END) {
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_game_end, viewGroup, false);
         }
@@ -93,7 +89,7 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
             event.setupSetupCard(cv);
             if(event.isEditing) event.setCurrentValues(cv);
 
-            if(event.getClass() != GameEndCard.class && event.getClass() != GameSetupCard.class) { //Checking, since both those cards are marked as setup but do not have cancel buttons
+            if(event.getClass() != GameEndCard.class) { //Checking, since this card is marked as setup but does not have a cancel button
                 //The Cancel button is visible on every card, hence we initialise it here to save code
                 ImageView iv_cancel = cv.findViewById(R.id.img_cancel);
                 iv_cancel.setOnClickListener(new View.OnClickListener() {
@@ -147,7 +143,6 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
 
             if(event.getClass() == LoyaltyInvestigationEvent.class) return LOYALTY_INVESTIGATION_SETUP;
             else if(event.getClass() == PolicyPeekEvent.class) return POLICY_PEEK_SETUP;
-            else if (event.getClass() == GameSetupCard.class) return GAME_SETUP;
             else if (event.getClass() == GameEndCard.class) return GAME_END;
             else return EXECUTION_SETUP;
 

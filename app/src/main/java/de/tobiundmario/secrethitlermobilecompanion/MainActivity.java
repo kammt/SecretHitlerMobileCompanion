@@ -72,14 +72,16 @@ public class MainActivity extends AppCompatActivity {
     private TextView tv_nothingHere;
     private Button btn_createNewGame;
 
-    private FloatingActionButton fab_forward;
-    private FloatingActionButton fab_back;
+    private Button btn_setup_forward;
+    private Button btn_setup_back;
+    private ConstraintLayout container_setup_buttons;
 
     private ConstraintLayout container_new_player;
     public TextView tv_choose_from_previous_games_players;
 
     private ProgressBar progressBar_setupSteps;
 
+    private View.OnClickListener listener_backward_players;
     private View.OnClickListener listener_forward_players;
     private View.OnClickListener listener_backward_tracks;
 
@@ -316,8 +318,10 @@ public class MainActivity extends AppCompatActivity {
         tv_nothingHere = findViewById(R.id.tv_nothing_here);
         btn_createNewGame = findViewById(R.id.btn_createGame);
 
-        fab_forward = findViewById(R.id.fab_setup_forward);
-        fab_back = findViewById(R.id.fab_setup_back);
+        btn_setup_back = findViewById(R.id.btn_setup_back);
+        btn_setup_forward = findViewById(R.id.btn_setup_forward);
+        container_setup_buttons = findViewById(R.id.setup_buttons);
+
         container_new_player = findViewById(R.id.container_add_players);
         tv_choose_from_previous_games_players = findViewById(R.id.tv_choose_old_players);
 
@@ -330,6 +334,8 @@ public class MainActivity extends AppCompatActivity {
                 cardList.setVisibility(View.VISIBLE);
                 GameLog.initialise(cardList, MainActivity.this);
 
+                PlayerList.initialise(playerCardList, MainActivity.this);
+
                 AlphaAnimation fadeOut = new AlphaAnimation((float) 1, (float) 0);
                 fadeOut.setDuration(500);
                 tv_nothingHere.startAnimation(fadeOut);
@@ -339,8 +345,10 @@ public class MainActivity extends AppCompatActivity {
                 fadeIn.setDuration(1000);
                 playerCardList.setVisibility(View.VISIBLE);
                 playerCardList.startAnimation(fadeIn);
-                fab_forward.setVisibility(View.VISIBLE);
-                fab_forward.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.fab_open));
+
+                container_setup_buttons.setVisibility(View.VISIBLE);
+                container_setup_buttons.startAnimation(fadeIn);
+
                 container_new_player.setVisibility(View.VISIBLE);
                 container_new_player.startAnimation(fadeIn);
 
@@ -361,15 +369,48 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        listener_backward_players = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlphaAnimation fadeOut = new AlphaAnimation((float) 1, (float) 0);
+                fadeOut.setDuration(500);
+                playerCardList.startAnimation(fadeOut);
+                container_setup_buttons.startAnimation(fadeOut);
+                container_new_player.startAnimation(fadeOut);
+                progressBar_setupSteps.startAnimation(fadeOut);
+
+                AlphaAnimation fadeIn = new AlphaAnimation((float) 0, (float) 1);
+                fadeIn.setDuration(1000);
+
+                tv_nothingHere.setVisibility(View.VISIBLE);
+                tv_nothingHere.startAnimation(fadeIn);
+
+                btn_createNewGame.setVisibility(View.VISIBLE);
+                btn_createNewGame.startAnimation(fadeIn);
+
+                Animation progressBarAnimation = new ProgressBarAnimation(progressBar_setupSteps, 250, 0);
+                progressBarAnimation.setDuration(500);
+                progressBar_setupSteps.startAnimation(progressBarAnimation);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        playerCardList.setVisibility(View.GONE);
+                        container_setup_buttons.setVisibility(View.GONE);
+                        container_new_player.setVisibility(View.GONE);
+                        progressBar_setupSteps.setVisibility(View.GONE);
+                    }
+                }, 500);
+            }
+        };
+
         listener_forward_players = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Runnable continueSetup = new Runnable() {
                     @Override
                     public void run() {
-                        fab_back.setVisibility(View.VISIBLE);
-                        fab_back.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.fab_open));
-                        fab_back.setOnClickListener(listener_backward_tracks);
+                        btn_setup_back.setOnClickListener(listener_backward_tracks);
 
                         Animation slideOutLeft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_left);
                         container_new_player.startAnimation(slideOutLeft);
@@ -411,13 +452,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //TODO make views invisible
-                fab_back.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.fab_close));
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        fab_back.setVisibility(View.GONE);
-                    }
-                }, 500);
 
                 Animation slideInLeft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_left);
                 container_new_player.setVisibility(View.VISIBLE);
@@ -428,12 +462,14 @@ public class MainActivity extends AppCompatActivity {
                 Animation progressBarAnimation = new ProgressBarAnimation(progressBar_setupSteps, 500, 250);
                 progressBarAnimation.setDuration(500);
                 progressBar_setupSteps.startAnimation(progressBarAnimation);
-                fab_forward.setOnClickListener(listener_forward_players);
+                btn_setup_forward.setOnClickListener(listener_forward_players);
+                btn_setup_back.setOnClickListener(listener_backward_players);
             }
         };
 
 
-        fab_forward.setOnClickListener(listener_forward_players);
+        btn_setup_forward.setOnClickListener(listener_forward_players);
+        btn_setup_back.setOnClickListener(listener_backward_players);
     }
 
     public void deselectAllMenuItems() {
