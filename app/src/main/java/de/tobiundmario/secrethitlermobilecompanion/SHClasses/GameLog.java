@@ -51,6 +51,7 @@ public class GameLog {
 
     public static int liberalPolicies = 0;
     public static int fascistPolicies = 0;
+    public static FascistTrack gameTrack = null;
 
     public static boolean swipeEnabled = false;
 
@@ -75,6 +76,7 @@ public class GameLog {
         eventList = null;
         hiddenEventIndexes = null;
         arr = null;
+        gameTrack = null;
     }
 
     public static void notifySetupPhaseLeft(GameEvent event) {
@@ -168,6 +170,8 @@ public class GameLog {
         //Reset the policy-count
         liberalPolicies = 0;
         fascistPolicies = 0;
+
+        gameTrack = null;
     }
 
     public static void addEvent(GameEvent event) {

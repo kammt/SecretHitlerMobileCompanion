@@ -9,14 +9,14 @@ public class FascistTrack {
     public static final int SPECIAL_ELECTION = 4;
 
 
-    private int[] actions = new int[6];
+    private int[] actions = new int[5];
     private int fasPolicies = 6;
     private int libPolicies = 5;
 
     private int minPlayers;
     private int maxPlayers;
 
-    private int hzStartingPolicy = 3;
+    private int hzStartingPolicy = 4;
     private int vetoStartingPolicy = 5;
 
     public FascistTrack(int minPlayers, int maxPlayers) {

@@ -1,6 +1,7 @@
 package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,7 +23,8 @@ public class FascistTrackSelectionManager {
     public static int selectedTrackIndex = -1;
     public static int recommendedTrackIndex = -1;
 
-    public static ArrayList<CardView> fasTracks = new ArrayList<>();
+    public static ArrayList<CardView> trackCards = new ArrayList<>();
+    public static ArrayList<FascistTrack> fasTracks = new ArrayList<>();
     public static CardView recommendedCard;
 
     public static void setupOfficialCard(CardView cardView, int trackType, final Context context) {
@@ -64,25 +66,42 @@ public class FascistTrackSelectionManager {
             updateTrackCard(cardView, true, context);
         }
         recommendedTrackIndex = newRecommendationIndex;
+        recommendedCard = cardView;
+
+        Log.v("Recommended Track", "Track is #" + recommendedTrackIndex + ", current selection is " + selectedTrackIndex);
+
+        if(selectedTrackIndex == -1) processSelection(recommendedTrackIndex, context); //If there is no selection yet, automatically select the recommended one
     }
 
     public static void processSelection(int newSelection, Context context) {
-        //Unselecting the old card
-        if(selectedTrackIndex != -1) {
-            updateTrackCard(fasTracks.get(selectedTrackIndex), false, context);
-            if (selectedTrackIndex == recommendedTrackIndex) {
-                updateTrackCard(recommendedCard, false, context);
+        if(newSelection != -1) {
+            //Unselecting the old card
+            if (selectedTrackIndex != -1) {
+                updateTrackCard(trackCards.get(selectedTrackIndex), false, context);
+                if (selectedTrackIndex == recommendedTrackIndex) {
+                    updateTrackCard(recommendedCard, false, context);
+                }
             }
-        }
 
-        //Select the new card
-        if(newSelection == recommendedTrackIndex) {
-            updateTrackCard(recommendedCard, true, context);
-        }
-        updateTrackCard(fasTracks.get(newSelection), true, context);
+            //Select the new card
+            if (newSelection == recommendedTrackIndex) {
+                updateTrackCard(recommendedCard, true, context);
+            }
+            updateTrackCard(trackCards.get(newSelection), true, context);
 
-        //Override the selection value
-        selectedTrackIndex = newSelection;
+            //Override the selection value
+            selectedTrackIndex = newSelection;
+
+            //Update the FascistTrack in GameLog
+            GameLog.gameTrack = fasTracks.get(newSelection);
+        } else if(selectedTrackIndex != -1){
+            //When newSelection is -1, all items should be unselected
+            updateTrackCard(trackCards.get(selectedTrackIndex), false, context);
+            GameLog.gameTrack = null;
+
+            selectedTrackIndex = -1;
+            recommendedTrackIndex = -1;
+        }
     }
 
     public static void updateTrackCard(CardView cardView, boolean selected, Context context) {
