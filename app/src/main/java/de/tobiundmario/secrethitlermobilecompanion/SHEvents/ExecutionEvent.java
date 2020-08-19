@@ -6,9 +6,11 @@ import android.media.MediaPlayer;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -53,11 +55,17 @@ public class ExecutionEvent extends ExecutiveAction {
 
     @Override
     public Drawable getDrawable() {
-        return context.getDrawable(R.drawable.execution);
+        return ContextCompat.getDrawable(context, R.drawable.execution);
     }
 
     @Override
     public void setupSetupCard(CardView cardView) {
+        TextView title = cardView.findViewById(R.id.title);
+        title.setText(context.getString(R.string.new_execution));
+
+        TextView tv_executed = cardView.findViewById(R.id.txt_executed_player);
+        tv_executed.setText(context.getString(R.string.executed));
+
         //Setting up Spinners
         final Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
         ArrayAdapter<String> playerListadapter = CardSetupHelper.getPlayerNameAdapter(context);
