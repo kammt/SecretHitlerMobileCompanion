@@ -78,9 +78,9 @@
     <string name="undo">Undo</string>
     <string name="game_ended_title">Game Ended</string>
     <string name="game_ended_who_won">To play the correct sound, please specify who has won and how.</string>
-    <string name="fascists_win_policies">6 fascist policies enacted</string>
+    <string name="fascists_win_policies">%1$d fascist policies enacted</string>
     <string name="fascists_won_hitler">Hitler elected chancellor</string>
-    <string name="liberals_won_policies">5 liberal policies enacted</string>
+    <string name="liberals_won_policies">%1$d liberal policies enacted</string>
     <string name="liberals_won_hitler">Hitler shot</string>
     <string name="sounds_end">Play a sound when the game ends</string>
     <string name="title_end_game_policies">End Game?</string>

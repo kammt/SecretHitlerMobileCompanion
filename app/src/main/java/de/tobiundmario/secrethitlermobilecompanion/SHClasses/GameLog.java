@@ -28,11 +28,12 @@ import java.util.List;
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CardRecyclerViewAdapter;
-import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LoyaltyInvestigationEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.PolicyPeekEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.SpecialElectionEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.VoteEvent;
 
 public class GameLog {
@@ -213,22 +214,36 @@ public class GameLog {
             liberalPolicies--;
         } else if (fascist) {
             fascistPolicies++;
-        } else liberalPolicies++;
 
-        if(liberalPolicies == 5 && !removed) {
-            CardDialog.showMessageDialog(c, c.getString(R.string.title_end_game_policies), c.getString(R.string.msg_end_game_policies_l), c.getString(R.string.yes), new Runnable() {
-                @Override
-                public void run() {
-                    ((MainActivity) c).displayEndGameOptions();
-                }
-            }, c.getString(R.string.no), null);
-        } else if (fascistPolicies == 6 && !removed) {
-            CardDialog.showMessageDialog(c, c.getString(R.string.title_end_game_policies), c.getString(R.string.msg_end_game_policies_f), c.getString(R.string.yes), new Runnable() {
-                @Override
-                public void run() {
-                    ((MainActivity) c).displayEndGameOptions();
-                }
-            }, c.getString(R.string.no), null);
+            if (fascistPolicies == gameTrack.getFasPolicies()) {
+                ((MainActivity) c).displayEndGameOptions();
+            } else addTrackAction(legislativeSession.getVoteEvent().getPresidentName());
+
+        } else {
+            liberalPolicies++;
+
+            if(liberalPolicies == gameTrack.getLibPolicies()) {
+                ((MainActivity) c).displayEndGameOptions();
+            }
+        }
+
+    }
+
+    private static void addTrackAction(String presidentName) {
+        switch (gameTrack.getActions()[fascistPolicies - 1]) {
+            case FascistTrack.NO_POWER:
+                break;
+            case FascistTrack.DECK_PEEK:
+                addEvent(new PolicyPeekEvent(presidentName, Claim.NO_CLAIM, c, true));
+                break;
+            case FascistTrack.EXECUTION:
+                addEvent(new ExecutionEvent(presidentName, null, c, true));
+                break;
+            case FascistTrack.INVESTIGATION:
+                addEvent(new LoyaltyInvestigationEvent(presidentName, null, Claim.NO_CLAIM, c, true));
+                break;
+            case FascistTrack.SPECIAL_ELECTION:
+                addEvent(new SpecialElectionEvent(presidentName, null, c, true));
         }
     }
 

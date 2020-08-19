@@ -185,7 +185,12 @@ public class MainActivity extends AppCompatActivity {
         PlayerList.addPlayer("Björn");
         PlayerList.addPlayer("Knut");
         PlayerList.addPlayer("Richard");
+
         startGame(true, true, true, true);
+
+        FascistTrack ft_78 = new FascistTrack(7, 8);
+        ft_78.setActions(new int[] {FascistTrack.NO_POWER, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
+        GameLog.gameTrack = ft_78;
     }
 
     @Override

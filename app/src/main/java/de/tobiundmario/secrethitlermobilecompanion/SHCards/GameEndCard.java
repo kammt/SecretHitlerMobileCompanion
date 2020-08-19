@@ -36,14 +36,18 @@ public class GameEndCard extends GameEvent {
 
     @Override
     public void setupSetupCard(CardView cardView) {
+        final int libPolicies = GameLog.gameTrack.getLibPolicies();
+        final int fasPolicies = GameLog.gameTrack.getFasPolicies();
+
         final ImageView iv_fascist = cardView.findViewById(R.id.img_policy_fascist);
         final ImageView iv_liberal = cardView.findViewById(R.id.img_policy_liberal);
         final FloatingActionButton fab_end = cardView.findViewById(R.id.fab_create);
 
         final RadioButton rb_hitler = cardView.findViewById(R.id.rb_win_option_hitler);
         final RadioButton rb_policy = cardView.findViewById(R.id.rb_win_option_policy);
+        rb_policy.setText(context.getString(R.string.fascists_win_policies, fasPolicies));
 
-        if(GameLog.getLiberalPolicies() == 4) {
+        if(GameLog.getLiberalPolicies() == libPolicies) {
             iv_liberal.setAlpha((float) 1);
             iv_fascist.setAlpha((float) 0.2);
 
@@ -53,7 +57,7 @@ public class GameEndCard extends GameEvent {
             rb_policy.setButtonTintList(csl);
 
             rb_hitler.setText(context.getString(R.string.liberals_won_hitler));
-            rb_policy.setText(context.getString(R.string.liberals_won_policies));
+            rb_policy.setText(context.getString(R.string.liberals_won_policies, GameLog.gameTrack.getLibPolicies()));
         }
 
         iv_liberal.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +72,7 @@ public class GameEndCard extends GameEvent {
                 rb_policy.setButtonTintList(csl);
 
                 rb_hitler.setText(context.getString(R.string.liberals_won_hitler));
-                rb_policy.setText(context.getString(R.string.liberals_won_policies));
+                rb_policy.setText(context.getString(R.string.liberals_won_policies, libPolicies));
             }
         });
 
@@ -84,7 +88,7 @@ public class GameEndCard extends GameEvent {
                 rb_policy.setButtonTintList(csl);
 
                 rb_hitler.setText(context.getString(R.string.fascists_won_hitler));
-                rb_policy.setText(context.getString(R.string.fascists_win_policies));
+                rb_policy.setText(context.getString(R.string.fascists_win_policies, fasPolicies));
             }
         });
 
@@ -96,13 +100,13 @@ public class GameEndCard extends GameEvent {
                     //Fascists won, hitler elected
                     if(GameLog.endSounds) MediaPlayer.create(context, R.raw.fascistswinhitlerelected).start();
                 } else if(fascistsWon && rb_policy.isChecked()) {
-                    //Fascists won, 5 policies
+                    //Fascists won, n fascist policies
                     if(GameLog.endSounds) MediaPlayer.create(context, R.raw.fascistswin).start();
                 } else if (!fascistsWon && rb_hitler.isChecked()) {
                     //Liberals won, hitler shot
                     if(GameLog.endSounds) MediaPlayer.create(context, R.raw.liberalswin).start();
                 } else {
-                    //Liberals won, 4 policies
+                    //Liberals won, n liberal policies
                     if(GameLog.endSounds) MediaPlayer.create(context, R.raw.liberalswin).start();
                 }
                 mainActivity.endGame();
