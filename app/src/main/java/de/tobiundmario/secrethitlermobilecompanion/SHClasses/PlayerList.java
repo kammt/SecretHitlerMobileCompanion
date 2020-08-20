@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
@@ -103,15 +104,23 @@ public class PlayerList {
         Drawable membershipDrawable;
         if(playerPartyMemberShip == Claim.LIBERAL) membershipDrawable = c.getDrawable(R.drawable.membership_liberal);
         else if (playerPartyMemberShip == Claim.FASCIST) membershipDrawable = c.getDrawable(R.drawable.membership_fascist);
-        else return; //This function will always be called when a view is re-added. This means that when there is no claim of a player, we abort the function.
+        else membershipDrawable = ContextCompat.getDrawable(c, R.drawable.secret_role);
 
         ImageView ivmembership = cardView.findViewById(R.id.img_secretRole);
         ivmembership.setImageDrawable(membershipDrawable);
-        ivmembership.setAlpha((float) 0.4);
+        if(playerPartyMemberShip == Claim.NO_CLAIM) {
+            ivmembership.setAlpha((float) 1);
+        } else {
+            ivmembership.setAlpha((float) 0.4);
+        }
 
         TextView tvquestionMark = cardView.findViewById(R.id.tv_questionmark);
-        tvquestionMark.setText("?");
-        tvquestionMark.setVisibility(View.VISIBLE);
+        if(playerPartyMemberShip == Claim.NO_CLAIM) {
+            tvquestionMark.setVisibility(View.GONE);
+        } else {
+            tvquestionMark.setText("?");
+            tvquestionMark.setVisibility(View.VISIBLE);
+        }
     }
 
     public static void setDeadSymbol(CardView cardView) {

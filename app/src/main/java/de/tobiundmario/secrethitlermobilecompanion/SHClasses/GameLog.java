@@ -43,7 +43,7 @@ public class GameLog {
     static List<GameEvent> eventList;
     private static boolean gameStarted;
 
-    private static RecyclerView.Adapter cardListAdapter;
+    private static CardRecyclerViewAdapter cardListAdapter;
 
     public static ArrayList<Integer> hiddenEventIndexes;
 
@@ -66,7 +66,7 @@ public class GameLog {
         return liberalPolicies;
     }
 
-    public static RecyclerView.Adapter getCardListAdapter() {
+    public static CardRecyclerViewAdapter getCardListAdapter() {
         return cardListAdapter;
     }
 
@@ -82,6 +82,7 @@ public class GameLog {
 
     public static void notifySetupPhaseLeft(GameEvent event) {
         int position;
+
         //We have to differentiate between two separate scenarios. If the event left the Editing phase, we want to change the JSON data at a specific position. If it left setup phase, we just want to add it to the array
         if(event.isEditing) {
 
@@ -234,16 +235,16 @@ public class GameLog {
             case FascistTrack.NO_POWER:
                 break;
             case FascistTrack.DECK_PEEK:
-                addEvent(new PolicyPeekEvent(presidentName, Claim.NO_CLAIM, c, true));
+                addEvent(new PolicyPeekEvent(presidentName, c));
                 break;
             case FascistTrack.EXECUTION:
-                addEvent(new ExecutionEvent(presidentName, null, c, true));
+                addEvent(new ExecutionEvent(presidentName, c));
                 break;
             case FascistTrack.INVESTIGATION:
-                addEvent(new LoyaltyInvestigationEvent(presidentName, null, Claim.NO_CLAIM, c, true));
+                addEvent(new LoyaltyInvestigationEvent(presidentName, c));
                 break;
             case FascistTrack.SPECIAL_ELECTION:
-                addEvent(new SpecialElectionEvent(presidentName, null, c, true));
+                addEvent(new SpecialElectionEvent(presidentName, c));
         }
     }
 
