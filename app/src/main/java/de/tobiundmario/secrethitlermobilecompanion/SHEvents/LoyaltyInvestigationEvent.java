@@ -34,13 +34,18 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
     //Defining the OnClickListeners outside of the function to call them separately in the setupEditCard() function
     private View.OnClickListener iv_fascistListener, iv_liberalListener;
 
-    public LoyaltyInvestigationEvent(String presidentName, String playerName, int claim, Context context, boolean setup) {
+    public LoyaltyInvestigationEvent(String presidentName, String playerName, int claim, Context context) {
         this.presidentName = presidentName;
         this.playerName = playerName;
         this.claim = claim;
         this.c = context;
-        if(!setup) PlayerList.setClaim(playerName, claim);
-        isSetup = setup;
+        PlayerList.setClaim(playerName, claim);
+    }
+
+    public LoyaltyInvestigationEvent(String presidentName, Context context) {
+        this.presidentName = presidentName;
+        this.c = context;
+        isSetup = true;
     }
 
     public void resetOnRemoval() {

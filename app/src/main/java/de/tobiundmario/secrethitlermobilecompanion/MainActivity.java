@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         checkForBackups();
 
         //TODO These methods are for testing purposes only and should be removed from the onCreate function after testing
-        //autoCreateGame();
+        autoCreateGame();
         //displayEndGameOptions();
     }
 
@@ -322,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             PlayerList.getPlayerRecyclerViewAdapter().notifyDataSetChanged(); //When a game starts, the add Player button will not be added to the RecyclerView anymore. As this would result in a mismatch between the ItemCount and the amount of items that are actually there, a IndexOutOfBoundsException would be thrown. This refresh fixes this
+            playerCardList.setVisibility(View.VISIBLE);
 
             bottomNavigationMenu_game.setVisibility(View.VISIBLE);
             bottomNavigationMenu_game.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in_bottom));
@@ -612,7 +613,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                GameLog.addEvent(new LegislativeSession(null, null , MainActivity.this, true));
+                GameLog.addEvent(new LegislativeSession(MainActivity.this));
             }
         });
 
@@ -620,7 +621,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                GameLog.addEvent(new LoyaltyInvestigationEvent(null, null , Claim.NO_CLAIM, MainActivity.this, true));
+                GameLog.addEvent(new LoyaltyInvestigationEvent(null, MainActivity.this));
             }
         });
 
@@ -628,7 +629,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                GameLog.addEvent(new ExecutionEvent(null, null, MainActivity.this, true));
+                GameLog.addEvent(new ExecutionEvent(null, MainActivity.this));
             }
         });
 
@@ -636,7 +637,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                GameLog.addEvent(new DeckShuffledEvent(0, 0, MainActivity.this, true));
+                GameLog.addEvent(new DeckShuffledEvent(MainActivity.this));
             }
         });
 
@@ -644,7 +645,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                GameLog.addEvent(new PolicyPeekEvent(null, Claim.NO_CLAIM, MainActivity.this, true));
+                GameLog.addEvent(new PolicyPeekEvent(null, MainActivity.this));
             }
         });
 
@@ -652,7 +653,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                GameLog.addEvent(new SpecialElectionEvent(null, null, MainActivity.this, true));
+                GameLog.addEvent(new SpecialElectionEvent(null, MainActivity.this));
             }
         });
 

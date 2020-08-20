@@ -26,11 +26,16 @@ public class SpecialElectionEvent extends ExecutiveAction {
     Context context;
     private String presidentName, electedPlayerName;
 
-    public SpecialElectionEvent(String presidentName, String electedPlayerName, Context context, boolean setup) {
+    public SpecialElectionEvent(String presidentName, String electedPlayerName, Context context) {
         this.context = context;
         this.presidentName = presidentName;
         this.electedPlayerName = electedPlayerName;
-        isSetup = setup;
+    }
+
+    public SpecialElectionEvent(String presidentName, Context context) {
+        this.presidentName = presidentName;
+        this.context = context;
+        isSetup = true;
     }
 
     @Override

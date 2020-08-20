@@ -22,10 +22,15 @@ public class DeckShuffledEvent extends GameEvent {
     private int liberalPolicies, fascistPolicies;
     private Context context;
 
-    public DeckShuffledEvent(int liberalPolicies, int fascistPolicies, Context context, boolean setup) {
+    public DeckShuffledEvent(int liberalPolicies, int fascistPolicies, Context context) {
         this.fascistPolicies = fascistPolicies;
         this.liberalPolicies = liberalPolicies;
-        isSetup = setup;
+        this.context = context;
+    }
+
+    public DeckShuffledEvent(Context context) {
+        isSetup = true;
+        this.context = context;
     }
 
     @Override

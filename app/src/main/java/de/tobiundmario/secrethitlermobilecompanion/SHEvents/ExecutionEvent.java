@@ -28,17 +28,26 @@ public class ExecutionEvent extends ExecutiveAction {
     Context context;
     private String presidentName, executedPlayerName;
 
-    public ExecutionEvent(String presidentName, String executedPlayerName, Context context, boolean setup) {
+    public ExecutionEvent(String presidentName, String executedPlayerName, Context context) {
         this.context = context;
         this.presidentName = presidentName;
         this.executedPlayerName = executedPlayerName;
-        isSetup = setup;
 
-        if(!setup) {
-            PlayerList.setAsDead(executedPlayerName, true);
-            if(GameLog.executionSounds) MediaPlayer.create(context, R.raw.playershot).start();
-        }
+
+        apply();
     }
+
+    public ExecutionEvent(String presidentName, Context context) {
+        this.context = context;
+        isSetup = true;
+        this.presidentName = presidentName;
+    }
+
+    private void apply() {
+        PlayerList.setAsDead(executedPlayerName, true);
+        if(GameLog.executionSounds) MediaPlayer.create(context, R.raw.playershot).start();
+    }
+
 
     public void resetOnRemoval() {
         PlayerList.setAsDead(executedPlayerName, false);
@@ -90,8 +99,7 @@ public class ExecutionEvent extends ExecutiveAction {
                 if(presidentName.equals(executedPlayerName)) {
                     Toast.makeText(context, context.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
                 } else {
-                    PlayerList.setAsDead(executedPlayerName, true);
-                    if(GameLog.executionSounds) MediaPlayer.create(context, R.raw.playershot).start();
+                    apply();
                     isSetup = false;
                     GameLog.notifySetupPhaseLeft(ExecutionEvent.this);
                 }

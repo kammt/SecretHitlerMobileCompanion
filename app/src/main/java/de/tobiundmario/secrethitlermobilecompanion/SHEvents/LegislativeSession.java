@@ -51,12 +51,16 @@ public class LegislativeSession extends GameEvent {
     //Defining the OnClickListeners outside of the function to call them separately in the setupEditCard() function
     private View.OnClickListener iv_fascistListener, iv_liberalListener;
 
-    public LegislativeSession(VoteEvent voteEvent, ClaimEvent claimEvent, Context context, boolean setup) {
+    public LegislativeSession(VoteEvent voteEvent, ClaimEvent claimEvent, Context context) {
         sessionNumber = GameLog.legSessionNo++;
         this.voteEvent = voteEvent;
         this.claimEvent = claimEvent;
         c = context;
-        isSetup = setup;
+    }
+
+    public LegislativeSession(Context context) {
+        isSetup = true;
+        c = context;
     }
 
     public VoteEvent getVoteEvent() {

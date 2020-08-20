@@ -29,11 +29,16 @@ public class PolicyPeekEvent extends ExecutiveAction {
     private String presidentName;
     private int claim;
 
-    public PolicyPeekEvent(String presidentName, int claim, Context context, boolean setup) {
+    public PolicyPeekEvent(String presidentName, int claim, Context context) {
         this.presidentName = presidentName;
         this.claim = claim;
         this.c = context;
-        isSetup = setup;
+    }
+
+    public PolicyPeekEvent(String presidentName, Context context) {
+        this.c = context;
+        this.presidentName = presidentName;
+        isSetup = true;
     }
 
     @Override

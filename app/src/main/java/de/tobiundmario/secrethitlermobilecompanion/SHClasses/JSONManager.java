@@ -129,7 +129,7 @@ public class JSONManager {
             claimEvent = new ClaimEvent(presClaim, chancClaim, policyPlayed, vetoed);
         }
 
-        LegislativeSession session = new LegislativeSession(voteEvent, claimEvent, c, false);
+        LegislativeSession session = new LegislativeSession(voteEvent, claimEvent, c);
         session.setSessionNumber(sessionNumber);
         return  session;
     }
@@ -138,7 +138,7 @@ public class JSONManager {
         int liberalPolicies = jsonObject.getInt("liberal_policies");
         int fascistPolicies = jsonObject.getInt("fascist_policies");
 
-        return new DeckShuffledEvent(liberalPolicies, fascistPolicies, c, false);
+        return new DeckShuffledEvent(liberalPolicies, fascistPolicies, c);
     }
 
     private static LoyaltyInvestigationEvent createLoyaltyInvestigationfromJSON(JSONObject jsonObject, Context c) throws JSONException {
@@ -146,28 +146,28 @@ public class JSONManager {
         String target = (String) jsonObject.get("target");
 
         int claim = Claim.getClaimInt((String) jsonObject.get("claim"));
-        return new LoyaltyInvestigationEvent(presidentName, target, claim, c, false);
+        return new LoyaltyInvestigationEvent(presidentName, target, claim, c);
     }
 
     private static ExecutionEvent createExecutionFromJSON(JSONObject jsonObject, Context c) throws JSONException {
         String presidentName = (String) jsonObject.get("president");
         String target = (String) jsonObject.get("target");
 
-        return new ExecutionEvent(presidentName, target, c, false);
+        return new ExecutionEvent(presidentName, target, c);
     }
 
     private static PolicyPeekEvent createPolicyPeekFromJSON(JSONObject jsonObject, Context c) throws JSONException {
         String presidentName = (String) jsonObject.get("president");
         int claim = Claim.getClaimInt((String) jsonObject.get("claim"));
 
-        return new PolicyPeekEvent(presidentName, claim, c, false);
+        return new PolicyPeekEvent(presidentName, claim, c);
     }
 
     private static SpecialElectionEvent createSpecialElectionFromJSON(JSONObject jsonObject, Context c) throws JSONException {
         String presidentName = (String) jsonObject.get("president");
         String target = (String) jsonObject.get("target");
 
-        return new SpecialElectionEvent(presidentName, target, c, false);
+        return new SpecialElectionEvent(presidentName, target, c);
     }
 
     public JSONObject writeFascistTrackToJSON(FascistTrack fascistTrack) throws JSONException {
