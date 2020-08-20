@@ -278,6 +278,8 @@ public class LegislativeSession extends GameEvent {
         presName.setText(voteEvent.getPresidentName());
         chancName.setText(voteEvent.getChancellorName());
 
+        if(sessionNumber == 0) sessionNumber = GameLog.legSessionNo++;
+
         if(voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED) {
             title.setText(c.getString(R.string.legislative_session)+ " #" + sessionNumber + c.getString(R.string.rejected));
 
