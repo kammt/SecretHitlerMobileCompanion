@@ -57,6 +57,12 @@
             android:inputType="textPersonName"
             android:textSize="14sp" />
 
+        <include
+            android:id="@+id/container_newTrack"
+            layout="@layout/dialog_new_fascist_track"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

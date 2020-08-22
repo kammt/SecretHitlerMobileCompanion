@@ -173,23 +173,29 @@ public class JSONManager {
     public JSONObject writeFascistTrackToJSON(FascistTrack fascistTrack) throws JSONException {
         JSONObject object = new JSONObject();
 
-        object.put("actions", fascistTrack.getActions());
+        if(fascistTrack.isManualMode())  object.put("manual", true);
+        else {
+            object.put("actions", fascistTrack.getActions());
+            object.put("manual", false);
+        }
 
-        object.put("hz", fascistTrack.getHzStartingPolicy());
-        object.put("veto", fascistTrack.getVetoStartingPolicy());
+        object.put("fpolicies", fascistTrack.getFasPolicies());
+        object.put("lpolicies", fascistTrack.getLibPolicies());
 
-        object.put("min", fascistTrack.getMinPlayers());
-        object.put("max", fascistTrack.getMaxPlayers());
         return object;
     }
 
     public static FascistTrack restoreFascistTrackFromJSON(JSONObject object) throws JSONException {
-        FascistTrack track = new FascistTrack(object.getInt("min"), object.getInt("max"));
+        FascistTrack track = new FascistTrack();
 
-        track.setActions((int[]) object.get("actions"));
+        boolean manual = object.getBoolean("manual");
+        track.setManualMode(manual);
 
-        track.setHZStartingPolicy(object.getInt("hz"));
-        track.setVetoStartingPolicy(object.getInt("veto"));
+        if(!manual) track.setActions((int[]) object.get("actions"));
+
+        track.setFasPolicies(object.getInt("fpolicies"));
+        track.setLibPolicies(object.getInt("lpolicies"));
+
         return track;
     }
 }

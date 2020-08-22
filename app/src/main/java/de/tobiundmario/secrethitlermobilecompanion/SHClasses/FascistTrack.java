@@ -13,15 +13,24 @@ public class FascistTrack {
     private int fasPolicies = 6;
     private int libPolicies = 5;
 
-    private int minPlayers;
-    private int maxPlayers;
+    private boolean manualMode = false;
 
-    private int hzStartingPolicy = 4;
-    private int vetoStartingPolicy = 5;
+    String name;
 
-    public FascistTrack(int minPlayers, int maxPlayers) {
-        this.minPlayers = minPlayers;
-        this.maxPlayers = maxPlayers;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isManualMode() {
+        return manualMode;
+    }
+
+    public void setManualMode(boolean manualMode) {
+        this.manualMode = manualMode;
     }
 
     public void setActions(int[] actions) {
@@ -38,38 +47,6 @@ public class FascistTrack {
 
     public int getAction(int position) {
         return actions[position];
-    }
-
-    public void setHZStartingPolicy(int HZStartingPolicy) {
-        this.hzStartingPolicy = HZStartingPolicy;
-    }
-
-    public int getHzStartingPolicy() {
-        return hzStartingPolicy;
-    }
-
-    public void setVetoStartingPolicy(int vetoStartingPolicy) {
-        this.vetoStartingPolicy = vetoStartingPolicy;
-    }
-
-    public int getVetoStartingPolicy() {
-        return vetoStartingPolicy;
-    }
-
-    public int getMinPlayers() {
-        return minPlayers;
-    }
-
-    public void setMinPlayers(int minPlayers) {
-        this.minPlayers = minPlayers;
-    }
-
-    public int getMaxPlayers() {
-        return maxPlayers;
-    }
-
-    public void setMaxPlayers(int maxPlayers) {
-        this.maxPlayers = maxPlayers;
     }
 
     public void setLibPolicies(int libPolicies) {

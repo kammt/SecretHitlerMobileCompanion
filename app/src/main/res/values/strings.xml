@@ -111,4 +111,17 @@
     <string name="track_78">7 - 8 players</string>
     <string name="explanation_trackSelection">Select a Fascist Track from the list below or use the Button to create a custom one.</string>
     <string name="in_use">In Use</string>
+    <string name="hint_track_name">Track Name</string>
+    <string name="add_track_section_basics">Basics:</string>
+    <string name="add_track_section_basics_noActions">Manual Mode (No pre-defined actions)</string>
+    <string name="add_track_section_actions">Actions:</string>
+    <string name="title_execution">Execution</string>
+    <string name="description_execution">The president selects to execute a player</string>
+    <string name="title_policyPeek">Policy Peek</string>
+    <string name="description_policyPeek">The president peeks at the next three policies</string>
+    <string name="new_fascistTrack">New Fascist Track</string>
+    <string name="done">Done</string>
+    <string name="error_invalid_value">Invalid value</string>
+    <string name="title_noAction">No Action</string>
+    <string name="description_noAction">The president doesn\'t perform any action</string>
 </resources>

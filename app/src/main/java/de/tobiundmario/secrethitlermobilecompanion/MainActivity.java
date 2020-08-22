@@ -53,7 +53,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
@@ -145,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         checkForBackups();
 
         //TODO These methods are for testing purposes only and should be removed from the onCreate function after testing
-        autoCreateGame();
+        //autoCreateGame();
         //displayEndGameOptions();
     }
 
@@ -346,6 +345,14 @@ public class MainActivity extends AppCompatActivity {
 
         progressBar_setupSteps = findViewById(R.id.progressBar_setupProgress);
         progressBar_setupSteps.setMax(1000);
+
+        FloatingActionButton fab_newTrack = findViewById(R.id.fab_create_custom_track);
+        fab_newTrack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CardDialog.showTrackCreationDialog(MainActivity.this);
+            }
+        });
 
         //Adding the official tracks to the LinearLayout
         LinearLayout ll_official_tracks = findViewById(R.id.container_official_tracks);

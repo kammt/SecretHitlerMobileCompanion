@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container_newTrack"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_general"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/et_trackName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:ems="10"
+            android:fontFamily="@font/comfortaa_light"
+            android:hint="@string/hint_track_name"
+            android:inputType="textPersonName"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/comfortaa_light"
+            android:text="Track size:"
+            app:layout_constraintBottom_toBottomOf="@+id/img_fascist_policy"
+            app:layout_constraintStart_toStartOf="@+id/guideline8"
+            app:layout_constraintTop_toTopOf="@+id/img_fascist_policy" />
+
+        <ImageView
+            android:id="@+id/img_fascist_policy"
+            android:layout_width="70dp"
+            android:layout_height="110dp"
+            android:layout_marginStart="24dp"
+            android:alpha="0.7"
+            app:layout_constraintStart_toEndOf="@+id/textView4"
+            app:layout_constraintTop_toBottomOf="@+id/et_trackName"
+            app:srcCompat="@drawable/icon_fpolicy" />
+
+        <EditText
+            android:id="@+id/et_fpolicies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/germania_one"
+            android:inputType="number"
+            android:maxLength="2"
+            android:text="6"
+            android:textColor="#000000"
+            android:textSize="45sp"
+            app:layout_constraintBottom_toBottomOf="@+id/img_fascist_policy"
+            app:layout_constraintEnd_toEndOf="@+id/img_fascist_policy"
+            app:layout_constraintStart_toStartOf="@+id/img_fascist_policy"
+            app:layout_constraintTop_toTopOf="@+id/img_fascist_policy" />
+
+        <ImageView
+            android:id="@+id/img_liberal_policy"
+            android:layout_width="70dp"
+            android:layout_height="110dp"
+            android:layout_marginStart="8dp"
+            android:alpha="0.7"
+            app:layout_constraintBottom_toBottomOf="@+id/img_fascist_policy"
+            app:layout_constraintStart_toEndOf="@+id/img_fascist_policy"
+            app:layout_constraintTop_toTopOf="@+id/img_fascist_policy"
+            app:srcCompat="@drawable/icon_lpolicy" />
+
+        <EditText
+            android:id="@+id/et_lpolicies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/germania_one"
+            android:inputType="number"
+            android:maxLength="2"
+            android:text="5"
+            android:textColor="#000000"
+            android:textSize="45sp"
+            app:layout_constraintBottom_toBottomOf="@+id/img_liberal_policy"
+            app:layout_constraintEnd_toEndOf="@+id/img_liberal_policy"
+            app:layout_constraintStart_toStartOf="@+id/img_liberal_policy"
+            app:layout_constraintTop_toTopOf="@+id/img_liberal_policy" />
+
+        <CheckBox
+            android:id="@+id/checkBox_manualMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/comfortaa_light"
+            android:text="@string/add_track_section_basics_noActions"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/img_fascist_policy" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.12" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_actions"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/container_general">
+
+        <TextView
+            android:id="@+id/section_title_actions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/comfortaa_light"
+            android:text="@string/add_track_section_actions"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/maxHeightContainer"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/section_title_actions">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <LinearLayout
+                    android:id="@+id/actions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
