@@ -21,11 +21,13 @@ import java.util.ArrayList;
 
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CustomTracksRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.OldPlayerListRecyclerViewAdapter;
 
 public class PreferencesManager {
 
     private static OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter;
+    private static CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter;
 
     private static boolean JSONObjectsTheSame(JSONObject one, JSONObject two) throws JSONException {
         for(int i = 0; i < one.length(); i++) {
@@ -209,5 +211,109 @@ public class PreferencesManager {
             e.printStackTrace();
         }
     }
+
+
+    //FascistTrack related
+
+    public static JSONArray getFascistTracks(Context context) throws JSONException {
+        SharedPreferences preferences = getSharedPreferences(context);
+        String tracks = preferences.getString("fas-tracks", null);
+
+        if(tracks == null) {
+            return new JSONArray();
+        }
+
+        JSONObject object = new JSONObject(tracks);
+
+        return object.getJSONArray("tracks");
+    }
+
+    public static void writeFascistTrack(FascistTrack fascistTrack, Context context) throws JSONException {
+        JSONObject trackAsJSON = JSONManager.writeFascistTrackToJSON(fascistTrack);
+
+        JSONArray array = getFascistTracks(context);
+        array.put(trackAsJSON);
+        writeFascistTracks(array, context);
+    }
+
+    private static void writeFascistTracks(JSONArray array, Context context) throws JSONException {
+        SharedPreferences preferences = getSharedPreferences(context);
+
+        JSONObject object = new JSONObject();
+        object.put("tracks", array);
+
+        preferences.edit().putString("fas-tracks", object.toString()).apply();
+
+        if(customTracksRecyclerViewAdapter != null) {
+            customTracksRecyclerViewAdapter.tracks = array;
+            customTracksRecyclerViewAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public static JSONObject removeFascistTrack(int position, Context context) throws JSONException {
+        JSONArray array = getFascistTracks(context);
+        JSONObject removed = array.getJSONObject(position);
+        array.remove(position);
+        writeFascistTracks(array, context);
+        customTracksRecyclerViewAdapter.notifyItemRemoved(position);
+
+        setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO
+
+        return removed;
+    }
+
+    public static void setupCustomTracksRecyclerView(final RecyclerView recyclerView, final Context context) {
+        try {
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            customTracksRecyclerViewAdapter = new CustomTracksRecyclerViewAdapter(getFascistTracks(context), context);
+            recyclerView.setAdapter(customTracksRecyclerViewAdapter);
+
+            ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+                @Override
+                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                    return false;
+                }
+
+                @Override
+                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                    final int position = viewHolder.getAdapterPosition();
+                    try {
+                        final JSONObject removed = removeFascistTrack(position, context);
+
+                        Snackbar snackbar = Snackbar.make(recyclerView, context.getString(R.string.snackbar_track_removed_message), BaseTransientBottomBar.LENGTH_LONG);
+
+                        snackbar.setAction(context.getString(R.string.undo), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    JSONArray tracksArray = getFascistTracks(context);
+
+                                    addJSONObjectToArray(removed, tracksArray, position);
+
+                                    writeFascistTracks(tracksArray, context);
+                                    customTracksRecyclerViewAdapter.notifyItemInserted(position);
+
+                                    setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            };
+            new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+
+            setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

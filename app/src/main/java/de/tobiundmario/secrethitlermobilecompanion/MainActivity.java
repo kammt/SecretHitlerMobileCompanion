@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
 
         startGame(true, true, true, true);
 
-        FascistTrack ft_78 = new FascistTrack(7, 8);
+        FascistTrack ft_78 = new FascistTrack();
         ft_78.setActions(new int[] {FascistTrack.NO_POWER, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
         GameLog.gameTrack = ft_78;
     }
@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
         ll_official_tracks.addView(cv_56);
         FascistTrackSelectionManager.trackCards.add(0, cv_56);
 
-        FascistTrack ft_56 = new FascistTrack(5, 6);
+        FascistTrack ft_56 = new FascistTrack();
         ft_56.setActions(new int[] {FascistTrack.NO_POWER, FascistTrack.NO_POWER, FascistTrack.DECK_PEEK, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
         FascistTrackSelectionManager.fasTracks.add(0, ft_56);
 
@@ -372,7 +372,7 @@ public class MainActivity extends AppCompatActivity {
         ll_official_tracks.addView(cv_78);
         FascistTrackSelectionManager.trackCards.add(1, cv_78);
 
-        FascistTrack ft_78 = new FascistTrack(7, 8);
+        FascistTrack ft_78 = new FascistTrack();
         ft_78.setActions(new int[] {FascistTrack.NO_POWER, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
         FascistTrackSelectionManager.fasTracks.add(0, ft_78);
 
@@ -382,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
         ll_official_tracks.addView(cv_910);
         FascistTrackSelectionManager.trackCards.add(2, cv_910);
 
-        FascistTrack ft_910 = new FascistTrack(7, 8);
+        FascistTrack ft_910 = new FascistTrack();
         ft_910.setActions(new int[] {FascistTrack.INVESTIGATION, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
         FascistTrackSelectionManager.fasTracks.add(0, ft_910);
 
@@ -924,6 +924,9 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView pastPlayerLists = findViewById(R.id.oldPlayerLists);
         PreferencesManager.setupOldPlayerListRecyclerView(pastPlayerLists, this);
+
+        RecyclerView fascistTracks = findViewById(R.id.list_custom_tracks);
+        PreferencesManager.setupCustomTracksRecyclerView(fascistTracks, this);
     }
 
     private void startAndBindServerService() {

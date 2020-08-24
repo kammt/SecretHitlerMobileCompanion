@@ -170,13 +170,21 @@ public class JSONManager {
         return new SpecialElectionEvent(presidentName, target, c);
     }
 
-    public JSONObject writeFascistTrackToJSON(FascistTrack fascistTrack) throws JSONException {
+    public static JSONObject writeFascistTrackToJSON(FascistTrack fascistTrack) throws JSONException {
         JSONObject object = new JSONObject();
+
+        object.put("name", fascistTrack.getName());
 
         if(fascistTrack.isManualMode())  object.put("manual", true);
         else {
-            object.put("actions", fascistTrack.getActions());
+
+            int[] actions = fascistTrack.getActions();
+            JSONArray actionsArray = new JSONArray();
+            for(int action : actions) {
+                actionsArray.put(action);
+            }
             object.put("manual", false);
+            object.put("actions", actionsArray);
         }
 
         object.put("fpolicies", fascistTrack.getFasPolicies());
@@ -188,13 +196,26 @@ public class JSONManager {
     public static FascistTrack restoreFascistTrackFromJSON(JSONObject object) throws JSONException {
         FascistTrack track = new FascistTrack();
 
+        track.setName(object.getString("name"));
+
+        int fasPolicies = object.getInt("fpolicies");
+
+        track.setFasPolicies(fasPolicies);
+        track.setLibPolicies(object.getInt("lpolicies"));
+
         boolean manual = object.getBoolean("manual");
         track.setManualMode(manual);
 
-        if(!manual) track.setActions((int[]) object.get("actions"));
+        if(!manual) {
+            JSONArray actionsArray = object.getJSONArray("actions");
+            int[] actions = new int[fasPolicies];
+            for(int i = 0; i < actionsArray.length(); i++) {
+                actions[i] = actionsArray.getInt(i);
+            }
+            track.setActions(actions);
+        }
 
-        track.setFasPolicies(object.getInt("fpolicies"));
-        track.setLibPolicies(object.getInt("lpolicies"));
+
 
         return track;
     }

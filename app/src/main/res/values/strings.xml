@@ -124,4 +124,7 @@
     <string name="error_invalid_value">Invalid value</string>
     <string name="title_noAction">No Action</string>
     <string name="description_noAction">The president doesn\'t perform any action</string>
+    <string name="snackbar_track_removed_message">Fascist Track removed</string>
+    <string name="description_track">Fascists win with %1$d and liberals with %2$d policies. It contains the following actions:</string>
+    <string name="description_track_manual">Fascists win with %1$d and liberals with %2$d policies. Manual mode is enabled.</string>
 </resources>

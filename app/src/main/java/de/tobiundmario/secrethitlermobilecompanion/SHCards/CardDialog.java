@@ -21,10 +21,13 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PreferencesManager;
 import de.tobiundmario.secrethitlermobilecompanion.SpinnerAdapters.TrackActionSpinnerAdapter;
 
 public class CardDialog {
@@ -89,7 +92,11 @@ public class CardDialog {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
                     tvPositive.setText(c.getString(R.string.done));
-                } else tvPositive.setText(c.getString(R.string.dialog_mismatching_claims_btn_continue));
+                    tvPositive.setOnClickListener(listener_create_track);
+                } else {
+                    tvPositive.setText(c.getString(R.string.dialog_mismatching_claims_btn_continue));
+                    tvPositive.setOnClickListener(listener_forward_one);
+                }
             }
         });
 
@@ -207,7 +214,13 @@ public class CardDialog {
                     fascistTrack.setManualMode(true);
                 };
 
-                //TODO add to JSON array
+                try {
+                    PreferencesManager.writeFascistTrack(fascistTrack, c);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                dialog.dismiss();
             }
         };
 
