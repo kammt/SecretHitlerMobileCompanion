@@ -120,25 +120,6 @@ public class MainActivity extends AppCompatActivity {
 
         GameLog.setContext(this);
         checkForBackups();
-
-        //autoCreateGame();
-    }
-
-    private void autoCreateGame() {
-        PlayerList.addPlayer("Rüdiger");
-        PlayerList.addPlayer("Markus");
-        PlayerList.addPlayer("Friedrich");
-        PlayerList.addPlayer("Leonard");
-        PlayerList.addPlayer("Anke");
-        PlayerList.addPlayer("Björn");
-        PlayerList.addPlayer("Knut");
-        PlayerList.addPlayer("Richard");
-
-        //TODO make this function work again
-
-        FascistTrack ft_78 = new FascistTrack();
-        ft_78.setActions(new int[] {FascistTrack.NO_POWER, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
-        GameLog.gameTrack = ft_78;
     }
 
     @Override
