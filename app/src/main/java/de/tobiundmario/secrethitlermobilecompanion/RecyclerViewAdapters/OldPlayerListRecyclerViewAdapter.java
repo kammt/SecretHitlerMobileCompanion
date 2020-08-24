@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PreferencesManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
 
 public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPlayerListRecyclerViewAdapter.OldPlayerListViewHolder> {
 
@@ -107,7 +107,7 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
                             String groupName = inputField.getText().toString();
 
                             try {
-                                PreferencesManager.setPlayerListName(groupName, pos, context);
+                                SharedPreferencesManager.setPlayerListName(groupName, pos, context);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

@@ -36,11 +36,6 @@ public class MainActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        checkForBackups();
-
-        //TODO These methods are for testing purposes only and should be removed from the onCreate function after testing
-        //autoCreateGame();
     }
 
     public void replaceFragment(int fragmentNumberToReplace, boolean fade) {
@@ -66,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         if(fade) {
             oldContainer.animate()
                     .alpha(0f)
-                    .setDuration(300)
+                    .setDuration(500)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
@@ -78,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             currentFragmentContainer.setAlpha(0f);
             currentFragmentContainer.animate()
                     .alpha(1f)
-                    .setDuration(300)
+                    .setDuration(500)
                     .start();
         } else {
             oldContainer.setVisibility(View.GONE);
@@ -122,6 +117,11 @@ public class MainActivity extends AppCompatActivity {
         container_setup = findViewById(R.id.container_fragment_setup);
 
         currentFragmentContainer = container_main;
+
+        GameLog.setContext(this);
+        checkForBackups();
+
+        //autoCreateGame();
     }
 
     private void autoCreateGame() {
@@ -151,10 +151,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void checkForBackups() {
-        if(GameLog.backupPresent(this)) {
+        if(GameLog.backupPresent()) {
             CardDialog.showMessageDialog(this, getString(R.string.dialog_restore_title), getString(R.string.dialog_restore_msg), getString(R.string.yes), new Runnable() {
                 @Override
                 public void run() {
+                    fragment_game.start();
                     GameLog.restoreBackup();
                     replaceFragment(game, true);
                 }

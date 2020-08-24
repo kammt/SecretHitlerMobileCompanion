@@ -57,7 +57,7 @@ public class GameLog {
 
     public static boolean swipeEnabled = false;
 
-    public static boolean executionSounds, policySounds, endSounds;
+    public static boolean executionSounds, policySounds, endSounds, server;
 
     public static boolean isGameStarted() {
         return gameStarted;
@@ -311,6 +311,10 @@ public class GameLog {
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(cardList);
     }
 
+    public static void setContext(Context c) {
+        GameLog.c = c;
+    }
+
     private static void restoreGameFromJSON(JSONObject object) throws JSONException {
         //TODO also restore game settings
         JSONObject game = object.getJSONObject("game");
@@ -334,7 +338,7 @@ public class GameLog {
         eventListToFile(true, "backup.json");
     }
 
-    public static boolean backupPresent(Context c) {
+    public static boolean backupPresent() {
         return new File(c.getCacheDir(), "backup.json").exists();
     }
 

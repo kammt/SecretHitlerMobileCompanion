@@ -130,6 +130,8 @@ public class GameFragment extends Fragment {
         setupRecyclerViews(view);
         setupBottomMenu(view);
 
+        if(GameLog.server) startAndBindServerService();
+
         bottomNavigationMenu_game.setVisibility(View.VISIBLE);
         bottomNavigationMenu_game.startAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_in_bottom));
 

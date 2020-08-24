@@ -44,7 +44,7 @@ public class PlayerList {
     }
 
     public static void changeRecyclerView(RecyclerView playerCardList) {
-        playerRecyclerView.setAdapter(null);
+        if(playerRecyclerView != null) playerRecyclerView.setAdapter(null);
 
         playerRecyclerViewAdapter = new PlayerRecyclerViewAdapter(playerList, c);
         playerCardList.setAdapter(playerRecyclerViewAdapter);

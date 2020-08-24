@@ -11,10 +11,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -28,7 +30,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PreferencesManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
 
 public class SetupFragment extends Fragment {
 
@@ -130,10 +132,10 @@ public class SetupFragment extends Fragment {
         progressBar_setupSteps.setMax(900);
 
         RecyclerView pastPlayerLists = fragmentLayout.findViewById(R.id.oldPlayerLists);
-        PreferencesManager.setupOldPlayerListRecyclerView(pastPlayerLists, context);
+        SharedPreferencesManager.setupOldPlayerListRecyclerView(pastPlayerLists, context);
 
         RecyclerView fascistTracks = fragmentLayout.findViewById(R.id.list_custom_tracks);
-        PreferencesManager.setupCustomTracksRecyclerView(fascistTracks, context);
+        SharedPreferencesManager.setupCustomTracksRecyclerView(fascistTracks, context);
 
         final FloatingActionButton fab_newTrack = fragmentLayout.findViewById(R.id.fab_create_custom_track);
         fab_newTrack.setOnClickListener(new View.OnClickListener() {
@@ -396,6 +398,18 @@ public class SetupFragment extends Fragment {
         listener_forward_settings = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Switch sw_sounds_execution = fragmentLayout.findViewById(R.id.switch_execution);
+                Switch sw_sonds_policy = fragmentLayout.findViewById(R.id.switch_policies);
+                Switch sw_sounds_end = fragmentLayout.findViewById(R.id.switch_gameEnd);
+
+                Switch sw_server = fragmentLayout.findViewById(R.id.switch_server);
+
+                GameLog.endSounds = sw_sounds_end.isChecked();
+                GameLog.policySounds = sw_sonds_policy.isChecked();
+                GameLog.executionSounds = sw_sounds_execution.isChecked();
+
+                GameLog.server = sw_server.isChecked();
+
                 ((MainActivity) context).replaceFragment(MainActivity.game, true);
             }
         };
