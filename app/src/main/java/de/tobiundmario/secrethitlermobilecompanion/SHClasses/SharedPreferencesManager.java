@@ -25,7 +25,7 @@ import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CustomTr
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.OldPlayerListRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.SetupFragment;
 
-public class PreferencesManager {
+public class SharedPreferencesManager {
 
     private static OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter;
     private static CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter;
