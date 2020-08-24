@@ -80,6 +80,7 @@ public class GameFragment extends Fragment {
     private boolean fabsVisible = true;
 
     private BroadcastReceiver serverPageUpdateReceiver;
+    private IntentFilter serverUpdateFilter;
 
     boolean serverConnected = false;
     private ServerSercive boundServerService;
@@ -134,20 +135,12 @@ public class GameFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        context.unregisterReceiver(serverPageUpdateReceiver);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ServerSercive.SERVER_STATE_CHANGED); //This action is used by the server to send updates to the MainActivity: When it is started or when it is killed
-        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION); //This action is used when a network change has taken place (e.g. disconnected from WiFi) It however does not send updates when the user enables/disables mobile hotspot
-        filter.addAction("android.net.wifi.WIFI_AP_STATE_CHANGED"); //This action is used when the mobile hotspot state changes
+    public void onStart() {
+        super.onStart();
+        serverUpdateFilter = new IntentFilter();
+        serverUpdateFilter.addAction(ServerSercive.SERVER_STATE_CHANGED); //This action is used by the server to send updates to the MainActivity: When it is started or when it is killed
+        serverUpdateFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION); //This action is used when a network change has taken place (e.g. disconnected from WiFi) It however does not send updates when the user enables/disables mobile hotspot
+        serverUpdateFilter.addAction("android.net.wifi.WIFI_AP_STATE_CHANGED"); //This action is used when the mobile hotspot state changes
 
         serverPageUpdateReceiver = new BroadcastReceiver() {
             @Override
@@ -157,13 +150,27 @@ public class GameFragment extends Fragment {
                 }
             }
         };
-        context.registerReceiver(serverPageUpdateReceiver, filter);
+        context.registerReceiver(serverPageUpdateReceiver, serverUpdateFilter);
     }
 
-    //Game related
+    @Override
+    public void onPause() {
+        super.onPause();
+        context.unregisterReceiver(serverPageUpdateReceiver);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        context.registerReceiver(serverPageUpdateReceiver, serverUpdateFilter);
+    }
+
+    /*
+    These functions below are necessary for controlling certain game aspects (e.g. stopping the game)
+     */
 
     public void displayEndGameOptions() {
-        //Make the Menu infunctional
+        //Make the Menu non-functioning
         bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(false);
         bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(false);
         bottomNavigationMenu_game.setOnNavigationItemSelectedListener(null);
@@ -188,6 +195,9 @@ public class GameFragment extends Fragment {
 
         //TODO change Fragment / do more fancy animations
     }
+
+
+
 
     /*
     These functions below are necessary for layout initialisation
@@ -215,28 +225,15 @@ public class GameFragment extends Fragment {
         bottomSheetBehaviorAdd = BottomSheetBehavior.from(bottomSheetAdd);
         bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
 
-        //Setting up the OnClickListeners. For this, we get each ConstraintLayout by using fragmentLayout.findViewById
+        /*
+        Setting up the OnClickListeners. For this, we get each ConstraintLayout by using fragmentLayout.findViewById
+        However, we have to differentiate here, as we only want Legislative Session and Deck shuffled to be visible when manual mode is enabled
+         */
         bottomSheetAdd.findViewById(R.id.legislative_session).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
                 GameLog.addEvent(new LegislativeSession(context));
-            }
-        });
-
-        bottomSheetAdd.findViewById(R.id.loyalty_investigation).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                GameLog.addEvent(new LoyaltyInvestigationEvent(null, context));
-            }
-        });
-
-        bottomSheetAdd.findViewById(R.id.execution).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                GameLog.addEvent(new ExecutionEvent(null, context));
             }
         });
 
@@ -248,21 +245,50 @@ public class GameFragment extends Fragment {
             }
         });
 
-        bottomSheetAdd.findViewById(R.id.policy_peek).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                GameLog.addEvent(new PolicyPeekEvent(null, context));
-            }
-        });
+        View entry_loyaltyInvestigation = bottomSheetAdd.findViewById(R.id.loyalty_investigation);
+        View entry_execution = bottomSheetAdd.findViewById(R.id.execution);
+        View entry_policy_peek = bottomSheetAdd.findViewById(R.id.policy_peek);
+        View entry_special_election = bottomSheetAdd.findViewById(R.id.special_election);
 
-        bottomSheetAdd.findViewById(R.id.special_election).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                GameLog.addEvent(new SpecialElectionEvent(null, context));
-            }
-        });
+        if(GameLog.gameTrack.isManualMode()) {
+            entry_loyaltyInvestigation.setVisibility(View.GONE);
+            entry_execution.setVisibility(View.GONE);
+            entry_policy_peek.setVisibility(View.GONE);
+            entry_special_election.setVisibility(View.GONE);
+        } else {
+            entry_loyaltyInvestigation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+                    GameLog.addEvent(new LoyaltyInvestigationEvent(null, context));
+                }
+            });
+
+            entry_execution.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+                    GameLog.addEvent(new ExecutionEvent(null, context));
+                }
+            });
+
+            entry_policy_peek.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+                    GameLog.addEvent(new PolicyPeekEvent(null, context));
+                }
+            });
+
+            entry_special_election.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+                    GameLog.addEvent(new SpecialElectionEvent(null, context));
+                }
+            });
+        }
+
 
         //Setting Up the Server Status Page
         bottomSheetServer = fragmentLayout.findViewById(R.id.bottom_sheet_server_status);

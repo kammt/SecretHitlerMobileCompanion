@@ -230,7 +230,9 @@ public class GameLog {
     }
 
     private static void addTrackAction(String presidentName) {
-        switch (gameTrack.getActions()[fascistPolicies - 1]) {
+        if(gameTrack.isManualMode()) return; //If it is set to manual mode, we abort the function
+
+        switch (gameTrack.getAction(fascistPolicies - 1)) {
             case FascistTrack.NO_POWER:
                 break;
             case FascistTrack.DECK_PEEK:

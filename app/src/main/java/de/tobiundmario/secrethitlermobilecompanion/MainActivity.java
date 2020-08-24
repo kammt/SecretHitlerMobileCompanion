@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
 
-        ft.setCustomAnimations(android.R.anim.fade_in,
+        if(fade) ft.setCustomAnimations(android.R.anim.fade_in,
                 android.R.anim.fade_out);
         ft.replace(R.id.fragment_placeholder, currentFragment)
                 .commit();
