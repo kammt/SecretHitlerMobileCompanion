@@ -170,7 +170,7 @@ public class PlayerList {
         playerRecyclerViewAdapter.notifyItemChanged(position);
 
         if(getAlivePlayerCount() <= 2) {
-            ((GameFragment) ((MainActivity) c).getCurrentFragment()).displayEndGameOptions();
+            ((MainActivity) c).fragment_game.displayEndGameOptions();
         }
     }
 

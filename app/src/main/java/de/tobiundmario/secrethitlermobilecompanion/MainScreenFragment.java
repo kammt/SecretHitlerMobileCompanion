@@ -38,7 +38,7 @@ public class MainScreenFragment extends Fragment {
         createGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).replaceFragments(SetupFragment.class, true);
+                ((MainActivity) getActivity()).replaceFragment(MainActivity.setup, true);
             }
         });
     }

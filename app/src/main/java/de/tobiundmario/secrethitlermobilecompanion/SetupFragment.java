@@ -75,12 +75,15 @@ public class SetupFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_setup, container, false);
     }
 
+    public void start() {
+        initialiseLayout(getView());
+        startSetup();
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = getActivity();
-        initialiseLayout(view);
-        startSetup();
     }
 
     public void startSetup() {
@@ -179,7 +182,7 @@ public class SetupFragment extends Fragment {
                 progressBarAnimation.setDuration(500);
                 progressBar_setupSteps.startAnimation(progressBarAnimation);
 
-                ((MainActivity) context).replaceFragments(MainScreenFragment.class, true);
+                ((MainActivity) context).replaceFragment(MainActivity.main, true);
             }
         };
 
@@ -393,7 +396,7 @@ public class SetupFragment extends Fragment {
         listener_forward_settings = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) context).replaceFragments(GameFragment.class, true);
+                ((MainActivity) context).replaceFragment(MainActivity.game, true);
             }
         };
 

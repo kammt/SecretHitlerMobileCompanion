@@ -216,14 +216,14 @@ public class GameLog {
             fascistPolicies++;
 
             if (fascistPolicies == gameTrack.getFasPolicies()) {
-                ((GameFragment) ((MainActivity) c).getCurrentFragment()).displayEndGameOptions();
+                ((MainActivity) c).fragment_game.displayEndGameOptions();
             } else addTrackAction(legislativeSession.getVoteEvent().getPresidentName());
 
         } else {
             liberalPolicies++;
 
             if(liberalPolicies == gameTrack.getLibPolicies()) {
-                ((GameFragment) ((MainActivity) c).getCurrentFragment()).displayEndGameOptions();
+                ((MainActivity) c).fragment_game.displayEndGameOptions();
             }
         }
 

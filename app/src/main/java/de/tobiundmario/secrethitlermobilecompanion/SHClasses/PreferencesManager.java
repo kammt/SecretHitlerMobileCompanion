@@ -155,7 +155,7 @@ public class PreferencesManager {
         writePastPlayerLists(array, context);
         oldPlayerListRecyclerViewAdapter.notifyItemRemoved(position);
 
-        setCorrectPlayerListExplanationText( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_choose_from_previous_games_players, context);
+        setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
 
         FascistTrackSelectionManager.fasTracks.remove(position + 3);
         FascistTrackSelectionManager.trackCards.remove(position + 3);
@@ -195,7 +195,7 @@ public class PreferencesManager {
                                     writePastPlayerLists(playerListsArray, context);
                                     oldPlayerListRecyclerViewAdapter.notifyItemInserted(position);
 
-                                    setCorrectPlayerListExplanationText( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_choose_from_previous_games_players, context);
+                                    setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -210,7 +210,7 @@ public class PreferencesManager {
             };
             new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
-            setCorrectPlayerListExplanationText( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_choose_from_previous_games_players, context);
+            setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -251,7 +251,7 @@ public class PreferencesManager {
         if(customTracksRecyclerViewAdapter != null) {
             customTracksRecyclerViewAdapter.tracks = array;
             customTracksRecyclerViewAdapter.notifyDataSetChanged();
-            setCustomTracksTitle( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_title_custom_tracks, context);
+            setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
         }
     }
 
@@ -262,7 +262,7 @@ public class PreferencesManager {
         writeFascistTracks(array, context);
         customTracksRecyclerViewAdapter.notifyItemRemoved(position);
 
-        setCustomTracksTitle( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_title_custom_tracks, context);
+        setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
 
         return removed;
     }
@@ -299,7 +299,7 @@ public class PreferencesManager {
                                     writeFascistTracks(tracksArray, context);
                                     customTracksRecyclerViewAdapter.notifyItemInserted(position);
 
-                                    setCustomTracksTitle( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_title_custom_tracks, context);
+                                    setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -314,7 +314,7 @@ public class PreferencesManager {
             };
             new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
-            setCustomTracksTitle( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_title_custom_tracks, context);
+            setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
         } catch (JSONException e) {
             e.printStackTrace();
         }

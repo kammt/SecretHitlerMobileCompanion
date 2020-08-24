@@ -82,6 +82,8 @@ public class GameFragment extends Fragment {
     private BroadcastReceiver serverPageUpdateReceiver;
     private IntentFilter serverUpdateFilter;
 
+    private boolean started = false;
+
     boolean serverConnected = false;
     private ServerSercive boundServerService;
     private ServiceConnection serverServiceConnection = new ServiceConnection() {
@@ -123,20 +125,15 @@ public class GameFragment extends Fragment {
         stopAndUnbindServerService();
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
+    public void start() {
+        View view = getView();
         setupRecyclerViews(view);
         setupBottomMenu(view);
 
         bottomNavigationMenu_game.setVisibility(View.VISIBLE);
         bottomNavigationMenu_game.startAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_in_bottom));
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+        //Creating the BroadcastReceiver
         serverUpdateFilter = new IntentFilter();
         serverUpdateFilter.addAction(ServerSercive.SERVER_STATE_CHANGED); //This action is used by the server to send updates to the MainActivity: When it is started or when it is killed
         serverUpdateFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION); //This action is used when a network change has taken place (e.g. disconnected from WiFi) It however does not send updates when the user enables/disables mobile hotspot
@@ -151,18 +148,20 @@ public class GameFragment extends Fragment {
             }
         };
         context.registerReceiver(serverPageUpdateReceiver, serverUpdateFilter);
+
+        started = true;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        context.unregisterReceiver(serverPageUpdateReceiver);
+        if(started) context.unregisterReceiver(serverPageUpdateReceiver);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        context.registerReceiver(serverPageUpdateReceiver, serverUpdateFilter);
+        if(started) context.registerReceiver(serverPageUpdateReceiver, serverUpdateFilter);
     }
 
     /*

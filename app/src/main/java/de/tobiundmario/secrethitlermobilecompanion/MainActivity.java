@@ -1,8 +1,12 @@
 package de.tobiundmario.secrethitlermobilecompanion;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,8 +21,15 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Fragment currentFragment;
+    public MainScreenFragment fragment_main;
+    public SetupFragment fragment_setup;
+    public GameFragment fragment_game;
 
+    private LinearLayout currentFragmentContainer;
+
+    private LinearLayout container_main, container_setup, container_game;
+
+    public static final int main = 0, setup = 1, game = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,30 +39,50 @@ public class MainActivity extends AppCompatActivity {
 
         checkForBackups();
 
-        replaceFragments(MainScreenFragment.class, false);
-
         //TODO These methods are for testing purposes only and should be removed from the onCreate function after testing
         //autoCreateGame();
     }
 
-    public void replaceFragments(Class fragmentClass, boolean fade) {
-        try {
-            currentFragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void replaceFragment(int fragmentNumberToReplace, boolean fade) {
+        final LinearLayout oldContainer = currentFragmentContainer;
+
+        switch (fragmentNumberToReplace) {
+            case main:
+                container_main.setVisibility(View.VISIBLE);
+                currentFragmentContainer = container_main;
+                break;
+            case game:
+                container_game.setVisibility(View.VISIBLE);
+                currentFragmentContainer = container_game;
+                fragment_game.start();
+                break;
+            case setup:
+                container_setup.setVisibility(View.VISIBLE);
+                currentFragmentContainer = container_setup;
+                fragment_setup.start();
+                break;
         }
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
 
-        if(fade) ft.setCustomAnimations(android.R.anim.fade_in,
-                android.R.anim.fade_out);
-        ft.replace(R.id.fragment_placeholder, currentFragment)
-                .commit();
-    }
+        if(fade) {
+            oldContainer.animate()
+                    .alpha(0f)
+                    .setDuration(300)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            oldContainer.setVisibility(View.GONE);
+                        }
+                    })
+                    .start();
 
-    public Fragment getCurrentFragment() {
-        return currentFragment;
+            currentFragmentContainer.setAlpha(0f);
+            currentFragmentContainer.animate()
+                    .alpha(1f)
+                    .setDuration(300)
+                    .start();
+        } else {
+            oldContainer.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -63,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             CardDialog.showMessageDialog(this, getString(R.string.title_end_game_policies), null, getString(R.string.yes), new Runnable() {
                 @Override
                 public void run() {
-                    ((GameFragment) currentFragment).displayEndGameOptions();
+                    fragment_game.displayEndGameOptions();
                 }
             }, getString(R.string.no), null);
         } else{ //User is in the empty screen, end the activity
@@ -80,6 +111,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragment_main = (MainScreenFragment) fragmentManager.findFragmentById(R.id.fragment_main);
+        fragment_setup = (SetupFragment) fragmentManager.findFragmentById(R.id.fragment_setup);
+        fragment_game = (GameFragment) fragmentManager.findFragmentById(R.id.fragment_game);
+
+        container_main = findViewById(R.id.container_fragment_main);
+        container_game = findViewById(R.id.container_fragment_game);
+        container_setup = findViewById(R.id.container_fragment_setup);
+
+        currentFragmentContainer = container_main;
     }
 
     private void autoCreateGame() {
@@ -114,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     GameLog.restoreBackup();
-                    replaceFragments(GameFragment.class, true);
+                    replaceFragment(game, true);
                 }
             }, getString(R.string.no), new Runnable() {
                 @Override
