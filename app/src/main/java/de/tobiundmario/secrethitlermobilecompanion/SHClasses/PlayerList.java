@@ -14,6 +14,7 @@ import org.json.JSONArray;
 
 import java.util.ArrayList;
 
+import de.tobiundmario.secrethitlermobilecompanion.GameFragment;
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.PlayerRecyclerViewAdapter;
@@ -40,6 +41,14 @@ public class PlayerList {
         playerRecyclerView = playerCardList;
 
         c = context;
+    }
+
+    public static void changeRecyclerView(RecyclerView playerCardList) {
+        playerRecyclerView.setAdapter(null);
+
+        playerRecyclerViewAdapter = new PlayerRecyclerViewAdapter(playerList, c);
+        playerCardList.setAdapter(playerRecyclerViewAdapter);
+        playerRecyclerView = playerCardList;
     }
 
     public static void destroy() {
@@ -161,7 +170,7 @@ public class PlayerList {
         playerRecyclerViewAdapter.notifyItemChanged(position);
 
         if(getAlivePlayerCount() <= 2) {
-            ((MainActivity) c).displayEndGameOptions();
+            ((GameFragment) ((MainActivity) c).getCurrentFragment()).displayEndGameOptions();
         }
     }
 

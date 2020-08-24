@@ -393,7 +393,7 @@ public class SetupFragment extends Fragment {
         listener_forward_settings = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                ((MainActivity) context).replaceFragments(GameFragment.class, true);
             }
         };
 

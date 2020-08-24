@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.tobiundmario.secrethitlermobilecompanion.GameFragment;
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CardRecyclerViewAdapter;
@@ -172,8 +173,6 @@ public class GameLog {
         //Reset the policy-count
         liberalPolicies = 0;
         fascistPolicies = 0;
-
-        gameTrack = null;
     }
 
     public static void addEvent(GameEvent event) {
@@ -217,14 +216,14 @@ public class GameLog {
             fascistPolicies++;
 
             if (fascistPolicies == gameTrack.getFasPolicies()) {
-                ((MainActivity) c).displayEndGameOptions();
+                ((GameFragment) ((MainActivity) c).getCurrentFragment()).displayEndGameOptions();
             } else addTrackAction(legislativeSession.getVoteEvent().getPresidentName());
 
         } else {
             liberalPolicies++;
 
             if(liberalPolicies == gameTrack.getLibPolicies()) {
-                ((MainActivity) c).displayEndGameOptions();
+                ((GameFragment) ((MainActivity) c).getCurrentFragment()).displayEndGameOptions();
             }
         }
 
@@ -333,7 +332,7 @@ public class GameLog {
         eventListToFile(true, "backup.json");
     }
 
-    public static boolean backupPresent() {
+    public static boolean backupPresent(Context c) {
         return new File(c.getCacheDir(), "backup.json").exists();
     }
 

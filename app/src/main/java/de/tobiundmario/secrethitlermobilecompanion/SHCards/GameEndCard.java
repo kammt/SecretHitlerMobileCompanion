@@ -109,7 +109,7 @@ public class GameEndCard extends GameEvent {
                     //Liberals won, n liberal policies
                     if(GameLog.endSounds) MediaPlayer.create(context, R.raw.liberalswin).start();
                 }
-                mainActivity.endGame();
+                //mainActivity.endGame(); TODO
             }
         });
     }
