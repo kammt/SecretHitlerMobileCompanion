@@ -40,6 +40,7 @@ public class SetupFragment extends Fragment {
     private ConstraintLayout container_new_player;
 
     private ConstraintLayout container_select_track;
+    public TextView tv_title_custom_tracks;
 
     private ConstraintLayout container_settings;
     private ConstraintLayout container_overview;
@@ -101,12 +102,6 @@ public class SetupFragment extends Fragment {
     }
 
     public void initialiseLayout(final View fragmentLayout) {
-        RecyclerView pastPlayerLists = fragmentLayout.findViewById(R.id.oldPlayerLists);
-        PreferencesManager.setupOldPlayerListRecyclerView(pastPlayerLists, context);
-
-        RecyclerView fascistTracks = fragmentLayout.findViewById(R.id.list_custom_tracks);
-        PreferencesManager.setupCustomTracksRecyclerView(fascistTracks, context);
-
         btn_setup_back = fragmentLayout.findViewById(R.id.btn_setup_back);
         btn_setup_forward = fragmentLayout.findViewById(R.id.btn_setup_forward);
         container_setup_buttons = fragmentLayout.findViewById(R.id.setup_buttons);
@@ -115,6 +110,8 @@ public class SetupFragment extends Fragment {
         tv_choose_from_previous_games_players = fragmentLayout.findViewById(R.id.tv_choose_old_players);
 
         container_select_track = fragmentLayout.findViewById(R.id.container_setup_set_Track);
+        tv_title_custom_tracks = fragmentLayout.findViewById(R.id.tv_title_custom_tracks);
+
         container_overview = fragmentLayout.findViewById(R.id.container_setup_overview);
         container_settings = fragmentLayout.findViewById(R.id.container_setup_settings);
 
@@ -124,6 +121,12 @@ public class SetupFragment extends Fragment {
 
         progressBar_setupSteps = fragmentLayout.findViewById(R.id.progressBar_setupProgress);
         progressBar_setupSteps.setMax(1000);
+
+        RecyclerView pastPlayerLists = fragmentLayout.findViewById(R.id.oldPlayerLists);
+        PreferencesManager.setupOldPlayerListRecyclerView(pastPlayerLists, context);
+
+        RecyclerView fascistTracks = fragmentLayout.findViewById(R.id.list_custom_tracks);
+        PreferencesManager.setupCustomTracksRecyclerView(fascistTracks, context);
 
         FloatingActionButton fab_newTrack = fragmentLayout.findViewById(R.id.fab_create_custom_track);
         fab_newTrack.setOnClickListener(new View.OnClickListener() {

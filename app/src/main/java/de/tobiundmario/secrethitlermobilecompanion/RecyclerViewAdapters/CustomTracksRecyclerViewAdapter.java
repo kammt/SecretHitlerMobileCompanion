@@ -1,13 +1,11 @@
 package de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,14 +18,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 import de.tobiundmario.secrethitlermobilecompanion.R;
-import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.JSONManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PreferencesManager;
 
 public class CustomTracksRecyclerViewAdapter extends RecyclerView.Adapter<CustomTracksRecyclerViewAdapter.TrackViewHolder> {
 
@@ -76,6 +69,7 @@ public class CustomTracksRecyclerViewAdapter extends RecyclerView.Adapter<Custom
             LinearLayout ll_actions = cv.findViewById(R.id.ll_actionSymbols);
             Button btn_use = cv.findViewById(R.id.btn_use);
 
+            ll_actions.removeAllViews();
             tv_name.setText(track.getName());
             if(manual) {
                 tv_desc.setText(context.getString(R.string.description_track_manual, track.getFasPolicies(), track.getLibPolicies()));

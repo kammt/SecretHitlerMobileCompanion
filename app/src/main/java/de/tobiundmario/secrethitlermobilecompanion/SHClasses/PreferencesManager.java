@@ -19,9 +19,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CustomTracksRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.OldPlayerListRecyclerViewAdapter;
+import de.tobiundmario.secrethitlermobilecompanion.SetupFragment;
 
 public class PreferencesManager {
 
@@ -153,7 +155,7 @@ public class PreferencesManager {
         writePastPlayerLists(array, context);
         oldPlayerListRecyclerViewAdapter.notifyItemRemoved(position);
 
-        //setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO fix
+        setCorrectPlayerListExplanationText( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_choose_from_previous_games_players, context);
 
         return removed;
     }
@@ -190,7 +192,7 @@ public class PreferencesManager {
                                     writePastPlayerLists(playerListsArray, context);
                                     oldPlayerListRecyclerViewAdapter.notifyItemInserted(position);
 
-                                    //setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO fix
+                                    setCorrectPlayerListExplanationText( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_choose_from_previous_games_players, context);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -205,7 +207,7 @@ public class PreferencesManager {
             };
             new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
-            //setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); TODO fix
+            setCorrectPlayerListExplanationText( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_choose_from_previous_games_players, context);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -256,7 +258,7 @@ public class PreferencesManager {
         writeFascistTracks(array, context);
         customTracksRecyclerViewAdapter.notifyItemRemoved(position);
 
-        //setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO
+        setCustomTracksTitle( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_title_custom_tracks, context);
 
         return removed;
     }
@@ -293,7 +295,7 @@ public class PreferencesManager {
                                     writeFascistTracks(tracksArray, context);
                                     customTracksRecyclerViewAdapter.notifyItemInserted(position);
 
-                                    //setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO
+                                    setCustomTracksTitle( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_title_custom_tracks, context);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -308,9 +310,17 @@ public class PreferencesManager {
             };
             new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
-            //setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO
+            setCustomTracksTitle( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_title_custom_tracks, context);
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void setCustomTracksTitle(TextView tv, Context context) throws JSONException {
+        if(getFascistTracks(context).length() == 0) {
+            tv.setText(context.getString(R.string.no_custom_tracks_title));
+        } else {
+            tv.setText(context.getString(R.string.custom_tracks_title));
         }
     }
 

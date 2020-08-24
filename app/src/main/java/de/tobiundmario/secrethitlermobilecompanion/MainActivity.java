@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
     boolean serverConnected = false;
     private BroadcastReceiver serverPageUpdateReceiver;
 
+    private Fragment currentFragment;
+
     private ServiceConnection serverServiceConnection = new ServiceConnection() {
 
         @Override
@@ -123,14 +125,14 @@ public class MainActivity extends AppCompatActivity {
         //autoCreateGame();
         //displayEndGameOptions();
         FragmentTransaction F_T =getSupportFragmentManager().beginTransaction();
-        F_T.replace(R.id.fragment_placeholder, new MainScreenFragment());
+        currentFragment = new MainScreenFragment();
+        F_T.replace(R.id.fragment_placeholder, currentFragment);
         F_T.commit();
     }
 
     public void replaceFragments(Class fragmentClass, boolean fade) {
-        Fragment fragment = null;
         try {
-            fragment = (Fragment) fragmentClass.newInstance();
+            currentFragment = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -140,8 +142,12 @@ public class MainActivity extends AppCompatActivity {
 
         ft.setCustomAnimations(android.R.anim.fade_in,
                 android.R.anim.fade_out);
-        ft.replace(R.id.fragment_placeholder, fragment)
+        ft.replace(R.id.fragment_placeholder, currentFragment)
                 .commit();
+    }
+
+    public Fragment getCurrentFragment() {
+        return currentFragment;
     }
 
     @Override

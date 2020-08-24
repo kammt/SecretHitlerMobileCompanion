@@ -127,4 +127,9 @@
     <string name="snackbar_track_removed_message">Fascist Track removed</string>
     <string name="description_track">Fascists win with %1$d and liberals with %2$d policies. It contains the following actions:</string>
     <string name="description_track_manual">Fascists win with %1$d and liberals with %2$d policies. Manual mode is enabled.</string>
+    <string name="no_custom_tracks_title">No Custom Tracks created (yet)</string>
+    <string name="title_investigation">Loyalty Investigation</string>
+    <string name="description_investigation">The president sees the party membership of another player</string>
+    <string name="title_special_election">Special election</string>
+    <string name="description_special_election">The president selects the next president</string>
 </resources>
