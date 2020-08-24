@@ -16,7 +16,6 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.text.Html;
 import android.view.Menu;
@@ -27,17 +26,17 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -54,7 +53,6 @@ import java.lang.reflect.InvocationTargetException;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PreferencesManager;
@@ -71,27 +69,6 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView cardList, playerCardList;
 
     private ServerSercive boundServerService;
-
-    private TextView tv_nothingHere;
-    private Button btn_createNewGame;
-
-    private Button btn_setup_forward;
-    private Button btn_setup_back;
-    private ConstraintLayout container_setup_buttons;
-
-    private ConstraintLayout container_new_player;
-
-    private ConstraintLayout container_select_track;
-
-    private ConstraintLayout container_sound_settings;
-    private ConstraintLayout container_server;
-    public TextView tv_choose_from_previous_games_players;
-
-    private ProgressBar progressBar_setupSteps;
-
-    private View.OnClickListener listener_backward_players;
-    private View.OnClickListener listener_forward_players;
-    private View.OnClickListener listener_backward_tracks;
 
     private BottomNavigationView bottomNavigationMenu_game;
     private ConstraintLayout bottomSheetAdd;
@@ -133,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setupNewGameCreation();
         setupRecyclerViews();
         setupBottomMenu();
 
@@ -146,6 +122,26 @@ public class MainActivity extends AppCompatActivity {
         //TODO These methods are for testing purposes only and should be removed from the onCreate function after testing
         //autoCreateGame();
         //displayEndGameOptions();
+        FragmentTransaction F_T =getSupportFragmentManager().beginTransaction();
+        F_T.replace(R.id.fragment_placeholder, new MainScreenFragment());
+        F_T.commit();
+    }
+
+    public void replaceFragments(Class fragmentClass, boolean fade) {
+        Fragment fragment = null;
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+
+        ft.setCustomAnimations(android.R.anim.fade_in,
+                android.R.anim.fade_out);
+        ft.replace(R.id.fragment_placeholder, fragment)
+                .commit();
     }
 
     @Override
@@ -286,8 +282,6 @@ public class MainActivity extends AppCompatActivity {
 
                 Animation fadeIn = new AlphaAnimation((float) 0, (float) 1);
                 fadeIn.setDuration(500);
-                tv_nothingHere.startAnimation(fadeIn);
-                btn_createNewGame.startAnimation(fadeIn);
             }
             @Override
             public void onAnimationRepeat(Animation animation) {
@@ -304,13 +298,9 @@ public class MainActivity extends AppCompatActivity {
     public void setGameMode(boolean gameMode) {
         if(!gameMode) {
             bottomNavigationMenu_game.setVisibility(View.GONE);
-            tv_nothingHere.setVisibility(View.VISIBLE);
-            btn_createNewGame.setVisibility(View.VISIBLE);
             GameLog.setGameStarted(false);
         } else {
             bottomNavigationMenu_game.setClickable(true);
-            tv_nothingHere.setVisibility(View.GONE);
-            btn_createNewGame.setVisibility(View.GONE);
 
             GameLog.initialise(cardList, this);
             GameLog.setGameStarted(true);
@@ -328,270 +318,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setupNewGameCreation() {
-        tv_nothingHere = findViewById(R.id.tv_nothing_here);
-        btn_createNewGame = findViewById(R.id.btn_createGame);
-
-        btn_setup_back = findViewById(R.id.btn_setup_back);
-        btn_setup_forward = findViewById(R.id.btn_setup_forward);
-        container_setup_buttons = findViewById(R.id.setup_buttons);
-
-        container_new_player = findViewById(R.id.container_setup_add_players);
-        tv_choose_from_previous_games_players = findViewById(R.id.tv_choose_old_players);
-
-        container_select_track = findViewById(R.id.container_setup_set_Track);
-        container_sound_settings = findViewById(R.id.container_setup_sound_settings);
-        container_server = findViewById(R.id.container_setup_server);
-
-        progressBar_setupSteps = findViewById(R.id.progressBar_setupProgress);
-        progressBar_setupSteps.setMax(1000);
-
-        FloatingActionButton fab_newTrack = findViewById(R.id.fab_create_custom_track);
-        fab_newTrack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CardDialog.showTrackCreationDialog(MainActivity.this);
-            }
-        });
-
-        //Adding the official tracks to the LinearLayout
-        LinearLayout ll_official_tracks = findViewById(R.id.container_official_tracks);
-        //For 5-6 players
-        CardView cv_56 = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, ll_official_tracks, false);
-        FascistTrackSelectionManager.setupOfficialCard(cv_56, FascistTrackSelectionManager.TRACK_TYPE_5_TO_6, this);
-        ll_official_tracks.addView(cv_56);
-        FascistTrackSelectionManager.trackCards.add(0, cv_56);
-
-        FascistTrack ft_56 = new FascistTrack();
-        ft_56.setActions(new int[] {FascistTrack.NO_POWER, FascistTrack.NO_POWER, FascistTrack.DECK_PEEK, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
-        FascistTrackSelectionManager.fasTracks.add(0, ft_56);
-
-        //For 7-8 players
-        CardView cv_78 = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, ll_official_tracks, false);
-        FascistTrackSelectionManager.setupOfficialCard(cv_78, FascistTrackSelectionManager.TRACK_TYPE_7_TO_8, this);
-        ll_official_tracks.addView(cv_78);
-        FascistTrackSelectionManager.trackCards.add(1, cv_78);
-
-        FascistTrack ft_78 = new FascistTrack();
-        ft_78.setActions(new int[] {FascistTrack.NO_POWER, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
-        FascistTrackSelectionManager.fasTracks.add(0, ft_78);
-
-        //For 9-10 players
-        CardView cv_910 = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, ll_official_tracks, false);
-        FascistTrackSelectionManager.setupOfficialCard(cv_910, FascistTrackSelectionManager.TRACK_TYPE_9_TO_10, this);
-        ll_official_tracks.addView(cv_910);
-        FascistTrackSelectionManager.trackCards.add(2, cv_910);
-
-        FascistTrack ft_910 = new FascistTrack();
-        ft_910.setActions(new int[] {FascistTrack.INVESTIGATION, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
-        FascistTrackSelectionManager.fasTracks.add(0, ft_910);
-
-        btn_createNewGame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cardList.setVisibility(View.VISIBLE);
-                GameLog.initialise(cardList, MainActivity.this);
-
-                //Resetting values in case there has been a setup before which was cancelled
-                PlayerList.initialise(playerCardList, MainActivity.this);
-                FascistTrackSelectionManager.processSelection(-1, MainActivity.this);
-
-                AlphaAnimation fadeOut = new AlphaAnimation((float) 1, (float) 0);
-                fadeOut.setDuration(500);
-                tv_nothingHere.startAnimation(fadeOut);
-                btn_createNewGame.startAnimation(fadeOut);
-
-                AlphaAnimation fadeIn = new AlphaAnimation((float) 0, (float) 1);
-                fadeIn.setDuration(1000);
-                playerCardList.setVisibility(View.VISIBLE);
-                playerCardList.startAnimation(fadeIn);
-
-                container_setup_buttons.setVisibility(View.VISIBLE);
-                container_setup_buttons.startAnimation(fadeIn);
-
-                container_new_player.setVisibility(View.VISIBLE);
-                container_new_player.startAnimation(fadeIn);
-
-                progressBar_setupSteps.setVisibility(View.VISIBLE);
-                progressBar_setupSteps.startAnimation(fadeIn);
-
-                Animation progressBarAnimation = new ProgressBarAnimation(progressBar_setupSteps, 0, 250);
-                progressBarAnimation.setDuration(500);
-                progressBar_setupSteps.startAnimation(progressBarAnimation);
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        tv_nothingHere.setVisibility(View.GONE);
-                        btn_createNewGame.setVisibility(View.GONE);
-                    }
-                }, 50);
-            }
-        });
-
-        listener_backward_players = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlphaAnimation fadeOut = new AlphaAnimation((float) 1, (float) 0);
-                fadeOut.setDuration(500);
-                playerCardList.startAnimation(fadeOut);
-                container_setup_buttons.startAnimation(fadeOut);
-                container_new_player.startAnimation(fadeOut);
-                progressBar_setupSteps.startAnimation(fadeOut);
-
-                AlphaAnimation fadeIn = new AlphaAnimation((float) 0, (float) 1);
-                fadeIn.setDuration(1000);
-
-                tv_nothingHere.setVisibility(View.VISIBLE);
-                tv_nothingHere.startAnimation(fadeIn);
-
-                btn_createNewGame.setVisibility(View.VISIBLE);
-                btn_createNewGame.startAnimation(fadeIn);
-
-                Animation progressBarAnimation = new ProgressBarAnimation(progressBar_setupSteps, 250, 0);
-                progressBarAnimation.setDuration(500);
-                progressBar_setupSteps.startAnimation(progressBarAnimation);
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        playerCardList.setVisibility(View.GONE);
-                        container_setup_buttons.setVisibility(View.GONE);
-                        container_new_player.setVisibility(View.GONE);
-                        progressBar_setupSteps.setVisibility(View.GONE);
-                    }
-                }, 500);
-            }
-        };
-
-        listener_forward_players = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Runnable continueSetup = new Runnable() {
-                    @Override
-                    public void run() {
-                        //Check if there is a recommended track available
-                        LinearLayout container_recommended_track = findViewById(R.id.container_recommended_track);
-
-                        if(PlayerList.getPlayerList().size() >=5 && PlayerList.getPlayerList().size() <=10) {//Recommended track available
-                            container_recommended_track.setVisibility(View.VISIBLE);
-
-                            int recommendation = -10;
-                            if(PlayerList.getPlayerList().size() == 5 || PlayerList.getPlayerList().size() == 6) {
-                                recommendation = 0;
-                            } else if(PlayerList.getPlayerList().size() == 7 || PlayerList.getPlayerList().size() == 8) {
-                                recommendation = 1;
-                            } else if(PlayerList.getPlayerList().size() == 9 || PlayerList.getPlayerList().size() ==10) {
-                                recommendation = 2;
-                            }
-
-                            //Only change the layout if the recommendation changed
-                            if(recommendation != FascistTrackSelectionManager.recommendedTrackIndex) {
-                                CardView cv_recommended_track = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, container_recommended_track, false);
-
-                                if (recommendation == 0) {
-                                    FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_5_TO_6, MainActivity.this);
-                                } else if (recommendation == 1) {
-                                    FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_7_TO_8, MainActivity.this);
-                                } else if (recommendation == 2) {
-                                    FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_9_TO_10, MainActivity.this);
-                                }
-
-                                if (container_recommended_track.getChildCount() > 1)
-                                    container_recommended_track.removeViewAt(1); //If there is already a recommended track in there, we remove it.
-
-                                container_recommended_track.addView(cv_recommended_track);
-                                FascistTrackSelectionManager.changeRecommendedCard(recommendation, cv_recommended_track, MainActivity.this);
-                            }
-                        } else {
-                            container_recommended_track.setVisibility(View.GONE);
-                            FascistTrackSelectionManager.recommendedTrackIndex = -1;
-                            FascistTrackSelectionManager.recommendedCard = null;
-                        }
-
-                        //Change the back listener
-                        btn_setup_back.setOnClickListener(listener_backward_tracks);
-
-                        //Animations
-                        Animation slideOutLeft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_left);
-                        container_new_player.startAnimation(slideOutLeft);
-                        playerCardList.startAnimation(slideOutLeft);
-
-                        slideOutLeft.setAnimationListener(new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                container_new_player.setVisibility(View.GONE);
-                                playerCardList.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-                            }
-                        });
-
-                        Animation progressBarAnimation = new ProgressBarAnimation(progressBar_setupSteps, 250, 500);
-                        progressBarAnimation.setDuration(500);
-                        progressBar_setupSteps.startAnimation(progressBarAnimation);
-
-                        Animation slideInRight = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_right);
-                        container_select_track.setVisibility(View.VISIBLE);
-                        container_select_track.startAnimation(slideInRight);
-                    }
-                };
-
-                int playerCount = PlayerList.getPlayerList().size();
-                if(playerCount <= 2) {
-                    String title = (playerCount == 0) ? getString(R.string.no_players_added) : getString(R.string.title_too_little_players);
-                    CardDialog.showMessageDialog(MainActivity.this, title, getString(R.string.no_players_added_msg), getString(R.string.btn_ok), null, null, null);
-                } else if (playerCount < 5) {
-                    CardDialog.showMessageDialog(MainActivity.this, getString(R.string.title_too_little_players), getString(R.string.msg_too_little_players, playerCount), getString(R.string.dialog_mismatching_claims_btn_continue), continueSetup, getString(R.string.dialog_mismatching_claims_btn_cancel), null);
-                } else continueSetup.run();
-            }
-        };
-
-        listener_backward_tracks = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Animation slideOutRight = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_out_right);
-                container_select_track.startAnimation(slideOutRight);
-
-                slideOutRight.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        container_select_track.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                });
-
-                Animation slideInLeft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.slide_in_left);
-                container_new_player.setVisibility(View.VISIBLE);
-                container_new_player.startAnimation(slideInLeft);
-                playerCardList.setVisibility(View.VISIBLE);
-                playerCardList.startAnimation(slideInLeft);
-
-                Animation progressBarAnimation = new ProgressBarAnimation(progressBar_setupSteps, 500, 250);
-                progressBarAnimation.setDuration(500);
-                progressBar_setupSteps.startAnimation(progressBarAnimation);
-                btn_setup_forward.setOnClickListener(listener_forward_players);
-                btn_setup_back.setOnClickListener(listener_backward_players);
-            }
-        };
-
-
-        btn_setup_forward.setOnClickListener(listener_forward_players);
-        btn_setup_back.setOnClickListener(listener_backward_players);
-    }
 
     public void deselectAllMenuItems() {
         Menu menu = bottomNavigationMenu_game.getMenu();
@@ -921,12 +647,6 @@ public class MainActivity extends AppCompatActivity {
         layoutManager2.setOrientation(RecyclerView.HORIZONTAL);
         playerCardList.setLayoutManager(layoutManager2);
         PlayerList.initialise(playerCardList, this);
-
-        RecyclerView pastPlayerLists = findViewById(R.id.oldPlayerLists);
-        PreferencesManager.setupOldPlayerListRecyclerView(pastPlayerLists, this);
-
-        RecyclerView fascistTracks = findViewById(R.id.list_custom_tracks);
-        PreferencesManager.setupCustomTracksRecyclerView(fascistTracks, this);
     }
 
     private void startAndBindServerService() {
@@ -960,7 +680,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class ProgressBarAnimation extends Animation{
+    public static class ProgressBarAnimation extends Animation{
         private ProgressBar progressBar;
         private float from;
         private float  to;

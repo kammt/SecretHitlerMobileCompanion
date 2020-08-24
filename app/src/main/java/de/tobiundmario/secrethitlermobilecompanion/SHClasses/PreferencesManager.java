@@ -19,7 +19,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CustomTracksRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.OldPlayerListRecyclerViewAdapter;
@@ -154,7 +153,7 @@ public class PreferencesManager {
         writePastPlayerLists(array, context);
         oldPlayerListRecyclerViewAdapter.notifyItemRemoved(position);
 
-        setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context);
+        //setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO fix
 
         return removed;
     }
@@ -191,7 +190,7 @@ public class PreferencesManager {
                                     writePastPlayerLists(playerListsArray, context);
                                     oldPlayerListRecyclerViewAdapter.notifyItemInserted(position);
 
-                                    setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context);
+                                    //setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO fix
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -206,7 +205,7 @@ public class PreferencesManager {
             };
             new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
-            setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context);
+            //setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); TODO fix
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -257,7 +256,7 @@ public class PreferencesManager {
         writeFascistTracks(array, context);
         customTracksRecyclerViewAdapter.notifyItemRemoved(position);
 
-        setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO
+        //setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO
 
         return removed;
     }
@@ -294,7 +293,7 @@ public class PreferencesManager {
                                     writeFascistTracks(tracksArray, context);
                                     customTracksRecyclerViewAdapter.notifyItemInserted(position);
 
-                                    setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO
+                                    //setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -309,7 +308,7 @@ public class PreferencesManager {
             };
             new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
-            setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO
+            //setCorrectPlayerListExplanationText( ((MainActivity) context).tv_choose_from_previous_games_players, context); //TODO
         } catch (JSONException e) {
             e.printStackTrace();
         }
