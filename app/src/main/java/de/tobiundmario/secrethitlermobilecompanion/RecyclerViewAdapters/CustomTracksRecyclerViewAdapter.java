@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.JSONManager;
 
 public class CustomTracksRecyclerViewAdapter extends RecyclerView.Adapter<CustomTracksRecyclerViewAdapter.TrackViewHolder> {
@@ -55,10 +56,10 @@ public class CustomTracksRecyclerViewAdapter extends RecyclerView.Adapter<Custom
     }
 
     @Override
-    public void onBindViewHolder(TrackViewHolder trackViewHolder, final int pos) {
+    public void onBindViewHolder(final TrackViewHolder trackViewHolder, final int pos) {
         try {
             JSONObject object = tracks.getJSONObject(pos);
-            FascistTrack track = JSONManager.restoreFascistTrackFromJSON(object);
+            final FascistTrack track = JSONManager.restoreFascistTrackFromJSON(object);
 
             boolean manual = track.isManualMode();
 
@@ -116,7 +117,7 @@ public class CustomTracksRecyclerViewAdapter extends RecyclerView.Adapter<Custom
             btn_use.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    FascistTrackSelectionManager.processSelection(pos + 3, trackViewHolder.cv, track, context);
                 }
             });
 

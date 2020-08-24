@@ -157,6 +157,9 @@ public class PreferencesManager {
 
         setCorrectPlayerListExplanationText( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_choose_from_previous_games_players, context);
 
+        FascistTrackSelectionManager.fasTracks.remove(position + 3);
+        FascistTrackSelectionManager.trackCards.remove(position + 3);
+
         return removed;
     }
 
@@ -248,6 +251,7 @@ public class PreferencesManager {
         if(customTracksRecyclerViewAdapter != null) {
             customTracksRecyclerViewAdapter.tracks = array;
             customTracksRecyclerViewAdapter.notifyDataSetChanged();
+            setCustomTracksTitle( ((SetupFragment) ((MainActivity) context).getCurrentFragment()).tv_title_custom_tracks, context);
         }
     }
 

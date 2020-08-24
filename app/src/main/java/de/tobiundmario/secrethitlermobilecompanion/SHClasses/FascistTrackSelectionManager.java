@@ -26,6 +26,18 @@ public class FascistTrackSelectionManager {
     public static ArrayList<CardView> trackCards = new ArrayList<>();
     public static ArrayList<FascistTrack> fasTracks = new ArrayList<>();
     public static CardView recommendedCard;
+    public static CardView previousSelection;
+
+    /*
+    This class is responsible for handling clicks on the "Use"-button in the Fascist Track Selection Screen of the Setup phase.
+
+    # Variable explanation:
+    - selectedTrackIndex: The current index of the selected card. Everything that is or is greater than 3 is a custom track (since there are three official tracks). If there are no tracks selected, the value is -1
+    - recommendedTrackIndex: The recommended track. Can have a value between 0 and 2. If there is no recommendation, the value is -1
+    - trackCards and fasTracks are ArrayLists that hold the CardViews and FascistTrack classes of the official tracks. This system is not used for custom tracks as they can be deleted during the setup, which would involve clearing both ArrayLists / inserting new objects
+    - recommendedCard holds the CardView of the recommended Track. This is necessary as we need to change the button when it is selected/unselected
+    - previousSelection holds the CardView of the previous selection. This is needed as the cardViews of custom tracks are not to be found in the trackCards ArrayList
+     */
 
     public static void setupOfficialCard(CardView cardView, int trackType, final Context context) {
         TextView title_players = cardView.findViewById(R.id.tv_officialTrack_players);
@@ -56,7 +68,7 @@ public class FascistTrackSelectionManager {
         btn_use.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                processSelection(index, context);
+                processSelection(index, trackCards.get(index), fasTracks.get(index), context);
             }
         });
     }
@@ -70,30 +82,34 @@ public class FascistTrackSelectionManager {
 
         Log.v("Recommended Track", "Track is #" + recommendedTrackIndex + ", current selection is " + selectedTrackIndex);
 
-        if(selectedTrackIndex == -1) processSelection(recommendedTrackIndex, context); //If there is no selection yet, automatically select the recommended one
+        if(selectedTrackIndex == -1) processSelection(recommendedTrackIndex, trackCards.get(recommendedTrackIndex), fasTracks.get(recommendedTrackIndex), context); //If there is no selection yet, automatically select the recommended one
     }
 
-    public static void processSelection(int newSelection, Context context) {
+    public static void processSelection(int newSelection, CardView cardView, FascistTrack fascistTrack, Context context) {
         if(newSelection != -1) {
             //Unselecting the old card
             if (selectedTrackIndex != -1) {
-                updateTrackCard(trackCards.get(selectedTrackIndex), false, context);
+
+                updateTrackCard(previousSelection, false, context);
                 if (selectedTrackIndex == recommendedTrackIndex) {
                     updateTrackCard(recommendedCard, false, context);
                 }
+
             }
 
             //Select the new card
             if (newSelection == recommendedTrackIndex) {
                 updateTrackCard(recommendedCard, true, context);
             }
-            updateTrackCard(trackCards.get(newSelection), true, context);
+
+            updateTrackCard(cardView, true, context); //If it is an official card, we just need to get the cardView from the ArrayList
 
             //Override the selection value
             selectedTrackIndex = newSelection;
 
             //Update the FascistTrack in GameLog
-            GameLog.gameTrack = fasTracks.get(newSelection);
+            GameLog.gameTrack = fascistTrack;
+            previousSelection = cardView;
         } else if(selectedTrackIndex != -1){
             //When newSelection is -1, all items should be unselected
             updateTrackCard(trackCards.get(selectedTrackIndex), false, context);

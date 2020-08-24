@@ -81,7 +81,7 @@ public class SetupFragment extends Fragment {
     public void startSetup() {
         //Resetting values in case there has been a setup before which was cancelled
         PlayerList.initialise(playerCardList, context);
-        FascistTrackSelectionManager.processSelection(-1, context);
+        FascistTrackSelectionManager.processSelection(-1, null, null, context);
 
         AlphaAnimation fadeIn = new AlphaAnimation((float) 0, (float) 1);
         fadeIn.setDuration(1000);
