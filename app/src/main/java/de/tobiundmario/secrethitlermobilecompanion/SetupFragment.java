@@ -26,6 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PreferencesManager;
 
@@ -43,14 +44,18 @@ public class SetupFragment extends Fragment {
     public TextView tv_title_custom_tracks;
 
     private ConstraintLayout container_settings;
-    private ConstraintLayout container_overview;
     public TextView tv_choose_from_previous_games_players;
 
     private ProgressBar progressBar_setupSteps;
 
     private View.OnClickListener listener_backward_players;
     private View.OnClickListener listener_forward_players;
+
     private View.OnClickListener listener_backward_tracks;
+    private View.OnClickListener listener_forward_tracks;
+
+    private View.OnClickListener listener_backward_settings;
+    private View.OnClickListener listener_forward_settings;
 
     private Context context;
 
@@ -96,7 +101,7 @@ public class SetupFragment extends Fragment {
         progressBar_setupSteps.setVisibility(View.VISIBLE);
         progressBar_setupSteps.startAnimation(fadeIn);
 
-        Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 0, 250);
+        Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 0, 300);
         progressBarAnimation.setDuration(500);
         progressBar_setupSteps.startAnimation(progressBarAnimation);
     }
@@ -112,7 +117,6 @@ public class SetupFragment extends Fragment {
         container_select_track = fragmentLayout.findViewById(R.id.container_setup_set_Track);
         tv_title_custom_tracks = fragmentLayout.findViewById(R.id.tv_title_custom_tracks);
 
-        container_overview = fragmentLayout.findViewById(R.id.container_setup_overview);
         container_settings = fragmentLayout.findViewById(R.id.container_setup_settings);
 
         playerCardList = fragmentLayout.findViewById(R.id.playerList);
@@ -120,7 +124,7 @@ public class SetupFragment extends Fragment {
         PlayerList.initialise(playerCardList, context);
 
         progressBar_setupSteps = fragmentLayout.findViewById(R.id.progressBar_setupProgress);
-        progressBar_setupSteps.setMax(1000);
+        progressBar_setupSteps.setMax(900);
 
         RecyclerView pastPlayerLists = fragmentLayout.findViewById(R.id.oldPlayerLists);
         PreferencesManager.setupOldPlayerListRecyclerView(pastPlayerLists, context);
@@ -128,7 +132,7 @@ public class SetupFragment extends Fragment {
         RecyclerView fascistTracks = fragmentLayout.findViewById(R.id.list_custom_tracks);
         PreferencesManager.setupCustomTracksRecyclerView(fascistTracks, context);
 
-        FloatingActionButton fab_newTrack = fragmentLayout.findViewById(R.id.fab_create_custom_track);
+        final FloatingActionButton fab_newTrack = fragmentLayout.findViewById(R.id.fab_create_custom_track);
         fab_newTrack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -226,6 +230,7 @@ public class SetupFragment extends Fragment {
 
                         //Change the back listener
                         btn_setup_back.setOnClickListener(listener_backward_tracks);
+                        btn_setup_forward.setOnClickListener(listener_forward_tracks);
 
                         //Animations
                         Animation slideOutLeft = AnimationUtils.loadAnimation(context, R.anim.slide_out_left);
@@ -246,7 +251,9 @@ public class SetupFragment extends Fragment {
                             }
                         });
 
-                        Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 250, 500);
+                        fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_open));
+
+                        Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 300, 600);
                         progressBarAnimation.setDuration(500);
                         progressBar_setupSteps.startAnimation(progressBarAnimation);
 
@@ -291,7 +298,9 @@ public class SetupFragment extends Fragment {
                 container_new_player.setVisibility(View.VISIBLE);
                 container_new_player.startAnimation(slideInLeft);
 
-                Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 500, 250);
+                fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_close));
+
+                Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 600, 300);
                 progressBarAnimation.setDuration(500);
                 progressBar_setupSteps.startAnimation(progressBarAnimation);
                 btn_setup_forward.setOnClickListener(listener_forward_players);
@@ -299,6 +308,94 @@ public class SetupFragment extends Fragment {
             }
         };
 
+        listener_forward_tracks = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Runnable continueSetup = new Runnable() {
+                    @Override
+                    public void run() {
+                        Animation slideOutLeft = AnimationUtils.loadAnimation(context, R.anim.slide_out_left);
+                        container_select_track.startAnimation(slideOutLeft);
+
+                        slideOutLeft.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                container_select_track.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+                            }
+                        });
+
+                        Animation slideInRight = AnimationUtils.loadAnimation(context, R.anim.slide_in_right);
+                        container_settings.setVisibility(View.VISIBLE);
+                        container_settings.startAnimation(slideInRight);
+
+                        fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_close));
+
+                        Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 600, 900);
+                        progressBarAnimation.setDuration(500);
+                        progressBar_setupSteps.startAnimation(progressBarAnimation);
+
+                        btn_setup_forward.setText(getString(R.string.start_game));
+                        btn_setup_forward.setOnClickListener(listener_forward_settings);
+                        btn_setup_back.setOnClickListener(listener_backward_settings);
+                    }
+                };
+
+                if(GameLog.gameTrack == null) CardDialog.showMessageDialog(context, getString(R.string.no_track_selected), getString(R.string.no_track_selected_message), getString(R.string.btn_ok), null, null, null);
+                else continueSetup.run();
+            }
+        };
+
+        listener_backward_settings = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Animation slideOutRight = AnimationUtils.loadAnimation(context, R.anim.slide_out_right);
+                container_settings.startAnimation(slideOutRight);
+
+                slideOutRight.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        container_settings.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+                });
+
+                Animation slideInLeft = AnimationUtils.loadAnimation(context, R.anim.slide_in_left);
+                container_select_track.setVisibility(View.VISIBLE);
+                container_select_track.startAnimation(slideInLeft);
+
+                fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_open));
+
+                Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 900, 600);
+                progressBarAnimation.setDuration(500);
+                progressBar_setupSteps.startAnimation(progressBarAnimation);
+
+                btn_setup_forward.setText(getString(R.string.dialog_mismatching_claims_btn_continue));
+                btn_setup_forward.setOnClickListener(listener_forward_tracks);
+                btn_setup_back.setOnClickListener(listener_backward_tracks);
+            }
+        };
+
+        listener_forward_settings = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        };
 
         btn_setup_forward.setOnClickListener(listener_forward_players);
         btn_setup_back.setOnClickListener(listener_backward_players);
