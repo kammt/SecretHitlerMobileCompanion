@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -45,6 +44,16 @@ public class TrackActionSpinnerAdapter extends BaseAdapter {
         titles.add(c.getString(R.string.title_policyPeek));
         descriptions.add(c.getString(R.string.description_policyPeek));
         icons.add(ContextCompat.getDrawable(c, R.drawable.policy_peek));
+
+        //Investigation
+        titles.add(c.getString(R.string.title_investigation));
+        descriptions.add(c.getString(R.string.description_investigation));
+        icons.add(ContextCompat.getDrawable(c, R.drawable.investigate_loyalty));
+
+        //Special Election
+        titles.add(c.getString(R.string.title_special_election));
+        descriptions.add(c.getString(R.string.description_special_election));
+        icons.add(ContextCompat.getDrawable(c, R.drawable.special_election));
     }
 
     public TrackActionSpinnerAdapter(Context c) {
@@ -69,7 +78,10 @@ public class TrackActionSpinnerAdapter extends BaseAdapter {
                 return FascistTrack.EXECUTION;
             case 2:
                 return FascistTrack.DECK_PEEK;
-
+            case 3:
+                return FascistTrack.INVESTIGATION;
+            case 4:
+                return FascistTrack.SPECIAL_ELECTION;
         }
         return null;
     }
