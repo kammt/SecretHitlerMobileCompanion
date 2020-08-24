@@ -5,8 +5,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -19,11 +17,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 
 import org.json.JSONException;
-
-import java.util.ArrayList;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
@@ -158,6 +153,8 @@ public class CardDialog {
                             Spinner spinner = new Spinner(c);
                             spinner.setAdapter(new TrackActionSpinnerAdapter(c));
                             spinner.setLayoutParams(params);
+
+                            spinner.setDropDownWidth(spinner.getLayoutParams().width);
 
                             ll_actions.addView(spinner);
                         }
