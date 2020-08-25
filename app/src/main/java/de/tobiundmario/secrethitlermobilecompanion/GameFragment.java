@@ -31,7 +31,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -251,7 +250,7 @@ public class GameFragment extends Fragment {
         View entry_policy_peek = bottomSheetAdd.findViewById(R.id.policy_peek);
         View entry_special_election = bottomSheetAdd.findViewById(R.id.special_election);
 
-        if(GameLog.gameTrack.isManualMode()) {
+        if(!GameLog.gameTrack.isManualMode()) {
             entry_loyaltyInvestigation.setVisibility(View.GONE);
             entry_execution.setVisibility(View.GONE);
             entry_policy_peek.setVisibility(View.GONE);
