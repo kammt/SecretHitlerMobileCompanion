@@ -196,7 +196,9 @@ public class JSONManager {
     public static FascistTrack restoreFascistTrackFromJSON(JSONObject object) throws JSONException {
         FascistTrack track = new FascistTrack();
 
-        track.setName(object.getString("name"));
+        if(object.has("name")) {
+            track.setName(object.getString("name"));
+        }
 
         int fasPolicies = object.getInt("fpolicies");
 

@@ -25,7 +25,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.tobiundmario.secrethitlermobilecompanion.GameFragment;
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CardRecyclerViewAdapter;
@@ -41,7 +40,7 @@ public class GameLog {
 
     public static int legSessionNo = 1;
     static private RecyclerView cardList;
-    static List<GameEvent> eventList;
+    static List<GameEvent> eventList, restoredEventList;
     private static boolean gameStarted;
 
     private static CardRecyclerViewAdapter cardListAdapter;
@@ -69,6 +68,30 @@ public class GameLog {
 
     public static CardRecyclerViewAdapter getCardListAdapter() {
         return cardListAdapter;
+    }
+
+    public static void initialise(RecyclerView recyclerView, Context context) {
+        //If an eventList was restored, use that one
+        if(restoredEventList != null) {
+            eventList = restoredEventList;
+            restoredEventList = null;
+        } else {
+            eventList = new ArrayList<>();
+            arr = new JSONArray();
+        }
+
+        hiddenEventIndexes = new ArrayList<>();
+        legSessionNo = 1;
+
+        c = context;
+
+        cardList = recyclerView;
+        cardListAdapter = new CardRecyclerViewAdapter(eventList);
+        cardList.setAdapter(cardListAdapter);
+
+        //Reset the policy-count
+        liberalPolicies = 0;
+        fascistPolicies = 0;
     }
 
     public static void destroy() {
@@ -115,7 +138,7 @@ public class GameLog {
         //Something changed - it's backup time!
         try {
             backupToCache();
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
     }
@@ -156,23 +179,6 @@ public class GameLog {
         gameStarted = isGameStarted;
         swipeEnabled = isGameStarted;
         if(isGameStarted) setupSwipeToDelete();
-    }
-
-    public static void initialise(RecyclerView recyclerView, Context context) {
-        eventList = new ArrayList<>();
-        hiddenEventIndexes = new ArrayList<>();
-        arr = new JSONArray();
-        legSessionNo = 1;
-
-        c = context;
-
-        cardList = recyclerView;
-        cardListAdapter = new CardRecyclerViewAdapter(eventList);
-        cardList.setAdapter(cardListAdapter);
-
-        //Reset the policy-count
-        liberalPolicies = 0;
-        fascistPolicies = 0;
     }
 
     public static void addEvent(GameEvent event) {
@@ -217,7 +223,7 @@ public class GameLog {
 
             if (fascistPolicies == gameTrack.getFasPolicies()) {
                 ((MainActivity) c).fragment_game.displayEndGameOptions();
-            } else addTrackAction(legislativeSession.getVoteEvent().getPresidentName());
+            } else if(gameStarted) addTrackAction(legislativeSession.getVoteEvent().getPresidentName()); //This method could also be called when a game is restored. In that case, we do not want to add new events
 
         } else {
             liberalPolicies++;
@@ -315,27 +321,8 @@ public class GameLog {
         GameLog.c = c;
     }
 
-    private static void restoreGameFromJSON(JSONObject object) throws JSONException {
-        //TODO also restore game settings
-        JSONObject game = object.getJSONObject("game");
-        JSONArray players = game.getJSONArray("players");
-        JSONArray plays = game.getJSONArray("plays");
-        arr = plays;
-
-        for(int j = 0; j < players.length(); j++) {
-            PlayerList.addPlayer(players.getString(j));
-        }
-
-        //Restore plays
-        for(int i = 0; i < plays.length(); i++) {
-            GameEvent event = JSONManager.createGameEventFromJSON((JSONObject) plays.get(i), c);
-            eventList.add(event);
-            if(event.getClass() == LegislativeSession.class) processPolicyChange((LegislativeSession) event, false);
-        }
-    }
-
-    public static void backupToCache() throws IOException {
-        eventListToFile(true, "backup.json");
+    public static void backupToCache() throws IOException, JSONException {
+        currentGameToFile(true, "backup.json", true);
     }
 
     public static boolean backupPresent() {
@@ -345,6 +332,7 @@ public class GameLog {
     public static void restoreBackup() {
         try {
             eventListFromFile(true, "backup.json");
+            setGameStarted(true);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -354,17 +342,66 @@ public class GameLog {
         deleteFile(true, "backup.json");
     }
 
-    public static void eventListToFile(boolean cache, String fileName) throws IOException {
+    /**
+     * Backs up the entire game (events, players, etc.) into a JSON format and writes it into a file
+     * @param cache if true, the file will be written to cache. If false, it wil be written to the app's data directory. This is to support permanent saving of games
+     * @param fileName the supplied file name (with file extension)
+     * @param settings if true, the used settings (sounds, server, fascistTrack) will be written as well
+     * @throws IOException
+     * @throws JSONException
+     */
+    public static void currentGameToFile(boolean cache, String fileName, boolean settings) throws IOException, JSONException {
         File file;
         if(cache) file = new File(c.getCacheDir(), fileName);
         else file = new File(c.getFilesDir(), fileName);
 
+        String json = JSONManager.getCompleteGameJSON();
+
         FileWriter fw = new FileWriter(file.getAbsoluteFile());
         BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(JSONManager.getCompleteGameJSON());
+
+        if(settings) {
+            JSONObject object = new JSONObject(json);
+            JSONObject settingsObject = new JSONObject();
+
+            //We begin by adding the FascistTrack
+            settingsObject.put("track", JSONManager.writeFascistTrackToJSON(GameLog.gameTrack));
+
+            //Now all other settings
+            settingsObject.put("sounds_execution", GameLog.executionSounds);
+            settingsObject.put("sounds_end", GameLog.endSounds);
+            settingsObject.put("sounds_policy", GameLog.policySounds);
+
+            settingsObject.put("server", GameLog.server);
+
+            object.put("settings", settingsObject);
+
+            bw.write(object.toString());
+        } else {
+            bw.write(json);
+        }
         bw.close();
     }
 
+    /**
+     * Deletes a specified file
+     * @param cache if true, the file will be written to cache. If false, it wil be written to the app's data directory. This is to support permanent saving of games
+     * @param fileName the supplied file name (with file extension)
+     */
+    public static void deleteFile(boolean cache, String fileName) {
+        File file;
+        if(cache) file = new File(c.getCacheDir(), fileName);
+        else file = new File(c.getFilesDir(), fileName);
+
+        if(file.exists()) file.delete();
+    }
+
+    /**
+     * Reads the contents from the specified file and passes it to the restoreGameFromJSON function
+     * @param cache if true, the file will be written to cache. If false, it wil be written to the app's data directory. This is to support permanent saving of games
+     * @param fileName the supplied file name (with file extension)
+     * @throws JSONException
+     */
     public static void eventListFromFile(boolean cache, String fileName) throws JSONException {
         File file;
         if(cache) file = new File(c.getCacheDir(), fileName);
@@ -391,12 +428,41 @@ public class GameLog {
         }
     }
 
-    public static void deleteFile(boolean cache, String fileName) {
-        File file;
-        if(cache) file = new File(c.getCacheDir(), fileName);
-        else file = new File(c.getFilesDir(), fileName);
+    /**
+     * Restores the entire game from a JSONObject
+     * @param object the Object that was once written into a backup file
+     * @throws JSONException
+     */
+    private static void restoreGameFromJSON(JSONObject object) throws JSONException {
+        if(object.has("settings")) { //The file also included settings, they will be restored as well
+            JSONObject settingsObject = object.getJSONObject("settings");
 
-        if(file.exists()) file.delete();
+            gameTrack = JSONManager.restoreFascistTrackFromJSON(settingsObject.getJSONObject("track"));
+
+            server = settingsObject.getBoolean("server");
+
+            executionSounds = settingsObject.getBoolean("sounds_execution");
+            endSounds = settingsObject.getBoolean("sounds_end");
+            policySounds = settingsObject.getBoolean("sounds_policy");
+        }
+
+        JSONObject game = object.getJSONObject("game");
+        JSONArray players = game.getJSONArray("players");
+        JSONArray plays = game.getJSONArray("plays");
+        arr = plays;
+
+        //Restore players
+        for(int j = 0; j < players.length(); j++) {
+            PlayerList.addPlayer(players.getString(j));
+        }
+
+        //Restore plays
+        restoredEventList = new ArrayList<>();
+        for(int i = 0; i < plays.length(); i++) {
+            GameEvent event = JSONManager.createGameEventFromJSON((JSONObject) plays.get(i), c);
+            restoredEventList.add(event);
+            if(event.getClass() == LegislativeSession.class) processPolicyChange((LegislativeSession) event, false);
+        }
     }
 
 }

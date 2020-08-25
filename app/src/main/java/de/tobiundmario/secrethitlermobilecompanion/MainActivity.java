@@ -10,12 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 
@@ -36,6 +33,20 @@ public class MainActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragment_main = (MainScreenFragment) fragmentManager.findFragmentById(R.id.fragment_main);
+        fragment_setup = (SetupFragment) fragmentManager.findFragmentById(R.id.fragment_setup);
+        fragment_game = (GameFragment) fragmentManager.findFragmentById(R.id.fragment_game);
+
+        container_main = findViewById(R.id.container_fragment_main);
+        container_game = findViewById(R.id.container_fragment_game);
+        container_setup = findViewById(R.id.container_fragment_setup);
+
+        currentFragmentContainer = container_main;
+
+        GameLog.setContext(this);
+        checkForBackups();
     }
 
     public void replaceFragment(int fragmentNumberToReplace, boolean fade) {
@@ -106,20 +117,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragment_main = (MainScreenFragment) fragmentManager.findFragmentById(R.id.fragment_main);
-        fragment_setup = (SetupFragment) fragmentManager.findFragmentById(R.id.fragment_setup);
-        fragment_game = (GameFragment) fragmentManager.findFragmentById(R.id.fragment_game);
-
-        container_main = findViewById(R.id.container_fragment_main);
-        container_game = findViewById(R.id.container_fragment_game);
-        container_setup = findViewById(R.id.container_fragment_setup);
-
-        currentFragmentContainer = container_main;
-
-        GameLog.setContext(this);
-        checkForBackups();
     }
 
     @Override
@@ -136,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             CardDialog.showMessageDialog(this, getString(R.string.dialog_restore_title), getString(R.string.dialog_restore_msg), getString(R.string.yes), new Runnable() {
                 @Override
                 public void run() {
-                    fragment_game.start();
+                    PlayerList.setContext(MainActivity.this);
                     GameLog.restoreBackup();
                     replaceFragment(game, true);
                 }

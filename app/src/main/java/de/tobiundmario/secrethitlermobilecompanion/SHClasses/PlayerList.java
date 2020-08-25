@@ -14,7 +14,6 @@ import org.json.JSONArray;
 
 import java.util.ArrayList;
 
-import de.tobiundmario.secrethitlermobilecompanion.GameFragment;
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.PlayerRecyclerViewAdapter;
@@ -41,6 +40,10 @@ public class PlayerList {
         playerRecyclerView = playerCardList;
 
         c = context;
+    }
+
+    public static void setContext(Context c) {
+        PlayerList.c = c;
     }
 
     public static void changeRecyclerView(RecyclerView playerCardList) {
@@ -70,8 +73,8 @@ public class PlayerList {
         claimList.add(Claim.NO_CLAIM);
         isDead.add(false);
 
-        //Notify the adapter
-        playerRecyclerViewAdapter.notifyItemInserted(playerList.size() - 1);
+        //Notify the adapter, if it exists. This method is also called during a game restoration from backup. In that case, no layout exists during the restoration => nothing to notify
+        if(playerRecyclerView != null) playerRecyclerViewAdapter.notifyItemInserted(playerList.size() - 1);
     }
 
     public static void removePlayer(String player) {
@@ -167,7 +170,7 @@ public class PlayerList {
     public static void setAsDead(String playerName, boolean dead) {
         int position = playerList.indexOf(playerName);
         isDead.set(position, dead);
-        playerRecyclerViewAdapter.notifyItemChanged(position);
+        if(playerRecyclerViewAdapter != null) playerRecyclerViewAdapter.notifyItemChanged(position);
 
         if(getAlivePlayerCount() <= 2) {
             ((MainActivity) c).fragment_game.displayEndGameOptions();
