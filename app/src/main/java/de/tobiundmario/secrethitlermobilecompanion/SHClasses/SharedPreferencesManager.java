@@ -23,20 +23,22 @@ import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CustomTracksRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.OldPlayerListRecyclerViewAdapter;
-import de.tobiundmario.secrethitlermobilecompanion.SetupFragment;
 
 public class SharedPreferencesManager {
 
     private static OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter;
     private static CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter;
 
-    private static boolean JSONObjectsTheSame(JSONObject one, JSONObject two) throws JSONException {
-        for(int i = 0; i < one.length(); i++) {
+    private static boolean playerListsTheSame(JSONObject one, JSONObject two) throws JSONException {
+        int oneLength = (one.has("name")) ? one.length() - 1 : one.length();
+        int twoLength = (two.has("name")) ? two.length() - 1 : two.length();
+
+        for(int i = 0; i < oneLength; i++) {
             String name = (String) one.get("" + i);
-            for (int j = 0; j < two.length(); j++) {
+            for (int j = 0; j < twoLength; j++) {
                 if(two.get("" + j).equals(name)) break;
 
-                if(j == two.length()) return false; //We just checked the last value and the name is not there, they cannot be the same
+                if(j == twoLength - 1) return false; //We just checked the last value and the name is not there, they cannot be the same
             }
         }
         return true;
@@ -113,9 +115,11 @@ public class SharedPreferencesManager {
         for(int i = 0; i < array.length(); i++) {
             JSONObject object = array.getJSONObject(i);
 
-            if(object.length() != playerJSON.length()) continue; //They cannot be the same, skipping
+            int oneLength = (playerJSON.has("name")) ? playerJSON.length() - 1 : playerJSON.length();
+            int twoLength = (object.has("name")) ? object.length() - 1 : object.length();
+            if(oneLength != twoLength) continue; //They cannot be the same, skipping
 
-            if(JSONObjectsTheSame(playerJSON, object)) return true;
+            if(playerListsTheSame(playerJSON, object)) return true;
         }
         return false; //No objects match
     }
@@ -156,9 +160,6 @@ public class SharedPreferencesManager {
         oldPlayerListRecyclerViewAdapter.notifyItemRemoved(position);
 
         setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
-
-        FascistTrackSelectionManager.fasTracks.remove(position + 3);
-        FascistTrackSelectionManager.trackCards.remove(position + 3);
 
         return removed;
     }

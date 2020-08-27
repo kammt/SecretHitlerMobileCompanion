@@ -90,6 +90,8 @@ public class SetupFragment extends Fragment {
         //Resetting values in case there has been a setup before which was cancelled
         PlayerList.initialise(playerCardList, context);
 
+        btn_setup_forward.setText(context.getString(R.string.dialog_mismatching_claims_btn_continue));
+
         container_setup_buttons.setVisibility(View.VISIBLE);
         container_new_player.setVisibility(View.VISIBLE);
         progressBar_setupSteps.setVisibility(View.VISIBLE);
