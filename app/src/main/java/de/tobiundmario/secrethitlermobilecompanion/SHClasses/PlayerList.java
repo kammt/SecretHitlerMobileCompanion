@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.ModifiedDefaultItemAnimator;
-import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.PlayerRecyclerViewAdapter;
+import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.PlayerCardRecyclerViewAdapter;
 
 public class PlayerList {
     private static ArrayList<String> playerList = new ArrayList<>();
@@ -25,7 +25,7 @@ public class PlayerList {
     private static ArrayList<Boolean> isDead = new ArrayList<>();
 
     private static Context c;
-    private static PlayerRecyclerViewAdapter playerRecyclerViewAdapter;
+    private static PlayerCardRecyclerViewAdapter playerCardRecyclerViewAdapter;
     private static RecyclerView playerRecyclerView;
 
     public static void initialise(RecyclerView playerCardList, Context context) {
@@ -36,8 +36,8 @@ public class PlayerList {
         claimList = new ArrayList<>();
         isDead = new ArrayList<>();
 
-        playerRecyclerViewAdapter = new PlayerRecyclerViewAdapter(playerList, context);
-        playerCardList.setAdapter(playerRecyclerViewAdapter);
+        playerCardRecyclerViewAdapter = new PlayerCardRecyclerViewAdapter(playerList, context);
+        playerCardList.setAdapter(playerCardRecyclerViewAdapter);
         playerRecyclerView = playerCardList;
 
         c = context;
@@ -50,15 +50,15 @@ public class PlayerList {
     public static void changeRecyclerView(RecyclerView playerCardList) {
         if(playerRecyclerView != null) playerRecyclerView.setAdapter(null);
 
-        playerRecyclerViewAdapter = new PlayerRecyclerViewAdapter(playerList, c);
-        playerCardList.setAdapter(playerRecyclerViewAdapter);
+        playerCardRecyclerViewAdapter = new PlayerCardRecyclerViewAdapter(playerList, c);
+        playerCardList.setAdapter(playerCardRecyclerViewAdapter);
         playerCardList.setItemAnimator(new ModifiedDefaultItemAnimator());
         playerRecyclerView = playerCardList;
     }
 
     public static void destroy() {
         c = null;
-        playerRecyclerViewAdapter = null;
+        playerCardRecyclerViewAdapter = null;
         playerList = null;
         claimList = null;
         isDead = null;
@@ -76,7 +76,7 @@ public class PlayerList {
         isDead.add(false);
 
         //Notify the adapter, if it exists. This method is also called during a game restoration from backup. In that case, no layout exists during the restoration => nothing to notify
-        if(playerRecyclerView != null) playerRecyclerViewAdapter.notifyItemInserted(playerList.size() - 1);
+        if(playerRecyclerView != null) playerCardRecyclerViewAdapter.notifyItemInserted(playerList.size() - 1);
     }
 
     public static void removePlayer(String player) {
@@ -90,14 +90,14 @@ public class PlayerList {
             claimList.remove(index);
             isDead.remove(index);
 
-            playerRecyclerViewAdapter.notifyItemRemoved(index);
+            playerCardRecyclerViewAdapter.notifyItemRemoved(index);
         }
     }
 
     public static void setClaim(String player, int playerPartyMemberShip) {
         int position = getPlayerPosition(player);
         claimList.set(position, playerPartyMemberShip);
-        if(playerRecyclerViewAdapter != null) playerRecyclerViewAdapter.notifyItemChanged(position);
+        if(playerCardRecyclerViewAdapter != null) playerCardRecyclerViewAdapter.notifyItemChanged(position);
     }
 
     public static boolean playerAlreadyExists(String name) {
@@ -106,8 +106,8 @@ public class PlayerList {
 
     public static int getPlayerPosition(String name) { return playerList.indexOf(name); }
 
-    public static PlayerRecyclerViewAdapter getPlayerRecyclerViewAdapter() {
-        return playerRecyclerViewAdapter;
+    public static PlayerCardRecyclerViewAdapter getplayerCardRecyclerViewAdapter() {
+        return playerCardRecyclerViewAdapter;
     }
 
     public static void setClaimImage(CardView cardView, int playerPartyMemberShip) {
@@ -172,7 +172,7 @@ public class PlayerList {
     public static void setAsDead(String playerName, boolean dead) {
         int position = playerList.indexOf(playerName);
         isDead.set(position, dead);
-        if(playerRecyclerViewAdapter != null) playerRecyclerViewAdapter.notifyItemChanged(position);
+        if(playerCardRecyclerViewAdapter != null) playerCardRecyclerViewAdapter.notifyItemChanged(position);
 
         if(getAlivePlayerCount() <= 2) {
             ((MainActivity) c).fragment_game.displayEndGameOptions();

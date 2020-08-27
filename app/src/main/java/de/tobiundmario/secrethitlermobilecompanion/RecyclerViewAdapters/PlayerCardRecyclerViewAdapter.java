@@ -22,7 +22,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 
-public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<DimmableViewHolder> {
+public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableViewHolder> {
 
     ArrayList<String> players;
     Context context;
@@ -33,7 +33,7 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<DimmableView
     private static int NORMAL = 1;
     private static int FIRST_CARD = 0;
 
-    public PlayerRecyclerViewAdapter(ArrayList<String> players, Context context) {
+    public PlayerCardRecyclerViewAdapter(ArrayList<String> players, Context context) {
         this.players = players;
         this.context = context;
     }

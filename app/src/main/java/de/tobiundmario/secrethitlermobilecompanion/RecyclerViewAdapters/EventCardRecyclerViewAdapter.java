@@ -20,7 +20,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LoyaltyInvestigationEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.PolicyPeekEvent;
 
-public class CardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableViewHolder> {
+public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableViewHolder> {
 
     List<GameEvent> events;
     private static final int EXECUTIVE_ACTION = 1;
@@ -36,7 +36,7 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableViewHo
     private static final int GAME_END = 9;
 
 
-    public CardRecyclerViewAdapter(List<GameEvent> events){
+    public EventCardRecyclerViewAdapter(List<GameEvent> events){
         this.events = events;
     }
 

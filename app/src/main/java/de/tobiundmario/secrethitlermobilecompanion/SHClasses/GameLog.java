@@ -27,7 +27,7 @@ import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
-import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CardRecyclerViewAdapter;
+import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.EventCardRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.ModifiedDefaultItemAnimator;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
@@ -44,7 +44,7 @@ public class GameLog {
     static List<GameEvent> eventList, restoredEventList;
     private static boolean gameStarted;
 
-    private static CardRecyclerViewAdapter cardListAdapter;
+    private static EventCardRecyclerViewAdapter cardListAdapter;
 
     public static ArrayList<Integer> hiddenEventIndexes;
     private static ArrayList<String> hiddenPlayers;
@@ -68,7 +68,7 @@ public class GameLog {
         return liberalPolicies;
     }
 
-    public static CardRecyclerViewAdapter getCardListAdapter() {
+    public static EventCardRecyclerViewAdapter getCardListAdapter() {
         return cardListAdapter;
     }
 
@@ -90,7 +90,7 @@ public class GameLog {
         c = context;
 
         cardList = recyclerView;
-        cardListAdapter = new CardRecyclerViewAdapter(eventList);
+        cardListAdapter = new EventCardRecyclerViewAdapter(eventList);
         cardList.setAdapter(cardListAdapter);
         cardList.setItemAnimator(new ModifiedDefaultItemAnimator());
         //((SimpleItemAnimator) cardList.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -140,7 +140,7 @@ public class GameLog {
         cardListAdapter.notifyItemChanged(position);
         if(event.getClass() == LegislativeSession.class) processPolicyChange((LegislativeSession) event, false);
 
-        blurEventsInvolvingHiddenPlayers(PlayerList.getPlayerRecyclerViewAdapter().getHiddenPlayers()); //Re-calling this function since a new item was added
+        blurEventsInvolvingHiddenPlayers(PlayerList.getplayerCardRecyclerViewAdapter().getHiddenPlayers()); //Re-calling this function since a new item was added
 
         //Something changed - it's backup time!
         try {
@@ -172,7 +172,7 @@ public class GameLog {
             e.printStackTrace();
         }
         eventList.add(oldPosition, event);
-        blurEventsInvolvingHiddenPlayers(PlayerList.getPlayerRecyclerViewAdapter().getHiddenPlayers()); //Re-calling this function since a new item was added
+        blurEventsInvolvingHiddenPlayers(PlayerList.getplayerCardRecyclerViewAdapter().getHiddenPlayers()); //Re-calling this function since a new item was added
 
         cardListAdapter.notifyItemInserted(oldPosition);
 
@@ -199,7 +199,7 @@ public class GameLog {
             e.printStackTrace();
         }
 
-        if(!event.isSetup && event.allInvolvedPlayersAreUnselected(PlayerList.getPlayerRecyclerViewAdapter().getHiddenPlayers())) {
+        if(!event.isSetup && event.allInvolvedPlayersAreUnselected(PlayerList.getplayerCardRecyclerViewAdapter().getHiddenPlayers())) {
             hiddenEventIndexes.add(eventList.size() - 1);
         }
 
