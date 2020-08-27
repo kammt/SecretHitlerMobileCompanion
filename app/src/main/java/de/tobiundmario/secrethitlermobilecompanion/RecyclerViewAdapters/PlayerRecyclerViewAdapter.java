@@ -22,7 +22,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 
-public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecyclerViewAdapter.PlayerCardViewHolder> {
+public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<DimmableViewHolder> {
 
     ArrayList<String> players;
     Context context;
@@ -38,15 +38,6 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
         this.context = context;
     }
 
-    public static class PlayerCardViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
-
-        PlayerCardViewHolder(View itemView) {
-            super(itemView);
-            cv = (CardView)itemView.findViewById(R.id.cardView);
-        }
-    }
-
     public ArrayList<String> getHiddenPlayers() {
         return hiddenPlayers;
     }
@@ -58,7 +49,7 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
     }
 
     @Override
-    public PlayerCardViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
+    public DimmableViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_player_list_single_player, viewGroup, false);
 
         if(type == ADD_BUTTON || type == ADD_BUTTON_POSITION_ONE) {
@@ -109,11 +100,11 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
             v.setLayoutParams(params);
         }
 
-        return new PlayerCardViewHolder(v);
+        return new DimmableViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(PlayerCardViewHolder cardViewHolder, int i) {
+    public void onBindViewHolder(final DimmableViewHolder cardViewHolder, int i) {
         if(cardViewHolder.getItemViewType() == ADD_BUTTON || cardViewHolder.getItemViewType() == ADD_BUTTON_POSITION_ONE) return;
 
         CardView cardView = cardViewHolder.cv;
@@ -122,6 +113,10 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
         TextView tvPlayerName = cardView.findViewById(R.id.tv_playerName);
         tvPlayerName.setText(player);
 
+        if(hiddenPlayers.contains(player)) {
+            cardViewHolder.alpha = 0.5f;
+            cardView.setAlpha(0.5f);
+        }
 
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,9 +126,11 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
 
                     if (cv.getAlpha() == 1.0) { //if it is unselected, select it
                         cv.setAlpha((float) 0.5);
+                        cardViewHolder.alpha = 0.5f;
                         hiddenPlayers.add(player); //add it to the list of hidden players
                     } else { //if it is selected (Alpha is smaller than 1), remove it from the list and reset alpha
                         cv.setAlpha(1);
+                        cardViewHolder.alpha = 1f;
                         hiddenPlayers.remove(player);
                     }
                     GameLog.blurEventsInvolvingHiddenPlayers(hiddenPlayers); //Tell GameLog to update the list of which cards to blur
@@ -166,7 +163,7 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
     }
 
     @Override
-    public void onViewAttachedToWindow(@NonNull PlayerCardViewHolder holder) {
+    public void onViewAttachedToWindow(@NonNull DimmableViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         if(holder.getItemViewType() == ADD_BUTTON || !GameLog.isGameStarted()) return;
 

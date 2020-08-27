@@ -172,6 +172,8 @@ public class GameLog {
             e.printStackTrace();
         }
         eventList.add(oldPosition, event);
+        blurEventsInvolvingHiddenPlayers(PlayerList.getPlayerRecyclerViewAdapter().getHiddenPlayers()); //Re-calling this function since a new item was added
+
         cardListAdapter.notifyItemInserted(oldPosition);
 
         if(event.getClass() == ExecutionEvent.class && !event.isSetup) ((ExecutionEvent) event).undoRemoval();
@@ -209,16 +211,14 @@ public class GameLog {
         ArrayList<Integer> cardIndexesToBlur = new ArrayList<>();
 
         for(int i = 0; i < eventList.size(); i++) {
-            View card = cardList.getLayoutManager().findViewByPosition(i);
+
             if(!eventList.get(i).isSetup && eventList.get(i).allInvolvedPlayersAreUnselected(hiddenPlayers)) {
                 cardIndexesToBlur.add(i);
-                if(card != null) card.setAlpha((float) 0.5);    //When the Card is not in view, the view returned will be null. Hence, we have to check
-            } else if (card != null && card.getAlpha() < 1) {   //If it shouldn't be blurred, we have to check if it is in view (not null) and is still blurred. If so, we have to un-blur it
-                card.setAlpha(1);
             }
         }
         hiddenEventIndexes = cardIndexesToBlur; //Update the static ArrayList, making it accessible to the RecyclerViewAdapter. When rendering a view (which was null before), it will look up if it has to be blurred or not
-        PlayerList.getPlayerRecyclerViewAdapter().notifyDataSetChanged();
+        cardListAdapter.notifyDataSetChanged();
+        //PlayerList.getPlayerRecyclerViewAdapter().notifyDataSetChanged();
     }
 
     public static void processPolicyChange(LegislativeSession legislativeSession, boolean removed) {

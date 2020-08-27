@@ -20,7 +20,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LoyaltyInvestigationEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.PolicyPeekEvent;
 
-public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerViewAdapter.CardViewHolder> {
+public class CardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableViewHolder> {
 
     List<GameEvent> events;
     private static final int EXECUTIVE_ACTION = 1;
@@ -40,23 +40,12 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
         this.events = events;
     }
 
-    public class CardViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
-        float alpha = 1f;
-
-        public CardViewHolder(View itemView) {
-            super(itemView);
-            cv = itemView.findViewById(R.id.cardView);
-            blurCardIfNeeded(this, getAdapterPosition());
-        }
-    }
-
     @Override
     public int getItemCount() {
         return events.size();
     }
 
-    private void blurCardIfNeeded(CardViewHolder cardViewHolder, int position) {
+    public void blurCardIfNeeded(DimmableViewHolder cardViewHolder, int position) {
         boolean toBeBlurred = GameLog.hiddenEventIndexes.contains(position);
         CardView cv = cardViewHolder.cv;
 
@@ -72,7 +61,7 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
 
     @NonNull
     @Override
-    public CardViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int type) {
+    public DimmableViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int type) {
         //The card can use two layouts - Legislative session or Executive Action. Thus we check to which class the Event belongs
         View v = null;
         if(type == LEGISLATIVE_SESSION) {
@@ -94,11 +83,11 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
         } else if (type == GAME_END) {
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_game_end, viewGroup, false);
         }
-        return new CardViewHolder(v);
+        return new DimmableViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(CardViewHolder cardViewHolder, final int position) {
+    public void onBindViewHolder(DimmableViewHolder cardViewHolder, final int position) {
         final CardView cv = cardViewHolder.cv;
         final GameEvent event = events.get(position);
         if(event.isSetup) {
@@ -167,7 +156,7 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
     }
 
     @Override
-    public void onViewAttachedToWindow(@NonNull CardViewHolder holder) {
+    public void onViewAttachedToWindow(@NonNull DimmableViewHolder holder) {
         //This function is called when a prior removed View is re-added by Android. Now, we check if it has to be blurred, beginning by getting its position
         int position = holder.getLayoutPosition();
 

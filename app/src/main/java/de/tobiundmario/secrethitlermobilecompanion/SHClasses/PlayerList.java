@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.ModifiedDefaultItemAnimator;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.PlayerRecyclerViewAdapter;
 
 public class PlayerList {
@@ -51,6 +52,7 @@ public class PlayerList {
 
         playerRecyclerViewAdapter = new PlayerRecyclerViewAdapter(playerList, c);
         playerCardList.setAdapter(playerRecyclerViewAdapter);
+        playerCardList.setItemAnimator(new ModifiedDefaultItemAnimator());
         playerRecyclerView = playerCardList;
     }
 
@@ -95,7 +97,7 @@ public class PlayerList {
     public static void setClaim(String player, int playerPartyMemberShip) {
         int position = getPlayerPosition(player);
         claimList.set(position, playerPartyMemberShip);
-        playerRecyclerViewAdapter.notifyItemChanged(position);
+        if(playerRecyclerViewAdapter != null) playerRecyclerViewAdapter.notifyItemChanged(position);
     }
 
     public static boolean playerAlreadyExists(String name) {
@@ -114,24 +116,24 @@ public class PlayerList {
          */
 
         Drawable membershipDrawable;
-        if(playerPartyMemberShip == Claim.LIBERAL) membershipDrawable = c.getDrawable(R.drawable.membership_liberal);
-        else if (playerPartyMemberShip == Claim.FASCIST) membershipDrawable = c.getDrawable(R.drawable.membership_fascist);
+        if(playerPartyMemberShip == Claim.LIBERAL) membershipDrawable = ContextCompat.getDrawable(c, R.drawable.membership_liberal);
+        else if (playerPartyMemberShip == Claim.FASCIST) membershipDrawable = ContextCompat.getDrawable(c, R.drawable.membership_fascist);
         else membershipDrawable = ContextCompat.getDrawable(c, R.drawable.secret_role);
 
-        ImageView ivmembership = cardView.findViewById(R.id.img_secretRole);
-        ivmembership.setImageDrawable(membershipDrawable);
+        ImageView iv_membership = cardView.findViewById(R.id.img_secretRole);
+        iv_membership.setImageDrawable(membershipDrawable);
         if(playerPartyMemberShip == Claim.NO_CLAIM) {
-            ivmembership.setAlpha((float) 1);
+            iv_membership.setAlpha((float) 1);
         } else {
-            ivmembership.setAlpha((float) 0.4);
+            iv_membership.setAlpha((float) 0.4);
         }
 
-        TextView tvquestionMark = cardView.findViewById(R.id.tv_questionmark);
+        TextView tv_questionMark = cardView.findViewById(R.id.tv_questionmark);
         if(playerPartyMemberShip == Claim.NO_CLAIM) {
-            tvquestionMark.setVisibility(View.GONE);
+            tv_questionMark.setVisibility(View.GONE);
         } else {
-            tvquestionMark.setText("?");
-            tvquestionMark.setVisibility(View.VISIBLE);
+            tv_questionMark.setText("?");
+            tv_questionMark.setVisibility(View.VISIBLE);
         }
     }
 

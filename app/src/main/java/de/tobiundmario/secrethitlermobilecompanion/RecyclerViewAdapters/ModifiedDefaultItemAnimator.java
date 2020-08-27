@@ -199,7 +199,7 @@ public class ModifiedDefaultItemAnimator extends SimpleItemAnimator {
                     @Override
                     public void onAnimationEnd(Animator animator) {
                         animation.setListener(null);
-                        view.setAlpha( ((CardRecyclerViewAdapter.CardViewHolder)holder).alpha ); //Modified
+                        view.setAlpha( ((DimmableViewHolder)holder).alpha ); //Modified
                         dispatchRemoveFinished(holder);
                         mRemoveAnimations.remove(holder);
                         dispatchFinishedWhenDone();
@@ -225,7 +225,7 @@ public class ModifiedDefaultItemAnimator extends SimpleItemAnimator {
                     }
                     @Override
                     public void onAnimationCancel(Animator animator) {
-                        view.setAlpha( ((CardRecyclerViewAdapter.CardViewHolder)holder).alpha ); //Modified
+                        view.setAlpha( ((DimmableViewHolder)holder).alpha ); //Modified
                     }
                     @Override
                     public void onAnimationEnd(Animator animator) {
@@ -344,7 +344,7 @@ public class ModifiedDefaultItemAnimator extends SimpleItemAnimator {
                 @Override
                 public void onAnimationEnd(Animator animator) {
                     oldViewAnim.setListener(null);
-                    view.setAlpha(((CardRecyclerViewAdapter.CardViewHolder)holder).alpha); //Modified
+                    view.setAlpha(((DimmableViewHolder)holder).alpha); //Modified
                     view.setTranslationX(0);
                     view.setTranslationY(0);
                     dispatchChangeFinished(changeInfo.oldHolder, true);
@@ -354,7 +354,7 @@ public class ModifiedDefaultItemAnimator extends SimpleItemAnimator {
             }).start();
         }
         if (newView != null) {
-            final float toAlpha = ((CardRecyclerViewAdapter.CardViewHolder) newHolder).alpha; //Added
+            final float toAlpha = ((DimmableViewHolder) newHolder).alpha; //Added
 
             final ViewPropertyAnimator newViewAnimation = newView.animate();
             mChangeAnimations.add(changeInfo.newHolder);
@@ -405,7 +405,7 @@ public class ModifiedDefaultItemAnimator extends SimpleItemAnimator {
         } else {
             return false;
         }
-        item.itemView.setAlpha(((CardRecyclerViewAdapter.CardViewHolder)item).alpha); //Modified
+        item.itemView.setAlpha(((DimmableViewHolder)item).alpha); //Modified
         item.itemView.setTranslationX(0);
         item.itemView.setTranslationY(0);
         dispatchChangeFinished(item, oldItem);
@@ -428,7 +428,7 @@ public class ModifiedDefaultItemAnimator extends SimpleItemAnimator {
         }
         endChangeAnimation(mPendingChanges, item);
 
-        float alpha = ((CardRecyclerViewAdapter.CardViewHolder)item).alpha; //Added
+        float alpha = ((DimmableViewHolder)item).alpha; //Added
         if (mPendingRemovals.remove(item)) {
             view.setAlpha( alpha ); //Modified
             dispatchRemoveFinished(item);
@@ -544,7 +544,7 @@ public class ModifiedDefaultItemAnimator extends SimpleItemAnimator {
         count = mPendingAdditions.size();
         for (int i = count - 1; i >= 0; i--) {
             RecyclerView.ViewHolder item = mPendingAdditions.get(i);
-            item.itemView.setAlpha(((CardRecyclerViewAdapter.CardViewHolder)item).alpha); //Modified
+            item.itemView.setAlpha(((DimmableViewHolder)item).alpha); //Modified
             dispatchAddFinished(item);
             mPendingAdditions.remove(i);
         }
@@ -579,7 +579,7 @@ public class ModifiedDefaultItemAnimator extends SimpleItemAnimator {
             count = additions.size();
             for (int j = count - 1; j >= 0; j--) {
                 RecyclerView.ViewHolder item = additions.get(j);
-                item.itemView.setAlpha(((CardRecyclerViewAdapter.CardViewHolder)item).alpha); //Modified
+                item.itemView.setAlpha(((DimmableViewHolder)item).alpha); //Modified
                 dispatchAddFinished(item);
                 additions.remove(j);
                 if (additions.isEmpty()) {
