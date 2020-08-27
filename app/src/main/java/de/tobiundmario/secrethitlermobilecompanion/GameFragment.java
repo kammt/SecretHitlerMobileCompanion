@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
@@ -43,11 +44,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import net.glxn.qrgen.android.QRCode;
 
+import org.json.JSONException;
+
 import java.lang.reflect.InvocationTargetException;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
@@ -62,14 +66,15 @@ public class GameFragment extends Fragment {
 
     private Context context;
 
+    private ViewStub viewStub;
+
     RecyclerView cardList, playerCardList;
 
     private BottomNavigationView bottomNavigationMenu_game;
-    private ConstraintLayout bottomSheetAdd;
-    private BottomSheetBehavior bottomSheetBehaviorAdd;
 
-    private ConstraintLayout bottomSheetServer;
+    private BottomSheetBehavior bottomSheetBehaviorAdd;
     private BottomSheetBehavior bottomSheetBehaviorServer;
+
     private String serverURL;
     private TextView tv_server_desc, tv_server_title;
     private FloatingActionButton fab_share, fab_copy, fab_toggle_server;
@@ -130,6 +135,12 @@ public class GameFragment extends Fragment {
         setupBottomMenu(view);
 
         if(GameLog.server) startAndBindServerService();
+
+        try {
+            SharedPreferencesManager.writeCurrentPlayerListIfNew(context);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         bottomNavigationMenu_game.setVisibility(View.VISIBLE);
         bottomNavigationMenu_game.startAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_in_bottom));
@@ -193,7 +204,7 @@ public class GameFragment extends Fragment {
         swipeOutBottom.setDuration(500);
         bottomNavigationMenu_game.startAnimation(swipeOutBottom);
 
-        //TODO change Fragment / do more fancy animations
+        ((MainActivity) context).replaceFragment(MainActivity.main, true);
     }
 
 
@@ -221,7 +232,7 @@ public class GameFragment extends Fragment {
         bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(true);
 
         //initialising the "Add Event" bottom Sheet
-        bottomSheetAdd = fragmentLayout.findViewById(R.id.bottom_sheet_add_event);
+        ConstraintLayout bottomSheetAdd = fragmentLayout.findViewById(R.id.bottom_sheet_add_event);
         bottomSheetBehaviorAdd = BottomSheetBehavior.from(bottomSheetAdd);
         bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
 
@@ -291,7 +302,7 @@ public class GameFragment extends Fragment {
 
 
         //Setting Up the Server Status Page
-        bottomSheetServer = fragmentLayout.findViewById(R.id.bottom_sheet_server_status);
+        ConstraintLayout bottomSheetServer = fragmentLayout.findViewById(R.id.bottom_sheet_server_status);
         bottomSheetBehaviorServer = BottomSheetBehavior.from(bottomSheetServer);
         bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN);
         setupServerLayout(fragmentLayout);

@@ -95,6 +95,8 @@ public class SetupFragment extends Fragment {
         fadeIn.setDuration(1000);
         playerCardList.startAnimation(fadeIn);
 
+        container_settings.setVisibility(View.GONE);
+
         container_setup_buttons.setVisibility(View.VISIBLE);
         container_setup_buttons.startAnimation(fadeIn);
 
