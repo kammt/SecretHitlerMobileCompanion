@@ -39,6 +39,7 @@
             android:orientation="horizontal"
             android:scrollbars="horizontal"
             android:visibility="visible"
+            android:requiresFadingEdge="horizontal|vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -76,6 +77,7 @@
             android:layout_marginTop="16dp"
             android:clickable="true"
             android:focusable="true"
+            android:requiresFadingEdge="horizontal|vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -112,6 +114,7 @@
             android:id="@+id/scrollView_tracks"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:requiresFadingEdge="horizontal|vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
