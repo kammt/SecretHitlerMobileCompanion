@@ -67,7 +67,7 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
     }
 
     @Override
-    public void setupSetupCard(CardView cardView) {
+    public void initialiseSetupCard(CardView cardView) {
         //Setting up Spinners
         final Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
         ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);

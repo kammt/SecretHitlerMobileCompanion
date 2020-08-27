@@ -49,7 +49,7 @@ public class SpecialElectionEvent extends ExecutiveAction {
     }
 
     @Override
-    public void setupSetupCard(CardView cardView) {
+    public void initialiseSetupCard(CardView cardView) {
         //Changing the text
         TextView title = cardView.findViewById(R.id.title);
         title.setText(context.getString(R.string.new_special_election));

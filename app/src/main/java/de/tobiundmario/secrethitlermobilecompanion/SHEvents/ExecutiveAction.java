@@ -18,7 +18,7 @@ public abstract class ExecutiveAction extends GameEvent {
     public abstract String getInfoText();
     public abstract Drawable getDrawable();
 
-    public void setupCard(CardView cardLayout) {
+    public void initialiseCard(CardView cardLayout) {
         TextView tvInfo = cardLayout.findViewById(R.id.infoText);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             tvInfo.setText(Html.fromHtml(getInfoText(),  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);

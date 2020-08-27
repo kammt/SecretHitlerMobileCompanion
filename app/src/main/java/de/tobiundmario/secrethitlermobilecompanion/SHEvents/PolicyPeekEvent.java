@@ -52,7 +52,7 @@ public class PolicyPeekEvent extends ExecutiveAction {
     }
 
     @Override
-    public void setupSetupCard(CardView cardView) {
+    public void initialiseSetupCard(CardView cardView) {
         FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
 
         final Spinner presSpinner = cardView.findViewById(R.id.spinner_president);

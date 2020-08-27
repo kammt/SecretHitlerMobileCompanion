@@ -76,7 +76,7 @@ public class LegislativeSession extends GameEvent {
     }
 
     @Override
-    public void setupSetupCard(CardView cardView) {
+    public void initialiseSetupCard(CardView cardView) {
         //Setting up Spinners
         final Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
         ArrayAdapter<String> playerListadapter = CardSetupHelper.getPlayerNameAdapter(c);
@@ -262,7 +262,7 @@ public class LegislativeSession extends GameEvent {
     }
 
     @SuppressLint("SetTextI18n")
-    public void setupCard(CardView cardLayout) {
+    public void initialiseCard(CardView cardLayout) {
         //We get the objects from the layout
         TextView title = cardLayout.findViewById(R.id.title);
         TextView presName = cardLayout.findViewById(R.id.pres_name);

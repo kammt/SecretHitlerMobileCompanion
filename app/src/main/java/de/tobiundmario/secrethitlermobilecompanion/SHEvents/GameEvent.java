@@ -32,13 +32,14 @@ public abstract class GameEvent {
                 - PolicyPeekEvent
                 - SpecialElectionEvent
             - DeckShuffledEvent
+            - TopPolicyPlayedEvent
             - GameSetupCard                 (permitEditing = false)
             - GameEndCard                   (permitEditing = false)
      */
 
     //Setup state related
     public boolean isSetup = false;
-    public abstract void setupSetupCard(CardView cardView);
+    public abstract void initialiseSetupCard(CardView cardView);
 
     //Editing state related
     public boolean permitEditing = true;
@@ -49,7 +50,7 @@ public abstract class GameEvent {
     public String id = UUID.randomUUID().toString();
 
     //Normal state related
-    public abstract void setupCard(CardView cardView); //Called by the RecyclerViewAdapter. The classes have to set up the card e.g. insert the President and Chancellor names
+    public abstract void initialiseCard(CardView cardView); //Called by the RecyclerViewAdapter. The classes have to set up the card e.g. insert the President and Chancellor names
     public abstract boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers); //Should return true if all involved Players are unselected (i.e. if their player card is not blurred). Necessary for event blurring, see GameLog.java for usage
 
     public abstract JSONObject getJSON() throws JSONException; //This function returns the JSON code of the event that is readable by the Website. This is sent over to all devices that have the website open. It is then parsed locally and displayed.

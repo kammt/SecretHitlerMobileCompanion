@@ -91,7 +91,7 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
         final CardView cv = cardViewHolder.cv;
         final GameEvent event = events.get(position);
         if(event.isSetup) {
-            event.setupSetupCard(cv);
+            event.initialiseSetupCard(cv);
             if(event.isEditing) event.setCurrentValues(cv);
 
             if(event.getClass() != GameEndCard.class) { //Checking, since this card is marked as setup but does not have a cancel button
@@ -117,7 +117,7 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
             }
 
         } else {
-            event.setupCard(cv);
+            event.initialiseCard(cv);
             if(event.permitEditing) {
                 cv.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override

@@ -68,7 +68,7 @@ public class ExecutionEvent extends ExecutiveAction {
     }
 
     @Override
-    public void setupSetupCard(CardView cardView) {
+    public void initialiseSetupCard(CardView cardView) {
         TextView title = cardView.findViewById(R.id.title);
         title.setText(context.getString(R.string.new_execution));
 

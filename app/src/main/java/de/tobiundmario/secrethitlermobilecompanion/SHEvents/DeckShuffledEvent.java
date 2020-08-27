@@ -34,7 +34,7 @@ public class DeckShuffledEvent extends GameEvent {
     }
 
     @Override
-    public void setupSetupCard(CardView cardView) {
+    public void initialiseSetupCard(CardView cardView) {
         FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
         final EditText et_liberalp = cardView.findViewById(R.id.et_lpolicies);
         final EditText et_fascistp = cardView.findViewById(R.id.et_fpolicies);
@@ -74,7 +74,7 @@ public class DeckShuffledEvent extends GameEvent {
     }
 
     @Override
-    public void setupCard(CardView cardView) {
+    public void initialiseCard(CardView cardView) {
         TextView tvliberal = cardView.findViewById(R.id.tv_lpolicies);
         tvliberal.setText("" + liberalPolicies);
 
