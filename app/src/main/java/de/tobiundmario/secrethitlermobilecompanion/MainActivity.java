@@ -85,6 +85,12 @@ public class MainActivity extends AppCompatActivity {
             currentFragmentContainer.animate()
                     .alpha(1f)
                     .setDuration(500)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            currentFragmentContainer.setAlpha(1f);
+                        }
+                    })
                     .start();
         } else {
             oldContainer.setVisibility(View.GONE);
@@ -93,8 +99,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        //TODO add support for setup
-        if(GameLog.isGameStarted()) { //Game is currently running, we ask the user if he wants to end the game
+        if(currentFragmentContainer.equals(container_setup)) {
+            fragment_setup.previousPage();
+        } else if(GameLog.isGameStarted()) { //Game is currently running, we ask the user if he wants to end the game
             if(!GameLog.swipeEnabled) return; //This means that the "Game Ended" Screen is currently showing, we do not want to show the dialog during this
 
             CardDialog.showMessageDialog(this, getString(R.string.title_end_game_policies), null, getString(R.string.yes), new Runnable() {

@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -109,6 +108,10 @@ public class SetupFragment extends Fragment {
         Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 0, 300);
         progressBarAnimation.setDuration(500);
         progressBar_setupSteps.startAnimation(progressBarAnimation);
+    }
+
+    public void previousPage() {
+        btn_setup_back.callOnClick();
     }
 
     public void initialiseLayout(final View fragmentLayout) {

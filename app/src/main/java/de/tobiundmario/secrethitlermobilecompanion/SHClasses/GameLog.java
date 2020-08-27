@@ -47,7 +47,6 @@ public class GameLog {
     private static EventCardRecyclerViewAdapter cardListAdapter;
 
     public static ArrayList<Integer> hiddenEventIndexes;
-    private static ArrayList<String> hiddenPlayers;
 
     private static JSONArray arr;
     private static Context c;
