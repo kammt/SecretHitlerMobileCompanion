@@ -25,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
@@ -148,37 +147,7 @@ public class SetupFragment extends Fragment {
             }
         });
 
-        //Adding the official tracks to the LinearLayout
-        LinearLayout ll_official_tracks = fragmentLayout.findViewById(R.id.container_official_tracks);
-        //For 5-6 players
-        final CardView cv_56 = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, ll_official_tracks, false);
-        FascistTrackSelectionManager.setupOfficialCard(cv_56, FascistTrackSelectionManager.TRACK_TYPE_5_TO_6, context);
-        ll_official_tracks.addView(cv_56);
-        FascistTrackSelectionManager.trackCards.add(0, cv_56);
-
-        FascistTrack ft_56 = new FascistTrack();
-        ft_56.setActions(new int[] {FascistTrack.NO_POWER, FascistTrack.NO_POWER, FascistTrack.DECK_PEEK, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
-        FascistTrackSelectionManager.fasTracks.add(0, ft_56);
-
-        //For 7-8 players
-        CardView cv_78 = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, ll_official_tracks, false);
-        FascistTrackSelectionManager.setupOfficialCard(cv_78, FascistTrackSelectionManager.TRACK_TYPE_7_TO_8, context);
-        ll_official_tracks.addView(cv_78);
-        FascistTrackSelectionManager.trackCards.add(1, cv_78);
-
-        FascistTrack ft_78 = new FascistTrack();
-        ft_78.setActions(new int[] {FascistTrack.NO_POWER, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
-        FascistTrackSelectionManager.fasTracks.add(0, ft_78);
-
-        //For 9-10 players
-        CardView cv_910 = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, ll_official_tracks, false);
-        FascistTrackSelectionManager.setupOfficialCard(cv_910, FascistTrackSelectionManager.TRACK_TYPE_9_TO_10, context);
-        ll_official_tracks.addView(cv_910);
-        FascistTrackSelectionManager.trackCards.add(2, cv_910);
-
-        FascistTrack ft_910 = new FascistTrack();
-        ft_910.setActions(new int[] {FascistTrack.INVESTIGATION, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
-        FascistTrackSelectionManager.fasTracks.add(0, ft_910);
+        FascistTrackSelectionManager.setupOfficialTrackList((LinearLayout) fragmentLayout.findViewById(R.id.container_official_tracks), context);
 
         listener_backward_players = new View.OnClickListener() {
             @Override
