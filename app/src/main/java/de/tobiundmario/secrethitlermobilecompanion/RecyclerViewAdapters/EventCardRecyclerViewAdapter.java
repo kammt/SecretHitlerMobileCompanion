@@ -97,17 +97,23 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
             if(event.getClass() != GameEndCard.class) { //Checking, since this card is marked as setup but does not have a cancel button
                 //The Cancel button is visible on every card, hence we initialise it here to save code
                 ImageView iv_cancel = cv.findViewById(R.id.img_cancel);
-                iv_cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(!event.isEditing) GameLog.remove(event);
-                        else {
-                            event.isEditing = false;
-                            event.isSetup = false;
-                            GameLog.getCardListAdapter().notifyItemChanged(position);
+
+                if(!GameLog.gameTrack.isManualMode() && !(event instanceof LegislativeSession) && !(event instanceof DeckShuffledEvent)) { //If manual mode is disabled, then we don't want to have cancel buttons on automatically generated actions
+                    iv_cancel.setVisibility(View.GONE);
+                } else {
+                    iv_cancel.setVisibility(View.VISIBLE);
+                    iv_cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (!event.isEditing) GameLog.remove(event);
+                            else {
+                                event.isEditing = false;
+                                event.isSetup = false;
+                                GameLog.getCardListAdapter().notifyItemChanged(position);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
 
         } else {
