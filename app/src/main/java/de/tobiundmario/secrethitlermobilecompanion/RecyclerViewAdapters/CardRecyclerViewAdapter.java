@@ -40,18 +40,34 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
         this.events = events;
     }
 
-    public static class CardViewHolder extends RecyclerView.ViewHolder {
+    public class CardViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
+        float alpha = 1f;
 
-        CardViewHolder(View itemView) {
+        public CardViewHolder(View itemView) {
             super(itemView);
             cv = itemView.findViewById(R.id.cardView);
+            blurCardIfNeeded(this, getAdapterPosition());
         }
     }
 
     @Override
     public int getItemCount() {
         return events.size();
+    }
+
+    private void blurCardIfNeeded(CardViewHolder cardViewHolder, int position) {
+        boolean toBeBlurred = GameLog.hiddenEventIndexes.contains(position);
+        CardView cv = cardViewHolder.cv;
+
+        if(toBeBlurred) {
+            cv.setAlpha(0.5f);
+            cardViewHolder.alpha = 0.5f;
+        }
+        else if(cv.getAlpha() < 1) {
+            cv.setAlpha(1f); //Views that are re-added have the same opacity as before. Because of that, we also check if it has to be un-blurred
+            cardViewHolder.alpha = 1f;
+        }
     }
 
     @NonNull
@@ -82,9 +98,9 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
     }
 
     @Override
-    public void onBindViewHolder(CardViewHolder cardViewHolder, final int i) {
+    public void onBindViewHolder(CardViewHolder cardViewHolder, final int position) {
         final CardView cv = cardViewHolder.cv;
-        final GameEvent event = events.get(i);
+        final GameEvent event = events.get(position);
         if(event.isSetup) {
             event.setupSetupCard(cv);
             if(event.isEditing) event.setCurrentValues(cv);
@@ -99,7 +115,7 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
                         else {
                             event.isEditing = false;
                             event.isSetup = false;
-                            GameLog.getCardListAdapter().notifyItemChanged(i);
+                            GameLog.getCardListAdapter().notifyItemChanged(position);
                         }
                     }
                 });
@@ -113,11 +129,13 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
                     public boolean onLongClick(View v) {
                         event.isEditing = true;
                         event.isSetup = true;
-                        notifyItemChanged(events.indexOf(event));
+                        notifyItemChanged(position);
                         return false;
                     }
                 });
             }
+
+            blurCardIfNeeded(cardViewHolder, position);
         }
     }
 
@@ -127,7 +145,6 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
         GameEvent event = events.get(position);
         //The card can use three layouts - Legislative session, Deck shuffled or Executive Action. Thus we check to which class the Event belongs
         //Additionally, there is the possibility that the card is a setup card - requiring a different layout
-        View v;
         if(event.getClass().isAssignableFrom(LegislativeSession.class)) {
 
             //It is a legislative session - then we inflate the correct layout
@@ -151,15 +168,10 @@ public class CardRecyclerViewAdapter extends RecyclerView.Adapter<CardRecyclerVi
 
     @Override
     public void onViewAttachedToWindow(@NonNull CardViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
         //This function is called when a prior removed View is re-added by Android. Now, we check if it has to be blurred, beginning by getting its position
         int position = holder.getLayoutPosition();
 
-        CardView cv = holder.cv;
-        boolean toBeBlurred = GameLog.hiddenEventIndexes.contains(position);
-
-        if(toBeBlurred) cv.setAlpha((float) 0.5);
-        else if(cv.getAlpha() < 1) cv.setAlpha(1); //Views that are re-added have the same opacity as before. Because of that, we also check if it has to be un-blurred
+        blurCardIfNeeded(holder, position);
     }
 }
 

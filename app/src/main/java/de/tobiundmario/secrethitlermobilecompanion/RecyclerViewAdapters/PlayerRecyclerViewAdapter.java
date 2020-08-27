@@ -47,6 +47,10 @@ public class PlayerRecyclerViewAdapter extends RecyclerView.Adapter<PlayerRecycl
         }
     }
 
+    public ArrayList<String> getHiddenPlayers() {
+        return hiddenPlayers;
+    }
+
     @Override
     public int getItemCount() {
         if(GameLog.isGameStarted()) return players.size();

@@ -28,6 +28,7 @@ import java.util.List;
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CardRecyclerViewAdapter;
+import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.ModifiedDefaultItemAnimator;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
@@ -46,6 +47,7 @@ public class GameLog {
     private static CardRecyclerViewAdapter cardListAdapter;
 
     public static ArrayList<Integer> hiddenEventIndexes;
+    private static ArrayList<String> hiddenPlayers;
 
     private static JSONArray arr;
     private static Context c;
@@ -71,27 +73,29 @@ public class GameLog {
     }
 
     public static void initialise(RecyclerView recyclerView, Context context) {
-        //If an eventList was restored, use that one
         if(restoredEventList != null) {
             eventList = restoredEventList;
             restoredEventList = null;
         } else {
             eventList = new ArrayList<>();
             arr = new JSONArray();
-        }
 
+            //Reset the policy-count
+            liberalPolicies = 0;
+            fascistPolicies = 0;
+            legSessionNo = 1;
+        }
         hiddenEventIndexes = new ArrayList<>();
-        legSessionNo = 1;
 
         c = context;
 
         cardList = recyclerView;
         cardListAdapter = new CardRecyclerViewAdapter(eventList);
         cardList.setAdapter(cardListAdapter);
+        cardList.setItemAnimator(new ModifiedDefaultItemAnimator());
+        //((SimpleItemAnimator) cardList.getItemAnimator()).setSupportsChangeAnimations(false);
 
-        //Reset the policy-count
-        liberalPolicies = 0;
-        fascistPolicies = 0;
+        reSetSessionNumber();
     }
 
     public static void destroy() {
@@ -122,7 +126,7 @@ public class GameLog {
 
         } else {
 
-            position = eventList.size();
+            position = eventList.indexOf(event);
             try {
                 arr.put(event.getJSON());
             } catch (JSONException e) {
@@ -131,9 +135,12 @@ public class GameLog {
 
             JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.NEW_EVENT));
         }
+
         //Nevertheless, we need to update the RecyclerViewItem
         cardListAdapter.notifyItemChanged(position);
         if(event.getClass() == LegislativeSession.class) processPolicyChange((LegislativeSession) event, false);
+
+        blurEventsInvolvingHiddenPlayers(PlayerList.getPlayerRecyclerViewAdapter().getHiddenPlayers()); //Re-calling this function since a new item was added
 
         //Something changed - it's backup time!
         try {
@@ -190,6 +197,10 @@ public class GameLog {
             e.printStackTrace();
         }
 
+        if(!event.isSetup && event.allInvolvedPlayersAreUnselected(PlayerList.getPlayerRecyclerViewAdapter().getHiddenPlayers())) {
+            hiddenEventIndexes.add(eventList.size() - 1);
+        }
+
         if(event.getClass() == LegislativeSession.class && !event.isSetup) processPolicyChange((LegislativeSession) event, false);
         if(event.isSetup) cardList.smoothScrollToPosition(eventList.size() - 1);
     }
@@ -207,6 +218,7 @@ public class GameLog {
             }
         }
         hiddenEventIndexes = cardIndexesToBlur; //Update the static ArrayList, making it accessible to the RecyclerViewAdapter. When rendering a view (which was null before), it will look up if it has to be blurred or not
+        PlayerList.getPlayerRecyclerViewAdapter().notifyDataSetChanged();
     }
 
     public static void processPolicyChange(LegislativeSession legislativeSession, boolean removed) {
@@ -301,6 +313,11 @@ public class GameLog {
                     public void onDismissed(Snackbar transientBottomBar, int e) {
                         if (e == 2) {
                             JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.EVENT_DELETE));
+                            try {
+                                backupToCache();
+                            } catch (IOException | JSONException ex) {
+                                ex.printStackTrace();
+                            }
                         }
 
                         super.onDismissed(transientBottomBar, e);
@@ -461,7 +478,9 @@ public class GameLog {
         for(int i = 0; i < plays.length(); i++) {
             GameEvent event = JSONManager.createGameEventFromJSON((JSONObject) plays.get(i), c);
             restoredEventList.add(event);
-            if(event.getClass() == LegislativeSession.class) processPolicyChange((LegislativeSession) event, false);
+            if(event.getClass() == LegislativeSession.class) {
+                processPolicyChange((LegislativeSession) event, false);
+            }
         }
     }
 
