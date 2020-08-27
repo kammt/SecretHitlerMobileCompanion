@@ -2,10 +2,10 @@ package de.tobiundmario.secrethitlermobilecompanion;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -89,22 +89,10 @@ public class SetupFragment extends Fragment {
     public void startSetup() {
         //Resetting values in case there has been a setup before which was cancelled
         PlayerList.initialise(playerCardList, context);
-        FascistTrackSelectionManager.processSelection(-1, null, null, context);
-
-        AlphaAnimation fadeIn = new AlphaAnimation((float) 0, (float) 1);
-        fadeIn.setDuration(1000);
-        playerCardList.startAnimation(fadeIn);
-
-        container_settings.setVisibility(View.GONE);
 
         container_setup_buttons.setVisibility(View.VISIBLE);
-        container_setup_buttons.startAnimation(fadeIn);
-
         container_new_player.setVisibility(View.VISIBLE);
-        container_new_player.startAnimation(fadeIn);
-
         progressBar_setupSteps.setVisibility(View.VISIBLE);
-        progressBar_setupSteps.startAnimation(fadeIn);
 
         Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 0, 300);
         progressBarAnimation.setDuration(500);
@@ -383,6 +371,15 @@ public class SetupFragment extends Fragment {
                 GameLog.executionSounds = sw_sounds_execution.isChecked();
 
                 GameLog.server = sw_server.isChecked();
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Resetting view visibility from
+                        container_new_player.setVisibility(View.VISIBLE);
+                        container_settings.setVisibility(View.GONE);
+                    }
+                }, 1000);
 
                 ((MainActivity) context).replaceFragment(MainActivity.game, true);
             }
