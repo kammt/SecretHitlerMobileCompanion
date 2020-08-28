@@ -58,6 +58,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LoyaltyInvestigationEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.PolicyPeekEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.SpecialElectionEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.TopPolicyPlayedEvent;
 import de.tobiundmario.secrethitlermobilecompanion.Server.ServerSercive;
 
 import static android.content.Context.WIFI_SERVICE;
@@ -260,12 +261,14 @@ public class GameFragment extends Fragment {
         View entry_execution = bottomSheetAdd.findViewById(R.id.execution);
         View entry_policy_peek = bottomSheetAdd.findViewById(R.id.policy_peek);
         View entry_special_election = bottomSheetAdd.findViewById(R.id.special_election);
+        View entry_top_policy = bottomSheetAdd.findViewById(R.id.topPolicy);
 
         if(!GameLog.gameTrack.isManualMode()) {
             entry_loyaltyInvestigation.setVisibility(View.GONE);
             entry_execution.setVisibility(View.GONE);
             entry_policy_peek.setVisibility(View.GONE);
             entry_special_election.setVisibility(View.GONE);
+            entry_top_policy.setVisibility(View.GONE);
         } else {
             entry_loyaltyInvestigation.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -296,6 +299,14 @@ public class GameFragment extends Fragment {
                 public void onClick(View v) {
                     bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
                     GameLog.addEvent(new SpecialElectionEvent(null, context));
+                }
+            });
+
+            entry_top_policy.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+                    GameLog.addEvent(new TopPolicyPlayedEvent(context));
                 }
             });
         }

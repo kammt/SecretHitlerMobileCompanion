@@ -35,7 +35,7 @@ public class GameEndCard extends GameEvent {
     }
 
     @Override
-    public void setupSetupCard(CardView cardView) {
+    public void initialiseSetupCard(CardView cardView) {
         final int libPolicies = GameLog.gameTrack.getLibPolicies();
         final int fasPolicies = GameLog.gameTrack.getFasPolicies();
 
@@ -120,7 +120,7 @@ public class GameEndCard extends GameEvent {
     }
 
     @Override
-    public void setupCard(CardView cardView) {
+    public void initialiseCard(CardView cardView) {
         //This will never be called
     }
 

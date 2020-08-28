@@ -19,6 +19,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LoyaltyInvestigationEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.PolicyPeekEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.TopPolicyPlayedEvent;
 
 public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableViewHolder> {
 
@@ -26,12 +27,14 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
     private static final int EXECUTIVE_ACTION = 1;
     private static final int LEGISLATIVE_SESSION = 0;
     private static final int DECK_SHUFFLED = 2;
+    private static final int TOP_POLICY = 8;
 
     private static final int LEGISLATIVE_SESSION_SETUP = 3;
     private static final int LOYALTY_INVESTIGATION_SETUP = 4;
     private static final int EXECUTION_SETUP = 5;
     private static final int DECK_SHUFFLED_SETUP = 6;
     private static final int POLICY_PEEK_SETUP = 7;
+    private static final int TOP_POLICY_SETUP = 10;
 
     private static final int GAME_END = 9;
 
@@ -80,6 +83,10 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_deck_shuffled, viewGroup, false);
         } else if (type == POLICY_PEEK_SETUP) {
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_policy_peek, viewGroup, false);
+        } else if(type == TOP_POLICY) {
+            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_top_policy, viewGroup, false);
+        } else if(type == TOP_POLICY_SETUP) {
+            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_top_policy, viewGroup, false);
         } else if (type == GAME_END) {
             v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_game_end, viewGroup, false);
         }
@@ -140,24 +147,27 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
         GameEvent event = events.get(position);
         //The card can use three layouts - Legislative session, Deck shuffled or Executive Action. Thus we check to which class the Event belongs
         //Additionally, there is the possibility that the card is a setup card - requiring a different layout
-        if(event.getClass().isAssignableFrom(LegislativeSession.class)) {
+        if(event instanceof LegislativeSession) {
 
             //It is a legislative session - then we inflate the correct layout
             if(event.isSetup) return LEGISLATIVE_SESSION_SETUP;
             else return LEGISLATIVE_SESSION;
 
-        } else if(event.getClass() == DeckShuffledEvent.class) {
+        } else if(event instanceof DeckShuffledEvent) {
 
             if(event.isSetup) return DECK_SHUFFLED_SETUP;
             else return DECK_SHUFFLED;
 
         } else if(event.isSetup) {
 
-            if(event.getClass() == LoyaltyInvestigationEvent.class) return LOYALTY_INVESTIGATION_SETUP;
-            else if(event.getClass() == PolicyPeekEvent.class) return POLICY_PEEK_SETUP;
-            else if (event.getClass() == GameEndCard.class) return GAME_END;
+            if(event instanceof LoyaltyInvestigationEvent) return LOYALTY_INVESTIGATION_SETUP;
+            else if(event instanceof PolicyPeekEvent) return POLICY_PEEK_SETUP;
+            else if (event instanceof TopPolicyPlayedEvent) return TOP_POLICY_SETUP;
+            else if (event instanceof GameEndCard) return GAME_END;
             else return EXECUTION_SETUP;
 
+        } else if (event instanceof TopPolicyPlayedEvent) {
+            return TOP_POLICY;
         } else return EXECUTIVE_ACTION;
     }
 

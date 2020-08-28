@@ -35,6 +35,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LoyaltyInvestigationEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.PolicyPeekEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.SpecialElectionEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.TopPolicyPlayedEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.VoteEvent;
 
 public class GameLog {
@@ -53,6 +54,7 @@ public class GameLog {
 
     public static int liberalPolicies = 0;
     public static int fascistPolicies = 0;
+    public static int electionTracker = 0;
     public static FascistTrack gameTrack = null;
 
     public static boolean swipeEnabled = false;
@@ -221,7 +223,20 @@ public class GameLog {
     }
 
     public static void processPolicyChange(LegislativeSession legislativeSession, boolean removed) {
-        if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_FAILED) return;
+        if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_FAILED) {
+            if(gameTrack.isManualMode()) return;
+
+            if(removed) electionTracker--;
+            else {
+                electionTracker++;
+                if(electionTracker == gameTrack.getElectionTrackerLength() && gameStarted) {
+                    electionTracker = 0;
+                    addEvent(new TopPolicyPlayedEvent(c));
+                }
+            }
+            return;
+        }
+
         if(legislativeSession.getClaimEvent().isVetoed()) return;
         boolean fascist = legislativeSession.getClaimEvent().getPlayedPolicy() == Claim.FASCIST;
 

@@ -13,6 +13,8 @@ public class FascistTrack {
     private int fasPolicies = 6;
     private int libPolicies = 5;
 
+    private int electionTrackerLength = 5;
+
     private boolean manualMode = false;
 
     String name;
@@ -47,6 +49,14 @@ public class FascistTrack {
 
     public int getAction(int position) {
         return actions[position];
+    }
+
+    public void setElectionTrackerLength(int electionTrackerLength) {
+        this.electionTrackerLength = electionTrackerLength;
+    }
+
+    public int getElectionTrackerLength() {
+        return electionTrackerLength;
     }
 
     public void setLibPolicies(int libPolicies) {

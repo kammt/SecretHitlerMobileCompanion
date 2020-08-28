@@ -140,4 +140,7 @@
     <string name="switch_start_server_setup">Start Server</string>
     <string name="start_game">Start Game</string>
     <string name="note_sounds_settings">Note: all used sounds are taken from the online game SecretHitler.io</string>
+    <string name="title_top_policy">Top policy played</string>
+    <string name="et_title_track_size">Track size:</string>
+    <string name="et_titie_electiontrackerLength">Election Tracker Length:</string>
 </resources>

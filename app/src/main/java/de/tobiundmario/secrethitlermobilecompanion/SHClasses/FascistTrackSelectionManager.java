@@ -152,6 +152,7 @@ public class FascistTrackSelectionManager {
 
         FascistTrack ft_56 = new FascistTrack();
         ft_56.setActions(new int[] {FascistTrack.NO_POWER, FascistTrack.NO_POWER, FascistTrack.DECK_PEEK, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
+        ft_56.setElectionTrackerLength(3);
         FascistTrackSelectionManager.fasTracks.add(0, ft_56);
 
         //For 7-8 players
@@ -162,6 +163,7 @@ public class FascistTrackSelectionManager {
 
         FascistTrack ft_78 = new FascistTrack();
         ft_78.setActions(new int[] {FascistTrack.NO_POWER, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
+        ft_78.setElectionTrackerLength(3);
         FascistTrackSelectionManager.fasTracks.add(0, ft_78);
 
         //For 9-10 players
@@ -172,6 +174,7 @@ public class FascistTrackSelectionManager {
 
         FascistTrack ft_910 = new FascistTrack();
         ft_910.setActions(new int[] {FascistTrack.INVESTIGATION, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
+        ft_910.setElectionTrackerLength(3);
         FascistTrackSelectionManager.fasTracks.add(0, ft_910);
     }
 }

@@ -21,6 +21,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LoyaltyInvestigationEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.PolicyPeekEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.SpecialElectionEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.TopPolicyPlayedEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.VoteEvent;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -93,6 +94,8 @@ public class JSONManager {
                 return createLegislativeSessionFromJSON(jsonObject, c);
             case "shuffle":
                 return createDeckShuffleFromJSON(jsonObject, c);
+            case "top_policy":
+                return createTopPolicyPlayedFromJSON(jsonObject, c);
             case "executive-action":
                 switch ((String) jsonObject.get("executive_action_type")) {
                     case "investigate_loyalty":
@@ -170,6 +173,10 @@ public class JSONManager {
         return new SpecialElectionEvent(presidentName, target, c);
     }
 
+    private static TopPolicyPlayedEvent createTopPolicyPlayedFromJSON(JSONObject jsonObject, Context c) throws JSONException {
+        return new TopPolicyPlayedEvent(Claim.getClaimInt((String) jsonObject.get("policy_played")), c);
+    }
+
     public static JSONObject writeFascistTrackToJSON(FascistTrack fascistTrack) throws JSONException {
         JSONObject object = new JSONObject();
 
@@ -185,6 +192,8 @@ public class JSONManager {
             }
             object.put("manual", false);
             object.put("actions", actionsArray);
+
+            object.put("electionTracker", fascistTrack.getElectionTrackerLength());
         }
 
         object.put("fpolicies", fascistTrack.getFasPolicies());
@@ -215,9 +224,9 @@ public class JSONManager {
                 actions[i] = actionsArray.getInt(i);
             }
             track.setActions(actions);
+
+            track.setElectionTrackerLength(object.getInt("electionTracker"));
         }
-
-
 
         return track;
     }

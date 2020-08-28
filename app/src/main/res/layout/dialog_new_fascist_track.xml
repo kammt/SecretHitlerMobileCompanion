@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container_newTrack"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -32,11 +31,11 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/et_title_trackSize"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/comfortaa_light"
-            android:text="Track size:"
+            android:text="@string/et_title_track_size"
             app:layout_constraintBottom_toBottomOf="@+id/img_fascist_policy"
             app:layout_constraintStart_toStartOf="@+id/guideline8"
             app:layout_constraintTop_toTopOf="@+id/img_fascist_policy" />
@@ -47,7 +46,7 @@
             android:layout_height="110dp"
             android:layout_marginStart="24dp"
             android:alpha="0.7"
-            app:layout_constraintStart_toEndOf="@+id/textView4"
+            app:layout_constraintStart_toEndOf="@+id/et_title_trackSize"
             app:layout_constraintTop_toBottomOf="@+id/et_trackName"
             app:srcCompat="@drawable/icon_fpolicy" />
 
@@ -109,6 +108,34 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.12" />
+
+        <TextView
+            android:id="@+id/et_title_eTracker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/comfortaa_light"
+            android:text="@string/et_titie_electiontrackerLength"
+            app:layout_constraintBottom_toBottomOf="@+id/et_electionTrackerLength"
+            app:layout_constraintStart_toStartOf="@+id/guideline8"
+            app:layout_constraintTop_toTopOf="@+id/et_electionTrackerLength" />
+
+        <EditText
+            android:id="@+id/et_electionTrackerLength"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="64dp"
+            android:ems="10"
+            android:fontFamily="@font/comfortaa_light"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="2"
+            android:text="3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/et_title_eTracker"
+            app:layout_constraintTop_toBottomOf="@+id/checkBox_manualMode" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

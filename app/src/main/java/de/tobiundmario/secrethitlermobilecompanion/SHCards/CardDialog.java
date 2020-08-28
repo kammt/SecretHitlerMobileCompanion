@@ -79,6 +79,8 @@ public class CardDialog {
         final EditText input_name = dialogView.findViewById(R.id.et_trackName);
         final EditText input_fpolicies = dialogView.findViewById(R.id.et_fpolicies);
         final EditText input_lpolicies = dialogView.findViewById(R.id.et_lpolicies);
+        final EditText input_electionTrackerLength = dialogView.findViewById(R.id.et_electionTrackerLength);
+        final TextView title_eTrackerLength = dialogView.findViewById(R.id.et_title_eTracker);
 
         final LinearLayout ll_actions = dialogView.findViewById(R.id.actions);
 
@@ -87,10 +89,14 @@ public class CardDialog {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
                     tvPositive.setText(c.getString(R.string.done));
-                    tvPositive.setOnClickListener(listener_create_track);
+
+                    input_electionTrackerLength.setVisibility(View.GONE);
+                    title_eTrackerLength.setVisibility(View.GONE);
                 } else {
                     tvPositive.setText(c.getString(R.string.dialog_mismatching_claims_btn_continue));
-                    tvPositive.setOnClickListener(listener_forward_one);
+
+                    input_electionTrackerLength.setVisibility(View.VISIBLE);
+                    title_eTrackerLength.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -98,10 +104,12 @@ public class CardDialog {
         listener_forward_one = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean manual = cb_manualMode.isChecked();
                 boolean error = false;
                 String name = input_name.getText().toString();
                 String fpolicies = input_fpolicies.getText().toString();
                 String lpolicies = input_lpolicies.getText().toString();
+                String eTrackerLength = input_electionTrackerLength.getText().toString();
 
                 if(name.equals("")) {
                     input_name.setError(c.getString(R.string.cannot_be_empty));
@@ -118,9 +126,17 @@ public class CardDialog {
                     error = true;
                 }
 
+                if(!manual) {
+                    if (eTrackerLength.equals("") || Integer.parseInt(eTrackerLength) <= 0) {
+                        input_electionTrackerLength.setError(c.getString(R.string.error_invalid_value));
+                        error = true;
+                    }
+                }
+
                 if(error) return;
 
-                if(cb_manualMode.isChecked()) {
+                if(manual) {
+                    listener_create_track.onClick(tvPositive);
                     dialog.dismiss();
                 } else {
                     //Show the new contianer
@@ -207,6 +223,8 @@ public class CardDialog {
                         actions[i] = selection;
                     }
                     fascistTrack.setActions(actions);
+
+                    fascistTrack.setElectionTrackerLength(Integer.parseInt(input_electionTrackerLength.getText().toString()));
                 } else {
                     fascistTrack.setManualMode(true);
                 };

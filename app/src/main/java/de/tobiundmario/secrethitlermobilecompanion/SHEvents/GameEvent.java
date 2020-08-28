@@ -15,11 +15,11 @@ public abstract class GameEvent {
 
         A Card extending this class can have three states:
             1. Normal:
-                In this state, the Card simply displays the information it has. During this state, the setupCard(CardView cardview) function is called when its layout is initialised.
+                In this state, the Card simply displays the information it has. During this state, the initialiseCard(CardView cardview) function is called when its layout is initialised.
             2. Setup:
-                In this state, the Card displays options to set the required values. During this state, isSetup is set to true and the setupSetupCard(CardView cardView) function is called when its layout is initialised
+                In this state, the Card displays options to set the required values. During this state, isSetup is set to true and the initialiseSetupCard(CardView cardView) function is called when its layout is initialised
             2. Editing
-                In this state, the Card has been long pressed on and now gives the user the option to edit it. During this state, isEditing is set to true, but so is isSetup. The  setupSetupCard(CardView cardView) is called as during a normal setup,
+                In this state, the Card has been long pressed on and now gives the user the option to edit it. During this state, isEditing is set to true, but so is isSetup. The initialiseSetupCard(CardView cardView) is called as during a normal setup,
                 but additionally, the setCurrentValues(CardView cardView) function is run. This function sets the current values that the Card has (e.g. president and chancellor names and their claims).
                 When a card class sets permitEditing to false, the user is unable to long-click on it to edit it.
 
