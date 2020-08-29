@@ -84,6 +84,7 @@ public class GameLog {
             //Reset the policy-count
             liberalPolicies = 0;
             fascistPolicies = 0;
+            electionTracker = 0;
             legSessionNo = 1;
         }
         hiddenEventIndexes = new ArrayList<>();
@@ -109,6 +110,11 @@ public class GameLog {
         gameTrack = null;
     }
 
+    /**
+     * This function is called by an Event in Setup mode when the FloatingActionButton is pressed, meaning that it left the Setup phase. It changes the layout of the card, processes changes made
+     * because of the edit etc.
+     * @param event The event that just left the setup phase
+     */
     public static void notifySetupPhaseLeft(GameEvent event) {
         int position;
 
@@ -139,7 +145,7 @@ public class GameLog {
 
         //Nevertheless, we need to update the RecyclerViewItem
         cardListAdapter.notifyItemChanged(position);
-        if(event.getClass() == LegislativeSession.class) processPolicyChange((LegislativeSession) event, false);
+        if(event.getClass() == LegislativeSession.class) processLegislativeSession((LegislativeSession) event, false);
 
         blurEventsInvolvingHiddenPlayers(PlayerList.getplayerCardRecyclerViewAdapter().getHiddenPlayers()); //Re-calling this function since a new item was added
 
@@ -151,7 +157,10 @@ public class GameLog {
         }
     }
 
-
+    /**
+     * Removes an Event and undoes changes made by the event e.g. un-setting a player as dead
+     * @param event the removed event
+     */
     public static void remove(GameEvent event) {
         int position = eventList.indexOf(event);
         if(!event.isSetup) arr.remove(eventList.indexOf(event));
@@ -162,13 +171,18 @@ public class GameLog {
         if(event.getClass() == LoyaltyInvestigationEvent.class && !event.isSetup) ((LoyaltyInvestigationEvent) event).resetOnRemoval();
         if(event.getClass() == LegislativeSession.class && !event.isSetup) {
             reSetSessionNumber();
-            processPolicyChange((LegislativeSession) event, true);
+            processLegislativeSession((LegislativeSession) event, true);
         }
     }
 
+    /**
+     * Re-adds the removed event. Do not use this function for adding new events!
+     * @param event The prior removed event
+     * @param oldPosition The position that it had previously
+     */
     public static void undoRemoval(GameEvent event, int oldPosition) {
         try {
-            arr.put(oldPosition, event.getJSON());
+            SharedPreferencesManager.addJSONObjectToArray(event.getJSON(), arr, oldPosition);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -181,7 +195,7 @@ public class GameLog {
         if(event.getClass() == LoyaltyInvestigationEvent.class && !event.isSetup) ((LoyaltyInvestigationEvent) event).undoRemoval();
         if(event.getClass() == LegislativeSession.class && !event.isSetup) {
             reSetSessionNumber();
-            processPolicyChange((LegislativeSession) event, false);
+            processLegislativeSession((LegislativeSession) event, false);
         }
     }
 
@@ -204,7 +218,7 @@ public class GameLog {
             hiddenEventIndexes.add(eventList.size() - 1);
         }
 
-        if(event.getClass() == LegislativeSession.class && !event.isSetup) processPolicyChange((LegislativeSession) event, false);
+        if(event.getClass() == LegislativeSession.class && !event.isSetup) processLegislativeSession((LegislativeSession) event, false);
         if(event.isSetup) cardList.smoothScrollToPosition(eventList.size() - 1);
     }
 
@@ -222,7 +236,16 @@ public class GameLog {
         //PlayerList.getPlayerRecyclerViewAdapter().notifyDataSetChanged();
     }
 
-    public static void processPolicyChange(LegislativeSession legislativeSession, boolean removed) {
+    /**
+     * Processes changes made by the legislative session. Its functions include:
+     * - update the number of policies
+     * - end the game
+     * - add an action defined by the FascistTrack
+     * It is also called when an event has been removed
+     * @param legislativeSession the event that causes changes e.g. the added event
+     * @param removed if true, the event has been removed
+     */
+    public static void processLegislativeSession(LegislativeSession legislativeSession, boolean removed) {
         if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_FAILED) {
             if(gameTrack.isManualMode()) return;
 
@@ -493,7 +516,7 @@ public class GameLog {
             GameEvent event = JSONManager.createGameEventFromJSON((JSONObject) plays.get(i), c);
             restoredEventList.add(event);
             if(event.getClass() == LegislativeSession.class) {
-                processPolicyChange((LegislativeSession) event, false);
+                processLegislativeSession((LegislativeSession) event, false);
             }
         }
     }

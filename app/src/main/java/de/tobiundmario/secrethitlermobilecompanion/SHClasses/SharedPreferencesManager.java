@@ -48,7 +48,7 @@ public class SharedPreferencesManager {
         return context.getSharedPreferences("past-values", Context.MODE_PRIVATE);
     }
 
-    private static JSONArray addJSONObjectToArray(JSONObject jsonObject, JSONArray jsonArray, int position) throws JSONException {
+    public static JSONArray addJSONObjectToArray(JSONObject jsonObject, JSONArray jsonArray, int position) throws JSONException {
         JSONObject objectToInsert = null;
         JSONObject objectAtPos;
         int originalLength = jsonArray.length();
