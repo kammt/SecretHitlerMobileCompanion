@@ -12,4 +12,8 @@
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
+    <style name="Widget.BottomNavigationViewCustomFont" parent="@style/Widget.MaterialComponents.BottomNavigationView">
+        <item name="fontFamily">@font/germania_one</item>
+    </style>
+
 </resources>

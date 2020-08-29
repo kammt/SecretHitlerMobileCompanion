@@ -61,6 +61,8 @@
         android:background="@color/colorAccent"
         android:visibility="gone"
         app:itemBackground="@color/colorAccent"
+        app:itemTextAppearanceActive="@style/Widget.BottomNavigationViewCustomFont"
+        app:itemTextAppearanceInactive="@style/Widget.BottomNavigationViewCustomFont"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
