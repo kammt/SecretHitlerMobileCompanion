@@ -69,6 +69,12 @@ public class PlayerList {
         /*
         This function adds a player from the player list
          */
+        if(playerList == null) {
+            playerList = new ArrayList<>();
+            claimList = new ArrayList<>();
+            isDead = new ArrayList<>();
+        }
+
         playerList.add(name);
 
         //Also add an additional entry to our claim- and dead-lists
