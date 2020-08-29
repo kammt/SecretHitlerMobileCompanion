@@ -3,6 +3,7 @@ package de.tobiundmario.secrethitlermobilecompanion.SHEvents;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -34,6 +35,15 @@ public class TopPolicyPlayedEvent extends GameEvent {
     public TopPolicyPlayedEvent(Context c) {
         this.c = c;
         isSetup = true;
+    }
+
+    private void playSound() {
+        if(GameLog.policySounds) {
+            MediaPlayer mp;
+            if (policyPlayed == Claim.LIBERAL) mp = MediaPlayer.create(c, R.raw.enactpolicyl);
+            else mp = MediaPlayer.create(c, R.raw.enactpolicyf);
+            mp.start();
+        }
     }
 
     @Override
@@ -71,6 +81,7 @@ public class TopPolicyPlayedEvent extends GameEvent {
                 policyPlayed = (iv_fascist.getAlpha() == 1f) ? Claim.FASCIST : Claim.LIBERAL;
                 isSetup = false;
                 GameLog.notifySetupPhaseLeft(TopPolicyPlayedEvent.this);
+                playSound();
             }
         });
     }

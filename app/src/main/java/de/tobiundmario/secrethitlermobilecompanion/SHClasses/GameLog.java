@@ -229,13 +229,13 @@ public class GameLog {
             if(removed) electionTracker--;
             else {
                 electionTracker++;
-                if(electionTracker == gameTrack.getElectionTrackerLength() && gameStarted) {
+                if(electionTracker == gameTrack.getElectionTrackerLength()) {
                     electionTracker = 0;
-                    addEvent(new TopPolicyPlayedEvent(c));
+                    if(gameStarted) addEvent(new TopPolicyPlayedEvent(c));
                 }
             }
             return;
-        }
+        } else electionTracker = 0;
 
         if(legislativeSession.getClaimEvent().isVetoed()) return;
         boolean fascist = legislativeSession.getClaimEvent().getPlayedPolicy() == Claim.FASCIST;
