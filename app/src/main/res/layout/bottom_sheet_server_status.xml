@@ -55,7 +55,7 @@
         app:fabSize="mini"
         app:layout_constraintEnd_toStartOf="@+id/guideline6"
         app:layout_constraintTop_toBottomOf="@+id/img_qr"
-        app:srcCompat="@drawable/ic_sharexml" />
+        app:srcCompat="@drawable/ic_share" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_copy_address"

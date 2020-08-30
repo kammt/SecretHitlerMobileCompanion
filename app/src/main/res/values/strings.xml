@@ -143,4 +143,6 @@
     <string name="title_top_policy">Top policy played</string>
     <string name="et_title_track_size">Track size:</string>
     <string name="et_titie_electiontrackerLength">Election Tracker Length:</string>
+    <string name="title_warning">Warning</string>
+    <string name="dialog_message_duplicate_event_creation">Another event is already being created. Please either finish creating the event or cancel it.</string>
 </resources>

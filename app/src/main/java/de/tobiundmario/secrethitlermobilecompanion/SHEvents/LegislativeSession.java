@@ -2,7 +2,6 @@ package de.tobiundmario.secrethitlermobilecompanion.SHEvents;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -20,7 +19,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -31,6 +29,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
@@ -196,19 +195,14 @@ public class LegislativeSession extends GameEvent {
                     }
 
                     if(claimEvent != null && !Claim.doClaimsFit(claimEvent.getPresidentClaim(), claimEvent.getChancellorClaim(), claimEvent.getPlayedPolicy())) {
-                        new AlertDialog.Builder(c)
-                                .setTitle(c.getString(R.string.dialog_mismatching_claims_title))
-                                .setMessage(c.getString(R.string.dialog_mismatching_claims_desc))
-                                .setPositiveButton(c.getString(R.string.dialog_mismatching_claims_btn_continue), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        isSetup = false;
-                                        GameLog.notifySetupPhaseLeft(LegislativeSession.this);
-                                        playSound();
-                                    }
-                                })
-                                .setNegativeButton(c.getString(R.string.dialog_mismatching_claims_btn_cancel), null)
-                                .show();
+                        CardDialog.showMessageDialog(c, c.getString(R.string.dialog_mismatching_claims_title), c.getString(R.string.dialog_mismatching_claims_desc), c.getString(R.string.dialog_mismatching_claims_btn_continue), new Runnable() {
+                            @Override
+                            public void run() {
+                                isSetup = false;
+                                GameLog.notifySetupPhaseLeft(LegislativeSession.this);
+                                playSound();
+                            }
+                        }, c.getString(R.string.dialog_mismatching_claims_btn_cancel), null);
                     } else {
                         isSetup = false;
                         GameLog.notifySetupPhaseLeft(LegislativeSession.this);
