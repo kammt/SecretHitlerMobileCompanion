@@ -39,18 +39,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_trackName" />
 
-        <LinearLayout
-            android:id="@+id/ll_actionSymbols"
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/fbl_actionSymbols"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:gravity="center"
+            android:orientation="horizontal"
+            app:alignContent="stretch"
+            app:alignItems="stretch"
+            app:flexWrap="wrap"
+            app:justifyContent="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_description_policies"
-            android:orientation="horizontal" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_description_policies" />
 
         <Button
             android:id="@+id/btn_use"
@@ -65,7 +69,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_actionSymbols" />
+            app:layout_constraintTop_toBottomOf="@+id/fbl_actionSymbols" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

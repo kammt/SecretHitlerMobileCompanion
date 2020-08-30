@@ -7,12 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.flexbox.FlexboxLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,21 +68,21 @@ public class CustomTracksRecyclerViewAdapter extends RecyclerView.Adapter<Custom
 
             TextView tv_name = cv.findViewById(R.id.tv_trackName);
             TextView tv_desc = cv.findViewById(R.id.tv_description_policies);
-            LinearLayout ll_actions = cv.findViewById(R.id.ll_actionSymbols);
+            FlexboxLayout fbl_actions = cv.findViewById(R.id.fbl_actionSymbols);
             Button btn_use = cv.findViewById(R.id.btn_use);
 
-            ll_actions.removeAllViews();
+            fbl_actions.removeAllViews();
             tv_name.setText(track.getName());
             if(manual) {
                 tv_desc.setText(context.getString(R.string.description_track_manual, track.getFasPolicies(), track.getLibPolicies()));
-                ll_actions.setVisibility(View.GONE);
+                fbl_actions.setVisibility(View.GONE);
             } else {
                 tv_desc.setText(context.getString(R.string.description_track, track.getFasPolicies(), track.getLibPolicies()));
-                ll_actions.setVisibility(View.VISIBLE);
+                fbl_actions.setVisibility(View.VISIBLE);
 
                 int width_and_height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, context.getResources().getDisplayMetrics());
 
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width_and_height, width_and_height);
+                FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(width_and_height, width_and_height);
                 params.rightMargin = 40;
 
                 int[] actions = track.getActions();
@@ -110,7 +111,7 @@ public class CustomTracksRecyclerViewAdapter extends RecyclerView.Adapter<Custom
                             icon_action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.special_election));
                     }
 
-                    ll_actions.addView(icon_action);
+                    fbl_actions.addView(icon_action);
                 }
             }
 
