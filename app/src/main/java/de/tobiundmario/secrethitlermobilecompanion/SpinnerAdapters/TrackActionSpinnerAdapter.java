@@ -33,7 +33,7 @@ public class TrackActionSpinnerAdapter extends BaseAdapter {
         //No Action
         titles.add(c.getString(R.string.title_noAction));
         descriptions.add(c.getString(R.string.description_noAction));
-        icons.add(ContextCompat.getDrawable(c, R.drawable.ic_baseline_cancel_24));
+        icons.add(ContextCompat.getDrawable(c, R.drawable.ic_cancel));
 
         //Execution
         titles.add(c.getString(R.string.title_execution));

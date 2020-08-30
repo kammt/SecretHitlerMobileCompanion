@@ -96,7 +96,7 @@ public class CustomTracksRecyclerViewAdapter extends RecyclerView.Adapter<Custom
 
                     switch (action) {
                         case FascistTrack.NO_POWER:
-                            icon_action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_baseline_cancel_24));
+                            icon_action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cancel));
                             break;
                         case FascistTrack.DECK_PEEK:
                             icon_action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.policy_peek));

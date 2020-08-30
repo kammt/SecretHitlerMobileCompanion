@@ -511,7 +511,7 @@ public class GameFragment extends Fragment {
             }
 
             ColorStateList colorStopServer = ColorStateList.valueOf(context.getColor(R.color.stop_server));
-            fab_toggle_server.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_baseline_stop_24));
+            fab_toggle_server.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_stop));
             fab_toggle_server.setBackgroundTintList(colorStopServer);
 
         } else {
@@ -529,7 +529,7 @@ public class GameFragment extends Fragment {
             startFABAnimation(false);
 
             ColorStateList colorStartServer = ColorStateList.valueOf(context.getColor(R.color.start_server));
-            fab_toggle_server.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_baseline_play_arrow_24));
+            fab_toggle_server.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_start));
             fab_toggle_server.setBackgroundTintList(colorStartServer);
         }
     }

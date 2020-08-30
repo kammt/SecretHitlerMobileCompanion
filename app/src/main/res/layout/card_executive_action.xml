@@ -39,7 +39,7 @@
             app:layout_constraintHorizontal_bias="0.86"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_baseline_how_to_vote_24" />
+            app:srcCompat="@drawable/ic_legislative_session" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline2"

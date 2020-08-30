@@ -55,7 +55,7 @@
         app:fabSize="mini"
         app:layout_constraintEnd_toStartOf="@+id/guideline6"
         app:layout_constraintTop_toBottomOf="@+id/img_qr"
-        app:srcCompat="@drawable/ic_baseline_share_24" />
+        app:srcCompat="@drawable/ic_sharexml" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_copy_address"
@@ -70,7 +70,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline7"
         app:layout_constraintTop_toBottomOf="@+id/img_qr"
-        app:srcCompat="@drawable/ic_baseline_file_copy_24" />
+        app:srcCompat="@drawable/ic_copy" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_toggle_server"
@@ -84,7 +84,7 @@
         app:layout_constraintEnd_toStartOf="@+id/fab_copy_address"
         app:layout_constraintStart_toEndOf="@+id/fab_share"
         app:layout_constraintTop_toBottomOf="@+id/img_qr"
-        app:srcCompat="@drawable/ic_baseline_stop_24" />
+        app:srcCompat="@drawable/ic_stop" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline6"
