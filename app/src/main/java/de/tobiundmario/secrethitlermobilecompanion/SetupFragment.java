@@ -2,7 +2,6 @@ package de.tobiundmario.secrethitlermobilecompanion;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +84,12 @@ public class SetupFragment extends Fragment {
         //Resetting values in case there has been a setup before which was cancelled
         PlayerList.initialise(playerCardList, context);
 
+        //Resetting view visibility
+        container_settings.setVisibility(View.GONE);
+        //Resetting buttons
+        btn_setup_forward.setOnClickListener(listener_forward_players);
         btn_setup_forward.setText(context.getString(R.string.dialog_mismatching_claims_btn_continue));
+        btn_setup_back.setOnClickListener(listener_backward_players);
 
         container_setup_buttons.setVisibility(View.VISIBLE);
         container_new_player.setVisibility(View.VISIBLE);
@@ -370,18 +374,6 @@ public class SetupFragment extends Fragment {
                 GameLog.executionSounds = sw_sounds_execution.isChecked();
 
                 GameLog.server = sw_server.isChecked();
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Resetting view visibility
-                        container_new_player.setVisibility(View.VISIBLE);
-                        container_settings.setVisibility(View.GONE);
-                        //Resetting buttons
-                        btn_setup_forward.setOnClickListener(listener_forward_players);
-                        btn_setup_back.setOnClickListener(listener_backward_players);
-                    }
-                }, 1000);
 
                 ((MainActivity) context).replaceFragment(MainActivity.game, true);
             }
