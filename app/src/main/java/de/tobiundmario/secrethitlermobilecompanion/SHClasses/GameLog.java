@@ -2,6 +2,7 @@ package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -29,7 +30,10 @@ import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.EventCardRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.ModifiedDefaultItemAnimator;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutiveAction;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LoyaltyInvestigationEvent;
@@ -115,7 +119,7 @@ public class GameLog {
      * because of the edit etc.
      * @param event The event that just left the setup phase
      */
-    public static void notifySetupPhaseLeft(GameEvent event) {
+    public static void notifySetupPhaseLeft(@NonNull GameEvent event) {
         int position;
 
         //We have to differentiate between two separate scenarios. If the event left the Editing phase, we want to change the JSON data at a specific position. If it left setup phase, we just want to add it to the array
@@ -135,7 +139,8 @@ public class GameLog {
 
             position = eventList.indexOf(event);
             try {
-                arr.put(event.getJSON());
+                if(position != eventList.size() - 1) SharedPreferencesManager.addJSONObjectToArray(event.getJSON(), arr, position);
+                else arr.put(event.getJSON());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -157,55 +162,17 @@ public class GameLog {
         }
     }
 
-    /**
-     * Removes an Event and undoes changes made by the event e.g. un-setting a player as dead
-     * @param event the removed event
-     */
-    public static void remove(GameEvent event) {
-        int position = eventList.indexOf(event);
-        if(!event.isSetup) arr.remove(eventList.indexOf(event));
-        eventList.remove(position);
-        cardListAdapter.notifyItemRemoved(position);
-
-        if(event.getClass() == ExecutionEvent.class && !event.isSetup) ((ExecutionEvent) event).resetOnRemoval();
-        if(event.getClass() == LoyaltyInvestigationEvent.class && !event.isSetup) ((LoyaltyInvestigationEvent) event).resetOnRemoval();
-        if(event.getClass() == LegislativeSession.class && !event.isSetup) {
-            reSetSessionNumber();
-            processLegislativeSession((LegislativeSession) event, true);
-        }
-    }
 
     /**
-     * Re-adds the removed event. Do not use this function for adding new events!
-     * @param event The prior removed event
-     * @param oldPosition The position that it had previously
+     * Adds an event into the GameLog
+     * @param event the event to be added
      */
-    public static void undoRemoval(GameEvent event, int oldPosition) {
-        try {
-            SharedPreferencesManager.addJSONObjectToArray(event.getJSON(), arr, oldPosition);
-        } catch (JSONException e) {
-            e.printStackTrace();
+    public static void addEvent(@NonNull GameEvent event) {
+        if(event.isSetup && eventList.size() > 0 && eventList.get(eventList.size() - 1).isSetup) {
+            CardDialog.showMessageDialog(c, c.getString(R.string.title_warning), c.getString(R.string.dialog_message_duplicate_event_creation), c.getString(R.string.btn_ok), null, null, null);
+            return;
         }
-        eventList.add(oldPosition, event);
-        blurEventsInvolvingHiddenPlayers(PlayerList.getplayerCardRecyclerViewAdapter().getHiddenPlayers()); //Re-calling this function since a new item was added
 
-        cardListAdapter.notifyItemInserted(oldPosition);
-
-        if(event.getClass() == ExecutionEvent.class && !event.isSetup) ((ExecutionEvent) event).undoRemoval();
-        if(event.getClass() == LoyaltyInvestigationEvent.class && !event.isSetup) ((LoyaltyInvestigationEvent) event).undoRemoval();
-        if(event.getClass() == LegislativeSession.class && !event.isSetup) {
-            reSetSessionNumber();
-            processLegislativeSession((LegislativeSession) event, false);
-        }
-    }
-
-    public static void setGameStarted(boolean isGameStarted) {
-        gameStarted = isGameStarted;
-        swipeEnabled = isGameStarted;
-        if(isGameStarted) setupSwipeToDelete();
-    }
-
-    public static void addEvent(GameEvent event) {
         eventList.add(event);
         cardListAdapter.notifyItemInserted(eventList.size() - 1);
         try {
@@ -222,6 +189,77 @@ public class GameLog {
         if(event.isSetup) cardList.smoothScrollToPosition(eventList.size() - 1);
     }
 
+
+    /**
+     * Removes an Event and undoes changes made by the event e.g. un-setting a player as dead
+     * @param event the removed event
+     */
+    public static void remove(GameEvent event) {
+        if(event instanceof ExecutiveAction) {
+            LegislativeSession legislativeSession = ((ExecutiveAction) event).getLinkedLegislativeSession();
+            if(legislativeSession != null && eventList.indexOf(legislativeSession) != -1) {
+                remove(legislativeSession);
+                return;
+            }
+        }
+
+        int position = eventList.indexOf(event);
+        if(!event.isSetup) arr.remove(position);
+        eventList.remove(position);
+        cardListAdapter.notifyItemRemoved(position);
+
+        if(event instanceof ExecutionEvent && !event.isSetup) ((ExecutionEvent) event).resetOnRemoval();
+        if(event instanceof LoyaltyInvestigationEvent && !event.isSetup) ((LoyaltyInvestigationEvent) event).resetOnRemoval();
+
+        if(event instanceof LegislativeSession && !event.isSetup) {
+            reSetSessionNumber();
+            processLegislativeSession((LegislativeSession) event, true);
+
+            GameEvent presidentAction = ((LegislativeSession) event).getPresidentAction();
+            if(presidentAction != null) remove(presidentAction);
+            if(presidentAction instanceof DeckShuffledEvent) {
+                if (electionTracker == 0) { //This Legislative Session created a DeckShuffledEvent. Thus we have to reset the electionTracker integer
+                    electionTracker = gameTrack.getElectionTrackerLength() - 1;
+                } else electionTracker--;
+            }
+        }
+    }
+
+    /**
+     * Re-adds the removed event. Do not use this function for adding new events!
+     * @param event The prior removed event
+     * @param oldPosition The position that it had previously
+     */
+    public static void undoRemoval(@NonNull GameEvent event, int oldPosition) {
+        try {
+            SharedPreferencesManager.addJSONObjectToArray(event.getJSON(), arr, oldPosition);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        eventList.add(oldPosition, event);
+        blurEventsInvolvingHiddenPlayers(PlayerList.getplayerCardRecyclerViewAdapter().getHiddenPlayers()); //Re-calling this function since a new item was added
+
+        cardListAdapter.notifyItemInserted(oldPosition);
+
+        if(event instanceof ExecutionEvent && !event.isSetup) ((ExecutionEvent) event).undoRemoval();
+        if(event instanceof LoyaltyInvestigationEvent && !event.isSetup) ((LoyaltyInvestigationEvent) event).undoRemoval();
+        if(event instanceof LegislativeSession && !event.isSetup) {
+            reSetSessionNumber();
+            processLegislativeSession((LegislativeSession) event, false);
+
+            GameEvent presidentAction = ((LegislativeSession) event).getPresidentAction();
+            if(presidentAction != null) {
+                undoRemoval(presidentAction, oldPosition + 1);
+            }
+        }
+    }
+
+    public static void setGameStarted(boolean isGameStarted) {
+        gameStarted = isGameStarted;
+        swipeEnabled = isGameStarted;
+        if(isGameStarted) setupSwipeToDelete();
+    }
+
     public static void blurEventsInvolvingHiddenPlayers(ArrayList<String> hiddenPlayers) {
         ArrayList<Integer> cardIndexesToBlur = new ArrayList<>();
 
@@ -233,7 +271,6 @@ public class GameLog {
         }
         hiddenEventIndexes = cardIndexesToBlur; //Update the static ArrayList, making it accessible to the RecyclerViewAdapter. When rendering a view (which was null before), it will look up if it has to be blurred or not
         cardListAdapter.notifyDataSetChanged();
-        //PlayerList.getPlayerRecyclerViewAdapter().notifyDataSetChanged();
     }
 
     /**
@@ -249,12 +286,14 @@ public class GameLog {
         if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_FAILED) {
             if(gameTrack.isManualMode()) return;
 
-            if(removed) electionTracker--;
+            if(removed) return;
             else {
                 electionTracker++;
                 if(electionTracker == gameTrack.getElectionTrackerLength()) {
                     electionTracker = 0;
-                    if(gameStarted) addEvent(new TopPolicyPlayedEvent(c));
+                    TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(c);
+                    legislativeSession.setPresidentAction(topPolicyPlayedEvent);
+                    if(gameStarted) addEvent(topPolicyPlayedEvent);
                 }
             }
             return;
@@ -272,7 +311,7 @@ public class GameLog {
 
             if (fascistPolicies == gameTrack.getFasPolicies()) {
                 ((MainActivity) c).fragment_game.displayEndGameOptions();
-            } else if(gameStarted) addTrackAction(legislativeSession.getVoteEvent().getPresidentName()); //This method could also be called when a game is restored. In that case, we do not want to add new events
+            } else if(gameStarted && legislativeSession.getPresidentAction() == null) addTrackAction(legislativeSession); //This method could also be called when a game is restored. In that case, we do not want to add new events
 
         } else {
             liberalPolicies++;
@@ -284,23 +323,37 @@ public class GameLog {
 
     }
 
-    private static void addTrackAction(String presidentName) {
+    /**
+     * Is called when a fascist policy is played. It creates an action, if necessary
+     * @param session The legislative session causing this
+     */
+    private static void addTrackAction(LegislativeSession session) {
         if(gameTrack.isManualMode()) return; //If it is set to manual mode, we abort the function
+        String presidentName = session.getVoteEvent().getPresidentName();
+
+        ExecutiveAction executiveAction = null;
 
         switch (gameTrack.getAction(fascistPolicies - 1)) {
             case FascistTrack.NO_POWER:
                 break;
             case FascistTrack.DECK_PEEK:
-                addEvent(new PolicyPeekEvent(presidentName, c));
+                executiveAction = new PolicyPeekEvent(presidentName, c);
                 break;
             case FascistTrack.EXECUTION:
-                addEvent(new ExecutionEvent(presidentName, c));
+                executiveAction = new ExecutionEvent(presidentName, c);
                 break;
             case FascistTrack.INVESTIGATION:
-                addEvent(new LoyaltyInvestigationEvent(presidentName, c));
+                executiveAction = new LoyaltyInvestigationEvent(presidentName, c);
                 break;
             case FascistTrack.SPECIAL_ELECTION:
-                addEvent(new SpecialElectionEvent(presidentName, c));
+                executiveAction = new SpecialElectionEvent(presidentName, c);
+        }
+        if(executiveAction != null) {
+            //Link both events together
+            executiveAction.setLinkedLegislativeSession(session);
+            session.setPresidentAction(executiveAction);
+            //Add the new event
+            addEvent(executiveAction);
         }
     }
 
@@ -335,37 +388,51 @@ public class GameLog {
                 final int position = viewHolder.getAdapterPosition();
                 final GameEvent event = eventList.get(position);
 
-                remove(event);
-                Snackbar snackbar = Snackbar.make(cardList, c.getString(R.string.snackbar_GameEvent_removed_message), BaseTransientBottomBar.LENGTH_LONG);
+                //Firstly, check if it is allowed to be removed
+                if(gameTrack.isManualMode() || position == eventList.size() - 1 || event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() == legSessionNo - 1) {
+                    remove(event);
+                    Snackbar snackbar = Snackbar.make(cardList, c.getString(R.string.snackbar_GameEvent_removed_message), BaseTransientBottomBar.LENGTH_LONG);
 
-                snackbar.setAction(c.getString(R.string.undo), new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        undoRemoval(event, position);
-                    }
-                }).show();
-
-                snackbar.addCallback(new Snackbar.Callback() {
-                    @Override
-                    public void onDismissed(Snackbar transientBottomBar, int e) {
-                        if (e == 2) {
-                            JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.EVENT_DELETE));
-                            try {
-                                backupToCache();
-                            } catch (IOException | JSONException ex) {
-                                ex.printStackTrace();
+                    snackbar.setAction(c.getString(R.string.undo), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(event instanceof ExecutiveAction) {
+                                LegislativeSession legislativeSession = ((ExecutiveAction) event).getLinkedLegislativeSession();
+                                if(legislativeSession != null) {
+                                    undoRemoval(legislativeSession, position - 1);
+                                    return;
+                                }
                             }
+                            undoRemoval(event, position);
                         }
+                    }).show();
 
-                        super.onDismissed(transientBottomBar, e);
-                    }
-                });
+                    snackbar.addCallback(new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar transientBottomBar, int e) {
+                            if (e == 2) {
+                                JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.EVENT_DELETE));
+                                try {
+                                    backupToCache();
+                                } catch (IOException | JSONException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+
+                            super.onDismissed(transientBottomBar, e);
+                        }
+                    });
+                } else {
+                    cardListAdapter.notifyItemChanged(position);
+                    Toast.makeText(c, c.getString(R.string.toast_message_deletion_disabled), Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
             public boolean isItemViewSwipeEnabled() {
                 return swipeEnabled;
             }
+
         };
 
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(cardList);

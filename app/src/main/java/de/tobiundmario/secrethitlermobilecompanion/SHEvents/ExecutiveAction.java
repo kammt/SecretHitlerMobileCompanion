@@ -18,6 +18,16 @@ public abstract class ExecutiveAction extends GameEvent {
     public abstract String getInfoText();
     public abstract Drawable getDrawable();
 
+    private LegislativeSession linkedLegislativeSession;
+
+    public LegislativeSession getLinkedLegislativeSession() {
+        return linkedLegislativeSession;
+    }
+
+    public void setLinkedLegislativeSession(LegislativeSession linkedLegislativeSession) {
+        this.linkedLegislativeSession = linkedLegislativeSession;
+    }
+
     public void initialiseCard(CardView cardLayout) {
         TextView tvInfo = cardLayout.findViewById(R.id.infoText);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

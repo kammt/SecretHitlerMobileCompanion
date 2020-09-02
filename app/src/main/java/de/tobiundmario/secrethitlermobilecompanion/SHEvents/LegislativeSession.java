@@ -47,6 +47,8 @@ public class LegislativeSession extends GameEvent {
     private Context c;
     private static ColorStateList oldcolors;
 
+    private GameEvent presidentAction;
+
     //Defining the OnClickListeners outside of the function to call them separately in the setupEditCard() function
     private View.OnClickListener iv_fascistListener, iv_liberalListener;
 
@@ -60,6 +62,14 @@ public class LegislativeSession extends GameEvent {
     public LegislativeSession(Context context) {
         isSetup = true;
         c = context;
+    }
+
+    public void setPresidentAction(GameEvent presidentAction) {
+        this.presidentAction = presidentAction;
+    }
+
+    public GameEvent getPresidentAction() {
+        return presidentAction;
     }
 
     public VoteEvent getVoteEvent() {

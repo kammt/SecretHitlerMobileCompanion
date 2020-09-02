@@ -136,7 +136,7 @@
     <string name="no_track_selected_message">To continue, select a fascist track from the list below or create a custom one.</string>
     <string name="title_sound_settings">Sound Settings:</string>
     <string name="title_server_settings">Server Settings:</string>
-    <string name="server_explanation_setup">When using a server, other players in your WiFi-network have access to the same GameLog as you do via their web browser. However, only you can create events and play game sounds. The server can be started and stopped at any time.</string>
+    <string name="server_explanation_setup">This will start a basic web server on your phone. When using a server, other players in your WiFi-network have access to the same GameLog as you do via their web browser. However, only you can create events and play game sounds. The server can be started and stopped at any time.</string>
     <string name="switch_start_server_setup">Start Server</string>
     <string name="start_game">Start Game</string>
     <string name="note_sounds_settings">Note: all used sounds are taken from the online game SecretHitler.io</string>
@@ -145,4 +145,5 @@
     <string name="et_titie_electiontrackerLength">Election Tracker Length:</string>
     <string name="title_warning">Warning</string>
     <string name="dialog_message_duplicate_event_creation">Another event is already being created. Please either finish creating the event or cancel it.</string>
+    <string name="toast_message_deletion_disabled">When manual mode is disabled, you can only delete the last event in the list!</string>
 </resources>
