@@ -28,4 +28,6 @@ This app is based on the board game Secret Hitler. However, do keep in mind that
 Sound files used in this project are licensed under <a href="https://creativecommons.org/publicdomain/zero/1.0/">zero (cc0)</a>, <a href="https://creativecommons.org/licenses/by/3.0/">by</a>, and <a href="https://creativecommons.org/licenses/by-nc/3.0/">by-nc</a>. 
 
 Secret Hitler is designed by Max Temkin (Cards Against Humanity, Humans vs. Zombies) Mike Boxleiter (Solipskier, TouchTone), Tommy Maranges (Philosophy Bro) and illustrated by Mackenzie Schubert (Letter Tycoon, Penny Press).
-The game is licensed as per the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International license (See the <a href="LICENSE">LICENSE file</a> for more information).
+The game is licensed as per the <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International license</a>
+
+This App is licensed under the GPLv3 license. (See the <a href="LICENSE">LICENSE file</a> for more information).
