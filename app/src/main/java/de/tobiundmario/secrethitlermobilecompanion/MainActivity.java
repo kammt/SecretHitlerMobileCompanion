@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
 
         currentFragmentContainer = container_main;
 
+        fragment_setup.initialiseLayout();
+
         GameLog.setContext(this);
         checkForBackups();
     }
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             case setup:
                 container_setup.setVisibility(View.VISIBLE);
                 currentFragmentContainer = container_setup;
-                fragment_setup.start();
+                fragment_setup.startSetup();
                 break;
         }
 

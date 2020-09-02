@@ -23,7 +23,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
@@ -66,8 +65,6 @@ import static android.content.Context.WIFI_SERVICE;
 public class GameFragment extends Fragment {
 
     private Context context;
-
-    private ViewStub viewStub;
 
     RecyclerView cardList, playerCardList;
 

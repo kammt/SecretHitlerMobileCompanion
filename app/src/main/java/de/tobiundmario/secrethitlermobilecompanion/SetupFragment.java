@@ -75,11 +75,6 @@ public class SetupFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_setup, container, false);
     }
 
-    public void start() {
-        initialiseLayout(getView());
-        startSetup();
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -105,7 +100,9 @@ public class SetupFragment extends Fragment {
         btn_setup_back.callOnClick();
     }
 
-    public void initialiseLayout(final View fragmentLayout) {
+    public void initialiseLayout() {
+        final View fragmentLayout = getView();
+
         btn_setup_back = fragmentLayout.findViewById(R.id.btn_setup_back);
         btn_setup_forward = fragmentLayout.findViewById(R.id.btn_setup_forward);
         container_setup_buttons = fragmentLayout.findViewById(R.id.setup_buttons);
