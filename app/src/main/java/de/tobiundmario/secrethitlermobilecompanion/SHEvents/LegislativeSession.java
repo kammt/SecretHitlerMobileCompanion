@@ -208,20 +208,23 @@ public class LegislativeSession extends GameEvent {
                         CardDialog.showMessageDialog(c, c.getString(R.string.dialog_mismatching_claims_title), c.getString(R.string.dialog_mismatching_claims_desc), c.getString(R.string.dialog_mismatching_claims_btn_continue), new Runnable() {
                             @Override
                             public void run() {
-                                isSetup = false;
-                                GameLog.notifySetupPhaseLeft(LegislativeSession.this);
-                                playSound();
+                                leaveSetupPhase();
                             }
                         }, c.getString(R.string.dialog_mismatching_claims_btn_cancel), null);
                     } else {
-                        isSetup = false;
-                        GameLog.notifySetupPhaseLeft(LegislativeSession.this);
-                        playSound();
+                        leaveSetupPhase();
                     }
 
                 }
             }
         });
+    }
+
+    private void leaveSetupPhase() {
+        isSetup = false;
+        if(sessionNumber == 0) sessionNumber = GameLog.legSessionNo++;
+        GameLog.notifySetupPhaseLeft(LegislativeSession.this);
+        playSound();
     }
 
     @Override
@@ -281,8 +284,6 @@ public class LegislativeSession extends GameEvent {
         //Set the president and chancellor names. This will always be done, no matter what outcome the event was
         presName.setText(voteEvent.getPresidentName());
         chancName.setText(voteEvent.getChancellorName());
-
-        if(sessionNumber == 0) sessionNumber = GameLog.legSessionNo++;
 
         if(voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED) {
             title.setText(c.getString(R.string.legislative_session)+ " #" + sessionNumber + c.getString(R.string.rejected));
