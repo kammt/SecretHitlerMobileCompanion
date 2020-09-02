@@ -22,3 +22,9 @@ An Android App intended to make the board game experience of Secret Hitler more 
 - LeakCanary (https://github.com/square/leakcanary, licensed under the Apache 2.0 license)
 - FlexboxLayout (https://github.com/google/flexbox-layout, licensed under the Apache 2.0 license)
 - Additionally, image and sound files have been used from the SecretHitlerIO project (https://github.com/cozuya/secret-hitler, licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License)
+
+# License and Attribution
+This app is based on the board game Secret Hitler. However, do keep in mind that this app is not intended to replace the game but rather extend on it to make the experience easier and more fun for all players.
+Secret Hitler is designed by Max Temkin (Cards Against Humanity, Humans vs. Zombies) Mike Boxleiter (Solipskier, TouchTone), Tommy Maranges (Philosophy Bro) and illustrated by Mackenzie Schubert (Letter Tycoon, Penny Press).
+
+This game is licensed as per the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International license (See the <a href="LICENSE">LICENSE file</a> for more information).
