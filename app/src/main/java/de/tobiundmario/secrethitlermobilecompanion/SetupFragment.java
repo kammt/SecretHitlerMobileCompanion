@@ -374,9 +374,12 @@ public class SetupFragment extends Fragment {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        //Resetting view visibility from
+                        //Resetting view visibility
                         container_new_player.setVisibility(View.VISIBLE);
                         container_settings.setVisibility(View.GONE);
+                        //Resetting buttons
+                        btn_setup_forward.setOnClickListener(listener_forward_players);
+                        btn_setup_back.setOnClickListener(listener_backward_players);
                     }
                 }, 1000);
 

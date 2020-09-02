@@ -204,6 +204,8 @@ public class LegislativeSession extends GameEvent {
                         claimEvent = new ClaimEvent(presClaim, chancClaim, playedPolicy, vetoed);
                     }
 
+                    //TODO block edit if manual mode is disabled and change would interfere with other events e.g. changing from fascist back to liberal policy when it is not the last event
+
                     if(claimEvent != null && !Claim.doClaimsFit(claimEvent.getPresidentClaim(), claimEvent.getChancellorClaim(), claimEvent.getPlayedPolicy())) {
                         CardDialog.showMessageDialog(c, c.getString(R.string.dialog_mismatching_claims_title), c.getString(R.string.dialog_mismatching_claims_desc), c.getString(R.string.dialog_mismatching_claims_btn_continue), new Runnable() {
                             @Override
