@@ -232,7 +232,7 @@ public class GameLog {
      */
     public static void undoRemoval(@NonNull GameEvent event, int oldPosition) {
         try {
-            SharedPreferencesManager.addJSONObjectToArray(event.getJSON(), arr, oldPosition);
+            if(!event.isSetup) SharedPreferencesManager.addJSONObjectToArray(event.getJSON(), arr, oldPosition);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -411,7 +411,21 @@ public class GameLog {
                         @Override
                         public void onDismissed(Snackbar transientBottomBar, int e) {
                             if (e == 2) {
-                                JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.EVENT_DELETE));
+                                if(event instanceof ExecutiveAction) {
+                                    LegislativeSession legislativeSession = ((ExecutiveAction) event).getLinkedLegislativeSession();
+                                    if(legislativeSession != null) {
+                                        JSONManager.addGameLogChange(new GameLogChange(legislativeSession, GameLogChange.EVENT_DELETE));
+                                        JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.EVENT_DELETE));
+                                    }
+                                } else if (event instanceof LegislativeSession) {
+                                    GameEvent presidentAction = ((LegislativeSession) event).getPresidentAction();
+                                    if(presidentAction != null && !presidentAction.isSetup) {
+                                        JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.EVENT_DELETE));
+                                        JSONManager.addGameLogChange(new GameLogChange(presidentAction, GameLogChange.EVENT_DELETE));
+                                    }
+
+                                } else JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.EVENT_DELETE));
+
                                 try {
                                     backupToCache();
                                 } catch (IOException | JSONException ex) {
