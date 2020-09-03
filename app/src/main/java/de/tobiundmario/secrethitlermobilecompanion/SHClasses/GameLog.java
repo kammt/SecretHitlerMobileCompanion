@@ -203,6 +203,14 @@ public class GameLog {
             }
         }
 
+        if(event instanceof TopPolicyPlayedEvent) {
+            LegislativeSession legislativeSession = ((TopPolicyPlayedEvent) event).getLinkedLegislativeSession();
+            if(legislativeSession != null && eventList.indexOf(legislativeSession) != -1) {
+                remove(legislativeSession);
+                return;
+            }
+        }
+
         int position = eventList.indexOf(event);
         if(!event.isSetup) arr.remove(position);
         eventList.remove(position);
@@ -291,9 +299,17 @@ public class GameLog {
                 electionTracker++;
                 if(electionTracker == gameTrack.getElectionTrackerLength()) {
                     electionTracker = 0;
-                    TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(c);
-                    legislativeSession.setPresidentAction(topPolicyPlayedEvent);
-                    if(gameStarted) addEvent(topPolicyPlayedEvent);
+
+                    if(gameStarted && legislativeSession.getPresidentAction() == null) {
+                        TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(c);
+
+                        //Link them together
+                        legislativeSession.setPresidentAction(topPolicyPlayedEvent);
+                        topPolicyPlayedEvent.setLinkedLegislativeSession(legislativeSession);
+
+                        //Add it
+                        addEvent(topPolicyPlayedEvent);
+                    }
                 }
             }
             return;
@@ -402,6 +418,12 @@ public class GameLog {
                                     undoRemoval(legislativeSession, position - 1);
                                     return;
                                 }
+                            } else if(event instanceof TopPolicyPlayedEvent) {
+                                LegislativeSession legislativeSession = ((TopPolicyPlayedEvent) event).getLinkedLegislativeSession();
+                                if(legislativeSession != null) {
+                                    undoRemoval(legislativeSession, position - 1);
+                                    return;
+                                }
                             }
                             undoRemoval(event, position);
                         }
@@ -413,6 +435,12 @@ public class GameLog {
                             if (e == 2) {
                                 if(event instanceof ExecutiveAction) {
                                     LegislativeSession legislativeSession = ((ExecutiveAction) event).getLinkedLegislativeSession();
+                                    if(legislativeSession != null) {
+                                        JSONManager.addGameLogChange(new GameLogChange(legislativeSession, GameLogChange.EVENT_DELETE));
+                                        JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.EVENT_DELETE));
+                                    }
+                                } else if(event instanceof TopPolicyPlayedEvent) {
+                                    LegislativeSession legislativeSession = ((TopPolicyPlayedEvent) event).getLinkedLegislativeSession();
                                     if(legislativeSession != null) {
                                         JSONManager.addGameLogChange(new GameLogChange(legislativeSession, GameLogChange.EVENT_DELETE));
                                         JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.EVENT_DELETE));

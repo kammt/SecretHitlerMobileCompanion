@@ -26,6 +26,8 @@ public class TopPolicyPlayedEvent extends GameEvent {
     private int policyPlayed;
     private Context c;
 
+    private LegislativeSession linkedLegislativeSession;
+
     public TopPolicyPlayedEvent(int policyPlayed, Context c) {
         this.c = c;
         this.policyPlayed = policyPlayed;
@@ -35,6 +37,14 @@ public class TopPolicyPlayedEvent extends GameEvent {
     public TopPolicyPlayedEvent(Context c) {
         this.c = c;
         isSetup = true;
+    }
+
+    public LegislativeSession getLinkedLegislativeSession() {
+        return linkedLegislativeSession;
+    }
+
+    public void setLinkedLegislativeSession(LegislativeSession linkedLegislativeSession) {
+        this.linkedLegislativeSession = linkedLegislativeSession;
     }
 
     private void playSound() {

@@ -83,6 +83,9 @@ public class SetupFragment extends Fragment {
     public void startSetup() {
         //Resetting values in case there has been a setup before which was cancelled
         PlayerList.initialise(playerCardList, context);
+        FascistTrackSelectionManager.selectedTrackIndex = -1;
+        FascistTrackSelectionManager.recommendedTrackIndex = -1;
+        FascistTrackSelectionManager.previousSelection = null;
 
         //Resetting view visibility
         container_settings.setVisibility(View.GONE);
