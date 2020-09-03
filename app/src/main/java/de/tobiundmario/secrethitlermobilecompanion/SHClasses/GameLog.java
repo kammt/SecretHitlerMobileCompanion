@@ -410,8 +410,14 @@ public class GameLog {
                 final int position = viewHolder.getAdapterPosition();
                 final GameEvent event = eventList.get(position);
 
-                //Firstly, check if it is allowed to be removed
-                if(gameTrack.isManualMode() || position == eventList.size() - 1 || event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() == legSessionNo - 1) {
+                /*
+                Firstly, check if it is allowed to be removed
+                It is allowed to be removed if
+                - Manual mode is enabled
+                - it is the last event
+                - It is the last Legislative Session in the list with no DeckShuffledEvent in front of it
+                 */
+                if(gameTrack.isManualMode() || position == eventList.size() - 1 || event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() == legSessionNo - 1 && !(eventList.get(eventList.size() - 1) instanceof DeckShuffledEvent)) {
                     remove(event);
                     Snackbar snackbar = Snackbar.make(cardList, c.getString(R.string.snackbar_GameEvent_removed_message), BaseTransientBottomBar.LENGTH_LONG);
 
@@ -630,8 +636,27 @@ public class GameLog {
         for(int i = 0; i < plays.length(); i++) {
             GameEvent event = JSONManager.createGameEventFromJSON((JSONObject) plays.get(i), c);
             restoredEventList.add(event);
-            if(event.getClass() == LegislativeSession.class) {
+            if(event instanceof LegislativeSession) {
                 processLegislativeSession((LegislativeSession) event, false);
+            }
+
+            //We have to link Legislative Session and Executive Action back manually, as this is not saved in JSON
+            //To do this, we check if the event before the Executive Action / TopPolicyPlayedEvent is a Legislative Session. If so, they are linked together
+            if(!gameTrack.isManualMode() && i > 0) {
+                GameEvent priorEvent = restoredEventList.get(restoredEventList.size() - 2);
+                if(priorEvent instanceof LegislativeSession) {
+                    LegislativeSession legislativeSession = (LegislativeSession) priorEvent;
+
+                    if (event instanceof ExecutiveAction) {
+                        ((ExecutiveAction) event).setLinkedLegislativeSession(legislativeSession);
+                        legislativeSession.setPresidentAction(event);
+                    }
+
+                    if (event instanceof TopPolicyPlayedEvent) {
+                        ((TopPolicyPlayedEvent) event).setLinkedLegislativeSession(legislativeSession);
+                        legislativeSession.setPresidentAction(event);
+                    }
+                }
             }
         }
     }
