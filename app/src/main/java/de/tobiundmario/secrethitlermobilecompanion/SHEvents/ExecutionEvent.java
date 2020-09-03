@@ -82,6 +82,8 @@ public class ExecutionEvent extends ExecutiveAction {
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
 
+        if(presidentName != null) CardSetupHelper.lockPresidentSpinner(presidentName, presSpinner);
+
         final Spinner executedSpinner = cardView.findViewById(R.id.spinner_executed_player);
         executedSpinner.setAdapter(playerListadapter);
         executedSpinner.setSelection(1); //Setting a different item on the executed player spinner so they don't have the same name at the beginning

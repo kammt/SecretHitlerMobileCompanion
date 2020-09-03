@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
@@ -74,6 +75,8 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
+
+        if(presidentName != null) CardSetupHelper.lockPresidentSpinner(presidentName, presSpinner);
 
         final Spinner investigatedSpinner = cardView.findViewById(R.id.spinner_investigated_player);
         investigatedSpinner.setAdapter(playerListadapter);

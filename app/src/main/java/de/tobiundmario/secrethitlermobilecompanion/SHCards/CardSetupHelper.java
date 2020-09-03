@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.core.content.res.ResourcesCompat;
@@ -13,9 +14,16 @@ import java.util.ArrayList;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 
 public class CardSetupHelper {
+    public static void lockPresidentSpinner(String presidentName, Spinner spinner) {
+        int position = PlayerList.getPlayerPosition(presidentName);
+        spinner.setSelection(position);
+        if(!GameLog.gameTrack.isManualMode()) spinner.setEnabled(false);
+    }
+
     public static ArrayAdapter<String> getPlayerNameAdapter(final Context context) {
         return new ArrayAdapter<String>(context,
                 android.R.layout.simple_spinner_item, PlayerList.getAlivePlayerList()) {
