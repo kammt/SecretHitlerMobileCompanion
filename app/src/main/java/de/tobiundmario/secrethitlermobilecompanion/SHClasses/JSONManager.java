@@ -37,6 +37,12 @@ public class JSONManager {
         clientIPs = null;
     }
 
+    public static void initialise() {
+        gameLogChangesMap = new ConcurrentHashMap<GameLogChange, Boolean>();
+        gameLogChanges = gameLogChangesMap.newKeySet();
+        clientIPs = new HashSet<String>();
+    }
+
     public static void setClientIPsSet(HashSet<String> clientIPsIn) {
         clientIPs = clientIPsIn;
     }

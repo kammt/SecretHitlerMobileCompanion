@@ -51,6 +51,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.JSONManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
@@ -133,6 +134,8 @@ public class GameFragment extends Fragment {
         //Destroying the Setup to prevent memory leaks
         FascistTrackSelectionManager.destroy();
         CardDialog.destroy();
+
+        JSONManager.initialise();
 
         View view = getView();
         setupRecyclerViews(view);
