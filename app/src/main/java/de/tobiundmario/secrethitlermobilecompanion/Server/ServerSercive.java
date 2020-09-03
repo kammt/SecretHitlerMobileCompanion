@@ -45,7 +45,6 @@ public class ServerSercive extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
     }
 
     @Override
@@ -68,12 +67,12 @@ public class ServerSercive extends Service {
         Log.v("Server", "URL is " + server.getURL());
 
         //Notify the MainActivity that the Server was started
-        Intent stoppedIntent = new Intent();
-        stoppedIntent.setAction(SERVER_STATE_CHANGED);
-        PendingIntent stoppedPendingIntent =
-                PendingIntent.getBroadcast(this, 0, stoppedIntent, 0);
+        Intent startedIntent = new Intent();
+        startedIntent.setAction(SERVER_STATE_CHANGED);
+        PendingIntent startedPendingIntent =
+                PendingIntent.getBroadcast(this, 0, startedIntent, 0);
         try {
-            stoppedPendingIntent.send();
+            startedPendingIntent.send();
         } catch (PendingIntent.CanceledException e) {
             e.printStackTrace();
         }
@@ -90,7 +89,10 @@ public class ServerSercive extends Service {
     }
 
     public void killSelf() {
-        while(server.isAlive()) server.stop();
+        //Stop the Server
+        while(server.isAlive()) server.stop(); //Sometimes, server.stop() does not do anything and the server keeps running. This workaround works but might not be the best
+
+        //Stop the foregroundService and remove the notification
         stopForeground(true);
 
         //Notify the MainActivity that the Server was killed
