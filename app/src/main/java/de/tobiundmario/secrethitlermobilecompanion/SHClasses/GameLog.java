@@ -31,6 +31,7 @@ import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.EventCardRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.ModifiedDefaultItemAnimator;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutiveAction;
@@ -169,8 +170,13 @@ public class GameLog {
      */
     public static void addEvent(@NonNull GameEvent event) {
         if(event.isSetup && eventList.size() > 0 && eventList.get(eventList.size() - 1).isSetup) {
-            CardDialog.showMessageDialog(c, c.getString(R.string.title_warning), c.getString(R.string.dialog_message_duplicate_event_creation), c.getString(R.string.btn_ok), null, null, null);
-            return;
+            if(event instanceof GameEndCard) {
+                eventList.remove(eventList.size() - 1);
+                cardListAdapter.notifyItemRemoved(eventList.size() - 1);
+            } else {
+                CardDialog.showMessageDialog(c, c.getString(R.string.title_warning), c.getString(R.string.dialog_message_duplicate_event_creation), c.getString(R.string.btn_ok), null, null, null);
+                return;
+            }
         }
 
         eventList.add(event);

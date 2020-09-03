@@ -41,6 +41,18 @@ public class FascistTrackSelectionManager {
     - previousSelection holds the CardView of the previous selection. This is needed as the cardViews of custom tracks are not to be found in the trackCards ArrayList
      */
 
+    public static void destroy() {
+        trackCards = null;
+        fasTracks = null;
+        recommendedCard = null;
+        previousSelection = null;
+    }
+
+    public static void initialise() {
+        trackCards = new ArrayList<>();
+        fasTracks = new ArrayList<>();
+    }
+
     public static void setupOfficialCard(CardView cardView, int trackType, final Context context) {
         TextView title_players = cardView.findViewById(R.id.tv_officialTrack_players);
         ImageView iv_trackImage = cardView.findViewById(R.id.iv_trackDrawable);
@@ -139,7 +151,10 @@ public class FascistTrackSelectionManager {
     }
 
     public static void setupOfficialTrackList(LinearLayout ll_official_tracks, Context c) {
-        if(ll_official_tracks.getChildCount() > 1) return;
+        if(ll_official_tracks.getChildCount() > 1 && fasTracks.size() > 0) return;
+        else if(ll_official_tracks.getChildCount() > 1 && fasTracks.size() == 0) { //In this case, the arrays were cleared to prevent memory leaks. However, the CardViews are still there. Hence, we remove them first
+            while(ll_official_tracks.getChildCount() > 1) ll_official_tracks.removeViewAt(ll_official_tracks.getChildCount() - 1);
+        }
 
         //Adding the official tracks to the LinearLayout
         LayoutInflater inflater = LayoutInflater.from(c);
@@ -164,7 +179,7 @@ public class FascistTrackSelectionManager {
         FascistTrack ft_78 = new FascistTrack();
         ft_78.setActions(new int[] {FascistTrack.NO_POWER, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
         ft_78.setElectionTrackerLength(3);
-        FascistTrackSelectionManager.fasTracks.add(0, ft_78);
+        FascistTrackSelectionManager.fasTracks.add(1, ft_78);
 
         //For 9-10 players
         CardView cv_910 = (CardView) inflater.inflate(R.layout.card_official_track, ll_official_tracks, false);
@@ -175,6 +190,6 @@ public class FascistTrackSelectionManager {
         FascistTrack ft_910 = new FascistTrack();
         ft_910.setActions(new int[] {FascistTrack.INVESTIGATION, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
         ft_910.setElectionTrackerLength(3);
-        FascistTrackSelectionManager.fasTracks.add(0, ft_910);
+        FascistTrackSelectionManager.fasTracks.add(2, ft_910);
     }
 }

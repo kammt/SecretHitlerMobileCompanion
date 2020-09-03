@@ -31,6 +31,12 @@ public class JSONManager {
 
     private static HashSet<String> clientIPs = new HashSet<String>();
 
+    public static void destroy() {
+        gameLogChanges = null;
+        gameLogChangesMap = null;
+        clientIPs = null;
+    }
+
     public static void setClientIPsSet(HashSet<String> clientIPsIn) {
         clientIPs = clientIPsIn;
     }

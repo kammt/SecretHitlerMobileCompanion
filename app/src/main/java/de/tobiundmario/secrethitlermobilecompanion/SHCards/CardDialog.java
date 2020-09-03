@@ -35,6 +35,12 @@ public class CardDialog {
     private static View.OnClickListener listener_create_track = null;
     private static View.OnClickListener listener_backward_two = null;
 
+    public static void destroy() {
+        listener_forward_one = null;
+        listener_create_track = null;
+        listener_backward_two = null;
+    }
+
     public static void showInputDialog (Context c, String title, String hint, String positive, final InputDialogSubmittedListener positiveListener, final String negative, final Runnable negativeListener) {
         final CustomDialog customDialog = createDialog(c, title, null, positive, null, negative, negativeListener, input);
         final Dialog dialog = customDialog.getDialog();

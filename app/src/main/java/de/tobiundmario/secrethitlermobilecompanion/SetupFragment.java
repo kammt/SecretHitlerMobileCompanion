@@ -86,6 +86,9 @@ public class SetupFragment extends Fragment {
         FascistTrackSelectionManager.selectedTrackIndex = -1;
         FascistTrackSelectionManager.recommendedTrackIndex = -1;
         FascistTrackSelectionManager.previousSelection = null;
+        FascistTrackSelectionManager.initialise();
+        FascistTrackSelectionManager.setupOfficialTrackList((LinearLayout) getView().findViewById(R.id.container_official_tracks), context);
+
 
         //Resetting view visibility
         container_settings.setVisibility(View.GONE);
@@ -142,8 +145,6 @@ public class SetupFragment extends Fragment {
                 CardDialog.showTrackCreationDialog(context);
             }
         });
-
-        FascistTrackSelectionManager.setupOfficialTrackList((LinearLayout) fragmentLayout.findViewById(R.id.container_official_tracks), context);
 
         listener_backward_players = new View.OnClickListener() {
             @Override

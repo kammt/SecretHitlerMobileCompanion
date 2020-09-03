@@ -82,6 +82,13 @@ public class Claim {
         }
     }
 
+    /**
+     * Checks if all claims specified in an Legislative session fit together
+     * @param presidentClaim The president's claim
+     * @param chancellorClaim The chancellor's claim
+     * @param playedPolicy The played policy
+     * @return if true the claims match together, false if otherwise
+     */
     public static boolean doClaimsFit(int presidentClaim, int chancellorClaim, int playedPolicy) {
         if (presidentClaim == RRR && chancellorClaim == RR && playedPolicy == FASCIST) return true;
 
@@ -89,7 +96,7 @@ public class Claim {
         else if (presidentClaim == RRB && chancellorClaim == RB) return true; //It doesn't matter what policy is played, not checking
 
         else if (presidentClaim == RBB && chancellorClaim == BB && playedPolicy == LIBERAL) return true;
-        else if (presidentClaim == RBB && chancellorClaim == RB) return true;
+        else if (presidentClaim == RBB && chancellorClaim == RB) return true; //It doesn't matter what policy is played, not checking
 
         else if (presidentClaim == BBB && chancellorClaim == BB && playedPolicy == LIBERAL) return true;
 
@@ -118,8 +125,7 @@ public class Claim {
     }
 
     public static Spanned colorClaim(String claim) {
-        String fascistReplace = claim.replace("R","<font color='#E23A12'>" + "R" + "</font>");
-        String liberalAndFascistReplace = fascistReplace.replace("B","<font color='#387CB3'>" + "B" + "</font>");
+        String liberalAndFascistReplace = claim.replace("B","<font color='#387CB3'>" + "B" + "</font>").replace("R","<font color='#E23A12'>" + "R" + "</font>");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return Html.fromHtml(liberalAndFascistReplace,  Html.FROM_HTML_MODE_LEGACY);
@@ -128,6 +134,11 @@ public class Claim {
         }
     }
 
+    /**
+     * Is used in conjunction with game restoration, as the claims are stored as strings in JSON files (See getClaimStringForJSON() )
+     * @param claimString the string that was saved in JSON
+     * @return the claim as an Integer value
+     */
     public static Integer getClaimInt(String claimString) {
         switch(claimString){
             case "BBB":

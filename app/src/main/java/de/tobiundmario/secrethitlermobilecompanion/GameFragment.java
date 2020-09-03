@@ -47,7 +47,9 @@ import org.json.JSONException;
 
 import java.lang.reflect.InvocationTargetException;
 
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
@@ -128,6 +130,10 @@ public class GameFragment extends Fragment {
     }
 
     public void start() {
+        //Destroying the Setup to prevent memory leaks
+        FascistTrackSelectionManager.destroy();
+        CardDialog.destroy();
+
         View view = getView();
         setupRecyclerViews(view);
         setupBottomMenu(view);
@@ -179,6 +185,8 @@ public class GameFragment extends Fragment {
      */
 
     public void displayEndGameOptions() {
+        GameLog.addEvent(new GameEndCard(context));
+
         //Make the Menu non-functioning
         bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(false);
         bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(false);
@@ -187,8 +195,6 @@ public class GameFragment extends Fragment {
         //Hide the BottomSheets
         bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN);
         bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-        GameLog.addEvent(new GameEndCard(context));
         GameLog.swipeEnabled = false;
     }
 

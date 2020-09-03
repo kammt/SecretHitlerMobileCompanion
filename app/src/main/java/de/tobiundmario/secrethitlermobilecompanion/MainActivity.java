@@ -13,7 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.JSONManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 
 public class MainActivity extends AppCompatActivity {
@@ -135,6 +137,9 @@ public class MainActivity extends AppCompatActivity {
         //These functions set references to MainActivity to null, as not doing this would result in a memory leak
         GameLog.destroy();
         PlayerList.destroy();
+        JSONManager.destroy();
+        FascistTrackSelectionManager.destroy();
+        CardDialog.destroy();
     }
 
     public void checkForBackups() {
