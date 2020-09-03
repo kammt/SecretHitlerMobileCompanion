@@ -333,7 +333,7 @@ public class GameLog {
 
             if (fascistPolicies == gameTrack.getFasPolicies()) {
                 ((MainActivity) c).fragment_game.displayEndGameOptions();
-            } else if(gameStarted && legislativeSession.getPresidentAction() == null) addTrackAction(legislativeSession); //This method could also be called when a game is restored. In that case, we do not want to add new events
+            } else if(gameStarted && legislativeSession.getPresidentAction() == null) addTrackAction(legislativeSession, false); //This method could also be called when a game is restored. In that case, we do not want to add new events
 
         } else {
             liberalPolicies++;
@@ -348,8 +348,9 @@ public class GameLog {
     /**
      * Is called when a fascist policy is played. It creates an action, if necessary
      * @param session The legislative session causing this
+     * @param restorationPhase If true, the track action is added while a game is being restored. It is then added to the restoredEventList ArrayList
      */
-    private static void addTrackAction(LegislativeSession session) {
+    private static void addTrackAction(LegislativeSession session, boolean restorationPhase) {
         if(gameTrack.isManualMode()) return; //If it is set to manual mode, we abort the function
         String presidentName = session.getVoteEvent().getPresidentName();
 
@@ -375,7 +376,8 @@ public class GameLog {
             executiveAction.setLinkedLegislativeSession(session);
             session.setPresidentAction(executiveAction);
             //Add the new event
-            addEvent(executiveAction);
+            if(restorationPhase) restoredEventList.add(executiveAction);
+            else addEvent(executiveAction);
         }
     }
 
@@ -660,6 +662,11 @@ public class GameLog {
                     }
                 }
             }
+        }
+        //When the auto-created executive action was not submitted (=> setup phase left) before the app closed, it will not be included in the backup. To mitigate this, we check if the last event is a LegislativeSession and if so add the track action again
+        GameEvent lastEvent = restoredEventList.get(restoredEventList.size() - 1);
+        if(lastEvent instanceof LegislativeSession && !gameTrack.isManualMode()) {
+            addTrackAction((LegislativeSession) lastEvent, true);
         }
 
         //Finally, apply the settings
