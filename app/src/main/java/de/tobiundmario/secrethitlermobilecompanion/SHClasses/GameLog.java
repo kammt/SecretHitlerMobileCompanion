@@ -609,6 +609,8 @@ public class GameLog {
      * @throws JSONException
      */
     private static void restoreGameFromJSON(JSONObject object) throws JSONException {
+        boolean executionSounds = false, endSounds = false, policySounds = false; //The sound settings will first be written into local variables. This is so that no sounds will be played during the event restoration as they have already been played before
+
         if(object.has("settings")) { //The file also included settings, they will be restored as well
             JSONObject settingsObject = object.getJSONObject("settings");
 
@@ -659,6 +661,11 @@ public class GameLog {
                 }
             }
         }
+
+        //Finally, apply the settings
+        GameLog.endSounds = endSounds;
+        GameLog.executionSounds = executionSounds;
+        GameLog.policySounds = policySounds;
     }
 
 }
