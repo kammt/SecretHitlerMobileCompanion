@@ -99,9 +99,17 @@ public class Server extends NanoHTTPD {
                     return newFixedLengthResponse(Response.Status.OK, "application/json", response);
                 }
                 return newFixedLengthResponse(Response.Status.SERVICE_UNAVAILABLE, "application/json", "");
-            default:
-                return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", getFile("404.html"));
         }
+
+        if(uri.contains("/fonts")) {
+            try {
+                return newFixedLengthResponse(Response.Status.ACCEPTED, getMimeTypeForFile(uri), c.getAssets().open(uri.substring(1)), -1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", getFile("404.html"));
     }
 
     public String getFile(String fileName) {
@@ -164,28 +172,29 @@ public class Server extends NanoHTTPD {
     }
 
     private String getHotspotIPAddress() {
-        String ip = "";
-        try {
-            Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
-                    .getNetworkInterfaces();
-            while (enumNetworkInterfaces.hasMoreElements()) {
-                NetworkInterface networkInterface = enumNetworkInterfaces
-                        .nextElement();
-                Enumeration<InetAddress> enumInetAddress = networkInterface
-                        .getInetAddresses();
-                while (enumInetAddress.hasMoreElements()) {
-                    InetAddress inetAddress = enumInetAddress.nextElement();
+        String deviceIpAddress = "###.###.###.###";
 
-                    if (inetAddress.isSiteLocalAddress()) {
-                        ip += inetAddress.getHostAddress();
+        try {
+            for (Enumeration<NetworkInterface> enumeration = NetworkInterface.getNetworkInterfaces(); enumeration.hasMoreElements();) {
+                NetworkInterface networkInterface = enumeration.nextElement();
+
+                for (Enumeration<InetAddress> enumerationIpAddr = networkInterface.getInetAddresses(); enumerationIpAddr.hasMoreElements();) {
+                    InetAddress inetAddress = enumerationIpAddr.nextElement();
+
+                    if (!inetAddress.isLoopbackAddress() && inetAddress.getAddress().length == 4)
+                    {
+                        deviceIpAddress = inetAddress.getHostAddress();
+
+                        Log.e("Server", "deviceIpAddress: " + deviceIpAddress);
                     }
                 }
             }
-
         } catch (SocketException e) {
+            Log.e("Server", "SocketException:" + e.getMessage());
             e.printStackTrace();
         }
-        return ip;
+
+        return deviceIpAddress;
     }
 
 }
