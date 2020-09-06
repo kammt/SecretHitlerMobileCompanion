@@ -29,6 +29,11 @@ public class SharedPreferencesManager {
     private static OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter;
     private static CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter;
 
+    public static void destroy() {
+        oldPlayerListRecyclerViewAdapter = null;
+        customTracksRecyclerViewAdapter = null;
+    }
+
     private static boolean playerListsTheSame(JSONObject one, JSONObject two) throws JSONException {
         int oneLength = (one.has("name")) ? one.length() - 1 : one.length();
         int twoLength = (two.has("name")) ? two.length() - 1 : two.length();

@@ -134,6 +134,7 @@ public class GameFragment extends Fragment {
         //Destroying the Setup to prevent memory leaks
         FascistTrackSelectionManager.destroy();
         CardDialog.destroy();
+        SharedPreferencesManager.destroy();
 
         JSONManager.initialise();
 
