@@ -97,7 +97,7 @@ public class GameLog {
         c = context;
 
         cardList = recyclerView;
-        cardListAdapter = new EventCardRecyclerViewAdapter(eventList);
+        cardListAdapter = new EventCardRecyclerViewAdapter(eventList, c);
         cardList.setAdapter(cardListAdapter);
         cardList.setItemAnimator(new ModifiedDefaultItemAnimator());
         //((SimpleItemAnimator) cardList.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -194,7 +194,6 @@ public class GameLog {
         if(event.getClass() == LegislativeSession.class && !event.isSetup) processLegislativeSession((LegislativeSession) event, false);
         if(event.isSetup) cardList.smoothScrollToPosition(eventList.size() - 1);
     }
-
 
     /**
      * Removes an Event and undoes changes made by the event e.g. un-setting a player as dead
@@ -398,6 +397,24 @@ public class GameLog {
 
     public static JSONArray getEventsJSON() {
         return arr;
+    }
+
+    /**
+     * Returns all legislative sessions or all beginning at a specific session number
+     * @param startingAt The first session number that should be in the ArrayList
+     * @return An ArrayList containing the requested LegislativeSessions
+     */
+    public static ArrayList<LegislativeSession> getAllLegislativeSessions(int startingAt) {
+        ArrayList<LegislativeSession> sessions = new ArrayList<>();
+
+        for (GameEvent event : eventList) {
+            if(event instanceof LegislativeSession) {
+                LegislativeSession legislativeSession = (LegislativeSession) event;
+                if(legislativeSession.getSessionNumber() >= startingAt) sessions.add(legislativeSession);
+            }
+        }
+
+        return sessions;
     }
 
     public static void setupSwipeToDelete() {

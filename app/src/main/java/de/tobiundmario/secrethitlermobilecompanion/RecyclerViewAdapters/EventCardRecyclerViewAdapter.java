@@ -1,9 +1,11 @@
 package de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -24,6 +26,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHEvents.TopPolicyPlayedEvent
 public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableViewHolder> {
 
     List<GameEvent> events;
+    Context c;
     private static final int EXECUTIVE_ACTION = 1;
     private static final int LEGISLATIVE_SESSION = 0;
     private static final int DECK_SHUFFLED = 2;
@@ -39,8 +42,9 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
     private static final int GAME_END = 9;
 
 
-    public EventCardRecyclerViewAdapter(List<GameEvent> events){
+    public EventCardRecyclerViewAdapter(List<GameEvent> events, Context c){
         this.events = events;
+        this.c = c;
     }
 
     @Override
@@ -131,9 +135,13 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
                 cv.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        event.isEditing = true;
-                        event.isSetup = true;
-                        notifyItemChanged(position);
+                        if (event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() != GameLog.legSessionNo - 1) {
+                            Toast.makeText(c, c.getString(R.string.toast_message_edit_blocked), Toast.LENGTH_LONG).show();
+                        } else {
+                            event.isEditing = true;
+                            event.isSetup = true;
+                            notifyItemChanged(position);
+                        }
                         return false;
                     }
                 });

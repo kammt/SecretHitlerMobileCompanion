@@ -146,4 +146,5 @@
     <string name="title_warning">Warning</string>
     <string name="dialog_message_duplicate_event_creation">Another event is already being created. Please either finish creating the event or cancel it.</string>
     <string name="toast_message_deletion_disabled">When manual mode is disabled, you can only delete the last event in the list!</string>
+    <string name="toast_message_edit_blocked">When manual mode is disabled, you can only edit the last Legislative Session in the list!</string>
 </resources>
