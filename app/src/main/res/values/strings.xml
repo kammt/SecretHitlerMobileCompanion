@@ -42,7 +42,7 @@
     <string name="create_new_game">Create a new game</string>
     <string name="new_event">New Event</string>
     <string name="server_status">Server Status</string>
-    <string name="server_status_url"><![CDATA[Please ask your friends to scan the QR code below or enter the following URL manually: <br><b>%1$s</b><br> \n Make sure that they are in the same WiFi-network as you! The web server can be stopped using the button below.]]></string>
+    <string name="server_status_url"><![CDATA[Please ask your friends to scan the QR code below or enter the following URL manually: <br><b>%1$s</b><br>  Make sure that they are in the same WiFi-network as you!]]></string>
     <string name="server_status_url_disabled">When using a web server, other devices in your WiFi-network have access to the same player and event list as you do. However, only you can create events and play game sounds. Use the button below to start the server.</string>
     <string name="server_running">Running</string>
     <string name="server_stopped">Not Running</string>

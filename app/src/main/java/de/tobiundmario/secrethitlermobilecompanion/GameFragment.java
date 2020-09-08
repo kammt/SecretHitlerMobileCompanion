@@ -45,6 +45,7 @@ import net.glxn.qrgen.android.QRCode;
 
 import org.json.JSONException;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
@@ -146,7 +147,8 @@ public class GameFragment extends Fragment {
 
         try {
             SharedPreferencesManager.writeCurrentPlayerListIfNew(context);
-        } catch (JSONException e) {
+            GameLog.backupToCache();
+        } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
 
