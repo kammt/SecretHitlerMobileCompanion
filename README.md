@@ -13,8 +13,8 @@ An Android App intended to make the board game experience of Secret Hitler more 
 - **Free and Open Source.** Licensed under the <a href="LICENSE">GPLv3 license</a>
 
 ## Screenshots
-<img src="/project-images/gamelog.png" width="35%"> <img src="/project-images/addevent.png" width="35%">
-<img src="/project-images/addLegSession.png" width="35%"> <img src="/project-images/webserver.png" width="35%">
+<img src="/project-images/gamelog.png" width="30%"> <img src="/project-images/addLegSession.png" width="30%"> <img src="/project-images/playerBlurring.png" width="30%"> 
+<img src="/project-images/serverStatus.png" width="30%"><img src="/project-images/webserver.png" width="30%">
 
 ## License and Attribution
 
@@ -27,6 +27,6 @@ An Android App intended to make the board game experience of Secret Hitler more 
 - This project uses the following fonts:
   - Germania One, designed by John Vargas Beltrán, licensed under the <a href="https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL">Open Font license</a>
   - Comfortaa, designed by Johan Aakerlund, Cyreal, licensed under the <a href="https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL">Open Font license</a>
-- This app is based on the board game Secret Hitler. Secret Hitler is designed by Max Temkin (Cards Against Humanity, Humans vs. Zombies) Mike Boxleiter (Solipskier, TouchTone), Tommy Maranges (Philosophy Bro) and illustrated by Mackenzie Schubert (Letter Tycoon, Penny Press).
+- The purpose of this app is to extend on the board game Secret Hitler. Secret Hitler is designed by Max Temkin (Cards Against Humanity, Humans vs. Zombies) Mike Boxleiter (Solipskier, TouchTone), Tommy Maranges (Philosophy Bro) and illustrated by Mackenzie Schubert (Letter Tycoon, Penny Press).
 The game is licensed as per the <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International license</a>.
 - This App is licensed under the GPLv3 license. (See the <a href="LICENSE">LICENSE file</a> for more information).
