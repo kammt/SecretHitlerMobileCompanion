@@ -39,6 +39,18 @@ body {
     font-size: 1.3rem;
 }
 
+/* Footer */
+#footer {
+    bottom:0;
+    width:100%;
+ }
+
+ #footer-text {
+     font-size: small;
+     text-align: center;
+ }
+
+
 /* Player pane */
 #player-pane {
     /* Leave this value here (see index.js constructor of player pane) */
