@@ -115,7 +115,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:fontFamily="@font/comfortaa_light"
-            android:text="@string/et_titie_electiontrackerLength"
+            android:text="@string/et_title_electiontrackerLength"
             app:layout_constraintBottom_toBottomOf="@+id/et_electionTrackerLength"
             app:layout_constraintStart_toStartOf="@+id/guideline8"
             app:layout_constraintTop_toTopOf="@+id/et_electionTrackerLength" />

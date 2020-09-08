@@ -507,7 +507,12 @@ public class GameFragment extends Fragment {
                 qrImage.setImageBitmap(qrBitmap);
                 qrImage.setClickable(true);
 
-                tv_server_desc.setText(getString(R.string.server_status_url, serverURL));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    tv_server_desc.setText(Html.fromHtml(getString(R.string.server_status_url, serverURL),  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
+                } else {
+                    tv_server_desc.setText(Html.fromHtml(getString(R.string.server_status_url, serverURL)), TextView.BufferType.SPANNABLE);
+                }
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     tv_server_title.setText(Html.fromHtml(getString(R.string.title_server_status) + " <font color='#009933'>" + getString(R.string.server_running) + "</font>",  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
                 } else {
