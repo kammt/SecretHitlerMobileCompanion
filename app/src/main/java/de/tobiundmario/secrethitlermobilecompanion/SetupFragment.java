@@ -89,6 +89,12 @@ public class SetupFragment extends Fragment {
         FascistTrackSelectionManager.initialise();
         FascistTrackSelectionManager.setupOfficialTrackList((LinearLayout) getView().findViewById(R.id.container_official_tracks), context);
 
+        //Initialising RecyclerViews
+        RecyclerView pastPlayerLists = getView().findViewById(R.id.oldPlayerLists);
+        SharedPreferencesManager.setupOldPlayerListRecyclerView(pastPlayerLists, context);
+
+        RecyclerView fascistTracks = getView().findViewById(R.id.list_custom_tracks);
+        SharedPreferencesManager.setupCustomTracksRecyclerView(fascistTracks, context);
 
         //Resetting view visibility
         container_settings.setVisibility(View.GONE);
@@ -132,11 +138,6 @@ public class SetupFragment extends Fragment {
         progressBar_setupSteps = fragmentLayout.findViewById(R.id.progressBar_setupProgress);
         progressBar_setupSteps.setMax(900);
 
-        RecyclerView pastPlayerLists = fragmentLayout.findViewById(R.id.oldPlayerLists);
-        SharedPreferencesManager.setupOldPlayerListRecyclerView(pastPlayerLists, context);
-
-        RecyclerView fascistTracks = fragmentLayout.findViewById(R.id.list_custom_tracks);
-        SharedPreferencesManager.setupCustomTracksRecyclerView(fascistTracks, context);
 
         final FloatingActionButton fab_newTrack = fragmentLayout.findViewById(R.id.fab_create_custom_track);
         fab_newTrack.setOnClickListener(new View.OnClickListener() {
