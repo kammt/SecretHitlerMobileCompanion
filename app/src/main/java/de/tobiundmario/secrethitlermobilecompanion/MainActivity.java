@@ -2,6 +2,7 @@ package de.tobiundmario.secrethitlermobilecompanion;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -53,7 +54,32 @@ public class MainActivity extends AppCompatActivity {
         GameLog.setContext(this);
         checkForBackups();
 
+        final Thread.UncaughtExceptionHandler uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
         ExceptionHandler.initialise(this);
+        Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler()
+        {
+            @Override
+            public void uncaughtException (Thread thread, Throwable e)
+            {
+                try {
+                    e.printStackTrace();
+
+                    //Re-set the exception Handler
+                    Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
+
+                    Intent intent = new Intent(MainActivity.this, CrashActivity.class);
+                    intent.putExtra("e", e);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    startActivity(intent);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    uncaughtExceptionHandler.uncaughtException(thread, ex);
+                }
+            }
+        });
+
+        throw new IllegalArgumentException("");
     }
 
     public void replaceFragment(int fragmentNumberToReplace, boolean fade) {

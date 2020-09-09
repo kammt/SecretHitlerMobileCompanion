@@ -13,11 +13,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".CrashActivity"
+            android:process=":report_process">
+        </activity>
         <activity
-            android:name="de.tobiundmario.secrethitlermobilecompanion.MainActivity"
-            android:theme="@style/SplashTheme"
+            android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +29,7 @@
         </activity>
 
         <service
-            android:name="de.tobiundmario.secrethitlermobilecompanion.Server.ServerSercive"
+            android:name=".Server.ServerSercive"
             android:label="Server service" />
 
         <meta-data
