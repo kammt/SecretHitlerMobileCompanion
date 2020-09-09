@@ -78,8 +78,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        throw new IllegalArgumentException("");
     }
 
     public void replaceFragment(int fragmentNumberToReplace, boolean fade) {

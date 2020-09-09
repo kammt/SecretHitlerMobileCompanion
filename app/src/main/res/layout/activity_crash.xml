@@ -55,13 +55,41 @@
         android:layout_marginTop="8dp"
         android:backgroundTint="#000000"
         android:fontFamily="sans-serif"
-        android:text="Report on GitHub"
+        android:text="@string/btn_report"
         app:icon="@drawable/github_logo"
         app:iconPadding="15dp"
         app:iconSize="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_message_2" />
+
+    <Button
+        android:id="@+id/btn_exit"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/start_server"
+        android:fontFamily="sans-serif"
+        android:onClick="restart"
+        android:text="@string/btn_exit"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_clear_data"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_clear_data" />
+
+    <Button
+        android:id="@+id/btn_clear_data"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/stop_server"
+        android:fontFamily="sans-serif"
+        android:text="@string/btn_clear_data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toBottomOf="@+id/btn_report" />
 
     <TextView
         android:id="@+id/tv_titile_error_details"
@@ -71,9 +99,9 @@
         android:layout_marginTop="8dp"
         android:text="@string/title_error_details"
         android:textColor="#FFFFFF"
-        android:textSize="24sp"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_report" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_exit" />
 
     <ScrollView
         android:layout_width="0dp"
@@ -98,5 +126,12 @@
                 android:textColor="#FFFFFF" />
         </LinearLayout>
     </ScrollView>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

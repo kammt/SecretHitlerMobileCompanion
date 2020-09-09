@@ -153,4 +153,7 @@
     <string name="message_app_crashed">Unfortunately, the app has just crashed. If you are currently in a game: Don\'t worry! Your game is backed up and you will be prompted to restore it once you restart the app!</string>
     <string name="message_app_crashed_report">However, please take your time to report this error on GitHub. We need your help to make this app better and more stable. When using the button below, a pre-filled error report will be generated for you. (Keep in mind that a GitHub account is required) Thank you very much for your help!</string>
     <string name="title_error_details">Error Details:</string>
+    <string name="btn_clear_data">Reset app</string>
+    <string name="btn_report">Report on Github</string>
+    <string name="btn_exit">Exit app</string>
 </resources>

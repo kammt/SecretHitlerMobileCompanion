@@ -1,5 +1,6 @@
 package de.tobiundmario.secrethitlermobilecompanion;
 
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -53,11 +54,27 @@ public class CrashActivity extends AppCompatActivity {
             }
         });
 
+        ((Button) findViewById(R.id.btn_clear_data)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((ActivityManager) getSystemService(ACTIVITY_SERVICE))
+                        .clearApplicationUserData();
+                finishAffinity();
+            }
+        });
+
+        ((Button) findViewById(R.id.btn_exit)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finishAffinity();
+            }
+        });
+
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
                 throwable.printStackTrace();
-                System.exit(1);
+                finishAffinity();
             }
         });
     }
