@@ -191,6 +191,12 @@ public class GameFragment extends Fragment {
      */
 
     public void displayEndGameOptions() {
+        //The game has no events, so there is no point in creating the "Game Ended" dialogue. The game will end immediately
+        if(GameLog.getEventsJSON().length() == 0) {
+            endGame();
+            return;
+        }
+
         GameLog.addEvent(new GameEndCard(context));
 
         //Make the Menu non-functioning
