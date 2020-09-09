@@ -232,6 +232,21 @@ body {
     font-size: 2rem;
 }
 
+/* Top Policy */
+.top-policy-div {
+    display: flex;
+    text-align: center;
+    justify-content: space-evenly;
+}
+
+.top-policy-div-body {
+    display: flex;
+}
+
+.top-policy-title {
+    margin: auto 0;
+}
+
 /* Styling for larger devices */
 @media (min-width: 768px) {
     #main{
@@ -280,5 +295,16 @@ body {
 
     .policy-number {
         font-size: 2.5rem;
+    }
+
+    .top-policy-div {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .top-policy-div-body {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
     }
 }
