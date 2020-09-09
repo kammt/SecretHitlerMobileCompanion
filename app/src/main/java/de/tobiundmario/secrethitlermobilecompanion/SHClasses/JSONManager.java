@@ -1,17 +1,13 @@
 package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
 
 import android.content.Context;
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ClaimEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
@@ -24,23 +20,19 @@ import de.tobiundmario.secrethitlermobilecompanion.SHEvents.SpecialElectionEvent
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.TopPolicyPlayedEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.VoteEvent;
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class JSONManager {
-    public static ConcurrentHashMap<GameLogChange, Boolean> gameLogChangesMap = new ConcurrentHashMap<GameLogChange, Boolean>();
-    public static Set<GameLogChange> gameLogChanges = gameLogChangesMap.newKeySet();
+    public static ConcurrentLinkedQueue<GameLogChange> gameLogChanges = new ConcurrentLinkedQueue<>();
 
-    private static HashSet<String> clientIPs = new HashSet<String>();
+    private static HashSet<String> clientIPs = new HashSet<>();
 
     public static void destroy() {
         gameLogChanges = null;
-        gameLogChangesMap = null;
         clientIPs = null;
     }
 
     public static void initialise() {
-        gameLogChangesMap = new ConcurrentHashMap<GameLogChange, Boolean>();
-        gameLogChanges = gameLogChangesMap.newKeySet();
-        clientIPs = new HashSet<String>();
+        gameLogChanges = new ConcurrentLinkedQueue<>();
+        clientIPs = new HashSet<>();
     }
 
     public static void setClientIPsSet(HashSet<String> clientIPsIn) {
