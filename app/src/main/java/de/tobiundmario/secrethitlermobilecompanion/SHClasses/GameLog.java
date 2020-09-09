@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.EventCardRecyclerViewAdapter;
@@ -132,7 +133,7 @@ public class GameLog {
             try {
                 arr.put(eventList.indexOf(event), event.getJSON());
             } catch (JSONException e) {
-                e.printStackTrace();
+                ExceptionHandler.showErrorSnackbar(e, "GameLog.notifySetupPhaseLeft() (arr.put, isEditing=true)");
             }
 
             JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.EVENT_UPDATE));
@@ -144,7 +145,7 @@ public class GameLog {
                 if(position != eventList.size() - 1) SharedPreferencesManager.addJSONObjectToArray(event.getJSON(), arr, position);
                 else arr.put(event.getJSON());
             } catch (JSONException e) {
-                e.printStackTrace();
+                ExceptionHandler.showErrorSnackbar(e, "GameLog.notifySetupPhaseLeft() (arr.put, isEditing=false)");
             }
 
             JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.NEW_EVENT));
@@ -160,7 +161,7 @@ public class GameLog {
         try {
             backupToCache();
         } catch (IOException | JSONException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "GameLog.notifySetupPhaseLeft() (backupToCache)");
         }
     }
 
@@ -185,7 +186,7 @@ public class GameLog {
         try {
             if(!event.isSetup) arr.put(event.getJSON());
         } catch (JSONException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "GameLog.addEvent() (arr.put)");
         }
 
         if(!event.isSetup && event.allInvolvedPlayersAreUnselected(PlayerList.getplayerCardRecyclerViewAdapter().getHiddenPlayers())) {
@@ -250,7 +251,7 @@ public class GameLog {
         try {
             if(!event.isSetup) SharedPreferencesManager.addJSONObjectToArray(event.getJSON(), arr, oldPosition);
         } catch (JSONException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "GameLog.undoRemoval() (SharedPreferencesManager.addJSONObjectToArray)");
         }
         eventList.add(oldPosition, event);
         blurEventsInvolvingHiddenPlayers(PlayerList.getplayerCardRecyclerViewAdapter().getHiddenPlayers()); //Re-calling this function since a new item was added
@@ -491,7 +492,7 @@ public class GameLog {
                                 try {
                                     backupToCache();
                                 } catch (IOException | JSONException ex) {
-                                    ex.printStackTrace();
+                                    ExceptionHandler.showErrorSnackbar(ex, "GameLog.onSwiped() (backupToCache)");
                                 }
                             }
 
@@ -531,7 +532,7 @@ public class GameLog {
             eventListFromFile(true, "backup.json");
             setGameStarted(true);
         } catch (JSONException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "GameLog.restoreBackup()");
         }
     }
 
@@ -617,7 +618,7 @@ public class GameLog {
                 line = reader.readLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "GameLog.eventListFromFile()");
         } finally {
             String contents = stringBuilder.toString();
             JSONObject object = new JSONObject(contents);

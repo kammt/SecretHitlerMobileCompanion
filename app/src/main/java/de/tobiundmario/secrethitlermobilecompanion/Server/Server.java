@@ -18,6 +18,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Map;
 
+import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.JSONManager;
 import fi.iki.elonen.NanoHTTPD;
@@ -105,7 +106,7 @@ public class Server extends NanoHTTPD {
             try {
                 return newFixedLengthResponse(Response.Status.ACCEPTED, getMimeTypeForFile(uri), c.getAssets().open(uri.substring(1)), -1);
             } catch (IOException e) {
-                e.printStackTrace();
+                ExceptionHandler.showErrorSnackbar(e, "Server.serve() (serving a font file)");
             }
         }
 
@@ -123,13 +124,13 @@ public class Server extends NanoHTTPD {
                 fileData.append(mLine).append("\n");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "Server.getFile() (while reading the file)");
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    ExceptionHandler.showErrorSnackbar(e, "Server.getFile() (while closing the BufferedReader)");
                 }
             }
         }
@@ -141,7 +142,7 @@ public class Server extends NanoHTTPD {
         try {
             start();
         } catch (IOException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "Server.startServer()");
         }
     }
 
@@ -166,7 +167,7 @@ public class Server extends NanoHTTPD {
             method.setAccessible(true);
             actualState = (Integer) method.invoke(wifiManager, (Object[]) null);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "Server.isUsingHotspot()");
         }
         return actualState == 13; //public static int AP_STATE_ENABLED = 13;
     }
@@ -191,7 +192,7 @@ public class Server extends NanoHTTPD {
             }
         } catch (SocketException e) {
             Log.e("Server", "SocketException:" + e.getMessage());
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "Server.getHotspotIPAddress()");
         }
 
         return deviceIpAddress;

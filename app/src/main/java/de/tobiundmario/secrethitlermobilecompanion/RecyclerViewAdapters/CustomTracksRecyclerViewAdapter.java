@@ -19,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
@@ -123,7 +124,7 @@ public class CustomTracksRecyclerViewAdapter extends RecyclerView.Adapter<Custom
             });
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "CustomTracksRecyclerViewAdapter.onBindViewHolder()");
         }
     }
 }

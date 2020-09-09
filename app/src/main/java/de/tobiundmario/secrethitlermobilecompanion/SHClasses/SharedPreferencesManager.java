@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CustomTracksRecyclerViewAdapter;
@@ -203,12 +204,12 @@ public class SharedPreferencesManager {
 
                                     setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
                                 } catch (JSONException e) {
-                                    e.printStackTrace();
+                                    ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.setupOldPlayerListRecyclerView().onSwiped() (Snackbar Action)");
                                 }
                             }
                         }).show();
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.setupOldPlayerListRecyclerView().onSwiped()");
                     }
 
 
@@ -218,7 +219,7 @@ public class SharedPreferencesManager {
 
             setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
         } catch (JSONException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.setupOldPlayerListRecyclerView() (outer try/catch block)");
         }
     }
 
@@ -307,12 +308,12 @@ public class SharedPreferencesManager {
 
                                     setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
                                 } catch (JSONException e) {
-                                    e.printStackTrace();
+                                    ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.setupCustomTracksRecyclerView() (Snackbar action)");
                                 }
                             }
                         }).show();
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.setupCustomTracksRecyclerView()");
                     }
 
 
@@ -322,7 +323,7 @@ public class SharedPreferencesManager {
 
             setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
         } catch (JSONException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.setupCustomTracksRecyclerView() (outer try/catch block)");
         }
     }
 

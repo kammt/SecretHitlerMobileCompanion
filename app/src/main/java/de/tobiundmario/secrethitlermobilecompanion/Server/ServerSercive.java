@@ -18,6 +18,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 
 public class ServerSercive extends Service {
@@ -74,7 +75,7 @@ public class ServerSercive extends Service {
         try {
             startedPendingIntent.send();
         } catch (PendingIntent.CanceledException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "ServerService.onStartCommand() (startedPendingIntent.send())");
         }
 
         startForeground(server.hashCode(), getForegroundNotification());
@@ -103,7 +104,7 @@ public class ServerSercive extends Service {
         try {
             stoppedPendingIntent.send();
         } catch (PendingIntent.CanceledException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "ServerService.killSelf() (stoppedPendingIntent.send())");
         }
 
         //Finally, kill the entire Service

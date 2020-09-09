@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ClaimEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
@@ -54,7 +55,7 @@ public class JSONManager {
             game.put("plays", GameLog.getEventsJSON());
             obj.put("game", game);
         } catch (JSONException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "JSONManager.getCompleteGameJSON()");
         }
         return obj.toString();
     }
@@ -82,7 +83,7 @@ public class JSONManager {
                 // Log.v("Change served to", change.getServedTo().toString() + "; " + change.getEvent().getJSON().toString());
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "JSONManager.getGameChangesJSON()");
         }
 
         return changesJSON.toString();

@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
@@ -109,7 +110,7 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
                             try {
                                 SharedPreferencesManager.setPlayerListName(groupName, pos, context);
                             } catch (JSONException e) {
-                                e.printStackTrace();
+                                ExceptionHandler.showErrorSnackbar(e, "OldPlayerListRecyclerViewAdapter.onBindViewHolder() (tv_rename.setOnClickListener)");
                             }
                             rootDialog.dismiss();
                         }
@@ -119,7 +120,7 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
 
             tv_playerNames.setText(playerListAsString);
         } catch (JSONException e) {
-            e.printStackTrace();
+            ExceptionHandler.showErrorSnackbar(e, "OldPlayerListRecyclerViewAdapter.onBindViewHolder()");
         }
     }
 }

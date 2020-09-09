@@ -20,6 +20,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import org.json.JSONException;
 
+import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
@@ -238,7 +239,7 @@ public class CardDialog {
                 try {
                     SharedPreferencesManager.writeFascistTrack(fascistTrack, c);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    ExceptionHandler.showErrorSnackbar(e, "CardDialog.showTrackCreationDialog() (SharedPreferencesManager.writeFascistTrack())");
                 }
 
                 dialog.dismiss();

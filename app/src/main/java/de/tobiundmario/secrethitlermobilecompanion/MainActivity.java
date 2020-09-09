@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int main = 0, setup = 1, game = 2;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
         GameLog.setContext(this);
         checkForBackups();
+
+        ExceptionHandler.initialise(this);
     }
 
     public void replaceFragment(int fragmentNumberToReplace, boolean fade) {
@@ -140,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
         JSONManager.destroy();
         FascistTrackSelectionManager.destroy();
         CardDialog.destroy();
+        ExceptionHandler.destroy();
     }
 
     public void checkForBackups() {
@@ -160,7 +164,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    public LinearLayout getCurrentFragmentContainer() {
+        return currentFragmentContainer;
+    }
 
     public static class ProgressBarAnimation extends Animation{
         private ProgressBar progressBar;
