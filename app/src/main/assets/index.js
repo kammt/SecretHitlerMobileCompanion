@@ -32,6 +32,8 @@ const generateEventElement = (event) => {
 		eventDiv = generateExecutiveAction(event);
 	} else if (event.type === "shuffle") {
 		eventDiv = generateShuffle(event);
+	} else if (event.type === "top_policy") {
+		eventDiv = generateTopPolicy(event);
 	}
 
 	eventDiv.addClass(event.id);
@@ -332,14 +334,43 @@ const createPolicyCard = (play, type) => {
 
 	policyDiv.append(policyImg);
 
-	// Create the div showing the number of policies remaining in the draw pile
-	let policyNum = $(document.createElement("div"));
-	policyNum.addClass("policy-number");
-	policyNum.text(play[`${type}_policies`]);
+	if(play.type != "top_policy") {
+		// Create the div showing the number of policies remaining in the draw pile
+		let policyNum = $(document.createElement("div"));
+		policyNum.addClass("policy-number");
+		policyNum.text(play[`${type}_policies`]);
 
-	policyDiv.append(policyNum);
+		policyDiv.append(policyNum);
+	}
 
 	return policyDiv;
+};
+
+const generateTopPolicy = (play) => {
+	// Create the main container
+	let topPolicyDiv = $(document.createElement("div"));
+	topPolicyDiv.addClass("game-action top-policy-div");
+
+	// Create the title of the Top Policy div
+	let topPolicyDivTitle = $(document.createElement("h1"));
+	topPolicyDivTitle.addClass("game-action-title top-policy-title");
+	topPolicyDivTitle.text("Top policy played");
+
+	topPolicyDiv.append(topPolicyDivTitle);
+
+	// Create the container holding the the policy image
+	let topPoilicyDivBody = $(document.createElement("div"));
+	topPoilicyDivBody.addClass("top-policy-div-body");
+	topPolicyDiv.append(topPoilicyDivBody);
+
+	if(play["policy_played"] === "R") {
+		topPoilicyDivBody.append(createPolicyCard(play, "fascist"));
+	} else {
+		topPoilicyDivBody.append(createPolicyCard(play, "liberal"));
+	}
+
+	// Append the top policy div to the game-log section
+	return topPolicyDiv;
 };
 
 getJSON(getCompleteGameRoute);
