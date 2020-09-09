@@ -689,9 +689,13 @@ public class GameLog {
             }
         }
         //When the auto-created executive action was not submitted (=> setup phase left) before the app closed, it will not be included in the backup. To mitigate this, we check if the last event is a LegislativeSession and if so add the track action again
-        GameEvent lastEvent = restoredEventList.get(restoredEventList.size() - 1);
-        if(lastEvent instanceof LegislativeSession && !gameTrack.isManualMode()) {
-            addTrackAction((LegislativeSession) lastEvent, true);
+        if(restoredEventList.size() > 0) {
+            GameEvent lastEvent = restoredEventList.get(restoredEventList.size() - 1);
+            if (lastEvent instanceof LegislativeSession && !gameTrack.isManualMode()) {
+                LegislativeSession legislativeSession = ((LegislativeSession) lastEvent);
+                //However, we need to check if this LegislativeSession actually passed a fascist policy
+                if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_PASSED && legislativeSession.getClaimEvent().getPlayedPolicy() == Claim.FASCIST && !legislativeSession.getClaimEvent().isVetoed())  addTrackAction(legislativeSession, true);
+            }
         }
 
         //Finally, apply the settings
