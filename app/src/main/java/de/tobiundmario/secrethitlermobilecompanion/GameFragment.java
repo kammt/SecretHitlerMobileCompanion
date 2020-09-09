@@ -73,6 +73,7 @@ public class GameFragment extends Fragment {
     RecyclerView cardList, playerCardList;
 
     private BottomNavigationView bottomNavigationMenu_game;
+    private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener;
 
     private BottomSheetBehavior bottomSheetBehaviorAdd;
     private BottomSheetBehavior bottomSheetBehaviorServer;
@@ -208,6 +209,15 @@ public class GameFragment extends Fragment {
         bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN);
         bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
         GameLog.swipeEnabled = false;
+        GameLog.editingEnabled = false;
+    }
+
+    public void undoEndGameOptions() {
+        bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(true);
+        bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(true);
+        bottomNavigationMenu_game.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
+        GameLog.swipeEnabled = true;
+        GameLog.editingEnabled = true;
     }
 
     public void endGame() {
@@ -361,7 +371,7 @@ public class GameFragment extends Fragment {
         bottomSheetBehaviorServer.addBottomSheetCallback(callbackServer);
 
         //Adding the Listener to the BottomNavigationMenu
-        bottomNavigationMenu_game.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        onNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch(item.getItemId()) {
@@ -387,7 +397,8 @@ public class GameFragment extends Fragment {
                 }
                 return true;
             }
-        });
+        };
+        bottomNavigationMenu_game.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
     }
 
 

@@ -63,6 +63,7 @@ public class GameLog {
     public static FascistTrack gameTrack = null;
 
     public static boolean swipeEnabled = false;
+    public static boolean editingEnabled = true;
 
     public static boolean executionSounds, policySounds, endSounds, server;
 
@@ -215,6 +216,8 @@ public class GameLog {
                 return;
             }
         }
+
+        if(event instanceof GameEndCard) ((MainActivity) c).fragment_game.undoEndGameOptions();
 
         int position = eventList.indexOf(event);
         if(!event.isSetup) arr.remove(position);
