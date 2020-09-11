@@ -156,4 +156,5 @@
     <string name="btn_clear_data">Reset app</string>
     <string name="btn_report">Report on Github</string>
     <string name="btn_exit">Exit app</string>
+    <string name="snackbar_message_player_removed">Player has been removed</string>
 </resources>

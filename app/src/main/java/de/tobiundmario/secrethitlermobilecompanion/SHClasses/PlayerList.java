@@ -6,9 +6,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 
@@ -39,6 +44,7 @@ public class PlayerList {
         playerCardRecyclerViewAdapter = new PlayerCardRecyclerViewAdapter(playerList, context);
         playerCardList.setAdapter(playerCardRecyclerViewAdapter);
         playerRecyclerView = playerCardList;
+        setupSwipeToDelete();
 
         c = context;
     }
@@ -54,6 +60,7 @@ public class PlayerList {
         playerCardList.setAdapter(playerCardRecyclerViewAdapter);
         playerCardList.setItemAnimator(new ModifiedDefaultItemAnimator());
         playerRecyclerView = playerCardList;
+        setupSwipeToDelete();
     }
 
     public static void destroy() {
@@ -84,6 +91,25 @@ public class PlayerList {
 
         //Notify the adapter, if it exists. This method is also called during a game restoration from backup. In that case, no layout exists during the restoration => nothing to notify
         if(playerRecyclerView != null) playerCardRecyclerViewAdapter.notifyItemInserted(playerList.size() - 1);
+    }
+
+    public static void addPlayer(String name, int position) {
+        /*
+        This function adds a player from the player list
+         */
+        if(playerList == null) {
+            playerList = new ArrayList<>();
+            claimList = new ArrayList<>();
+            isDead = new ArrayList<>();
+        }
+
+        playerList.add(position, name);
+
+        //Also add an additional entry to our claim- and dead-lists
+        claimList.add(position, Claim.NO_CLAIM);
+        isDead.add(position, false);
+
+        playerCardRecyclerViewAdapter.notifyItemInserted(position);
     }
 
     public static void removePlayer(String player) {
@@ -214,5 +240,40 @@ public class PlayerList {
         }
 
         return arr;
+    }
+
+    private static void setupSwipeToDelete() {
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.UP) {
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                final int position = viewHolder.getAdapterPosition();
+                final String playerName = playerList.get(position);
+
+                removePlayer(playerName);
+                playerCardRecyclerViewAdapter.notifyItemRemoved(position);
+
+                Snackbar.make(((MainActivity) c).getCurrentFragmentContainer(), c.getString(R.string.snackbar_message_player_removed), BaseTransientBottomBar.LENGTH_SHORT)
+                        .setAction(c.getString(R.string.undo), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                addPlayer(playerName, position);
+                            }
+                        })
+                        .show();
+            }
+
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return !GameLog.isGameStarted();
+            }
+        };
+
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(playerRecyclerView);
     }
 }

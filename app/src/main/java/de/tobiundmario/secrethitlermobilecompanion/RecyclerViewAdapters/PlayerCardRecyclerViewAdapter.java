@@ -137,22 +137,6 @@ public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<Dimmable
                 }
             }
         });
-
-        cardView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if(!GameLog.isGameStarted()) {
-                    //In the setup phase, we want to give the user the option to remove a user
-                    CardDialog.showMessageDialog(context, context.getString(R.string.are_you_sure), context.getString(R.string.delete_player_msg, player), context.getString(R.string.yes), new Runnable() {
-                        @Override
-                        public void run() {
-                            PlayerList.removePlayer(player);
-                        }
-                    }, context.getString(R.string.no), null);
-                }
-                return false;
-            }
-        });
     }
 
 
