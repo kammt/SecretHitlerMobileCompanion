@@ -93,9 +93,21 @@ public class LegislativeSession extends GameEvent {
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
 
+        //Attempting to get the last Legislative Session and setting the next player in order as president. If this is the first LegSession, the first player will be selected
+        LegislativeSession lastSession = GameLog.getLastLegislativeSession();
+        int newChancellorPos = 1;
+        if(lastSession != null) {
+            int newPresidentPos = PlayerList.getPlayerPosition(lastSession.getVoteEvent().getPresidentName()) + 1;
+            if(newPresidentPos == PlayerList.getPlayerList().size()) newPresidentPos = 0;
+
+            presSpinner.setSelection(newPresidentPos);
+
+            newChancellorPos = (newPresidentPos == PlayerList.getPlayerList().size() - 1) ? 0 : newPresidentPos + 1;
+        }
+
         final Spinner chancSpinner = cardView.findViewById(R.id.spinner_chancellor);
         chancSpinner.setAdapter(playerListadapter);
-        chancSpinner.setSelection(1); //Setting a different item on the chancellor spinner so they don't have the same name at the beginning
+        chancSpinner.setSelection(newChancellorPos); //Setting a different item on the chancellor spinner so they don't have the same name at the beginning
 
         final Spinner presClaimSpinner = cardView.findViewById(R.id.spinner_pres_claim);
         final ArrayAdapter<String> presClaimListadapter = CardSetupHelper.getClaimAdapter(c, Claim.getPresidentClaims());

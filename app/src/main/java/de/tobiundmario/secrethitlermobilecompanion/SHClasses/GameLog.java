@@ -404,6 +404,19 @@ public class GameLog {
     }
 
     /**
+     * Returns the last Legislative Session
+     * @return the last legislative session that was created (Highest session number) returns null if there are no legislative sessions created yet
+     */
+    public static LegislativeSession getLastLegislativeSession() {
+        for (int i = eventList.size() - 1; i >= 0; i--) {
+            GameEvent event = eventList.get(i);
+            if(!event.isSetup && event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() == legSessionNo - 1) return (LegislativeSession) event;
+        }
+
+        return null;
+    }
+
+    /**
      * Returns all legislative sessions or all beginning at a specific session number
      * @param startingAt The first session number that should be in the ArrayList
      * @return An ArrayList containing the requested LegislativeSessions
