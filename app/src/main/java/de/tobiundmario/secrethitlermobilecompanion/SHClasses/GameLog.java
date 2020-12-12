@@ -117,6 +117,10 @@ public class GameLog {
         gameTrack = null;
     }
 
+    public static List<GameEvent> getEventList() {
+        return eventList;
+    }
+
     /**
      * This function is called by an Event in Setup mode when the FloatingActionButton is pressed, meaning that it left the Setup phase. It changes the layout of the card, processes changes made
      * because of the edit etc.
@@ -131,13 +135,12 @@ public class GameLog {
             position = eventList.indexOf(event);
             event.isEditing = false;
             try {
-                arr.put(eventList.indexOf(event), event.getJSON());
+                arr.put(position, event.getJSON());
             } catch (JSONException e) {
                 ExceptionHandler.showErrorSnackbar(e, "GameLog.notifySetupPhaseLeft() (arr.put, isEditing=true)");
             }
 
             JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.EVENT_UPDATE));
-
         } else {
 
             position = eventList.indexOf(event);
@@ -149,11 +152,12 @@ public class GameLog {
             }
 
             JSONManager.addGameLogChange(new GameLogChange(event, GameLogChange.NEW_EVENT));
+
+            if(event instanceof LegislativeSession) processLegislativeSession((LegislativeSession) event, false);
         }
 
         //Nevertheless, we need to update the RecyclerViewItem
         cardListAdapter.notifyItemChanged(position);
-        if(event.getClass() == LegislativeSession.class) processLegislativeSession((LegislativeSession) event, false);
 
         blurEventsInvolvingHiddenPlayers(PlayerList.getplayerCardRecyclerViewAdapter().getHiddenPlayers()); //Re-calling this function since a new item was added
 
@@ -171,11 +175,11 @@ public class GameLog {
      * @param event the event to be added
      */
     public static void addEvent(@NonNull GameEvent event) {
-        if(event.isSetup && eventList.size() > 0 && eventList.get(eventList.size() - 1).isSetup) {
-            if(event instanceof GameEndCard) {
+        if(event.isSetup && eventList.size() > 0 && eventList.get(eventList.size() - 1).isSetup) { //Checking if the last event is in setup mode
+            if(event instanceof GameEndCard) { //If it is the EndCard, we remove the setup event
                 eventList.remove(eventList.size() - 1);
                 cardListAdapter.notifyItemRemoved(eventList.size() - 1);
-            } else {
+            } else { //If not, the process is blocked since we can't (or at least shouldn't) have two setups active at a time
                 CardDialog.showMessageDialog(c, c.getString(R.string.title_warning), c.getString(R.string.dialog_message_duplicate_event_creation), c.getString(R.string.btn_ok), null, null, null);
                 return;
             }
@@ -353,8 +357,8 @@ public class GameLog {
      * @param session The legislative session causing this
      * @param restorationPhase If true, the track action is added while a game is being restored. It is then added to the restoredEventList ArrayList
      */
-    private static void addTrackAction(LegislativeSession session, boolean restorationPhase) {
-        if(gameTrack.isManualMode()) return; //If it is set to manual mode, we abort the function
+    public static void addTrackAction(LegislativeSession session, boolean restorationPhase) {
+        if(gameTrack.isManualMode()) return; //If it is set to manual mode, we abort the function as no track actions exist in that mode
         String presidentName = session.getVoteEvent().getPresidentName();
 
         ExecutiveAction executiveAction = null;
@@ -383,6 +387,8 @@ public class GameLog {
             else addEvent(executiveAction);
         }
     }
+
+
 
     public static void reSetSessionNumber() {
         /*
