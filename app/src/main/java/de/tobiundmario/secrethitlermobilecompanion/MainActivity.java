@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     private LinearLayout container_main, container_setup, container_game;
 
+    private Thread.UncaughtExceptionHandler uncaughtExceptionHandler;
+
     public static final int main = 0, setup = 1, game = 2;
 
 
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         GameLog.setContext(this);
         checkForBackups();
 
-        final Thread.UncaughtExceptionHandler uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+        uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
         ExceptionHandler.initialise(this);
         Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler()
         {
@@ -168,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
         FascistTrackSelectionManager.destroy();
         CardDialog.destroy();
         ExceptionHandler.destroy();
+        uncaughtExceptionHandler = null;
     }
 
     public void checkForBackups() {
