@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -187,20 +188,25 @@ public class LegislativeSession extends GameEvent {
             @Override
             public void onClick(View v) {
 
+                final VoteEvent newVoteEvent;
+                final ClaimEvent newClaimEvent;
+
                 if(presSpinner.getSelectedItem().equals(chancSpinner.getSelectedItem())) {
 
                     Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
 
                 } else {
 
+                    boolean addTrackAction = false; //This boolean will be triggered after a track action is needed after an edit (see code after if(isEditing))
+
                     boolean voteRejected = sw_votingoutcome.isChecked();
                     String presName = (String) presSpinner.getSelectedItem();
                     String chancName = (String) chancSpinner.getSelectedItem();
 
-                    voteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED);
+                    newVoteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED);
 
                     if(voteRejected) {
-                        claimEvent = null;
+                        newClaimEvent = null;
                     } else {
                         int presClaim = Claim.getClaimInt((String) presClaimSpinner.getSelectedItem());
                         int chancClaim = Claim.getClaimInt((String) chancClaimSpinner.getSelectedItem());
@@ -208,25 +214,86 @@ public class LegislativeSession extends GameEvent {
                         int playedPolicy = (iv_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL;
                         boolean vetoed = cb_vetoed.isChecked();
 
-                        if(isEditing) { //We are editing the card, we need to process the changes (i.e. update the policy count)
-                            if(claimEvent.getPlayedPolicy() == Claim.LIBERAL) GameLog.liberalPolicies--;
-                            else GameLog.fascistPolicies--;
-                        }
-
-                        claimEvent = new ClaimEvent(presClaim, chancClaim, playedPolicy, vetoed);
+                        newClaimEvent = new ClaimEvent(presClaim, chancClaim, playedPolicy, vetoed);
                     }
 
-                    //TODO block edit if manual mode is disabled and change would interfere with other events e.g. changing from fascist back to liberal policy when it is not the last event
+                    if(isEditing) { //We are editing the card, we need to process the changes (e.g. update the policy count)
+                        //If we change the event to be rejected or vetoed, we reduce the policy count
+                        if(newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || newClaimEvent != null && newClaimEvent.isVetoed()) {
+                            if(claimEvent != null && claimEvent.getPlayedPolicy() == Claim.LIBERAL) GameLog.liberalPolicies--;
+                            if(claimEvent != null && claimEvent.getPlayedPolicy() == Claim.FASCIST) GameLog.fascistPolicies--;
+                        }
 
-                    if(claimEvent != null && !Claim.doClaimsFit(claimEvent.getPresidentClaim(), claimEvent.getChancellorClaim(), claimEvent.getPlayedPolicy())) {
+                        //If we change the event to play a policy, we increase the policy count
+                        if(voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || claimEvent != null && claimEvent.isVetoed()) {
+                            if(newClaimEvent != null && newClaimEvent.getPlayedPolicy() == Claim.LIBERAL) GameLog.liberalPolicies++;
+                            if(newClaimEvent != null && newClaimEvent.getPlayedPolicy() == Claim.FASCIST) GameLog.fascistPolicies++;
+                        }
+
+                        //If we had a liberal policy and change it to a fascist policy, we update the policy count
+                        if(newClaimEvent != null && !newClaimEvent.isVetoed() && newClaimEvent.getPlayedPolicy() == Claim.FASCIST && claimEvent != null && !claimEvent.isVetoed() && claimEvent.getPlayedPolicy() == Claim.LIBERAL) {
+                            GameLog.liberalPolicies--;
+                            GameLog.fascistPolicies++;
+                        }
+
+                        //If we had a fascist policy and change it to a liberal policy, we update the policy count
+                        if(newClaimEvent != null && !newClaimEvent.isVetoed() && newClaimEvent.getPlayedPolicy() == Claim.LIBERAL && claimEvent != null && !claimEvent.isVetoed() && claimEvent.getPlayedPolicy() == Claim.FASCIST) {
+                            GameLog.liberalPolicies++;
+                            GameLog.fascistPolicies--;
+                        }
+
+                        //If we are not in manual mode, we have to recalculate the election tracker as well
+                        if(!GameLog.gameTrack.isManualMode()) {
+                            //If it was rejected and now not anymore, we decrease the election tracker
+                            if(voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED && newVoteEvent.getVotingResult() == VoteEvent.VOTE_PASSED) GameLog.electionTracker--;
+                            //If it was passed and now not anymore, we increase the election tracker
+                            if(voteEvent.getVotingResult() == VoteEvent.VOTE_PASSED && newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED) {
+                                GameLog.electionTracker++;
+
+                                if(GameLog.electionTracker == GameLog.gameTrack.getElectionTrackerLength()) {
+                                    GameLog.electionTracker = 0;
+
+                                    TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(c);
+                                    topPolicyPlayedEvent.setLinkedLegislativeSession(LegislativeSession.this);
+                                    setPresidentAction(topPolicyPlayedEvent);
+
+                                    GameLog.addEvent(topPolicyPlayedEvent);
+                                }
+                            }
+                        }
+
+                        //If we are editing an event, this can cause changes. If there is a presidential action and we switch the policy to a liberal one, we have to remove the presidential action
+                        if(getPresidentAction() != null) {
+                            GameEvent presidentialAction = getPresidentAction();
+                            if(voteRejected || newClaimEvent.isVetoed() || newClaimEvent.getPlayedPolicy() == Claim.LIBERAL) {
+                                if(presidentialAction instanceof ExecutiveAction) ((ExecutiveAction) presidentialAction).setLinkedLegislativeSession(null);
+                                if(presidentialAction instanceof TopPolicyPlayedEvent) ((TopPolicyPlayedEvent) presidentialAction).setLinkedLegislativeSession(null);
+                                GameLog.remove(presidentialAction);
+
+                                presidentAction = null;
+                            }
+                        }
+
+                        //If we switch to a fascist policy, we have to create a presidential action
+                        if(newVoteEvent.getVotingResult() == VoteEvent.VOTE_PASSED && newClaimEvent.getPlayedPolicy() == Claim.FASCIST && !newClaimEvent.isVetoed() && (voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || claimEvent.isVetoed() || claimEvent.getPlayedPolicy() == Claim.LIBERAL)) {
+                            addTrackAction = true;
+                        }
+
+                        Log.v("LesiglativeSession Edit", "Election Tracker now at " + GameLog.electionTracker);
+                        Log.v("LesiglativeSession Edit", "Liberal Policies now at " + GameLog.liberalPolicies);
+                        Log.v("LesiglativeSession Edit", "Fascist policies now at " + GameLog.fascistPolicies);
+                    }
+
+                    if(newClaimEvent != null && !Claim.doClaimsFit(newClaimEvent.getPresidentClaim(), newClaimEvent.getChancellorClaim(), newClaimEvent.getPlayedPolicy())) {
                         CardDialog.showMessageDialog(c, c.getString(R.string.dialog_mismatching_claims_title), c.getString(R.string.dialog_mismatching_claims_desc), c.getString(R.string.dialog_mismatching_claims_btn_continue), new Runnable() {
                             @Override
                             public void run() {
-                                leaveSetupPhase();
+                                leaveSetupPhase(newClaimEvent, newVoteEvent);
                             }
                         }, c.getString(R.string.dialog_mismatching_claims_btn_cancel), null);
                     } else {
-                        leaveSetupPhase();
+                        leaveSetupPhase(newClaimEvent, newVoteEvent);
+                        if(addTrackAction) GameLog.addTrackAction(LegislativeSession.this, false);
                     }
 
                 }
@@ -234,7 +301,10 @@ public class LegislativeSession extends GameEvent {
         });
     }
 
-    private void leaveSetupPhase() {
+    private void leaveSetupPhase(ClaimEvent newClaimEvent, VoteEvent newVoteEvent) {
+        claimEvent = newClaimEvent;
+        voteEvent = newVoteEvent;
+
         isSetup = false;
         if(sessionNumber == 0) sessionNumber = GameLog.legSessionNo++;
         GameLog.notifySetupPhaseLeft(LegislativeSession.this);
