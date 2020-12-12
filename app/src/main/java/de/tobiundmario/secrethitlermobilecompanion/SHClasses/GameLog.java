@@ -278,6 +278,7 @@ public class GameLog {
     public static void setGameStarted(boolean isGameStarted) {
         gameStarted = isGameStarted;
         swipeEnabled = isGameStarted;
+        editingEnabled = isGameStarted;
         if(isGameStarted) setupSwipeToDelete();
     }
 

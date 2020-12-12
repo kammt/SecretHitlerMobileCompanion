@@ -26,13 +26,11 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
 
 public class ExecutionEvent extends ExecutiveAction {
     Context context;
-    private String presidentName, executedPlayerName;
 
     public ExecutionEvent(String presidentName, String executedPlayerName, Context context) {
         this.context = context;
         this.presidentName = presidentName;
-        this.executedPlayerName = executedPlayerName;
-
+        this.targetName = executedPlayerName;
 
         apply();
     }
@@ -44,22 +42,22 @@ public class ExecutionEvent extends ExecutiveAction {
     }
 
     private void apply() {
-        PlayerList.setAsDead(executedPlayerName, true);
+        PlayerList.setAsDead(targetName, true);
         if(GameLog.executionSounds) MediaPlayer.create(context, R.raw.playershot).start();
     }
 
 
     public void resetOnRemoval() {
-        PlayerList.setAsDead(executedPlayerName, false);
+        PlayerList.setAsDead(targetName, false);
     }
 
     public void undoRemoval() {
-        PlayerList.setAsDead(executedPlayerName, true);
+        PlayerList.setAsDead(targetName, true);
     }
 
     @Override
     public String getInfoText() {
-        return context.getString(R.string.executed_string, PlayerList.boldPlayerName(presidentName), PlayerList.boldPlayerName(executedPlayerName));
+        return context.getString(R.string.executed_string, PlayerList.boldPlayerName(presidentName), PlayerList.boldPlayerName(targetName));
     }
 
     @Override
@@ -96,9 +94,9 @@ public class ExecutionEvent extends ExecutiveAction {
             public void onClick(View v) {
                 if(isEditing) resetOnRemoval(); //Undo actions made by the old content (i.e. removing the dead-image set before)
                 presidentName = (String) presSpinner.getSelectedItem();
-                executedPlayerName = (String) executedSpinner.getSelectedItem();
+                targetName = (String) executedSpinner.getSelectedItem();
 
-                if(presidentName.equals(executedPlayerName)) {
+                if(presidentName.equals(targetName)) {
                     Toast.makeText(context, context.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
                 } else {
                     apply();
@@ -117,7 +115,7 @@ public class ExecutionEvent extends ExecutiveAction {
         presSpinner.setSelection(PlayerList.getPlayerPosition( presidentName ));
 
         //Here we face a problem. We cannot just set the selection before, as the player was marked as dead, thus not being in the selection anymore. To mitigate this, we add the player name temporarily to a new adapter and set it. See the function in CardSetupHelper for details
-        ArrayAdapter<String> playerListadapterWithDeadPlayer = CardSetupHelper.getPlayerNameAdapterWithDeadPlayer(context, executedPlayerName);
+        ArrayAdapter<String> playerListadapterWithDeadPlayer = CardSetupHelper.getPlayerNameAdapterWithDeadPlayer(context, targetName);
         playerListadapterWithDeadPlayer.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         executedSpinner.setAdapter(playerListadapterWithDeadPlayer);
@@ -126,7 +124,7 @@ public class ExecutionEvent extends ExecutiveAction {
 
     @Override
     public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
-        return unselectedPlayers.contains(presidentName) && unselectedPlayers.contains(executedPlayerName);
+        return unselectedPlayers.contains(presidentName) && unselectedPlayers.contains(targetName);
     }
 
     @Override
@@ -137,7 +135,7 @@ public class ExecutionEvent extends ExecutiveAction {
         obj.put("type", "executive-action");
         obj.put("executive_action_type", "execution");
         obj.put("president", presidentName);
-        obj.put("target", executedPlayerName);
+        obj.put("target", targetName);
 
         return obj;
     }

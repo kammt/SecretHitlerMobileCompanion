@@ -18,6 +18,8 @@ public abstract class ExecutiveAction extends GameEvent {
     public abstract String getInfoText();
     public abstract Drawable getDrawable();
 
+    String presidentName, targetName;
+
     private LegislativeSession linkedLegislativeSession;
 
     public LegislativeSession getLinkedLegislativeSession() {

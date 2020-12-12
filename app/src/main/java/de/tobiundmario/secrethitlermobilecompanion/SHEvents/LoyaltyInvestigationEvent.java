@@ -29,7 +29,6 @@ import static de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelpe
 public class LoyaltyInvestigationEvent extends ExecutiveAction {
 
     private Context c;
-    private String presidentName, playerName;
     private int claim;
 
     //Defining the OnClickListeners outside of the function to call them separately in the setupEditCard() function
@@ -37,7 +36,7 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
 
     public LoyaltyInvestigationEvent(String presidentName, String playerName, int claim, Context context) {
         this.presidentName = presidentName;
-        this.playerName = playerName;
+        this.targetName = playerName;
         this.claim = claim;
         this.c = context;
         PlayerList.setClaim(playerName, claim);
@@ -50,16 +49,16 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
     }
 
     public void resetOnRemoval() {
-        PlayerList.setClaim(playerName, Claim.NO_CLAIM);
+        PlayerList.setClaim(targetName, Claim.NO_CLAIM);
     }
 
     public void undoRemoval() {
-        PlayerList.setClaim(playerName, claim);
+        PlayerList.setClaim(targetName, claim);
     }
 
     @Override
     public String getInfoText() {
-        return c.getString(R.string.investigation_string, PlayerList.boldPlayerName(presidentName), PlayerList.boldPlayerName(playerName), Claim.getClaimString(c, claim));
+        return c.getString(R.string.investigation_string, PlayerList.boldPlayerName(presidentName), PlayerList.boldPlayerName(targetName), Claim.getClaimString(c, claim));
     }
 
     @Override
@@ -120,14 +119,14 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
                 }
 
                 presidentName = (String) presSpinner.getSelectedItem();
-                playerName = (String) investigatedSpinner.getSelectedItem();
+                targetName = (String) investigatedSpinner.getSelectedItem();
                 claim = (iv_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL;
 
-                if(presidentName.equals(playerName)) {
+                if(presidentName.equals(targetName)) {
                     Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
                 } else {
                     isSetup = false;
-                    PlayerList.setClaim(playerName, claim);
+                    PlayerList.setClaim(targetName, claim);
                     GameLog.notifySetupPhaseLeft(LoyaltyInvestigationEvent.this);
                 }
             }
@@ -143,12 +142,12 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
         else iv_fascistListener.onClick(null);
 
         presSpinner.setSelection(PlayerList.getPlayerPosition( presidentName ));
-        investigatedSpinner.setSelection(PlayerList.getPlayerPosition( playerName ));
+        investigatedSpinner.setSelection(PlayerList.getPlayerPosition( targetName ));
     }
 
     @Override
     public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
-        return unselectedPlayers.contains(presidentName) && unselectedPlayers.contains(playerName);
+        return unselectedPlayers.contains(presidentName) && unselectedPlayers.contains(targetName);
     }
 
     @Override
@@ -159,7 +158,7 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
         obj.put("type", "executive-action");
         obj.put("executive_action_type", "investigate_loyalty");
         obj.put("president", presidentName);
-        obj.put("target", playerName);
+        obj.put("target", targetName);
         obj.put("claim", Claim.getClaimStringForJSON(c, claim));
 
         return obj;

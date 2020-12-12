@@ -279,6 +279,21 @@ public class LegislativeSession extends GameEvent {
                             addTrackAction = true;
                         }
 
+                        //If we switch the president's name and the legislative session has a presidential action, we have to change the name in that one too
+                        if(!voteEvent.getPresidentName().equals(newVoteEvent.getPresidentName()) && getPresidentAction() != null) {
+                            GameEvent presidentAction = getPresidentAction();
+                            if(presidentAction instanceof ExecutiveAction) {
+                                ExecutiveAction presidentExecutiveAction = (ExecutiveAction) presidentAction;
+                                presidentExecutiveAction.presidentName = newVoteEvent.getPresidentName();
+
+                                if(presidentExecutiveAction.presidentName.equals(presidentExecutiveAction.targetName)) { //If the president and chancellor name are now the same, the user is prompted to edit that event as well
+                                    presidentExecutiveAction.isSetup = true;
+                                    presidentExecutiveAction.isEditing = true;
+                                    GameLog.getCardListAdapter().notifyItemChanged(GameLog.getEventList().size() - 1);
+                                }
+                            }
+                        }
+
                         Log.v("LesiglativeSession Edit", "Election Tracker now at " + GameLog.electionTracker);
                         Log.v("LesiglativeSession Edit", "Liberal Policies now at " + GameLog.liberalPolicies);
                         Log.v("LesiglativeSession Edit", "Fascist policies now at " + GameLog.fascistPolicies);
