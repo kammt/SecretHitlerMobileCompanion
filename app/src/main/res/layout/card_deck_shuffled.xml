@@ -91,8 +91,9 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
+            android:gravity="center"
             android:orientation="horizontal"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -100,10 +101,9 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="30dp"
+                android:layout_width="25dp"
                 android:layout_height="30dp"
                 android:layout_gravity="center"
-                android:layout_weight="1"
                 app:srcCompat="@drawable/ic_baseline_warning_24" />
 
             <TextView
@@ -111,7 +111,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_weight="4"
                 android:fontFamily="@font/comfortaa_light"
                 android:text="@string/message_claims_not_matching_with_deck" />
         </LinearLayout>
