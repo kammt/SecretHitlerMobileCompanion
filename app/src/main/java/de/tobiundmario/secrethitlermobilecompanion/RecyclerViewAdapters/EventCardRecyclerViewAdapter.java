@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -101,13 +101,15 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
     public void onBindViewHolder(DimmableViewHolder cardViewHolder, final int position) {
         final CardView cv = cardViewHolder.cv;
         final GameEvent event = events.get(position);
-        final ImageView iv_cancel = cv.findViewById(R.id.img_cancel);
+        final Button btn_cancel = cv.findViewById(R.id.btn_setup_back);
 
         if(event.isSetup) {
             event.initialiseSetupCard(cv);
             if(event.isEditing) event.setCurrentValues(cv);
+
              //The Cancel button is visible on every card, hence we initialise it here to save code
-            iv_cancel.setOnClickListener(new View.OnClickListener() {
+            btn_cancel.setText(c.getString(R.string.dialog_mismatching_claims_btn_cancel));
+            btn_cancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (!event.isEditing) GameLog.remove(event);
@@ -120,9 +122,9 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
             });
 
             if(!GameLog.gameTrack.isManualMode() && !(event instanceof LegislativeSession) && !(event instanceof DeckShuffledEvent) && !(event instanceof GameEndCard) && !event.isEditing) { //If manual mode is disabled, then we don't want to have cancel buttons on automatically generated actions
-                iv_cancel.setVisibility(View.GONE);
+                btn_cancel.setVisibility(View.GONE);
             } else {
-                iv_cancel.setVisibility(View.VISIBLE);
+                btn_cancel.setVisibility(View.VISIBLE);
             }
 
         } else {
