@@ -1,7 +1,9 @@
 package de.tobiundmario.secrethitlermobilecompanion.SHEvents;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -36,7 +38,7 @@ public class DeckShuffledEvent extends GameEvent {
     }
 
     @Override
-    public void initialiseSetupCard(CardView cardView) {
+    public void initialiseSetupCard(final CardView cardView) {
         Button btn_create = cardView.findViewById(R.id.btn_setup_forward);
         final EditText et_liberalp = cardView.findViewById(R.id.et_lpolicies);
         final EditText et_fascistp = cardView.findViewById(R.id.et_fpolicies);
@@ -55,6 +57,9 @@ public class DeckShuffledEvent extends GameEvent {
                     et_fascistp.setError(context.getString(R.string.cannot_be_empty));
                     failed = true;
                 }
+
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(cardView.getWindowToken(), 0);
 
                 if(!failed) {
                     liberalPolicies = Integer.parseInt(et_liberalp.getText().toString());
