@@ -626,8 +626,12 @@ public class LegislativeSession extends GameEvent {
             playedPolicytv.setVisibility(View.VISIBLE);
             playedPolicyLogo.setVisibility(View.VISIBLE);
 
-            if(oldcolors != null) chancName.setTextColor(oldcolors);
+            if(oldcolors != null) {
+                chancName.setTextColor(oldcolors);
+                playedPolicytv.setTextColor(oldcolors);
+            }
             chancName.setPaintFlags(chancName.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+            playedPolicytv.setPaintFlags(playedPolicytv.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
 
             //The vote didn't fail, now we have to set the colored Claims. To do this, we parse the HTML <font> attribute (see Claim.java for more)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -644,6 +648,8 @@ public class LegislativeSession extends GameEvent {
         }
 
         if(claimEvent != null && claimEvent.isVetoed()) {
+            if(oldcolors == null) oldcolors =  playedPolicytv.getTextColors();
+
             title.setText(c.getString(R.string.legislative_session) + " #" + sessionNumber + c.getString(R.string.vetoed));
             playedPolicytv.setTextColor(Color.RED);
             playedPolicytv.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
