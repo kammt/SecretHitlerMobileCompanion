@@ -32,7 +32,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
-import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
@@ -488,19 +487,8 @@ public class LegislativeSession extends GameEvent {
                             Log.v("LesiglativeSession Edit", "Fascist policies now at " + GameLog.fascistPolicies);
                         }
 
-                        if (newClaimEvent != null && !Claim.doClaimsFit(newClaimEvent.getPresidentClaim(), newClaimEvent.getChancellorClaim(), newClaimEvent.getPlayedPolicy())) {
-                            CardDialog.showMessageDialog(c, c.getString(R.string.dialog_mismatching_claims_title), c.getString(R.string.dialog_mismatching_claims_desc), c.getString(R.string.dialog_mismatching_claims_btn_continue), new Runnable() {
-                                @Override
-                                public void run() {
-                                    leaveSetupPhase(newClaimEvent, newVoteEvent);
-                                }
-                            }, c.getString(R.string.dialog_mismatching_claims_btn_cancel), null);
-                        } else {
-                            leaveSetupPhase(newClaimEvent, newVoteEvent);
-                            if (addTrackAction)
-                                GameLog.addTrackAction(LegislativeSession.this, false);
-                        }
-
+                        leaveSetupPhase(newClaimEvent, newVoteEvent);
+                        if (addTrackAction) GameLog.addTrackAction(LegislativeSession.this, false);
                     }
                 }
             });
@@ -645,6 +633,11 @@ public class LegislativeSession extends GameEvent {
             if(claimEvent.getPlayedPolicy() == Claim.LIBERAL) {
                 playedPolicyLogo.setImageDrawable(c.getDrawable(R.drawable.liberal_logo));
             } else playedPolicyLogo.setImageDrawable(c.getDrawable(R.drawable.fascist_logo));
+
+            LinearLayout ll_warning_claims = cardLayout.findViewById(R.id.warning_mismatching_claims);
+            if(!Claim.doClaimsFit(claimEvent.getPresidentClaim(), claimEvent.getChancellorClaim(), claimEvent.getPlayedPolicy())) {
+                ll_warning_claims.setVisibility(View.VISIBLE);
+            } else ll_warning_claims.setVisibility(View.GONE);
         }
 
         if(claimEvent != null && claimEvent.isVetoed()) {
