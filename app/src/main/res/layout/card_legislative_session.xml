@@ -98,13 +98,14 @@
             app:layout_constraintTop_toTopOf="@+id/chanc_name" />
 
         <LinearLayout
+            android:id="@+id/ll_played_policy"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
             android:gravity="center"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/warning_mismatching_claims"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/chanc_name">
@@ -127,6 +128,37 @@
                 android:cropToPadding="false"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/fascist_logo" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/warning_mismatching_claims"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="25dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/ic_baseline_warning_24" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/comfortaa_light"
+                android:text="@string/dialog_mismatching_claims_title" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
