@@ -589,6 +589,8 @@ public class LegislativeSession extends GameEvent {
         TextView playedPolicytv = cardLayout.findViewById(R.id.policy_played);
         ImageView playedPolicyLogo = cardLayout.findViewById(R.id.img_policy_played);
 
+        LinearLayout ll_warning_claims = cardLayout.findViewById(R.id.warning_mismatching_claims);
+
         //Set the president and chancellor names. This will always be done, no matter what outcome the event was
         presName.setText(voteEvent.getPresidentName());
         chancName.setText(voteEvent.getChancellorName());
@@ -601,6 +603,7 @@ public class LegislativeSession extends GameEvent {
             presClaim.setVisibility(View.GONE);
             playedPolicytv.setVisibility(View.GONE);
             playedPolicyLogo.setVisibility(View.GONE);
+            ll_warning_claims.setVisibility(View.GONE);
 
             if(oldcolors == null) oldcolors =  chancName.getTextColors();
             chancName.setTextColor(Color.RED);
@@ -634,7 +637,6 @@ public class LegislativeSession extends GameEvent {
                 playedPolicyLogo.setImageDrawable(c.getDrawable(R.drawable.liberal_logo));
             } else playedPolicyLogo.setImageDrawable(c.getDrawable(R.drawable.fascist_logo));
 
-            LinearLayout ll_warning_claims = cardLayout.findViewById(R.id.warning_mismatching_claims);
             if(!Claim.doClaimsFit(claimEvent.getPresidentClaim(), claimEvent.getChancellorClaim(), claimEvent.getPlayedPolicy())) {
                 ll_warning_claims.setVisibility(View.VISIBLE);
             } else ll_warning_claims.setVisibility(View.GONE);
