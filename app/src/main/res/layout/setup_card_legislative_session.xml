@@ -17,8 +17,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/creation"
         android:layout_width="match_parent"
-        android:layout_height="210dp"
-        android:animateLayoutChanges="true">
+        android:layout_height="210dp">
 
         <TextView
             android:id="@+id/title_new_legSession"
