@@ -2,12 +2,11 @@ package de.tobiundmario.secrethitlermobilecompanion.SHEvents;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,11 +34,11 @@ public class DeckShuffledEvent extends GameEvent {
 
     @Override
     public void initialiseSetupCard(CardView cardView) {
-        FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
+        Button btn_create = cardView.findViewById(R.id.btn_setup_forward);
         final EditText et_liberalp = cardView.findViewById(R.id.et_lpolicies);
         final EditText et_fascistp = cardView.findViewById(R.id.et_fpolicies);
 
-        fab_create.setOnClickListener(new View.OnClickListener() {
+        btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean failed = false;

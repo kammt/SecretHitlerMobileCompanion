@@ -1,17 +1,15 @@
 package de.tobiundmario.secrethitlermobilecompanion.SHEvents;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,7 +82,7 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
         //Initialising all other important aspects
         final ImageView iv_fascist = cardView.findViewById(R.id.img_policy_fascist);
         final ImageView iv_liberal = cardView.findViewById(R.id.img_policy_liberal);
-        final FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
+        final Button btn_create = cardView.findViewById(R.id.btn_setup_forward);
 
 
         iv_liberalListener = new View.OnClickListener() {
@@ -92,9 +90,6 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
             public void onClick(View v) {
                 iv_liberal.setAlpha((float) 1);
                 iv_fascist.setAlpha((float) 0.2);
-
-                ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorLiberal));
-                fab_create.setBackgroundTintList(csl);
             }
         };
         iv_liberal.setOnClickListener(iv_liberalListener);
@@ -104,14 +99,11 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
             public void onClick(View v) {
                 iv_fascist.setAlpha((float) 1);
                 iv_liberal.setAlpha((float) 0.2);
-
-                ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorFascist));
-                fab_create.setBackgroundTintList(csl);
             }
         };
         iv_fascist.setOnClickListener(iv_fascistListener);
 
-        fab_create.setOnClickListener(new View.OnClickListener() {
+        btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(isEditing) {
