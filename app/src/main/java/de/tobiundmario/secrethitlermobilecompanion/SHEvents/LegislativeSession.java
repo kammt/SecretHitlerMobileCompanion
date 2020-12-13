@@ -26,8 +26,6 @@ import android.widget.Toast;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -321,7 +319,7 @@ public class LegislativeSession extends GameEvent {
             final Switch sw_votingoutcome = cardView.findViewById(R.id.switch_vote_outcome);
             final ImageView iv_fascist = cardView.findViewById(R.id.img_policy_fascist);
             final ImageView iv_liberal = cardView.findViewById(R.id.img_policy_liberal);
-            final FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
+            final Button btn_continue = cardView.findViewById(R.id.btn_setup_forward);
 
             //When the switch is changed, we want certain UI elements to disappear
             sw_votingoutcome.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
@@ -349,7 +347,6 @@ public class LegislativeSession extends GameEvent {
                     iv_fascist.setAlpha((float) 0.2);
 
                     ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorLiberal));
-                    fab_create.setBackgroundTintList(csl);
                     cb_vetoed.setButtonTintList(csl);
 
                     sw_votingoutcome.setThumbTintList(csl);
@@ -366,7 +363,6 @@ public class LegislativeSession extends GameEvent {
                     iv_liberal.setAlpha((float) 0.2);
 
                     ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorFascist));
-                    fab_create.setBackgroundTintList(csl);
                     cb_vetoed.setButtonTintList(csl);
 
                     sw_votingoutcome.setThumbTintList(csl);
@@ -375,7 +371,7 @@ public class LegislativeSession extends GameEvent {
             };
             iv_fascist.setOnClickListener(iv_fascistListener);
 
-            fab_create.setOnClickListener(new View.OnClickListener() {
+            btn_continue.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
