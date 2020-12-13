@@ -73,7 +73,7 @@
     <string name="msg_too_little_players">You currently have %1$d players. The official game requires 5 or more players. Continue anyway?</string>
     <string name="title_too_little_players">Too little players</string>
     <string name="no_players_added">No players added</string>
-    <string name="no_players_added_msg">You can add more players using the button above</string>
+    <string name="no_players_added_msg">Five or more players are required. You can add more players using the button above</string>
     <string name="snackbar_GameEvent_removed_message">Event has been deleted</string>
     <string name="undo">Undo</string>
     <string name="game_ended_title">Game Ended</string>
@@ -109,7 +109,7 @@
     <string name="track_56">5 – 6 players</string>
     <string name="track_910">9 – 10 players</string>
     <string name="track_78">7 – 8 players</string>
-    <string name="explanation_trackSelection">Select a Fascist Track from the list below or use the Button to create a custom one.</string>
+    <string name="explanation_trackSelection">Select a Fascist Track from the list below or use the Plus-Button to create a custom one.</string>
     <string name="in_use">In Use</string>
     <string name="hint_track_name">Track Name</string>
     <string name="add_track_section_basics">Basics:</string>
