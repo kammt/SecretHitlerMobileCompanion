@@ -92,8 +92,6 @@ public class LegislativeSession extends GameEvent {
     public void initialiseSetupCard(CardView cardView) {
         final Spinner presSpinner, chancSpinner, presClaimSpinner, chancClaimSpinner;
         if(!isEditing) {
-
-
             cardView.findViewById(R.id.legacy).setVisibility(View.GONE);
             cardView.findViewById(R.id.initial_setup).setVisibility(View.VISIBLE);
 
@@ -168,9 +166,6 @@ public class LegislativeSession extends GameEvent {
             page2_voting.setVisibility(View.GONE);
             page3_policies.setVisibility(View.GONE);
             page4_claims.setVisibility(View.GONE);
-
-            final Animation slideInLeft = AnimationUtils.loadAnimation(c, R.anim.slide_in_left);
-            page1_selection.startAnimation(slideInLeft);
 
             //Initialising buttons
             Button btn_continue = cardView.findViewById(R.id.btn_setup_forward);

@@ -104,9 +104,6 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
         final Button btn_cancel = cv.findViewById(R.id.btn_setup_back);
 
         if(event.isSetup) {
-            event.initialiseSetupCard(cv);
-            if(event.isEditing) event.setCurrentValues(cv);
-
              //The Cancel button is visible on every card, hence we initialise it here to save code
             btn_cancel.setText(c.getString(R.string.dialog_mismatching_claims_btn_cancel));
             btn_cancel.setOnClickListener(new View.OnClickListener() {
@@ -127,6 +124,8 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
                 btn_cancel.setVisibility(View.VISIBLE);
             }
 
+            event.initialiseSetupCard(cv);
+            if(event.isEditing) event.setCurrentValues(cv);
         } else {
             event.initialiseCard(cv);
             if(event.permitEditing) {
