@@ -109,8 +109,10 @@ public class LegislativeSession extends GameEvent {
             final ImageView icon_liberal = cardView.findViewById(R.id.icon_policyl);
 
             final ImageView icon_ja = cardView.findViewById(R.id.icon_voting_ja);
+            icon_ja.setAlpha(1f);
             View.OnClickListener iv_jaListener, iv_neinListener;
             final ImageView icon_nein = cardView.findViewById(R.id.icon_voting_nein);
+            icon_nein.setAlpha(0.2f);
 
             final CheckBox cb_vetoed = cardView.findViewById(R.id.checkBox_played_policy_vetoed);
 
@@ -145,7 +147,6 @@ public class LegislativeSession extends GameEvent {
                 public void onClick(View v) {
                     icon_ja.setAlpha((float) 1);
                     icon_nein.setAlpha((float) 0.2);
-                    setupPage = 2;
                 }
             };
             icon_ja.setOnClickListener(iv_jaListener);
@@ -155,7 +156,6 @@ public class LegislativeSession extends GameEvent {
                 public void onClick(View v) {
                     icon_nein.setAlpha((float) 1);
                     icon_ja.setAlpha((float) 0.2);
-                    setupPage = 4;
                 }
             };
             icon_nein.setOnClickListener(iv_neinListener);
@@ -171,7 +171,7 @@ public class LegislativeSession extends GameEvent {
             page3_policies.setVisibility(View.GONE);
             page4_claims.setVisibility(View.GONE);
 
-            Animation slideInLeft = AnimationUtils.loadAnimation(c, R.anim.slide_in_left);
+            final Animation slideInLeft = AnimationUtils.loadAnimation(c, R.anim.slide_in_left);
             page1_selection.startAnimation(slideInLeft);
 
             //Initialising buttons
@@ -192,8 +192,14 @@ public class LegislativeSession extends GameEvent {
                             newPage = page2_voting;
                             break;
                         case 3:
-                            oldPage = page2_voting;
-                            newPage = page3_policies;
+                            if(icon_ja.getAlpha() == 1f) {
+                                oldPage = page2_voting;
+                                newPage = page3_policies;
+                            } else {
+                                setupPage = 5; //If the vote is rejected, then we finish the setup on page 2
+                                oldPage = null;
+                                newPage = null;
+                            }
                             break;
                         case 4:
                             oldPage = page3_policies;
@@ -242,9 +248,9 @@ public class LegislativeSession extends GameEvent {
                             public void onAnimationRepeat(Animation animation) {
 
                             }
-
                         });
                         Animation slideInRight = AnimationUtils.loadAnimation(c, R.anim.slide_in_right);
+                        slideInRight.setFillAfter(true);
                         oldPage.startAnimation(slideOutLeft);
 
                         newPage.setVisibility(View.VISIBLE);
@@ -282,24 +288,9 @@ public class LegislativeSession extends GameEvent {
                     } else {
                         //Animations
                         Animation slideOutRight = AnimationUtils.loadAnimation(c, R.anim.slide_out_right);
-                        slideOutRight.setAnimationListener(new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                oldPage.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-
-                            }
-
-                        });
+                        slideOutRight.setFillAfter(true);
                         Animation slideInLeft = AnimationUtils.loadAnimation(c, R.anim.slide_in_left);
+                        slideInLeft.setFillAfter(true);
                         oldPage.startAnimation(slideOutRight);
 
                         newPage.setVisibility(View.VISIBLE);
