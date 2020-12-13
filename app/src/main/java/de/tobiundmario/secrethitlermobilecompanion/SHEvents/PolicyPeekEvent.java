@@ -4,11 +4,10 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import androidx.cardview.widget.CardView;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,7 +53,7 @@ public class PolicyPeekEvent extends ExecutiveAction {
 
     @Override
     public void initialiseSetupCard(CardView cardView) {
-        FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
+        Button btn_create = cardView.findViewById(R.id.btn_setup_forward);
 
         final Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
         ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);
@@ -70,7 +69,7 @@ public class PolicyPeekEvent extends ExecutiveAction {
                 .simple_spinner_dropdown_item);
         presClaimSpinner.setAdapter(presClaimListadapter);
 
-        fab_create.setOnClickListener(new View.OnClickListener() {
+        btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 presidentName = presSpinner.getSelectedItem().toString();

@@ -5,14 +5,13 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,9 +86,9 @@ public class ExecutionEvent extends ExecutiveAction {
         executedSpinner.setSelection(1); //Setting a different item on the executed player spinner so they don't have the same name at the beginning
 
         //Initialising all other important aspects
-        final FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
+        final Button btn_create = cardView.findViewById(R.id.btn_setup_forward);
 
-        fab_create.setOnClickListener(new View.OnClickListener() {
+        btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(isEditing) resetOnRemoval(); //Undo actions made by the old content (i.e. removing the dead-image set before)
