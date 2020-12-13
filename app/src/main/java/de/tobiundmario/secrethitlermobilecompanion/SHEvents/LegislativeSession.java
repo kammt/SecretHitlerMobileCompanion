@@ -97,7 +97,7 @@ public class LegislativeSession extends GameEvent {
 
 
             cardView.findViewById(R.id.legacy).setVisibility(View.GONE);
-            cardView.findViewById(R.id.creation).setVisibility(View.VISIBLE);
+            cardView.findViewById(R.id.initial_setup).setVisibility(View.VISIBLE);
 
             presSpinner = cardView.findViewById(R.id.spinner_president_selection);
             chancSpinner = cardView.findViewById(R.id.spinner_chancellor_selection);
@@ -304,7 +304,7 @@ public class LegislativeSession extends GameEvent {
 
         } else {
             cardView.findViewById(R.id.legacy).setVisibility(View.VISIBLE);
-            cardView.findViewById(R.id.creation).setVisibility(View.GONE);
+            cardView.findViewById(R.id.initial_setup).setVisibility(View.GONE);
 
             //Setting up Spinners
             presSpinner = cardView.findViewById(R.id.spinner_president);

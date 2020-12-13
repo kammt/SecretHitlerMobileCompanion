@@ -15,9 +15,10 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/creation"
+        android:id="@+id/initial_setup"
         android:layout_width="match_parent"
-        android:layout_height="210dp">
+        android:layout_height="210dp"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/title_new_legSession"
@@ -291,7 +292,7 @@
         android:id="@+id/legacy"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <TextView
             android:id="@+id/title"
@@ -360,11 +361,11 @@
             android:layout_marginBottom="8dp"
             android:gravity="center"
             android:orientation="horizontal"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_chancellor"
-            tools:visibility="visible">
+            app:layout_constraintTop_toBottomOf="@+id/spinner_chancellor">
 
             <TextView
                 android:id="@+id/policy_played"
@@ -427,11 +428,11 @@
             android:id="@+id/switch_vote_outcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:checked="false"
             android:fontFamily="@font/comfortaa_light"
             android:thumbTint="@color/colorFascist"
             android:trackTint="@color/colorFascist"
-            app:layout_constraintBottom_toTopOf="@+id/ll_policy_outcome"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@+id/spinner_chancellor"
             tools:checked="true" />
