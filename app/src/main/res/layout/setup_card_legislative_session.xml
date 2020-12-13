@@ -15,8 +15,284 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/initial_setup"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="210dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/title_new_legSession"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/germania_one"
+            android:text="@string/new_legislative_session"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/page4_claims"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_new_legSession">
+
+            <ImageView
+                android:id="@+id/icon_president_claim"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/president_token" />
+
+            <Spinner
+                android:id="@+id/spinner_president_claim"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="#D5BC96"
+                android:spinnerMode="dropdown"
+                app:layout_constraintBottom_toBottomOf="@+id/icon_president_claim"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/icon_president_claim"
+                app:layout_constraintTop_toTopOf="@+id/icon_president_claim"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <ImageView
+                android:id="@+id/icon_chancellor_claim"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="@+id/icon_president_claim"
+                app:layout_constraintStart_toStartOf="@+id/icon_president_claim"
+                app:layout_constraintTop_toBottomOf="@+id/icon_president_claim"
+                app:srcCompat="@drawable/chancellor_token" />
+
+            <Spinner
+                android:id="@+id/spinner_chancellor_claim"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:background="@color/colorSpinner"
+                android:spinnerMode="dropdown"
+                app:layout_constraintBottom_toBottomOf="@+id/icon_chancellor_claim"
+                app:layout_constraintEnd_toEndOf="@+id/spinner_president_claim"
+                app:layout_constraintStart_toEndOf="@+id/icon_chancellor_claim"
+                app:layout_constraintTop_toTopOf="@+id/icon_chancellor_claim" />
+
+            <CheckBox
+                android:id="@+id/checkBox_played_policy_vetoed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/colorFascist"
+                android:fontFamily="@font/comfortaa_light"
+                android:text="@string/CheckBox_vetoed"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/icon_chancellor_claim" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/page3_policies"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_new_legSession">
+
+            <ImageView
+                android:id="@+id/icon_policyf"
+                android:layout_width="80dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline10"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_fpolicy" />
+
+            <ImageView
+                android:id="@+id/icon_policyl"
+                android:layout_width="80dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="8dp"
+                android:alpha="0.2"
+                app:layout_constraintBottom_toBottomOf="@+id/icon_policyf"
+                app:layout_constraintStart_toStartOf="@+id/guideline10"
+                app:layout_constraintTop_toTopOf="@+id/icon_policyf"
+                app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@drawable/icon_lpolicy" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/page2_voting"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_new_legSession">
+
+            <ImageView
+                android:id="@+id/icon_voting_ja"
+                android:layout_width="80dp"
+                android:layout_height="100dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline9"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ja" />
+
+            <ImageView
+                android:id="@+id/icon_voting_nein"
+                android:layout_width="80dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="8dp"
+                android:alpha="0.2"
+                app:layout_constraintBottom_toBottomOf="@+id/icon_voting_ja"
+                app:layout_constraintStart_toStartOf="@+id/guideline9"
+                app:layout_constraintTop_toTopOf="@+id/icon_voting_ja"
+                app:srcCompat="@drawable/nein" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/page1_selection"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_new_legSession">
+
+            <ImageView
+                android:id="@+id/icon_president"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/president_token" />
+
+            <Spinner
+                android:id="@+id/spinner_president_selection"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="#D5BC96"
+                android:spinnerMode="dropdown"
+                app:layout_constraintBottom_toBottomOf="@+id/icon_president"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/icon_president"
+                app:layout_constraintTop_toTopOf="@+id/icon_president"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <ImageView
+                android:id="@+id/icon_chancellor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="@+id/icon_president"
+                app:layout_constraintStart_toStartOf="@+id/icon_president"
+                app:layout_constraintTop_toBottomOf="@+id/icon_president"
+                app:srcCompat="@drawable/chancellor_token" />
+
+            <Spinner
+                android:id="@+id/spinner_chancellor_selection"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:background="@color/colorSpinner"
+                android:spinnerMode="dropdown"
+                app:layout_constraintBottom_toBottomOf="@+id/icon_chancellor"
+                app:layout_constraintEnd_toEndOf="@+id/spinner_president_selection"
+                app:layout_constraintStart_toEndOf="@+id/icon_chancellor"
+                app:layout_constraintTop_toTopOf="@+id/icon_chancellor" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/setup_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="160dp"
+            android:layout_marginEnd="8dp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+            <Button
+                android:id="@+id/btn_setup_back"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/colorFascist"
+                android:enabled="true"
+                android:text="@string/back"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline_center"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/btn_setup_forward"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/colorLiberal"
+                android:text="@string/dialog_mismatching_claims_btn_continue"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline_center" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/legacy"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
         <TextView
             android:id="@+id/title"
@@ -85,11 +361,11 @@
             android:layout_marginBottom="8dp"
             android:gravity="center"
             android:orientation="horizontal"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_chancellor"
-            tools:visibility="visible">
+            app:layout_constraintTop_toBottomOf="@+id/spinner_chancellor">
 
             <TextView
                 android:id="@+id/policy_played"
@@ -152,11 +428,11 @@
             android:id="@+id/switch_vote_outcome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:checked="false"
             android:fontFamily="@font/comfortaa_light"
             android:thumbTint="@color/colorFascist"
             android:trackTint="@color/colorFascist"
-            app:layout_constraintBottom_toTopOf="@+id/ll_policy_outcome"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@+id/spinner_chancellor"
             tools:checked="true" />

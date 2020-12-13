@@ -157,4 +157,6 @@
     <string name="btn_report">Report on Github</string>
     <string name="btn_exit">Exit app</string>
     <string name="snackbar_message_player_removed">Player has been removed</string>
+    <string name="title_voting_outcome">Vote outcome:</string>
+    <string name="title_claims">Claims:</string>
 </resources>
