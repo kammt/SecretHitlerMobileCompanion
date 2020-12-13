@@ -4,12 +4,11 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.media.MediaPlayer;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 
 import androidx.cardview.widget.CardView;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,7 +40,7 @@ public class GameEndCard extends GameEvent {
 
         final ImageView iv_fascist = cardView.findViewById(R.id.img_policy_fascist);
         final ImageView iv_liberal = cardView.findViewById(R.id.img_policy_liberal);
-        final FloatingActionButton fab_end = cardView.findViewById(R.id.fab_create);
+        final Button btn_end = cardView.findViewById(R.id.btn_setup_forward);
 
         final RadioButton rb_hitler = cardView.findViewById(R.id.rb_win_option_hitler);
         final RadioButton rb_policy = cardView.findViewById(R.id.rb_win_option_policy);
@@ -52,7 +51,7 @@ public class GameEndCard extends GameEvent {
             iv_fascist.setAlpha((float) 0.2);
 
             ColorStateList csl = ColorStateList.valueOf(context.getColor(R.color.colorLiberal));
-            fab_end.setBackgroundTintList(csl);
+            if(!GameLog.gameTrack.isManualMode()) btn_end.setBackgroundTintList(csl);
             rb_hitler.setButtonTintList(csl);
             rb_policy.setButtonTintList(csl);
 
@@ -67,7 +66,7 @@ public class GameEndCard extends GameEvent {
                 iv_fascist.setAlpha((float) 0.2);
 
                 ColorStateList csl = ColorStateList.valueOf(context.getColor(R.color.colorLiberal));
-                fab_end.setBackgroundTintList(csl);
+                if(!GameLog.gameTrack.isManualMode()) btn_end.setBackgroundTintList(csl);
                 rb_hitler.setButtonTintList(csl);
                 rb_policy.setButtonTintList(csl);
 
@@ -83,7 +82,7 @@ public class GameEndCard extends GameEvent {
                 iv_liberal.setAlpha((float) 0.2);
 
                 ColorStateList csl = ColorStateList.valueOf(context.getColor(R.color.colorFascist));
-                fab_end.setBackgroundTintList(csl);
+                if(!GameLog.gameTrack.isManualMode()) btn_end.setBackgroundTintList(csl);
                 rb_hitler.setButtonTintList(csl);
                 rb_policy.setButtonTintList(csl);
 
@@ -92,7 +91,7 @@ public class GameEndCard extends GameEvent {
             }
         });
 
-        fab_end.setOnClickListener(new View.OnClickListener() {
+        btn_end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean fascistsWon = (iv_fascist.getAlpha() == (float) 1);

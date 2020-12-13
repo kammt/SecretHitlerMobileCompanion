@@ -1,16 +1,14 @@
 package de.tobiundmario.secrethitlermobilecompanion.SHEvents;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,18 +58,13 @@ public class TopPolicyPlayedEvent extends GameEvent {
     public void initialiseSetupCard(CardView cardView) {
         final ImageView iv_fascist = cardView.findViewById(R.id.img_fascist_policy);
         final ImageView iv_liberal = cardView.findViewById(R.id.img_liberal_policy);
-        final FloatingActionButton fab_create = cardView.findViewById(R.id.fab_create);
-
-        final ColorStateList csl_liberal = ColorStateList.valueOf(c.getColor(R.color.colorLiberal));
-        final ColorStateList csl_fascist = ColorStateList.valueOf(c.getColor(R.color.colorFascist));
+        final Button btn_create = cardView.findViewById(R.id.btn_setup_forward);
 
         iv_fascist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 iv_liberal.setAlpha(0.2f);
                 iv_fascist.setAlpha(1f);
-
-                fab_create.setBackgroundTintList(csl_fascist);
             }
         });
 
@@ -80,12 +73,10 @@ public class TopPolicyPlayedEvent extends GameEvent {
             public void onClick(View v) {
                 iv_liberal.setAlpha(1f);
                 iv_fascist.setAlpha(0.2f);
-
-                fab_create.setBackgroundTintList(csl_liberal);
             }
         });
 
-        fab_create.setOnClickListener(new View.OnClickListener() {
+        btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 policyPlayed = (iv_fascist.getAlpha() == 1f) ? Claim.FASCIST : Claim.LIBERAL;
