@@ -1,7 +1,7 @@
 # Secret Hitler Mobile Companion <img src="/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width="10%" align="left">
 An Android App intended to make the board game experience of Secret Hitler more easy and fun. 
 
-[![Known Vulnerabilities](https://snyk.io/test/github/TobeSoftwareGmbH/SecretHitlerMobileCompanion/badge.svg)](https://snyk.io/test/github/TobeSoftwareGmbH/SecretHitlerMobileCompanion)
+[![Known Vulnerabilities](https://snyk.io/test/github/TobeSoftwareGmbH/SecretHitlerMobileCompanion/badge.svg?targetFile=app/build.gradle)](https://snyk.io/test/github/TobeSoftwareGmbH/SecretHitlerMobileCompanion?targetFile=app/build.gradle)
 
 ## Overview and Features
 - **Keep track of your Game Events.** You might know that moment - you have entered Hitler zone and now want to see who can be trusted the most. But what did that person do again? Did he play a liberal or a fascist policy? What did he claim? By entering all events into the App, you can now easily see them in a Card-based list and even filter to only show events including certain players! Depending on the amount of players, the app also automatically creates Presidential Powers (such as a Loyalty Investigation) for you once a fascist policy has been played. This can also be customised using custom Tracks to play game modes like Gun Game!
