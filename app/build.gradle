@@ -8,15 +8,15 @@ android {
         applicationId "de.tobiundmario.secrethitlermobilecompanion"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 1
-        versionName '0.1'
+        versionCode 3
+        versionName '0.3'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables {
             useSupportLibrary = true
         }
-        versionNameSuffix ' beta'
+        versionNameSuffix '-beta'
     }
 
     buildTypes {
