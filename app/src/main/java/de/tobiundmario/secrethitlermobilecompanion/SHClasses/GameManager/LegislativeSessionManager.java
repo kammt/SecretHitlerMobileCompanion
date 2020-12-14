@@ -15,11 +15,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHEvents.SpecialElectionEvent
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.TopPolicyPlayedEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.VoteEvent;
 
-import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager.addEvent;
-import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager.eventList;
-import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager.restoredEventList;
-
-public class LegislativeSessionManager extends GameManager {
+public class LegislativeSessionManager extends GameEventsManager {
 
     public static int legSessionNo = 1;
 
