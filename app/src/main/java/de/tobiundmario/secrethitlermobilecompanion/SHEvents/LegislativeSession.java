@@ -29,13 +29,16 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.RecyclerViewManager;
 
 public class LegislativeSession extends GameEvent {
 
@@ -56,7 +59,7 @@ public class LegislativeSession extends GameEvent {
     private View.OnClickListener iv_fascistListener, iv_liberalListener;
 
     public LegislativeSession(VoteEvent voteEvent, ClaimEvent claimEvent, Context context) {
-        sessionNumber = GameLog.legSessionNo++;
+        sessionNumber = LegislativeSessionManager.legSessionNo++;
         this.voteEvent = voteEvent;
         this.claimEvent = claimEvent;
         c = context;
@@ -276,7 +279,7 @@ public class LegislativeSession extends GameEvent {
                             newPage = null;
                     }
                     if(setupPage == 0) {
-                        GameLog.remove(LegislativeSession.this);
+                        GameEventsManager.remove(LegislativeSession.this);
                     } else {
                         //Animations
                         Animation slideOutRight = AnimationUtils.loadAnimation(c, R.anim.slide_out_right);
@@ -402,48 +405,48 @@ public class LegislativeSession extends GameEvent {
                             //If we change the event to be rejected or vetoed, we reduce the policy count
                             if (newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || newClaimEvent != null && newClaimEvent.isVetoed()) {
                                 if (claimEvent != null && claimEvent.getPlayedPolicy() == Claim.LIBERAL)
-                                    GameLog.liberalPolicies--;
+                                    GameEventsManager.liberalPolicies--;
                                 if (claimEvent != null && claimEvent.getPlayedPolicy() == Claim.FASCIST)
-                                    GameLog.fascistPolicies--;
+                                    GameEventsManager.fascistPolicies--;
                             }
 
                             //If we change the event to play a policy, we increase the policy count
                             if (voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || claimEvent != null && claimEvent.isVetoed()) {
                                 if (newClaimEvent != null && newClaimEvent.getPlayedPolicy() == Claim.LIBERAL)
-                                    GameLog.liberalPolicies++;
+                                    GameEventsManager.liberalPolicies++;
                                 if (newClaimEvent != null && newClaimEvent.getPlayedPolicy() == Claim.FASCIST)
-                                    GameLog.fascistPolicies++;
+                                    GameEventsManager.fascistPolicies++;
                             }
 
                             //If we had a liberal policy and change it to a fascist policy, we update the policy count
                             if (newClaimEvent != null && !newClaimEvent.isVetoed() && newClaimEvent.getPlayedPolicy() == Claim.FASCIST && claimEvent != null && !claimEvent.isVetoed() && claimEvent.getPlayedPolicy() == Claim.LIBERAL) {
-                                GameLog.liberalPolicies--;
-                                GameLog.fascistPolicies++;
+                                GameEventsManager.liberalPolicies--;
+                                GameEventsManager.fascistPolicies++;
                             }
 
                             //If we had a fascist policy and change it to a liberal policy, we update the policy count
                             if (newClaimEvent != null && !newClaimEvent.isVetoed() && newClaimEvent.getPlayedPolicy() == Claim.LIBERAL && claimEvent != null && !claimEvent.isVetoed() && claimEvent.getPlayedPolicy() == Claim.FASCIST) {
-                                GameLog.liberalPolicies++;
-                                GameLog.fascistPolicies--;
+                                GameEventsManager.liberalPolicies++;
+                                GameEventsManager.fascistPolicies--;
                             }
 
                             //If we are not in manual mode, we have to recalculate the election tracker as well
-                            if (!GameLog.gameTrack.isManualMode()) {
+                            if (!GameManager.gameTrack.isManualMode()) {
                                 //If it was rejected and now not anymore, we decrease the election tracker
                                 if (voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED && newVoteEvent.getVotingResult() == VoteEvent.VOTE_PASSED)
-                                    GameLog.electionTracker--;
+                                    GameEventsManager.electionTracker--;
                                 //If it was passed and now not anymore, we increase the election tracker
                                 if (voteEvent.getVotingResult() == VoteEvent.VOTE_PASSED && newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED) {
-                                    GameLog.electionTracker++;
+                                    GameEventsManager.electionTracker++;
 
-                                    if (GameLog.electionTracker == GameLog.gameTrack.getElectionTrackerLength()) {
-                                        GameLog.electionTracker = 0;
+                                    if (GameEventsManager.electionTracker == GameManager.gameTrack.getElectionTrackerLength()) {
+                                        GameEventsManager.electionTracker = 0;
 
                                         TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(c);
                                         topPolicyPlayedEvent.setLinkedLegislativeSession(LegislativeSession.this);
                                         setPresidentAction(topPolicyPlayedEvent);
 
-                                        GameLog.addEvent(topPolicyPlayedEvent);
+                                        GameEventsManager.addEvent(topPolicyPlayedEvent);
                                     }
                                 }
                             }
@@ -456,7 +459,7 @@ public class LegislativeSession extends GameEvent {
                                         ((ExecutiveAction) presidentialAction).setLinkedLegislativeSession(null);
                                     if (presidentialAction instanceof TopPolicyPlayedEvent)
                                         ((TopPolicyPlayedEvent) presidentialAction).setLinkedLegislativeSession(null);
-                                    GameLog.remove(presidentialAction);
+                                    GameEventsManager.remove(presidentialAction);
 
                                     presidentAction = null;
                                 }
@@ -477,18 +480,18 @@ public class LegislativeSession extends GameEvent {
                                     if (presidentExecutiveAction.presidentName.equals(presidentExecutiveAction.targetName)) { //If the president and chancellor name are now the same, the user is prompted to edit that event as well
                                         presidentExecutiveAction.isSetup = true;
                                         presidentExecutiveAction.isEditing = true;
-                                        GameLog.getCardListAdapter().notifyItemChanged(GameLog.getEventList().size() - 1);
+                                        RecyclerViewManager.getCardListAdapter().notifyItemChanged(GameEventsManager.getEventList().size() - 1);
                                     }
                                 }
                             }
 
-                            Log.v("LesiglativeSession Edit", "Election Tracker now at " + GameLog.electionTracker);
-                            Log.v("LesiglativeSession Edit", "Liberal Policies now at " + GameLog.liberalPolicies);
-                            Log.v("LesiglativeSession Edit", "Fascist policies now at " + GameLog.fascistPolicies);
+                            Log.v("LesiglativeSession Edit", "Election Tracker now at " + GameEventsManager.electionTracker);
+                            Log.v("LesiglativeSession Edit", "Liberal Policies now at " + GameEventsManager.liberalPolicies);
+                            Log.v("LesiglativeSession Edit", "Fascist policies now at " + GameEventsManager.fascistPolicies);
                         }
 
                         leaveSetupPhase(newClaimEvent, newVoteEvent);
-                        if (addTrackAction) GameLog.addTrackAction(LegislativeSession.this, false);
+                        if (addTrackAction) LegislativeSessionManager.addTrackAction(LegislativeSession.this, false);
                     }
                 }
             });
@@ -500,15 +503,15 @@ public class LegislativeSession extends GameEvent {
         presSpinner.setAdapter(playerListadapter);
 
         //Attempting to get the last Legislative Session and setting the next player in order as president. If this is the first LegSession, the first player will be selected
-        LegislativeSession lastSession = GameLog.getLastLegislativeSession();
+        LegislativeSession lastSession = LegislativeSessionManager.getLastLegislativeSession();
         int newChancellorPos = 1;
         if (lastSession != null) {
-            int newPresidentPos = PlayerList.getPlayerPosition(lastSession.getVoteEvent().getPresidentName()) + 1;
-            if (newPresidentPos == PlayerList.getPlayerList().size()) newPresidentPos = 0;
+            int newPresidentPos = PlayerListManager.getPlayerPosition(lastSession.getVoteEvent().getPresidentName()) + 1;
+            if (newPresidentPos == PlayerListManager.getPlayerList().size()) newPresidentPos = 0;
 
             presSpinner.setSelection(newPresidentPos);
 
-            newChancellorPos = (newPresidentPos == PlayerList.getPlayerList().size() - 1) ? 0 : newPresidentPos + 1;
+            newChancellorPos = (newPresidentPos == PlayerListManager.getPlayerList().size() - 1) ? 0 : newPresidentPos + 1;
         }
 
         chancSpinner.setAdapter(playerListadapter);
@@ -530,8 +533,8 @@ public class LegislativeSession extends GameEvent {
         voteEvent = newVoteEvent;
 
         isSetup = false;
-        if(sessionNumber == 0) sessionNumber = GameLog.legSessionNo++;
-        GameLog.notifySetupPhaseLeft(LegislativeSession.this);
+        if(sessionNumber == 0) sessionNumber = LegislativeSessionManager.legSessionNo++;
+        GameEventsManager.notifySetupPhaseLeft(LegislativeSession.this);
         playSound();
     }
 
@@ -559,8 +562,8 @@ public class LegislativeSession extends GameEvent {
             if(claimEvent.isVetoed()) cb_vetoed.setChecked(true);
         }
 
-        presSpinner.setSelection(PlayerList.getPlayerPosition( voteEvent.getPresidentName() ));
-        chancSpinner.setSelection(PlayerList.getPlayerPosition( voteEvent.getChancellorName() ));
+        presSpinner.setSelection(PlayerListManager.getPlayerPosition( voteEvent.getPresidentName() ));
+        chancSpinner.setSelection(PlayerListManager.getPlayerPosition( voteEvent.getChancellorName() ));
     }
 
     public ClaimEvent getClaimEvent() {
@@ -568,7 +571,7 @@ public class LegislativeSession extends GameEvent {
     }
 
     private void playSound() {
-        if(GameLog.policySounds && voteEvent.getVotingResult() == VoteEvent.VOTE_PASSED) {
+        if(GameEventsManager.policySounds && voteEvent.getVotingResult() == VoteEvent.VOTE_PASSED) {
             MediaPlayer mp;
             if (claimEvent.getPlayedPolicy() == Claim.LIBERAL) mp = MediaPlayer.create(c, R.raw.enactpolicyl);
             else mp = MediaPlayer.create(c, R.raw.enactpolicyf);
@@ -652,7 +655,7 @@ public class LegislativeSession extends GameEvent {
     }
 
     @Override
-    public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
+    public boolean allInvolvedPlayersAreUnselected(List<String> unselectedPlayers) {
         return unselectedPlayers.contains(voteEvent.getPresidentName()) && unselectedPlayers.contains(voteEvent.getChancellorName());
     }
 

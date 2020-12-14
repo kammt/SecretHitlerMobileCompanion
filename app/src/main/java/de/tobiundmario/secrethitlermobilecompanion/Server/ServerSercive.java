@@ -44,11 +44,6 @@ public class ServerSercive extends Service {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
-    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         IntentFilter filter = new IntentFilter();
         filter.addAction(ServerSercive.ACTION_KILL_SERVER);

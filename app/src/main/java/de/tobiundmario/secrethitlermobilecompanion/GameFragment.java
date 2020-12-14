@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,13 +48,17 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.JSONManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.BackupManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.JSONManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.RecyclerViewManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
@@ -144,13 +149,13 @@ public class GameFragment extends Fragment {
         setupRecyclerViews(view);
         setupBottomMenu(view);
 
-        if(GameLog.server) startAndBindServerService();
+        if(GameEventsManager.server) startAndBindServerService();
 
         try {
             SharedPreferencesManager.writeCurrentPlayerListIfNew(context);
-            GameLog.backupToCache();
+            BackupManager.backupToCache();
         } catch (JSONException | IOException e) {
-            e.printStackTrace();
+            Log.e("Error", Arrays.toString(e.getStackTrace()));
         }
 
         bottomNavigationMenu_game.setVisibility(View.VISIBLE);
@@ -193,12 +198,12 @@ public class GameFragment extends Fragment {
 
     public void displayEndGameOptions() {
         //The game has no events, so there is no point in creating the "Game Ended" dialogue. The game will end immediately
-        if(GameLog.getEventsJSON().length() == 0) {
+        if(GameEventsManager.jsonData.length() == 0) {
             endGame();
             return;
         }
 
-        GameLog.addEvent(new GameEndCard(context));
+        GameEventsManager.addEvent(new GameEndCard(context));
 
         //Make the Menu non-functioning
         bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(false);
@@ -208,29 +213,29 @@ public class GameFragment extends Fragment {
         //Hide the BottomSheets
         bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN);
         bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-        GameLog.swipeEnabled = false;
-        GameLog.editingEnabled = false;
+        RecyclerViewManager.swipeEnabled = false;
+        GameEventsManager.editingEnabled = false;
     }
 
     public void undoEndGameOptions() {
         bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(true);
         bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(true);
         bottomNavigationMenu_game.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
-        GameLog.swipeEnabled = true;
-        GameLog.editingEnabled = true;
+        RecyclerViewManager.swipeEnabled = true;
+        GameEventsManager.editingEnabled = true;
     }
 
     public void endGame() {
-        GameLog.setGameStarted(false);
+        GameEventsManager.setGameStarted(false);
         stopAndUnbindServerService();
 
-        GameLog.deleteBackup();
+        BackupManager.deleteBackup();
 
         Animation swipeOutBottom = new TranslateAnimation(0, 0, 0, 200);
         swipeOutBottom.setDuration(500);
         bottomNavigationMenu_game.startAnimation(swipeOutBottom);
 
-        ((MainActivity) context).replaceFragment(MainActivity.main, true);
+        ((MainActivity) context).replaceFragment(MainActivity.page_main, true);
     }
 
 
@@ -270,7 +275,7 @@ public class GameFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                GameLog.addEvent(new LegislativeSession(context));
+                GameEventsManager.addEvent(new LegislativeSession(context));
             }
         });
 
@@ -278,7 +283,7 @@ public class GameFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                GameLog.addEvent(new DeckShuffledEvent(context));
+                GameEventsManager.addEvent(new DeckShuffledEvent(context));
             }
         });
 
@@ -288,7 +293,7 @@ public class GameFragment extends Fragment {
         View entry_special_election = bottomSheetAdd.findViewById(R.id.special_election);
         View entry_top_policy = bottomSheetAdd.findViewById(R.id.topPolicy);
 
-        if(!GameLog.gameTrack.isManualMode()) {
+        if(!GameManager.gameTrack.isManualMode()) {
             entry_loyaltyInvestigation.setVisibility(View.GONE);
             entry_execution.setVisibility(View.GONE);
             entry_policy_peek.setVisibility(View.GONE);
@@ -299,7 +304,7 @@ public class GameFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    GameLog.addEvent(new LoyaltyInvestigationEvent(null, context));
+                    GameEventsManager.addEvent(new LoyaltyInvestigationEvent(null, context));
                 }
             });
 
@@ -307,7 +312,7 @@ public class GameFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    GameLog.addEvent(new ExecutionEvent(null, context));
+                    GameEventsManager.addEvent(new ExecutionEvent(null, context));
                 }
             });
 
@@ -315,7 +320,7 @@ public class GameFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    GameLog.addEvent(new PolicyPeekEvent(null, context));
+                    GameEventsManager.addEvent(new PolicyPeekEvent(null, context));
                 }
             });
 
@@ -323,7 +328,7 @@ public class GameFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    GameLog.addEvent(new SpecialElectionEvent(null, context));
+                    GameEventsManager.addEvent(new SpecialElectionEvent(null, context));
                 }
             });
 
@@ -331,7 +336,7 @@ public class GameFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    GameLog.addEvent(new TopPolicyPlayedEvent(context));
+                    GameEventsManager.addEvent(new TopPolicyPlayedEvent(context));
                 }
             });
         }
@@ -584,7 +589,7 @@ public class GameFragment extends Fragment {
             method.setAccessible(true);
             actualState = (Integer) method.invoke(wifiManager, (Object[]) null);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+            Log.e("Error", Arrays.toString(e.getStackTrace()));
         }
         return actualState == 13; //public static int AP_STATE_ENABLED = 13;
     }
@@ -593,12 +598,12 @@ public class GameFragment extends Fragment {
     public void setupRecyclerViews(View fragmentLayout) {
         cardList = fragmentLayout.findViewById(R.id.cardList);
         cardList.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        GameLog.initialise(cardList, context);
-        GameLog.setGameStarted(true);
+        GameEventsManager.initialise(cardList, context);
+        GameEventsManager.setGameStarted(true);
 
         playerCardList = fragmentLayout.findViewById(R.id.playerList);
         playerCardList.setLayoutManager(new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false));
-        PlayerList.changeRecyclerView(playerCardList);
+        PlayerListManager.changeRecyclerView(playerCardList);
     }
 
     private void startAndBindServerService() {

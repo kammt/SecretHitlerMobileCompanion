@@ -16,12 +16,12 @@ import androidx.core.content.ContextCompat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
 public class ExecutionEvent extends ExecutiveAction {
     Context context;
@@ -41,22 +41,22 @@ public class ExecutionEvent extends ExecutiveAction {
     }
 
     private void apply() {
-        PlayerList.setAsDead(targetName, true);
-        if(GameLog.executionSounds) MediaPlayer.create(context, R.raw.playershot).start();
+        PlayerListManager.setAsDead(targetName, true);
+        if(GameEventsManager.executionSounds) MediaPlayer.create(context, R.raw.playershot).start();
     }
 
 
     public void resetOnRemoval() {
-        PlayerList.setAsDead(targetName, false);
+        PlayerListManager.setAsDead(targetName, false);
     }
 
     public void undoRemoval() {
-        PlayerList.setAsDead(targetName, true);
+        PlayerListManager.setAsDead(targetName, true);
     }
 
     @Override
     public String getInfoText() {
-        return context.getString(R.string.executed_string, PlayerList.boldPlayerName(presidentName), PlayerList.boldPlayerName(targetName));
+        return context.getString(R.string.executed_string, PlayerListManager.boldPlayerName(presidentName), PlayerListManager.boldPlayerName(targetName));
     }
 
     @Override
@@ -100,7 +100,7 @@ public class ExecutionEvent extends ExecutiveAction {
                 } else {
                     apply();
                     isSetup = false;
-                    GameLog.notifySetupPhaseLeft(ExecutionEvent.this);
+                    GameEventsManager.notifySetupPhaseLeft(ExecutionEvent.this);
                 }
             }
         });
@@ -111,18 +111,18 @@ public class ExecutionEvent extends ExecutiveAction {
         Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
         Spinner executedSpinner = cardView.findViewById(R.id.spinner_executed_player);
 
-        presSpinner.setSelection(PlayerList.getPlayerPosition( presidentName ));
+        presSpinner.setSelection(PlayerListManager.getPlayerPosition( presidentName ));
 
         //Here we face a problem. We cannot just set the selection before, as the player was marked as dead, thus not being in the selection anymore. To mitigate this, we add the player name temporarily to a new adapter and set it. See the function in CardSetupHelper for details
         ArrayAdapter<String> playerListadapterWithDeadPlayer = CardSetupHelper.getPlayerNameAdapterWithDeadPlayer(context, targetName);
         playerListadapterWithDeadPlayer.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         executedSpinner.setAdapter(playerListadapterWithDeadPlayer);
-        executedSpinner.setSelection(PlayerList.getAlivePlayerCount() );
+        executedSpinner.setSelection(PlayerListManager.getAlivePlayerCount() );
     }
 
     @Override
-    public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
+    public boolean allInvolvedPlayersAreUnselected(List<String> unselectedPlayers) {
         return unselectedPlayers.contains(presidentName) && unselectedPlayers.contains(targetName);
     }
 

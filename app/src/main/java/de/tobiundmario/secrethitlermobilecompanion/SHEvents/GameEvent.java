@@ -5,7 +5,7 @@ import androidx.cardview.widget.CardView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public abstract class GameEvent {
@@ -51,7 +51,7 @@ public abstract class GameEvent {
 
     //Normal state related
     public abstract void initialiseCard(CardView cardView); //Called by the RecyclerViewAdapter. The classes have to set up the card e.g. insert the President and Chancellor names
-    public abstract boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers); //Should return true if all involved Players are unselected (i.e. if their player card is not blurred). Necessary for event blurring, see GameLog.java for usage
+    public abstract boolean allInvolvedPlayersAreUnselected(List<String> unselectedPlayers); //Should return true if all involved Players are unselected (i.e. if their player card is not blurred). Necessary for event blurring, see GameLog.java for usage
 
     public abstract JSONObject getJSON() throws JSONException; //This function returns the JSON code of the event that is readable by the Website. This is sent over to all devices that have the website open. It is then parsed locally and displayed.
 

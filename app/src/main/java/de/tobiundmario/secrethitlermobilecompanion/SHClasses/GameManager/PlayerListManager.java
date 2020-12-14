@@ -1,4 +1,4 @@
-package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
+package de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -23,8 +23,9 @@ import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.ModifiedDefaultItemAnimator;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.PlayerCardRecyclerViewAdapter;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 
-public class PlayerList {
+public class PlayerListManager {
     private static ArrayList<String> playerList = new ArrayList<>();
     private static ArrayList<Integer> claimList = new ArrayList<>();
     private static ArrayList<Boolean> isDead = new ArrayList<>();
@@ -50,7 +51,7 @@ public class PlayerList {
     }
 
     public static void setContext(Context c) {
-        PlayerList.c = c;
+        PlayerListManager.c = c;
     }
 
     public static void changeRecyclerView(RecyclerView playerCardList) {
@@ -116,7 +117,7 @@ public class PlayerList {
         /*
         This function removes a player from the player list
          */
-        if(!GameLog.isGameStarted()) { //As the player list shouldn't be changed once the game starts, we check here
+        if(!GameEventsManager.isGameStarted()) { //As the player list shouldn't be changed once the game starts, we check here
             int index = getPlayerPosition(player);
 
             playerList.remove(player);
@@ -270,7 +271,7 @@ public class PlayerList {
 
             @Override
             public boolean isItemViewSwipeEnabled() {
-                return !GameLog.isGameStarted();
+                return !GameEventsManager.isGameStarted();
             }
         };
 

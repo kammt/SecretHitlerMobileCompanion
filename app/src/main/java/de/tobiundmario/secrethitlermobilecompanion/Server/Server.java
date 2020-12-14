@@ -19,8 +19,8 @@ import java.util.HashSet;
 import java.util.Map;
 
 import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.JSONManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.JSONManager;
 import fi.iki.elonen.NanoHTTPD;
 
 import static android.content.Context.WIFI_SERVICE;
@@ -87,14 +87,14 @@ public class Server extends NanoHTTPD {
             case "/bootstrap.min.css":
                 return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("bootstrap.min.css"));
             case "/getGameJSON":
-                if (GameLog.isGameStarted()) {
+                if (GameEventsManager.isGameStarted()) {
                     String response = JSONManager.getCompleteGameJSON(clientIP);
                     Log.v("/getGameJSON: JSON: ", response);
                     return newFixedLengthResponse(Response.Status.OK, "application/json", response);
                 }
                 return newFixedLengthResponse(Response.Status.SERVICE_UNAVAILABLE, "application/json", "");
             case "/getGameChangesJSON":
-                if (GameLog.isGameStarted()) {
+                if (GameEventsManager.isGameStarted()) {
                     String response = JSONManager.getGameChangesJSON(clientIP);
                     Log.v("/getGameChanges: JSON: ", response);
                     return newFixedLengthResponse(Response.Status.OK, "application/json", response);

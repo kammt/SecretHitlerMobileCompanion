@@ -133,12 +133,11 @@ public class CardDialog {
                     error = true;
                 }
 
-                if(!manual) {
-                    if (eTrackerLength.equals("") || Integer.parseInt(eTrackerLength) <= 0) {
-                        input_electionTrackerLength.setError(c.getString(R.string.error_invalid_value));
-                        error = true;
-                    }
+                if (!manual && (eTrackerLength.equals("") || Integer.parseInt(eTrackerLength) <= 0)) {
+                    input_electionTrackerLength.setError(c.getString(R.string.error_invalid_value));
+                    error = true;
                 }
+
 
                 if(error) return;
 
@@ -234,7 +233,7 @@ public class CardDialog {
                     fascistTrack.setElectionTrackerLength(Integer.parseInt(input_electionTrackerLength.getText().toString()));
                 } else {
                     fascistTrack.setManualMode(true);
-                };
+                }
 
                 try {
                     SharedPreferencesManager.writeFascistTrack(fascistTrack, c);
@@ -338,7 +337,7 @@ public class CardDialog {
         private Dialog dialog;
         private View content;
 
-        public CustomDialog(Dialog dialog, View content) {
+        CustomDialog(Dialog dialog, View content) {
             this.dialog = dialog;
             this.content = content;
         }

@@ -11,22 +11,23 @@ import android.widget.TextView;
 import androidx.core.content.res.ResourcesCompat;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
 public class CardSetupHelper {
     public static void lockPresidentSpinner(String presidentName, Spinner spinner) {
-        int position = PlayerList.getPlayerPosition(presidentName);
+        int position = PlayerListManager.getPlayerPosition(presidentName);
         spinner.setSelection(position);
-        if(!GameLog.gameTrack.isManualMode()) spinner.setEnabled(false);
+        if(!GameManager.gameTrack.isManualMode()) spinner.setEnabled(false);
     }
 
     public static ArrayAdapter<String> getPlayerNameAdapter(final Context context) {
         return new ArrayAdapter<String>(context,
-                android.R.layout.simple_spinner_item, PlayerList.getAlivePlayerList()) {
+                android.R.layout.simple_spinner_item, PlayerListManager.getAlivePlayerList()) {
 
             public View getView(int position, View convertView, ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
@@ -49,7 +50,7 @@ public class CardSetupHelper {
         };
     }
 
-    public static ArrayAdapter<String> getClaimAdapter(final Context context, ArrayList<String> data) {
+    public static ArrayAdapter<String> getClaimAdapter(final Context context, List<String> data) {
         return new ArrayAdapter<String>(context,
                 android.R.layout.simple_spinner_item, data) {
 
@@ -79,7 +80,7 @@ public class CardSetupHelper {
     }
 
     public static ArrayAdapter<String> getPlayerNameAdapterWithDeadPlayer(final Context context, String deadPlayer) {
-        ArrayList<String> playerList = PlayerList.getAlivePlayerList();
+        ArrayList<String> playerList = PlayerListManager.getAlivePlayerList();
         playerList.add(deadPlayer);
         return new ArrayAdapter<String>(context,
                 android.R.layout.simple_spinner_item, playerList) {

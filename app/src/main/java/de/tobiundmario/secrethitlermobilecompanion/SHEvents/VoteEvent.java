@@ -1,7 +1,5 @@
 package de.tobiundmario.secrethitlermobilecompanion.SHEvents;
 
-import android.content.Context;
-
 public class VoteEvent {
 
     private String presidentName, chancellorName;
@@ -9,8 +7,6 @@ public class VoteEvent {
 
     public static final int VOTE_PASSED = 1;
     public static final int VOTE_FAILED = 0;
-
-    private Context c;
 
     public VoteEvent(String presidentName, String chancellorName, int votingResult) {
         this.presidentName = presidentName;

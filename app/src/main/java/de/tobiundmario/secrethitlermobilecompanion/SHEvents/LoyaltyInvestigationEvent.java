@@ -14,13 +14,13 @@ import androidx.cardview.widget.CardView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
 import static de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper.getPlayerNameAdapter;
 
@@ -37,7 +37,7 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
         this.targetName = playerName;
         this.claim = claim;
         this.c = context;
-        PlayerList.setClaim(playerName, claim);
+        PlayerListManager.setClaim(playerName, claim);
     }
 
     public LoyaltyInvestigationEvent(String presidentName, Context context) {
@@ -47,16 +47,16 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
     }
 
     public void resetOnRemoval() {
-        PlayerList.setClaim(targetName, Claim.NO_CLAIM);
+        PlayerListManager.setClaim(targetName, Claim.NO_CLAIM);
     }
 
     public void undoRemoval() {
-        PlayerList.setClaim(targetName, claim);
+        PlayerListManager.setClaim(targetName, claim);
     }
 
     @Override
     public String getInfoText() {
-        return c.getString(R.string.investigation_string, PlayerList.boldPlayerName(presidentName), PlayerList.boldPlayerName(targetName), Claim.getClaimString(c, claim));
+        return c.getString(R.string.investigation_string, PlayerListManager.boldPlayerName(presidentName), PlayerListManager.boldPlayerName(targetName), Claim.getClaimString(c, claim));
     }
 
     @Override
@@ -118,8 +118,8 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
                     Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
                 } else {
                     isSetup = false;
-                    PlayerList.setClaim(targetName, claim);
-                    GameLog.notifySetupPhaseLeft(LoyaltyInvestigationEvent.this);
+                    PlayerListManager.setClaim(targetName, claim);
+                    GameEventsManager.notifySetupPhaseLeft(LoyaltyInvestigationEvent.this);
                 }
             }
         });
@@ -133,12 +133,12 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
         if(claim == Claim.LIBERAL) iv_liberalListener.onClick(null);
         else iv_fascistListener.onClick(null);
 
-        presSpinner.setSelection(PlayerList.getPlayerPosition( presidentName ));
-        investigatedSpinner.setSelection(PlayerList.getPlayerPosition( targetName ));
+        presSpinner.setSelection(PlayerListManager.getPlayerPosition( presidentName ));
+        investigatedSpinner.setSelection(PlayerListManager.getPlayerPosition( targetName ));
     }
 
     @Override
-    public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
+    public boolean allInvolvedPlayersAreUnselected(List<String> unselectedPlayers) {
         return unselectedPlayers.contains(presidentName) && unselectedPlayers.contains(targetName);
     }
 

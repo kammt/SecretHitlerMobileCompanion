@@ -12,13 +12,13 @@ import androidx.cardview.widget.CardView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
 import static de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper.getClaimAdapter;
 import static de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper.getPlayerNameAdapter;
@@ -43,7 +43,7 @@ public class PolicyPeekEvent extends ExecutiveAction {
 
     @Override
     public String getInfoText() {
-        return c.getString(R.string.policypeek_string, PlayerList.boldPlayerName(presidentName), Claim.getClaimString(c, claim));
+        return c.getString(R.string.policypeek_string, PlayerListManager.boldPlayerName(presidentName), Claim.getClaimString(c, claim));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class PolicyPeekEvent extends ExecutiveAction {
                 presidentName = presSpinner.getSelectedItem().toString();
                 claim = Claim.getClaimInt(presClaimSpinner.getSelectedItem().toString());
                 isSetup = false;
-                GameLog.notifySetupPhaseLeft(PolicyPeekEvent.this);
+                GameEventsManager.notifySetupPhaseLeft(PolicyPeekEvent.this);
             }
         });
     }
@@ -86,11 +86,11 @@ public class PolicyPeekEvent extends ExecutiveAction {
         Spinner presClaimSpinner = cardView.findViewById(R.id.spinner_pres_claim);
 
         presClaimSpinner.setSelection( Claim.getPresidentClaims().indexOf( Claim.getClaimStringForJSON(c, claim)) );
-        presSpinner.setSelection(PlayerList.getPlayerPosition( presidentName ));
+        presSpinner.setSelection(PlayerListManager.getPlayerPosition( presidentName ));
     }
 
     @Override
-    public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
+    public boolean allInvolvedPlayersAreUnselected(List<String> unselectedPlayers) {
         return unselectedPlayers.contains(presidentName);
     }
 

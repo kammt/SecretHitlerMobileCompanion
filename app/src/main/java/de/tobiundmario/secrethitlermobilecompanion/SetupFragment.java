@@ -25,8 +25,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
 
 public class SetupFragment extends Fragment {
@@ -63,12 +64,6 @@ public class SetupFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_setup, container, false);
@@ -82,7 +77,7 @@ public class SetupFragment extends Fragment {
 
     public void startSetup() {
         //Resetting values in case there has been a setup before which was cancelled
-        PlayerList.initialise(playerCardList, context);
+        PlayerListManager.initialise(playerCardList, context);
         FascistTrackSelectionManager.selectedTrackIndex = -1;
         FascistTrackSelectionManager.recommendedTrackIndex = -1;
         FascistTrackSelectionManager.previousSelection = null;
@@ -133,7 +128,7 @@ public class SetupFragment extends Fragment {
 
         playerCardList = fragmentLayout.findViewById(R.id.playerList);
         playerCardList.setLayoutManager(new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false));
-        PlayerList.initialise(playerCardList, context);
+        PlayerListManager.initialise(playerCardList, context);
 
         progressBar_setupSteps = fragmentLayout.findViewById(R.id.progressBar_setupProgress);
         progressBar_setupSteps.setMax(900);
@@ -154,7 +149,7 @@ public class SetupFragment extends Fragment {
                 progressBarAnimation.setDuration(500);
                 progressBar_setupSteps.startAnimation(progressBarAnimation);
 
-                ((MainActivity) context).replaceFragment(MainActivity.main, true);
+                ((MainActivity) context).replaceFragment(MainActivity.page_main, true);
             }
         };
 
@@ -167,15 +162,15 @@ public class SetupFragment extends Fragment {
                         //Check if there is a recommended track available
                         LinearLayout container_recommended_track = fragmentLayout.findViewById(R.id.container_recommended_track);
 
-                        if(PlayerList.getPlayerList().size() >=5 && PlayerList.getPlayerList().size() <=10) {//Recommended track available
+                        if(PlayerListManager.getPlayerList().size() >=5 && PlayerListManager.getPlayerList().size() <=10) {//Recommended track available
                             container_recommended_track.setVisibility(View.VISIBLE);
 
                             int recommendation = -10;
-                            if(PlayerList.getPlayerList().size() == 5 || PlayerList.getPlayerList().size() == 6) {
+                            if(PlayerListManager.getPlayerList().size() == 5 || PlayerListManager.getPlayerList().size() == 6) {
                                 recommendation = 0;
-                            } else if(PlayerList.getPlayerList().size() == 7 || PlayerList.getPlayerList().size() == 8) {
+                            } else if(PlayerListManager.getPlayerList().size() == 7 || PlayerListManager.getPlayerList().size() == 8) {
                                 recommendation = 1;
-                            } else if(PlayerList.getPlayerList().size() == 9 || PlayerList.getPlayerList().size() ==10) {
+                            } else if(PlayerListManager.getPlayerList().size() == 9 || PlayerListManager.getPlayerList().size() ==10) {
                                 recommendation = 2;
                             }
 
@@ -238,7 +233,7 @@ public class SetupFragment extends Fragment {
                     }
                 };
 
-                int playerCount = PlayerList.getPlayerList().size();
+                int playerCount = PlayerListManager.getPlayerList().size();
                 if(playerCount <= 2) {
                     String title = (playerCount == 0) ? getString(R.string.no_players_added) : getString(R.string.title_too_little_players);
                     CardDialog.showMessageDialog(context, title, getString(R.string.no_players_added_msg), getString(R.string.btn_ok), null, null, null);
@@ -323,7 +318,7 @@ public class SetupFragment extends Fragment {
                     }
                 };
 
-                if(GameLog.gameTrack == null) CardDialog.showMessageDialog(context, getString(R.string.no_track_selected), getString(R.string.no_track_selected_message), getString(R.string.btn_ok), null, null, null);
+                if(GameManager.gameTrack == null) CardDialog.showMessageDialog(context, getString(R.string.no_track_selected), getString(R.string.no_track_selected_message), getString(R.string.btn_ok), null, null, null);
                 else continueSetup.run();
             }
         };
@@ -374,11 +369,11 @@ public class SetupFragment extends Fragment {
 
                 Switch sw_server = fragmentLayout.findViewById(R.id.switch_server);
 
-                GameLog.endSounds = sw_sounds_end.isChecked();
-                GameLog.policySounds = sw_sonds_policy.isChecked();
-                GameLog.executionSounds = sw_sounds_execution.isChecked();
+                GameEventsManager.endSounds = sw_sounds_end.isChecked();
+                GameEventsManager.policySounds = sw_sonds_policy.isChecked();
+                GameEventsManager.executionSounds = sw_sounds_execution.isChecked();
 
-                GameLog.server = sw_server.isChecked();
+                GameEventsManager.server = sw_server.isChecked();
 
                 ((MainActivity) context).replaceFragment(MainActivity.game, true);
             }

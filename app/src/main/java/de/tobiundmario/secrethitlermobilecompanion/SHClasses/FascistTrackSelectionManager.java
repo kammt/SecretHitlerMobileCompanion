@@ -13,8 +13,10 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 
 public class FascistTrackSelectionManager {
 
@@ -25,8 +27,8 @@ public class FascistTrackSelectionManager {
     public static int selectedTrackIndex = -1;
     public static int recommendedTrackIndex = -1;
 
-    public static ArrayList<CardView> trackCards = new ArrayList<>();
-    public static ArrayList<FascistTrack> fasTracks = new ArrayList<>();
+    public static List<CardView> trackCards = new ArrayList<>();
+    public static List<FascistTrack> fasTracks = new ArrayList<>();
     public static CardView recommendedCard;
     public static CardView previousSelection;
 
@@ -122,12 +124,12 @@ public class FascistTrackSelectionManager {
             selectedTrackIndex = newSelection;
 
             //Update the FascistTrack in GameLog
-            GameLog.gameTrack = fascistTrack;
+            GameManager.gameTrack = fascistTrack;
             previousSelection = cardView;
         } else if(selectedTrackIndex != -1){
             //When newSelection is -1, all items should be unselected
             updateTrackCard(trackCards.get(selectedTrackIndex), false, context);
-            GameLog.gameTrack = null;
+            GameManager.gameTrack = null;
 
             selectedTrackIndex = -1;
             recommendedTrackIndex = -1;

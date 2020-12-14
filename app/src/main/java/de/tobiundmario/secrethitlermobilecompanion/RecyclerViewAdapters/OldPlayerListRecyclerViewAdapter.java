@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
 
 public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPlayerListRecyclerViewAdapter.OldPlayerListViewHolder> {
@@ -53,8 +53,7 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
     public OldPlayerListViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_old_player_list, viewGroup, false);
 
-        OldPlayerListViewHolder cardViewHolder = new OldPlayerListViewHolder(v);
-        return cardViewHolder;
+        return new OldPlayerListViewHolder(v);
     }
 
     @Override
@@ -92,7 +91,7 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
             btn_use.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PlayerList.setPlayerList(players);
+                    PlayerListManager.setPlayerList(players);
                 }
             });
 
