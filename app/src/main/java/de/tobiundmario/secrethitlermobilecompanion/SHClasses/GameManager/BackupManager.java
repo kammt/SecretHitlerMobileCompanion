@@ -23,6 +23,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.TopPolicyPlayedEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.VoteEvent;
 
+import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager.restoredEventList;
 import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionManager.addTrackAction;
 import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionManager.processLegislativeSession;
 
@@ -147,6 +148,8 @@ public class BackupManager extends GameManager {
      * @throws JSONException
      */
     private static void restoreGameFromJSON(JSONObject object) throws JSONException {
+        restoredEventList = new ArrayList<>();
+
         GameEventsManager.setGameStarted(false);
         GameEventsManager.liberalPolicies = 0;
         GameEventsManager.fascistPolicies = 0;
