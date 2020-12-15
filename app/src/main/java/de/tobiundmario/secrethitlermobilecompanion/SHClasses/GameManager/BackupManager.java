@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
@@ -105,7 +104,12 @@ public final class BackupManager {
         if(cache) file = new File(GameEventsManager.getContext().getCacheDir(), fileName);
         else file = new File(GameEventsManager.getContext().getFilesDir(), fileName);
 
-        if(file.exists()) file.delete();
+        if(file.exists()) {
+            boolean success = file.delete();
+            if(!success) {
+                ExceptionHandler.showErrorSnackbar(new Exception("File.delete() returned false"), "BackupManager.deleteFile("+cache+", "+fileName+")");
+            }
+        }
     }
 
     /**
@@ -181,7 +185,25 @@ public final class BackupManager {
         }
 
         //Restore plays
-        List<GameEvent> restoredEventList = new ArrayList<>();
+        restorePlays(plays);
+
+        //When the auto-created executive action was not submitted (=> setup phase left) before the app closed, it will not be included in the backup. To mitigate this, we check if the last event is a LegislativeSession and if so add the track action again
+        if(restoredEventList.size() > 0) {
+            GameEvent lastEvent = restoredEventList.get(restoredEventList.size() - 1);
+            if (lastEvent instanceof LegislativeSession && !GameManager.gameTrack.isManualMode()) {
+                LegislativeSession legislativeSession = ((LegislativeSession) lastEvent);
+                //However, we need to check if this LegislativeSession actually passed a fascist policy
+                if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_PASSED && legislativeSession.getClaimEvent().getPlayedPolicy() == Claim.FASCIST && !legislativeSession.getClaimEvent().isVetoed())  addTrackAction(legislativeSession, true);
+            }
+        }
+
+        //Finally, apply the settings
+        GameEventsManager.endSounds = endSounds;
+        GameEventsManager.executionSounds = executionSounds;
+        GameEventsManager.policySounds = policySounds;
+    }
+
+    private static void restorePlays(final JSONArray plays) throws JSONException {
         for(int i = 0; i < plays.length(); i++) {
             GameEvent event = JSONManager.createGameEventFromJSON((JSONObject) plays.get(i), GameEventsManager.getContext());
             restoredEventList.add(event);
@@ -208,19 +230,6 @@ public final class BackupManager {
                 }
             }
         }
-        //When the auto-created executive action was not submitted (=> setup phase left) before the app closed, it will not be included in the backup. To mitigate this, we check if the last event is a LegislativeSession and if so add the track action again
-        if(restoredEventList.size() > 0) {
-            GameEvent lastEvent = restoredEventList.get(restoredEventList.size() - 1);
-            if (lastEvent instanceof LegislativeSession && !GameManager.gameTrack.isManualMode()) {
-                LegislativeSession legislativeSession = ((LegislativeSession) lastEvent);
-                //However, we need to check if this LegislativeSession actually passed a fascist policy
-                if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_PASSED && legislativeSession.getClaimEvent().getPlayedPolicy() == Claim.FASCIST && !legislativeSession.getClaimEvent().isVetoed())  addTrackAction(legislativeSession, true);
-            }
-        }
 
-        //Finally, apply the settings
-        GameEventsManager.endSounds = endSounds;
-        GameEventsManager.executionSounds = executionSounds;
-        GameEventsManager.policySounds = policySounds;
     }
 }

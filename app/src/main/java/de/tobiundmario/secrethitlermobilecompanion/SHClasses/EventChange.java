@@ -8,9 +8,9 @@ import java.util.HashSet;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
 
 public class EventChange {
-    public static String EVENT_UPDATE = "event_update";
-    public static String EVENT_DELETE = "event_delete";
-    public static String NEW_EVENT = "new_event";
+    public static final String EVENT_UPDATE = "event_update";
+    public static final String EVENT_DELETE = "event_delete";
+    public static final String NEW_EVENT = "new_event";
 
     private GameEvent event;
     private String type;

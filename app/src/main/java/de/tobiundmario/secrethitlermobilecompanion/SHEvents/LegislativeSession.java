@@ -48,12 +48,8 @@ public class LegislativeSession extends GameEvent {
     private ClaimEvent claimEvent;
     private Context c;
     private static ColorStateList oldcolors;
-    private int setupPage = 1;
 
     private GameEvent presidentAction;
-
-    //Defining the OnClickListeners outside of the function to call them separately in the setupEditCard() function
-    private View.OnClickListener iv_fascistListener, iv_liberalListener;
 
     //Defining Setup variables here as they are needed in multiple setup functions
     private Spinner presSpinner, chancSpinner, presClaimSpinner, chancClaimSpinner;
@@ -294,8 +290,8 @@ public class LegislativeSession extends GameEvent {
             sw_votingoutcome.setChecked(true);
         } else {
             sw_votingoutcome.setChecked(false);
-            if(claimEvent.getPlayedPolicy() == Claim.LIBERAL) iv_liberalListener.onClick(null);
-            else iv_fascistListener.onClick(null);
+            if(claimEvent.getPlayedPolicy() == Claim.LIBERAL) cardView.findViewById(R.id.img_liberal_policy).performClick();
+            else cardView.findViewById(R.id.img_fascist_policy).performClick();
 
             presClaimSpinner.setSelection( Claim.getPresidentClaims().indexOf( Claim.getClaimStringForJSON(c, claimEvent.getPresidentClaim())) );
             chancClaimSpinner.setSelection( Claim.getChancellorClaims().indexOf( Claim.getClaimStringForJSON(c, claimEvent.getChancellorClaim())) );

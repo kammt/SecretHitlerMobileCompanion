@@ -16,12 +16,15 @@ import de.tobiundmario.secrethitlermobilecompanion.SHEvents.SpecialElectionEvent
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.TopPolicyPlayedEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.VoteEvent;
 
+import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager.addEvent;
+import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager.eventList;
+import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager.restoredEventList;
 import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager.electionTracker;
 import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager.fascistPolicies;
 import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager.gameTrack;
 import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager.liberalPolicies;
 
-public class LegislativeSessionManager extends GameEventsManager {
+public class LegislativeSessionManager {
 
     public static int legSessionNo = 1;
 
@@ -207,7 +210,7 @@ public class LegislativeSessionManager extends GameEventsManager {
                     topPolicyPlayedEvent.setLinkedLegislativeSession(legislativeSession);
                     legislativeSession.setPresidentAction(topPolicyPlayedEvent);
 
-                    GameEventsManager.addEvent(topPolicyPlayedEvent);
+                    addEvent(topPolicyPlayedEvent);
                 }
             }
         }
