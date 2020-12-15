@@ -41,6 +41,7 @@ public class SetupFragment extends Fragment {
     private ConstraintLayout container_new_player;
 
     private ConstraintLayout container_select_track;
+    private FloatingActionButton fab_newTrack;
     public TextView tv_title_custom_tracks;
 
     private ConstraintLayout container_settings;
@@ -48,16 +49,14 @@ public class SetupFragment extends Fragment {
 
     private ProgressBar progressBar_setupSteps;
 
-    private View.OnClickListener listener_backward_players;
-    private View.OnClickListener listener_forward_players;
-
-    private View.OnClickListener listener_backward_tracks;
-    private View.OnClickListener listener_forward_tracks;
-
-    private View.OnClickListener listener_backward_settings;
-    private View.OnClickListener listener_forward_settings;
-
     private Context context;
+
+    private int page = 1;
+    private ConstraintLayout[] pages;
+    private int progressBar_value = 300;
+    private final int progressBar_steps = 300;
+    private int progressBar_newValue = 0;
+    private SetupContinueCondition[] setupContinueConditions;
 
     public SetupFragment() {
 
@@ -93,10 +92,9 @@ public class SetupFragment extends Fragment {
 
         //Resetting view visibility
         container_settings.setVisibility(View.GONE);
-        //Resetting buttons
-        btn_setup_forward.setOnClickListener(listener_forward_players);
+
+        //Resetting button
         btn_setup_forward.setText(context.getString(R.string.dialog_mismatching_claims_btn_continue));
-        btn_setup_back.setOnClickListener(listener_backward_players);
 
         container_setup_buttons.setVisibility(View.VISIBLE);
         container_new_player.setVisibility(View.VISIBLE);
@@ -105,10 +103,6 @@ public class SetupFragment extends Fragment {
         Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 0, 300);
         progressBarAnimation.setDuration(500);
         progressBar_setupSteps.startAnimation(progressBarAnimation);
-    }
-
-    public void previousPage() {
-        btn_setup_back.callOnClick();
     }
 
     public void initialiseLayout() {
@@ -133,8 +127,10 @@ public class SetupFragment extends Fragment {
         progressBar_setupSteps = fragmentLayout.findViewById(R.id.progressBar_setupProgress);
         progressBar_setupSteps.setMax(900);
 
+        setupContinueConditions = new SetupContinueCondition[] {firstCondition(), secondCondition()};
+        pages = new ConstraintLayout[] {container_new_player, container_select_track, container_settings};
 
-        final FloatingActionButton fab_newTrack = fragmentLayout.findViewById(R.id.fab_create_custom_track);
+        fab_newTrack = fragmentLayout.findViewById(R.id.fab_create_custom_track);
         fab_newTrack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,244 +138,214 @@ public class SetupFragment extends Fragment {
             }
         });
 
-        listener_backward_players = new View.OnClickListener() {
+        btn_setup_forward.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 250, 0);
-                progressBarAnimation.setDuration(500);
-                progressBar_setupSteps.startAnimation(progressBarAnimation);
-
-                ((MainActivity) context).replaceFragment(MainActivity.page_main, true);
+            public void onClick(View view) {
+                nextSetupPage(false);
             }
-        };
-
-        listener_forward_players = new View.OnClickListener() {
+        });
+        btn_setup_back.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Runnable continueSetup = new Runnable() {
-                    @Override
-                    public void run() {
-                        //Check if there is a recommended track available
-                        LinearLayout container_recommended_track = fragmentLayout.findViewById(R.id.container_recommended_track);
+            public void onClick(View view) {
+                previousSetupPage();
+            }
+        });
+    }
 
-                        if(PlayerListManager.getPlayerList().size() >=5 && PlayerListManager.getPlayerList().size() <=10) {//Recommended track available
-                            container_recommended_track.setVisibility(View.VISIBLE);
+    private void nextSetupPage(boolean forceNextPage) {
+        SetupContinueCondition condition = null;
+        if(page != 3) condition = setupContinueConditions[page - 1];
 
-                            int recommendation = -10;
-                            if(PlayerListManager.getPlayerList().size() == 5 || PlayerListManager.getPlayerList().size() == 6) {
-                                recommendation = 0;
-                            } else if(PlayerListManager.getPlayerList().size() == 7 || PlayerListManager.getPlayerList().size() == 8) {
-                                recommendation = 1;
-                            } else if(PlayerListManager.getPlayerList().size() == 9 || PlayerListManager.getPlayerList().size() ==10) {
-                                recommendation = 2;
-                            }
+        if(condition == null || condition.shouldSetupContinue() || forceNextPage) {
+            page++;
+            final ConstraintLayout oldPage, newPage;
 
-                            //Only change the layout if the recommendation changed
-                            if(recommendation != FascistTrackSelectionManager.recommendedTrackIndex) {
-                                CardView cv_recommended_track = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, container_recommended_track, false);
+            if(page <= 3) {
+                oldPage = pages[page - 2];
+                newPage = pages[page - 1];
 
-                                if (recommendation == 0) {
-                                    FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_5_TO_6, context);
-                                } else if (recommendation == 1) {
-                                    FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_7_TO_8, context);
-                                } else if (recommendation == 2) {
-                                    FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_9_TO_10, context);
-                                }
 
-                                if (container_recommended_track.getChildCount() > 1)
-                                    container_recommended_track.removeViewAt(1); //If there is already a recommended track in there, we remove it.
+                Animation slideInRight = AnimationUtils.loadAnimation(context, R.anim.slide_in_right);
+                Animation slideOutLeft = AnimationUtils.loadAnimation(context, R.anim.slide_out_left);
 
-                                container_recommended_track.addView(cv_recommended_track);
-                                FascistTrackSelectionManager.changeRecommendedCard(recommendation, cv_recommended_track, context);
-                            }
-                        } else {
-                            container_recommended_track.setVisibility(View.GONE);
-                            FascistTrackSelectionManager.recommendedTrackIndex = -1;
-                            FascistTrackSelectionManager.recommendedCard = null;
-                        }
+                progressBar_newValue = progressBar_value + progressBar_steps;
 
-                        //Change the back listener
-                        btn_setup_back.setOnClickListener(listener_backward_tracks);
-                        btn_setup_forward.setOnClickListener(listener_forward_tracks);
+                animateTransition(oldPage, newPage, slideOutLeft, slideInRight, false);
 
-                        //Animations
-                        Animation slideOutLeft = AnimationUtils.loadAnimation(context, R.anim.slide_out_left);
-                        container_new_player.startAnimation(slideOutLeft);
+                assert condition != null;
+                condition.initialiseLayout();
 
-                        slideOutLeft.setAnimationListener(new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {
-                            }
+                if(page == 3) btn_setup_forward.setText(getString(R.string.start_game));
+            } else finishSetup();
+        } else  condition.showErrorMessage();
+    }
 
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                container_new_player.setVisibility(View.GONE);
-                            }
+    void previousSetupPage() {
+        page--;
+        final ConstraintLayout oldPage, newPage;
 
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-                            }
-                        });
+        if(page >= 1) {
+            oldPage = pages[page];
+            newPage = pages[page - 1];
 
-                        fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_open));
+            Animation slideInLeft = AnimationUtils.loadAnimation(context, R.anim.slide_in_left);
+            Animation slideOutRight = AnimationUtils.loadAnimation(context, R.anim.slide_out_right);
 
-                        Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 300, 600);
-                        progressBarAnimation.setDuration(500);
-                        progressBar_setupSteps.startAnimation(progressBarAnimation);
+            progressBar_newValue = progressBar_value - progressBar_steps;
 
-                        Animation slideInRight = AnimationUtils.loadAnimation(context, R.anim.slide_in_right);
-                        container_select_track.setVisibility(View.VISIBLE);
-                        container_select_track.startAnimation(slideInRight);
-                    }
-                };
+            if(page == 1) fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_close));
+            animateTransition(oldPage, newPage, slideOutRight, slideInLeft, false);
 
+            if(page == 2) btn_setup_forward.setText(getString(R.string.dialog_mismatching_claims_btn_continue));
+        } else cancelSetup();
+    }
+
+    private void animateTransition(final ConstraintLayout oldPage, ConstraintLayout newPage, Animation slide_Out, Animation slide_in, boolean progressBarOnly) {
+        if(!progressBarOnly) {
+            newPage.setVisibility(View.VISIBLE);
+            newPage.startAnimation(slide_in);
+
+            slide_Out.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    oldPage.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            oldPage.startAnimation(slide_Out);
+        }
+
+        Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, progressBar_value, progressBar_newValue);
+        progressBarAnimation.setDuration(500);
+        progressBar_setupSteps.startAnimation(progressBarAnimation);
+        progressBar_value = progressBar_newValue;
+    }
+
+    private SetupContinueCondition firstCondition() {
+        //When switching from page 1 to 2
+        return new SetupContinueCondition() {
+            @Override
+            public boolean shouldSetupContinue() {
+                int playerCount = PlayerListManager.getPlayerList().size();
+                return playerCount >= 5;
+            }
+
+            @Override
+            public void showErrorMessage() {
                 int playerCount = PlayerListManager.getPlayerList().size();
                 if(playerCount <= 2) {
                     String title = (playerCount == 0) ? getString(R.string.no_players_added) : getString(R.string.title_too_little_players);
                     CardDialog.showMessageDialog(context, title, getString(R.string.no_players_added_msg), getString(R.string.btn_ok), null, null, null);
                 } else if (playerCount < 5) {
-                    CardDialog.showMessageDialog(context, getString(R.string.title_too_little_players), getString(R.string.msg_too_little_players, playerCount), getString(R.string.dialog_mismatching_claims_btn_continue), continueSetup, getString(R.string.dialog_mismatching_claims_btn_cancel), null);
-                } else continueSetup.run();
+                    CardDialog.showMessageDialog(context, getString(R.string.title_too_little_players), getString(R.string.msg_too_little_players, playerCount), getString(R.string.dialog_mismatching_claims_btn_continue), new Runnable() {
+                        @Override
+                        public void run() {
+                            nextSetupPage(true);
+                        }
+                    }, getString(R.string.dialog_mismatching_claims_btn_cancel), null);
+                }
             }
-        };
 
-        listener_backward_tracks = new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Animation slideOutRight = AnimationUtils.loadAnimation(context, R.anim.slide_out_right);
-                container_select_track.startAnimation(slideOutRight);
+            public void initialiseLayout() {
+                //Check if there is a recommended track available
+                LinearLayout container_recommended_track = getView().findViewById(R.id.container_recommended_track);
 
-                slideOutRight.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
+                if(PlayerListManager.getPlayerList().size() >=5 && PlayerListManager.getPlayerList().size() <=10) {//Recommended track available
+                    container_recommended_track.setVisibility(View.VISIBLE);
+
+                    int recommendation = -10;
+                    if(PlayerListManager.getPlayerList().size() == 5 || PlayerListManager.getPlayerList().size() == 6) {
+                        recommendation = 0;
+                    } else if(PlayerListManager.getPlayerList().size() == 7 || PlayerListManager.getPlayerList().size() == 8) {
+                        recommendation = 1;
+                    } else if(PlayerListManager.getPlayerList().size() == 9 || PlayerListManager.getPlayerList().size() ==10) {
+                        recommendation = 2;
                     }
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        container_select_track.setVisibility(View.GONE);
+                    //Only change the layout if the recommendation changed
+                    if(recommendation != FascistTrackSelectionManager.recommendedTrackIndex) {
+                        CardView cv_recommended_track = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, container_recommended_track, false);
+
+                        if (recommendation == 0) {
+                            FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_5_TO_6, context);
+                        } else if (recommendation == 1) {
+                            FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_7_TO_8, context);
+                        } else if (recommendation == 2) {
+                            FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_9_TO_10, context);
+                        }
+
+                        if (container_recommended_track.getChildCount() > 1)
+                            container_recommended_track.removeViewAt(1); //If there is already a recommended track in there, we remove it.
+
+                        container_recommended_track.addView(cv_recommended_track);
+                        FascistTrackSelectionManager.changeRecommendedCard(recommendation, cv_recommended_track, context);
                     }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                });
-
-                Animation slideInLeft = AnimationUtils.loadAnimation(context, R.anim.slide_in_left);
-                container_new_player.setVisibility(View.VISIBLE);
-                container_new_player.startAnimation(slideInLeft);
-
-                fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_close));
-
-                Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 600, 300);
-                progressBarAnimation.setDuration(500);
-                progressBar_setupSteps.startAnimation(progressBarAnimation);
-                btn_setup_forward.setOnClickListener(listener_forward_players);
-                btn_setup_back.setOnClickListener(listener_backward_players);
-            }
-        };
-
-        listener_forward_tracks = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Runnable continueSetup = new Runnable() {
-                    @Override
-                    public void run() {
-                        Animation slideOutLeft = AnimationUtils.loadAnimation(context, R.anim.slide_out_left);
-                        container_select_track.startAnimation(slideOutLeft);
-
-                        slideOutLeft.setAnimationListener(new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                container_select_track.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-                            }
-                        });
-
-                        Animation slideInRight = AnimationUtils.loadAnimation(context, R.anim.slide_in_right);
-                        container_settings.setVisibility(View.VISIBLE);
-                        container_settings.startAnimation(slideInRight);
-
-                        fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_close));
-
-                        Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 600, 900);
-                        progressBarAnimation.setDuration(500);
-                        progressBar_setupSteps.startAnimation(progressBarAnimation);
-
-                        btn_setup_forward.setText(getString(R.string.start_game));
-                        btn_setup_forward.setOnClickListener(listener_forward_settings);
-                        btn_setup_back.setOnClickListener(listener_backward_settings);
-                    }
-                };
-
-                if(GameManager.gameTrack == null) CardDialog.showMessageDialog(context, getString(R.string.no_track_selected), getString(R.string.no_track_selected_message), getString(R.string.btn_ok), null, null, null);
-                else continueSetup.run();
-            }
-        };
-
-        listener_backward_settings = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Animation slideOutRight = AnimationUtils.loadAnimation(context, R.anim.slide_out_right);
-                container_settings.startAnimation(slideOutRight);
-
-                slideOutRight.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        container_settings.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-                });
-
-                Animation slideInLeft = AnimationUtils.loadAnimation(context, R.anim.slide_in_left);
-                container_select_track.setVisibility(View.VISIBLE);
-                container_select_track.startAnimation(slideInLeft);
+                } else {
+                    container_recommended_track.setVisibility(View.GONE);
+                    FascistTrackSelectionManager.recommendedTrackIndex = -1;
+                    FascistTrackSelectionManager.recommendedCard = null;
+                }
 
                 fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_open));
-
-                Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 900, 600);
-                progressBarAnimation.setDuration(500);
-                progressBar_setupSteps.startAnimation(progressBarAnimation);
-
-                btn_setup_forward.setText(getString(R.string.dialog_mismatching_claims_btn_continue));
-                btn_setup_forward.setOnClickListener(listener_forward_tracks);
-                btn_setup_back.setOnClickListener(listener_backward_tracks);
             }
         };
+    }
 
-        listener_forward_settings = new View.OnClickListener() {
+    private SetupContinueCondition secondCondition() {
+        //When switching from page 2 to 3
+        return new SetupContinueCondition() {
             @Override
-            public void onClick(View v) {
-                Switch sw_sounds_execution = fragmentLayout.findViewById(R.id.switch_execution);
-                Switch sw_sonds_policy = fragmentLayout.findViewById(R.id.switch_policies);
-                Switch sw_sounds_end = fragmentLayout.findViewById(R.id.switch_gameEnd);
+            public boolean shouldSetupContinue() {
+                return GameManager.gameTrack != null;
+            }
 
-                Switch sw_server = fragmentLayout.findViewById(R.id.switch_server);
+            @Override
+            public void showErrorMessage() {
+                CardDialog.showMessageDialog(context, getString(R.string.no_track_selected), getString(R.string.no_track_selected_message), getString(R.string.btn_ok), null, null, null);
+            }
 
-                GameEventsManager.endSounds = sw_sounds_end.isChecked();
-                GameEventsManager.policySounds = sw_sonds_policy.isChecked();
-                GameEventsManager.executionSounds = sw_sounds_execution.isChecked();
-
-                GameEventsManager.server = sw_server.isChecked();
-
-                ((MainActivity) context).replaceFragment(MainActivity.game, true);
+            @Override
+            public void initialiseLayout() {
+                fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_close));
             }
         };
+    }
 
-        btn_setup_forward.setOnClickListener(listener_forward_players);
-        btn_setup_back.setOnClickListener(listener_backward_players);
+    private void cancelSetup() {
+        ((MainActivity) context).replaceFragment(MainActivity.page_main, true);
+        progressBar_newValue = 0;
+        animateTransition(null, null, null, null, true);
+    }
+
+    private void finishSetup() {
+        View fragmentLayout = getView();
+        Switch sw_sounds_execution = fragmentLayout.findViewById(R.id.switch_execution);
+        Switch sw_sonds_policy = fragmentLayout.findViewById(R.id.switch_policies);
+        Switch sw_sounds_end = fragmentLayout.findViewById(R.id.switch_gameEnd);
+
+        Switch sw_server = fragmentLayout.findViewById(R.id.switch_server);
+
+        GameEventsManager.endSounds = sw_sounds_end.isChecked();
+        GameEventsManager.policySounds = sw_sonds_policy.isChecked();
+        GameEventsManager.executionSounds = sw_sounds_execution.isChecked();
+
+        GameEventsManager.server = sw_server.isChecked();
+
+        ((MainActivity) context).replaceFragment(MainActivity.game, true);
+    }
+
+    interface SetupContinueCondition {
+        abstract boolean shouldSetupContinue();
+        abstract void showErrorMessage();
+        abstract void initialiseLayout();
     }
 }
+

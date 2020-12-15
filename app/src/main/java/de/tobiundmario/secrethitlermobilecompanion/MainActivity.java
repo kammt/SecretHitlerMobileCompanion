@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if(currentFragmentContainer.equals(container_setup)) {
-            fragment_setup.previousPage();
+            fragment_setup.previousSetupPage();
         } else if(GameManager.isGameStarted()) { //Game is currently running, we ask the user if he wants to end the game
             if(!RecyclerViewManager.swipeEnabled) return; //This means that the "Game Ended" Screen is currently showing, we do not want to show the dialog during this
 
