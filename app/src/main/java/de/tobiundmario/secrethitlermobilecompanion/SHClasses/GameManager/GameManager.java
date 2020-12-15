@@ -7,7 +7,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 
 import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager.eventList;
 
-public class GameManager {
+public final class GameManager {
 
     public static int liberalPolicies = 0;
     public static int fascistPolicies = 0;
@@ -15,6 +15,8 @@ public class GameManager {
     public static FascistTrack gameTrack = null;
 
     private static boolean gameStarted;
+
+    private GameManager() {}
 
     public static boolean isGameStarted() {
         return gameStarted;

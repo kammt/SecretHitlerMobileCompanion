@@ -16,6 +16,11 @@ import de.tobiundmario.secrethitlermobilecompanion.SHEvents.SpecialElectionEvent
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.TopPolicyPlayedEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.VoteEvent;
 
+import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager.electionTracker;
+import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager.fascistPolicies;
+import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager.gameTrack;
+import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager.liberalPolicies;
+
 public class LegislativeSessionManager extends GameEventsManager {
 
     public static int legSessionNo = 1;
@@ -161,42 +166,42 @@ public class LegislativeSessionManager extends GameEventsManager {
         //If we change the event to be rejected or vetoed, we reduce the policy count
         if (newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || newClaimEvent != null && newClaimEvent.isVetoed()) {
             if (claimEvent != null && claimEvent.getPlayedPolicy() == Claim.LIBERAL)
-                GameEventsManager.liberalPolicies--;
+                liberalPolicies--;
             if (claimEvent != null && claimEvent.getPlayedPolicy() == Claim.FASCIST)
-                GameEventsManager.fascistPolicies--;
+                fascistPolicies--;
         }
 
         //If we change the event to play a policy, we increase the policy count
         if (voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || claimEvent != null && claimEvent.isVetoed()) {
             if (newClaimEvent != null && newClaimEvent.getPlayedPolicy() == Claim.LIBERAL)
-                GameEventsManager.liberalPolicies++;
+                liberalPolicies++;
             if (newClaimEvent != null && newClaimEvent.getPlayedPolicy() == Claim.FASCIST)
-                GameEventsManager.fascistPolicies++;
+                fascistPolicies++;
         }
 
         //If we had a liberal policy and change it to a fascist policy, we update the policy count
         if (newClaimEvent != null && !newClaimEvent.isVetoed() && newClaimEvent.getPlayedPolicy() == Claim.FASCIST && claimEvent != null && !claimEvent.isVetoed() && claimEvent.getPlayedPolicy() == Claim.LIBERAL) {
-            GameEventsManager.liberalPolicies--;
-            GameEventsManager.fascistPolicies++;
+            liberalPolicies--;
+            fascistPolicies++;
         }
 
         //If we had a fascist policy and change it to a liberal policy, we update the policy count
         if (newClaimEvent != null && !newClaimEvent.isVetoed() && newClaimEvent.getPlayedPolicy() == Claim.LIBERAL && claimEvent != null && !claimEvent.isVetoed() && claimEvent.getPlayedPolicy() == Claim.FASCIST) {
-            GameEventsManager.liberalPolicies++;
-            GameEventsManager.fascistPolicies--;
+            liberalPolicies++;
+            fascistPolicies--;
         }
 
         //If we are not in manual mode, we have to recalculate the election tracker as well
-        if (!GameManager.gameTrack.isManualMode()) {
+        if (!gameTrack.isManualMode()) {
             //If it was rejected and now not anymore, we decrease the election tracker
             if (voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED && newVoteEvent.getVotingResult() == VoteEvent.VOTE_PASSED)
-                GameEventsManager.electionTracker--;
+                electionTracker--;
             //If it was passed and now not anymore, we increase the election tracker
             if (voteEvent.getVotingResult() == VoteEvent.VOTE_PASSED && newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED) {
-                GameEventsManager.electionTracker++;
+                electionTracker++;
 
-                if (GameEventsManager.electionTracker == GameManager.gameTrack.getElectionTrackerLength()) {
-                    GameEventsManager.electionTracker = 0;
+                if (electionTracker == gameTrack.getElectionTrackerLength()) {
+                    electionTracker = 0;
 
                     TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(GameEventsManager.getContext());
                     topPolicyPlayedEvent.setLinkedLegislativeSession(legislativeSession);

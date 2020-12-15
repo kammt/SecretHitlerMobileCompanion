@@ -226,7 +226,7 @@ public class GameFragment extends Fragment {
     }
 
     public void endGame() {
-        GameEventsManager.setGameStarted(false);
+        GameManager.setGameStarted(false);
         stopAndUnbindServerService();
 
         BackupManager.deleteBackup();
@@ -599,7 +599,7 @@ public class GameFragment extends Fragment {
         cardList = fragmentLayout.findViewById(R.id.cardList);
         cardList.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
         GameEventsManager.initialise(cardList, context);
-        GameEventsManager.setGameStarted(true);
+        GameManager.setGameStarted(true);
 
         playerCardList = fragmentLayout.findViewById(R.id.playerList);
         playerCardList.setLayoutManager(new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false));

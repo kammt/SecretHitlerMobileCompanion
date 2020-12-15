@@ -26,7 +26,9 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEve
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
-public class CardSetupHelper {
+public final class CardSetupHelper {
+    private CardSetupHelper() {}
+
     public static void lockPresidentSpinner(String presidentName, Spinner spinner) {
         int position = PlayerListManager.getPlayerPosition(presidentName);
         spinner.setSelection(position);

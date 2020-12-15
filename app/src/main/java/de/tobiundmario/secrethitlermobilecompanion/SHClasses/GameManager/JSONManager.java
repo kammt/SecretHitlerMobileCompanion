@@ -24,7 +24,9 @@ import de.tobiundmario.secrethitlermobilecompanion.SHEvents.SpecialElectionEvent
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.TopPolicyPlayedEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.VoteEvent;
 
-public class JSONManager extends GameManager {
+public final class JSONManager {
+    private JSONManager() {}
+
     public static ConcurrentLinkedQueue<EventChange> gameLogChanges = new ConcurrentLinkedQueue<>();
 
     private static HashSet<String> clientIPs = new HashSet<>();

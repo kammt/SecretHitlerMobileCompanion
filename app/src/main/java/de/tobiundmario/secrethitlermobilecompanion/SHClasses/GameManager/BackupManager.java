@@ -27,7 +27,8 @@ import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.
 import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionManager.addTrackAction;
 import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionManager.processLegislativeSession;
 
-public class BackupManager extends GameManager {
+public final class BackupManager {
+    private BackupManager() {}
 
     private static String backupFileName = "backup.json";
 
@@ -42,7 +43,7 @@ public class BackupManager extends GameManager {
     public static void restoreBackup() {
         try {
             eventListFromFile(true, backupFileName);
-            GameEventsManager.setGameStarted(true);
+            GameManager.setGameStarted(true);
         } catch (JSONException e) {
             ExceptionHandler.showErrorSnackbar(e, "GameLog.restoreBackup()");
         }
@@ -150,10 +151,10 @@ public class BackupManager extends GameManager {
     private static void restoreGameFromJSON(JSONObject object) throws JSONException {
         restoredEventList = new ArrayList<>();
 
-        GameEventsManager.setGameStarted(false);
-        GameEventsManager.liberalPolicies = 0;
-        GameEventsManager.fascistPolicies = 0;
-        GameEventsManager.electionTracker = 0;
+        GameManager.setGameStarted(false);
+        GameManager.liberalPolicies = 0;
+        GameManager.fascistPolicies = 0;
+        GameManager.electionTracker = 0;
 
         boolean executionSounds = false, endSounds = false, policySounds = false; //The sound settings will first be written into local variables. This is so that no sounds will be played during the event restoration as they have already been played before
 

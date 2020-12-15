@@ -26,7 +26,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
 import de.tobiundmario.secrethitlermobilecompanion.SpinnerAdapters.TrackActionSpinnerAdapter;
 
-public class CardDialog {
+public final class CardDialog {
 
     private static int message = 0;
     private static int input = 1;
@@ -35,6 +35,8 @@ public class CardDialog {
     private static View.OnClickListener listener_forward_one;
     private static View.OnClickListener listener_create_track = null;
     private static View.OnClickListener listener_backward_two = null;
+
+    private CardDialog() {}
 
     public static void destroy() {
         listener_forward_one = null;

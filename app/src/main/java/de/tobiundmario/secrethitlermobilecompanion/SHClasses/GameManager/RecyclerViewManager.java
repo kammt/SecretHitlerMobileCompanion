@@ -31,7 +31,8 @@ import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.
 import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager.undoRemoval;
 import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionManager.legSessionNo;
 
-public class RecyclerViewManager extends GameManager {
+public final class RecyclerViewManager {
+    private RecyclerViewManager() {}
 
     static private RecyclerView cardList;
     private static EventCardRecyclerViewAdapter cardListAdapter;
@@ -75,7 +76,7 @@ public class RecyclerViewManager extends GameManager {
                 - it is the last event
                 - It is the last Legislative Session in the list with no DeckShuffledEvent in front of it
                  */
-                if(gameTrack.isManualMode() || position == eventList.size() - 1 || event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() == legSessionNo - 1 && !(eventList.get(eventList.size() - 1) instanceof DeckShuffledEvent)) {
+                if(GameManager.gameTrack.isManualMode() || position == eventList.size() - 1 || event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() == legSessionNo - 1 && !(eventList.get(eventList.size() - 1) instanceof DeckShuffledEvent)) {
                     remove(event);
                     Snackbar snackbar = Snackbar.make(cardList, GameEventsManager.getContext().getString(R.string.snackbar_GameEvent_removed_message), BaseTransientBottomBar.LENGTH_LONG);
 

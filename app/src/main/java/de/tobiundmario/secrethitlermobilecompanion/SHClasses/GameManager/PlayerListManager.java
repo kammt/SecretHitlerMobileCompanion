@@ -34,6 +34,8 @@ public class PlayerListManager {
     private static PlayerCardRecyclerViewAdapter playerCardRecyclerViewAdapter;
     private static RecyclerView playerRecyclerView;
 
+    private PlayerListManager() {}
+
     public static void initialise(RecyclerView playerCardList, Context context) {
         /*
         Called when pushing the "Create Game" Button. Initialises and resets all variables used
@@ -117,7 +119,7 @@ public class PlayerListManager {
         /*
         This function removes a player from the player list
          */
-        if(!GameEventsManager.isGameStarted()) { //As the player list shouldn't be changed once the game starts, we check here
+        if(!GameManager.isGameStarted()) { //As the player list shouldn't be changed once the game starts, we check here
             int index = getPlayerPosition(player);
 
             playerList.remove(player);
@@ -271,7 +273,7 @@ public class PlayerListManager {
 
             @Override
             public boolean isItemViewSwipeEnabled() {
-                return !GameEventsManager.isGameStarted();
+                return !GameManager.isGameStarted();
             }
         };
 

@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
 public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableViewHolder> {
@@ -44,7 +44,7 @@ public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<Dimmable
 
     @Override
     public int getItemCount() {
-        if(GameEventsManager.isGameStarted()) return players.size();
+        if(GameManager.isGameStarted()) return players.size();
         else return players.size() + 1;
     }
 
@@ -121,7 +121,7 @@ public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<Dimmable
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(GameEventsManager.isGameStarted()) {
+                if(GameManager.isGameStarted()) {
                     CardView cv = (CardView) v;
 
                     if (cv.getAlpha() == 1.0) { //if it is unselected, select it
@@ -133,7 +133,7 @@ public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<Dimmable
                         cardViewHolder.alpha = 1f;
                         hiddenPlayers.remove(player);
                     }
-                    GameEventsManager.blurEventsInvolvingHiddenPlayers(hiddenPlayers); //Tell GameLog to update the list of which cards to blur
+                    GameManager.blurEventsInvolvingHiddenPlayers(hiddenPlayers); //Tell GameLog to update the list of which cards to blur
                 }
             }
         });
@@ -149,7 +149,7 @@ public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<Dimmable
     @Override
     public void onViewAttachedToWindow(@NonNull DimmableViewHolder holder) {
         super.onViewAttachedToWindow(holder);
-        if(holder.getItemViewType() == ADD_BUTTON || !GameEventsManager.isGameStarted()) return;
+        if(holder.getItemViewType() == ADD_BUTTON || !GameManager.isGameStarted()) return;
 
         int position = holder.getLayoutPosition();
         int claim = PlayerListManager.getMembershipClaims().get(position);

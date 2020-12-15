@@ -32,7 +32,8 @@ import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.
 import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionManager.processLegislativeSession;
 import static de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionManager.reSetSessionNumber;
 
-public class GameEventsManager extends GameManager {
+public final class GameEventsManager {
+    private GameEventsManager() {}
 
     static List<GameEvent> eventList, restoredEventList;
 
@@ -54,9 +55,9 @@ public class GameEventsManager extends GameManager {
             jsonData = new JSONArray();
 
             //Reset the policy-count
-            liberalPolicies = 0;
-            fascistPolicies = 0;
-            electionTracker = 0;
+            GameManager.liberalPolicies = 0;
+            GameManager.fascistPolicies = 0;
+            GameManager.electionTracker = 0;
             legSessionNo = 1;
         }
         hiddenEventIndexes = new ArrayList<>();
@@ -72,7 +73,7 @@ public class GameEventsManager extends GameManager {
         eventList = null;
         hiddenEventIndexes = null;
         jsonData = null;
-        gameTrack = null;
+        GameManager.gameTrack = null;
         RecyclerViewManager.destroy();
     }
 
@@ -122,7 +123,7 @@ public class GameEventsManager extends GameManager {
         //Nevertheless, we need to update the RecyclerViewItem
         RecyclerViewManager.getCardListAdapter().notifyItemChanged(position);
 
-        blurEventsInvolvingHiddenPlayers(PlayerListManager.getplayerCardRecyclerViewAdapter().getHiddenPlayers()); //Re-calling this function since a new item was added
+        GameManager.blurEventsInvolvingHiddenPlayers(PlayerListManager.getplayerCardRecyclerViewAdapter().getHiddenPlayers()); //Re-calling this function since a new item was added
 
         //Something changed - it's backup time!
         try {
@@ -202,9 +203,9 @@ public class GameEventsManager extends GameManager {
             GameEvent presidentAction = ((LegislativeSession) event).getPresidentAction();
             if(presidentAction != null) remove(presidentAction);
             if(presidentAction instanceof DeckShuffledEvent) {
-                if (electionTracker == 0) { //This Legislative Session created a DeckShuffledEvent. Thus we have to reset the electionTracker integer
-                    electionTracker = gameTrack.getElectionTrackerLength() - 1;
-                } else electionTracker--;
+                if (GameManager.electionTracker == 0) { //This Legislative Session created a DeckShuffledEvent. Thus we have to reset the electionTracker integer
+                    GameManager.electionTracker = GameManager.gameTrack.getElectionTrackerLength() - 1;
+                } else GameManager.electionTracker--;
             }
         }
     }

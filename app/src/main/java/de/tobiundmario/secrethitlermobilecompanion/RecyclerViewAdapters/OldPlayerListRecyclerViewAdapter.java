@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,7 +37,6 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
 
     public static class OldPlayerListViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
-        ArrayList<String> players;
 
         OldPlayerListViewHolder(View itemView) {
             super(itemView);
@@ -57,7 +57,7 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
     }
 
     @Override
-    public void onBindViewHolder(OldPlayerListViewHolder oldPlayerListViewHolder, final int pos) {
+    public void onBindViewHolder(@NonNull OldPlayerListViewHolder oldPlayerListViewHolder, final int pos) {
         try {
             JSONObject object = oldPlayers.getJSONObject(pos);
             final ArrayList<String> players = new ArrayList<>();
@@ -80,7 +80,6 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
                 stringBuilder.append(playerName);
                 if(j != listLength - 1) stringBuilder.append(", ");
             }
-            oldPlayerListViewHolder.players = players;
             String playerListAsString = stringBuilder.toString();
 
             CardView cardView = oldPlayerListViewHolder.cv;

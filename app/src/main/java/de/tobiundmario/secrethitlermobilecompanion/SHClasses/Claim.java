@@ -10,7 +10,8 @@ import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 
-public class Claim {
+public final class Claim {
+    private Claim() {}
     /*
     This Class is responsible for everything surrounding Claims and Claim values. Some of its functions do things like
     - color the Claim accordingly (red/blue)

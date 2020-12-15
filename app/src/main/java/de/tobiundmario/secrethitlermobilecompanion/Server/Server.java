@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.JSONManager;
 import fi.iki.elonen.NanoHTTPD;
 
@@ -87,14 +87,14 @@ public class Server extends NanoHTTPD {
             case "/bootstrap.min.css":
                 return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("bootstrap.min.css"));
             case "/getGameJSON":
-                if (GameEventsManager.isGameStarted()) {
+                if (GameManager.isGameStarted()) {
                     String response = JSONManager.getCompleteGameJSON(clientIP);
                     Log.v("/getGameJSON: JSON: ", response);
                     return newFixedLengthResponse(Response.Status.OK, "application/json", response);
                 }
                 return newFixedLengthResponse(Response.Status.SERVICE_UNAVAILABLE, "application/json", "");
             case "/getGameChangesJSON":
-                if (GameEventsManager.isGameStarted()) {
+                if (GameManager.isGameStarted()) {
                     String response = JSONManager.getGameChangesJSON(clientIP);
                     Log.v("/getGameChanges: JSON: ", response);
                     return newFixedLengthResponse(Response.Status.OK, "application/json", response);

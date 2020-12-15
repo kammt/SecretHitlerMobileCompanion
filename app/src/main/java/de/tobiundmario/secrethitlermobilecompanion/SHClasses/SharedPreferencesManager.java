@@ -24,14 +24,15 @@ import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CustomTracksRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.OldPlayerListRecyclerViewAdapter;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.JSONManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
-public class SharedPreferencesManager extends GameManager {
+public final class SharedPreferencesManager {
 
     private static OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter;
     private static CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter;
+
+    private SharedPreferencesManager() {}
 
     public static void destroy() {
         oldPlayerListRecyclerViewAdapter = null;

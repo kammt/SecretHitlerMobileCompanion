@@ -20,6 +20,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.BackupManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.JSONManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.RecyclerViewManager;
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if(currentFragmentContainer.equals(container_setup)) {
             fragment_setup.previousPage();
-        } else if(GameEventsManager.isGameStarted()) { //Game is currently running, we ask the user if he wants to end the game
+        } else if(GameManager.isGameStarted()) { //Game is currently running, we ask the user if he wants to end the game
             if(!RecyclerViewManager.swipeEnabled) return; //This means that the "Game Ended" Screen is currently showing, we do not want to show the dialog during this
 
             CardDialog.showMessageDialog(this, getString(R.string.title_end_game_policies), null, getString(R.string.yes), new Runnable() {

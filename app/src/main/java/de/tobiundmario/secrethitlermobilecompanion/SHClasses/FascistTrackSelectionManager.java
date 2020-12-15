@@ -18,7 +18,7 @@ import java.util.List;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 
-public class FascistTrackSelectionManager {
+public final class FascistTrackSelectionManager {
 
     public static final int TRACK_TYPE_5_TO_6 = 5;
     public static final int TRACK_TYPE_7_TO_8 = 6;
@@ -31,6 +31,8 @@ public class FascistTrackSelectionManager {
     public static List<FascistTrack> fasTracks = new ArrayList<>();
     public static CardView recommendedCard;
     public static CardView previousSelection;
+
+    private FascistTrackSelectionManager() {}
 
     /*
     This class is responsible for handling clicks on the "Use"-button in the Fascist Track Selection Screen of the Setup phase.
