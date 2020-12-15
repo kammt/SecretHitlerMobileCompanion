@@ -8,10 +8,7 @@ import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -24,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,12 +29,13 @@ import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.OnSetupCancelledListener;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.OnSetupFinishedListener;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.SetupFinishCondition;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.RecyclerViewManager;
 
 public class LegislativeSession extends GameEvent {
 
@@ -57,6 +54,10 @@ public class LegislativeSession extends GameEvent {
 
     //Defining the OnClickListeners outside of the function to call them separately in the setupEditCard() function
     private View.OnClickListener iv_fascistListener, iv_liberalListener;
+
+    //Defining Setup variables here as they are needed in multiple setup functions
+    private Spinner presSpinner, chancSpinner, presClaimSpinner, chancClaimSpinner;
+
 
     public LegislativeSession(VoteEvent voteEvent, ClaimEvent claimEvent, Context context) {
         sessionNumber = LegislativeSessionManager.legSessionNo++;
@@ -90,9 +91,87 @@ public class LegislativeSession extends GameEvent {
         return sessionNumber;
     }
 
+    public void initialiseEditCard(CardView cardView) {
+        cardView.findViewById(R.id.legacy).setVisibility(View.VISIBLE);
+        cardView.findViewById(R.id.initial_setup).setVisibility(View.GONE);
+
+        //Setting up Spinners
+        presSpinner = cardView.findViewById(R.id.spinner_president);
+        chancSpinner = cardView.findViewById(R.id.spinner_chancellor);
+
+        presClaimSpinner = cardView.findViewById(R.id.spinner_pres_claim);
+
+        chancClaimSpinner = cardView.findViewById(R.id.spinner_chanc_claim);
+
+
+        //Initialise all other important bits
+        final LinearLayout ll_policyplayed = cardView.findViewById(R.id.ll_policy_outcome);
+        final CheckBox cb_vetoed = cardView.findViewById(R.id.checkBox_policy_vetoed);
+        final Switch sw_votingoutcome = cardView.findViewById(R.id.switch_vote_outcome);
+        final ImageView iv_fascist = cardView.findViewById(R.id.img_policy_fascist);
+        final ImageView iv_liberal = cardView.findViewById(R.id.img_policy_liberal);
+        final Button btn_continue = cardView.findViewById(R.id.btn_setup_forward);
+
+        //When the switch is changed, we want certain UI elements to disappear
+        sw_votingoutcome.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    ll_policyplayed.setVisibility(View.GONE);
+                    cb_vetoed.setVisibility(View.GONE);
+                    chancClaimSpinner.setVisibility(View.GONE);
+                    presClaimSpinner.setVisibility(View.GONE);
+                } else {
+                    ll_policyplayed.setVisibility(View.VISIBLE);
+                    cb_vetoed.setVisibility(View.VISIBLE);
+                    chancClaimSpinner.setVisibility(View.VISIBLE);
+                    presClaimSpinner.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        //Setting up the OnClickListeners for the ImageViews
+        CardSetupHelper.setupImageViewSelector(iv_liberal, iv_fascist, ColorStateList.valueOf(c.getColor(R.color.colorLiberal)), ColorStateList.valueOf(c.getColor(R.color.colorFascist)), new View[]{cb_vetoed, sw_votingoutcome});
+
+        btn_continue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                processEdit(sw_votingoutcome.isChecked(), (iv_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL, cb_vetoed.isChecked());
+            }
+        });
+    }
+
+    private void processEdit(boolean voteRejected, int playedPolicy, boolean vetoed) {
+        final VoteEvent newVoteEvent;
+        final ClaimEvent newClaimEvent;
+
+        if (presSpinner.getSelectedItem().equals(chancSpinner.getSelectedItem())) {
+            Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
+        } else {
+            String presName = (String) presSpinner.getSelectedItem();
+            String chancName = (String) chancSpinner.getSelectedItem();
+
+            newVoteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED);
+
+            if (voteRejected) {
+                newClaimEvent = null;
+            } else {
+                int presClaim = Claim.getClaimInt((String) presClaimSpinner.getSelectedItem());
+                int chancClaim = Claim.getClaimInt((String) chancClaimSpinner.getSelectedItem());
+                newClaimEvent = new ClaimEvent(presClaim, chancClaim, playedPolicy, vetoed);
+            }
+
+            if (isEditing) { //We are editing the card, we need to process the changes (e.g. update the policy count)
+                LegislativeSessionManager.processLegislativeSessionEdit(LegislativeSession.this, claimEvent, newClaimEvent, voteEvent, newVoteEvent);
+            }
+
+            leaveSetupPhase(newClaimEvent, newVoteEvent);
+            if (LegislativeSessionManager.trackActionRequired(LegislativeSession.this, claimEvent, newClaimEvent, voteEvent, newVoteEvent)) LegislativeSessionManager.addTrackAction(LegislativeSession.this, false);
+        }
+    }
+
     @Override
     public void initialiseSetupCard(CardView cardView) {
-        final Spinner presSpinner, chancSpinner, presClaimSpinner, chancClaimSpinner;
         if(!isEditing) {
             cardView.findViewById(R.id.legacy).setVisibility(View.GONE);
             cardView.findViewById(R.id.initial_setup).setVisibility(View.VISIBLE);
@@ -108,393 +187,55 @@ public class LegislativeSession extends GameEvent {
 
             final ImageView icon_ja = cardView.findViewById(R.id.icon_voting_ja);
             icon_ja.setAlpha(1f);
-            View.OnClickListener iv_jaListener, iv_neinListener;
             final ImageView icon_nein = cardView.findViewById(R.id.icon_voting_nein);
             icon_nein.setAlpha(0.2f);
 
             final CheckBox cb_vetoed = cardView.findViewById(R.id.checkBox_played_policy_vetoed);
 
-            //Changing the color scheme to liberal blue
-            iv_liberalListener = new View.OnClickListener() {
+            //Setting up ImageViewSelectors
+            CardSetupHelper.setupImageViewSelector(icon_liberal, icon_fascist, ColorStateList.valueOf(c.getColor(R.color.colorLiberal)), ColorStateList.valueOf(c.getColor(R.color.colorFascist)), new View[]{cb_vetoed});
+            CardSetupHelper.setupImageViewSelector(icon_ja, icon_nein, null, null, null);
+
+            OnSetupFinishedListener onSetupFinishedListener = new OnSetupFinishedListener() {
                 @Override
-                public void onClick(View v) {
-                    icon_liberal.setAlpha((float) 1);
-                    icon_fascist.setAlpha((float) 0.2);
+                public void onSetupFinished() {
+                    boolean voteRejected = icon_nein.getAlpha() == 1.0f;
+                    String presName = (String) presSpinner.getSelectedItem();
+                    String chancName = (String) chancSpinner.getSelectedItem();
 
-                    ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorLiberal));
-                    cb_vetoed.setButtonTintList(csl);
-                }
-            };
-            icon_liberal.setOnClickListener(iv_liberalListener);
+                    VoteEvent newVoteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED);
+                    ClaimEvent newClaimEvent;
 
-            //Changing the color scheme to fascist red
-            iv_fascistListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    icon_fascist.setAlpha((float) 1);
-                    icon_liberal.setAlpha((float) 0.2);
-
-                    ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorFascist));
-                    cb_vetoed.setButtonTintList(csl);
-                }
-            };
-            icon_fascist.setOnClickListener(iv_fascistListener);
-
-            iv_jaListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    icon_ja.setAlpha((float) 1);
-                    icon_nein.setAlpha((float) 0.2);
-                }
-            };
-            icon_ja.setOnClickListener(iv_jaListener);
-
-            iv_neinListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    icon_nein.setAlpha((float) 1);
-                    icon_ja.setAlpha((float) 0.2);
-                }
-            };
-            icon_nein.setOnClickListener(iv_neinListener);
-
-            //Initialising all pages
-            final ConstraintLayout page1_selection = cardView.findViewById(R.id.page1_selection);
-            final ConstraintLayout page2_voting = cardView.findViewById(R.id.page2_voting);
-            final ConstraintLayout page3_policies = cardView.findViewById(R.id.page3_policies);
-            final ConstraintLayout page4_claims = cardView.findViewById(R.id.page4_claims);
-
-            page1_selection.setVisibility(View.VISIBLE);
-            page2_voting.setVisibility(View.GONE);
-            page3_policies.setVisibility(View.GONE);
-            page4_claims.setVisibility(View.GONE);
-
-            //Initialising buttons
-            Button btn_continue = cardView.findViewById(R.id.btn_setup_forward);
-            final Button btn_back = cardView.findViewById(R.id.btn_setup_back);
-            btn_back.setText(c.getString(R.string.dialog_mismatching_claims_btn_cancel));
-
-            setupPage = 1;
-
-            btn_continue.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    setupPage++;
-                    final ConstraintLayout oldPage, newPage;
-                    switch (setupPage) {
-                        case 2:
-                            oldPage = page1_selection;
-                            newPage = page2_voting;
-                            break;
-                        case 3:
-                            if(icon_ja.getAlpha() == 1f) {
-                                oldPage = page2_voting;
-                                newPage = page3_policies;
-                            } else {
-                                setupPage = 5; //If the vote is rejected, then we finish the setup on page 2
-                                oldPage = null;
-                                newPage = null;
-                            }
-                            break;
-                        case 4:
-                            oldPage = page3_policies;
-                            newPage = page4_claims;
-                            break;
-                        default:
-                            oldPage = null;
-                            newPage = null;
-                    }
-                    if(setupPage == 5) {
-                        boolean voteRejected = icon_nein.getAlpha() == 1.0f;
-                        String presName = (String) presSpinner.getSelectedItem();
-                        String chancName = (String) chancSpinner.getSelectedItem();
-
-                        VoteEvent newVoteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED);
-                        ClaimEvent newClaimEvent;
-
-                        if (voteRejected) {
-                            newClaimEvent = null;
-                        } else {
-                            int presClaim = Claim.getClaimInt((String) presClaimSpinner.getSelectedItem());
-                            int chancClaim = Claim.getClaimInt((String) chancClaimSpinner.getSelectedItem());
-
-                            int playedPolicy = (icon_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL;
-                            boolean vetoed = cb_vetoed.isChecked();
-
-                            newClaimEvent = new ClaimEvent(presClaim, chancClaim, playedPolicy, vetoed);
-                        }
-
-                        leaveSetupPhase(newClaimEvent, newVoteEvent);
+                    if (voteRejected) {
+                        newClaimEvent = null;
                     } else {
-                        //Animations
-                        Animation slideOutLeft = AnimationUtils.loadAnimation(c, R.anim.slide_out_left);
-                        slideOutLeft.setAnimationListener(new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {
+                        int presClaim = Claim.getClaimInt((String) presClaimSpinner.getSelectedItem());
+                        int chancClaim = Claim.getClaimInt((String) chancClaimSpinner.getSelectedItem());
 
-                            }
+                        int playedPolicy = (icon_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL;
+                        boolean vetoed = cb_vetoed.isChecked();
 
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                oldPage.setVisibility(View.GONE);
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-
-                            }
-                        });
-                        Animation slideInRight = AnimationUtils.loadAnimation(c, R.anim.slide_in_right);
-                        slideInRight.setFillAfter(true);
-                        oldPage.startAnimation(slideOutLeft);
-
-                        newPage.setVisibility(View.VISIBLE);
-                        newPage.startAnimation(slideInRight);
-
-                        if(setupPage == 2) btn_back.setText(c.getString(R.string.back));
+                        newClaimEvent = new ClaimEvent(presClaim, chancClaim, playedPolicy, vetoed);
                     }
+                    leaveSetupPhase(newClaimEvent, newVoteEvent);
+                }
+            };
+
+            OnSetupCancelledListener onSetupCancelledListener = new OnSetupCancelledListener() {
+                @Override
+                public void onSetupCancelled() {
+                    GameEventsManager.remove(LegislativeSession.this);
+                }
+            };
+
+            CardSetupHelper.initialiseSetupPages(new View[]{cardView.findViewById(R.id.page1_selection), cardView.findViewById(R.id.page2_voting), cardView.findViewById(R.id.page3_policies), cardView.findViewById(R.id.page4_claims)}, (Button) cardView.findViewById(R.id.btn_setup_forward), (Button) cardView.findViewById(R.id.btn_setup_back), onSetupFinishedListener, onSetupCancelledListener, new SetupFinishCondition() {
+                @Override
+                public boolean shouldSetupBeFinished() {
+                    return icon_nein.getAlpha() == 1f;
                 }
             });
-
-            btn_back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    setupPage--;
-                    final ConstraintLayout oldPage, newPage;
-                    switch (setupPage) {
-                        case 1:
-                            oldPage = page2_voting;
-                            newPage = page1_selection;
-                            break;
-                        case 2:
-                            oldPage = page3_policies;
-                            newPage = page2_voting;
-                            break;
-                        case 3:
-                            oldPage = page4_claims;
-                            newPage = page3_policies;
-                            break;
-                        default:
-                            oldPage = null;
-                            newPage = null;
-                    }
-                    if(setupPage == 0) {
-                        GameEventsManager.remove(LegislativeSession.this);
-                    } else {
-                        //Animations
-                        Animation slideOutRight = AnimationUtils.loadAnimation(c, R.anim.slide_out_right);
-                        slideOutRight.setFillAfter(true);
-                        Animation slideInLeft = AnimationUtils.loadAnimation(c, R.anim.slide_in_left);
-                        slideInLeft.setFillAfter(true);
-                        oldPage.startAnimation(slideOutRight);
-
-                        newPage.setVisibility(View.VISIBLE);
-                        newPage.startAnimation(slideInLeft);
-
-                        if(setupPage == 1) btn_back.setText(c.getString(R.string.dialog_mismatching_claims_btn_cancel));
-                    }
-                }
-            });
-
-
         } else {
-            cardView.findViewById(R.id.legacy).setVisibility(View.VISIBLE);
-            cardView.findViewById(R.id.initial_setup).setVisibility(View.GONE);
-
-            //Setting up Spinners
-            presSpinner = cardView.findViewById(R.id.spinner_president);
-            chancSpinner = cardView.findViewById(R.id.spinner_chancellor);
-
-            presClaimSpinner = cardView.findViewById(R.id.spinner_pres_claim);
-
-            chancClaimSpinner = cardView.findViewById(R.id.spinner_chanc_claim);
-
-
-            //Initialise all other important bits
-            final LinearLayout ll_policyplayed = cardView.findViewById(R.id.ll_policy_outcome);
-            final CheckBox cb_vetoed = cardView.findViewById(R.id.checkBox_policy_vetoed);
-            final Switch sw_votingoutcome = cardView.findViewById(R.id.switch_vote_outcome);
-            final ImageView iv_fascist = cardView.findViewById(R.id.img_policy_fascist);
-            final ImageView iv_liberal = cardView.findViewById(R.id.img_policy_liberal);
-            final Button btn_continue = cardView.findViewById(R.id.btn_setup_forward);
-
-            //When the switch is changed, we want certain UI elements to disappear
-            sw_votingoutcome.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        ll_policyplayed.setVisibility(View.GONE);
-                        cb_vetoed.setVisibility(View.GONE);
-                        chancClaimSpinner.setVisibility(View.GONE);
-                        presClaimSpinner.setVisibility(View.GONE);
-                    } else {
-                        ll_policyplayed.setVisibility(View.VISIBLE);
-                        cb_vetoed.setVisibility(View.VISIBLE);
-                        chancClaimSpinner.setVisibility(View.VISIBLE);
-                        presClaimSpinner.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
-
-            //Changing the color scheme to liberal blue
-            iv_liberalListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    iv_liberal.setAlpha((float) 1);
-                    iv_fascist.setAlpha((float) 0.2);
-
-                    ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorLiberal));
-                    cb_vetoed.setButtonTintList(csl);
-
-                    sw_votingoutcome.setThumbTintList(csl);
-                    sw_votingoutcome.setTrackTintList(csl);
-                }
-            };
-            iv_liberal.setOnClickListener(iv_liberalListener);
-
-            //Changing the color scheme to fascist red
-            iv_fascistListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    iv_fascist.setAlpha((float) 1);
-                    iv_liberal.setAlpha((float) 0.2);
-
-                    ColorStateList csl = ColorStateList.valueOf(c.getColor(R.color.colorFascist));
-                    cb_vetoed.setButtonTintList(csl);
-
-                    sw_votingoutcome.setThumbTintList(csl);
-                    sw_votingoutcome.setTrackTintList(csl);
-                }
-            };
-            iv_fascist.setOnClickListener(iv_fascistListener);
-
-            btn_continue.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    final VoteEvent newVoteEvent;
-                    final ClaimEvent newClaimEvent;
-
-                    if (presSpinner.getSelectedItem().equals(chancSpinner.getSelectedItem())) {
-
-                        Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
-
-                    } else {
-
-                        boolean addTrackAction = false; //This boolean will be triggered after a track action is needed after an edit (see code after if(isEditing))
-
-                        boolean voteRejected = sw_votingoutcome.isChecked();
-                        String presName = (String) presSpinner.getSelectedItem();
-                        String chancName = (String) chancSpinner.getSelectedItem();
-
-                        newVoteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED);
-
-                        if (voteRejected) {
-                            newClaimEvent = null;
-                        } else {
-                            int presClaim = Claim.getClaimInt((String) presClaimSpinner.getSelectedItem());
-                            int chancClaim = Claim.getClaimInt((String) chancClaimSpinner.getSelectedItem());
-
-                            int playedPolicy = (iv_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL;
-                            boolean vetoed = cb_vetoed.isChecked();
-
-                            newClaimEvent = new ClaimEvent(presClaim, chancClaim, playedPolicy, vetoed);
-                        }
-
-                        if (isEditing) { //We are editing the card, we need to process the changes (e.g. update the policy count)
-                            //If we change the event to be rejected or vetoed, we reduce the policy count
-                            if (newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || newClaimEvent != null && newClaimEvent.isVetoed()) {
-                                if (claimEvent != null && claimEvent.getPlayedPolicy() == Claim.LIBERAL)
-                                    GameEventsManager.liberalPolicies--;
-                                if (claimEvent != null && claimEvent.getPlayedPolicy() == Claim.FASCIST)
-                                    GameEventsManager.fascistPolicies--;
-                            }
-
-                            //If we change the event to play a policy, we increase the policy count
-                            if (voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || claimEvent != null && claimEvent.isVetoed()) {
-                                if (newClaimEvent != null && newClaimEvent.getPlayedPolicy() == Claim.LIBERAL)
-                                    GameEventsManager.liberalPolicies++;
-                                if (newClaimEvent != null && newClaimEvent.getPlayedPolicy() == Claim.FASCIST)
-                                    GameEventsManager.fascistPolicies++;
-                            }
-
-                            //If we had a liberal policy and change it to a fascist policy, we update the policy count
-                            if (newClaimEvent != null && !newClaimEvent.isVetoed() && newClaimEvent.getPlayedPolicy() == Claim.FASCIST && claimEvent != null && !claimEvent.isVetoed() && claimEvent.getPlayedPolicy() == Claim.LIBERAL) {
-                                GameEventsManager.liberalPolicies--;
-                                GameEventsManager.fascistPolicies++;
-                            }
-
-                            //If we had a fascist policy and change it to a liberal policy, we update the policy count
-                            if (newClaimEvent != null && !newClaimEvent.isVetoed() && newClaimEvent.getPlayedPolicy() == Claim.LIBERAL && claimEvent != null && !claimEvent.isVetoed() && claimEvent.getPlayedPolicy() == Claim.FASCIST) {
-                                GameEventsManager.liberalPolicies++;
-                                GameEventsManager.fascistPolicies--;
-                            }
-
-                            //If we are not in manual mode, we have to recalculate the election tracker as well
-                            if (!GameManager.gameTrack.isManualMode()) {
-                                //If it was rejected and now not anymore, we decrease the election tracker
-                                if (voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED && newVoteEvent.getVotingResult() == VoteEvent.VOTE_PASSED)
-                                    GameEventsManager.electionTracker--;
-                                //If it was passed and now not anymore, we increase the election tracker
-                                if (voteEvent.getVotingResult() == VoteEvent.VOTE_PASSED && newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED) {
-                                    GameEventsManager.electionTracker++;
-
-                                    if (GameEventsManager.electionTracker == GameManager.gameTrack.getElectionTrackerLength()) {
-                                        GameEventsManager.electionTracker = 0;
-
-                                        TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(c);
-                                        topPolicyPlayedEvent.setLinkedLegislativeSession(LegislativeSession.this);
-                                        setPresidentAction(topPolicyPlayedEvent);
-
-                                        GameEventsManager.addEvent(topPolicyPlayedEvent);
-                                    }
-                                }
-                            }
-
-                            //If we are editing an event, this can cause changes. If there is a presidential action and we switch the policy to a liberal one, we have to remove the presidential action
-                            if (getPresidentAction() != null) {
-                                GameEvent presidentialAction = getPresidentAction();
-                                if (voteRejected || newClaimEvent.isVetoed() || newClaimEvent.getPlayedPolicy() == Claim.LIBERAL) {
-                                    if (presidentialAction instanceof ExecutiveAction)
-                                        ((ExecutiveAction) presidentialAction).setLinkedLegislativeSession(null);
-                                    if (presidentialAction instanceof TopPolicyPlayedEvent)
-                                        ((TopPolicyPlayedEvent) presidentialAction).setLinkedLegislativeSession(null);
-                                    GameEventsManager.remove(presidentialAction);
-
-                                    presidentAction = null;
-                                }
-                            }
-
-                            //If we switch to a fascist policy, we have to create a presidential action
-                            if (newVoteEvent.getVotingResult() == VoteEvent.VOTE_PASSED && newClaimEvent.getPlayedPolicy() == Claim.FASCIST && !newClaimEvent.isVetoed() && (voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || claimEvent.isVetoed() || claimEvent.getPlayedPolicy() == Claim.LIBERAL)) {
-                                addTrackAction = true;
-                            }
-
-                            //If we switch the president's name and the legislative session has a presidential action, we have to change the name in that one too
-                            if (!voteEvent.getPresidentName().equals(newVoteEvent.getPresidentName()) && getPresidentAction() != null) {
-                                GameEvent presidentAction = getPresidentAction();
-                                if (presidentAction instanceof ExecutiveAction) {
-                                    ExecutiveAction presidentExecutiveAction = (ExecutiveAction) presidentAction;
-                                    presidentExecutiveAction.presidentName = newVoteEvent.getPresidentName();
-
-                                    if (presidentExecutiveAction.presidentName.equals(presidentExecutiveAction.targetName)) { //If the president and chancellor name are now the same, the user is prompted to edit that event as well
-                                        presidentExecutiveAction.isSetup = true;
-                                        presidentExecutiveAction.isEditing = true;
-                                        RecyclerViewManager.getCardListAdapter().notifyItemChanged(GameEventsManager.getEventList().size() - 1);
-                                    }
-                                }
-                            }
-
-                            Log.v("LesiglativeSession Edit", "Election Tracker now at " + GameEventsManager.electionTracker);
-                            Log.v("LesiglativeSession Edit", "Liberal Policies now at " + GameEventsManager.liberalPolicies);
-                            Log.v("LesiglativeSession Edit", "Fascist policies now at " + GameEventsManager.fascistPolicies);
-                        }
-
-                        leaveSetupPhase(newClaimEvent, newVoteEvent);
-                        if (addTrackAction) LegislativeSessionManager.addTrackAction(LegislativeSession.this, false);
-                    }
-                }
-            });
+            initialiseEditCard(cardView);
         }
 
         ArrayAdapter<String> playerListadapter = CardSetupHelper.getPlayerNameAdapter(c);
@@ -679,5 +420,6 @@ public class LegislativeSession extends GameEvent {
 
         return obj;
     }
+
 
 }
