@@ -16,7 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
 public final class FascistTrackSelectionManager {
 
@@ -195,5 +197,40 @@ public final class FascistTrackSelectionManager {
         ft_910.setActions(new int[] {FascistTrack.INVESTIGATION, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
         ft_910.setElectionTrackerLength(3);
         FascistTrackSelectionManager.fasTracks.add(2, ft_910);
+    }
+
+    public static int getRecommendedTrack() {
+        int playerCount = PlayerListManager.getPlayerList().size();
+        if(playerCount == 5 || playerCount == 6) {
+            return 0;
+        } else if(playerCount == 7 || playerCount == 8) {
+            return 1;
+        } else if(playerCount == 9 || playerCount ==10) {
+            return 2;
+        }
+
+        else return -1;
+    }
+
+    public static void setupRecommendedCard(LayoutInflater inflater, LinearLayout container_recommended_track) {
+        int recommendation = getRecommendedTrack();
+        Context context = GameEventsManager.getContext();
+
+        //Only change the layout if the recommendation changed
+        if(recommendation != FascistTrackSelectionManager.recommendedTrackIndex) {
+            CardView cv_recommended_track = (CardView) inflater.inflate(R.layout.card_official_track, container_recommended_track, false);
+
+            if (recommendation == 0) {
+                FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_5_TO_6, context);
+            } else if (recommendation == 1) {
+                FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_7_TO_8, context);
+            } else if (recommendation == 2) {
+                FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_9_TO_10, context);
+            }
+
+            container_recommended_track.removeAllViews();
+            container_recommended_track.addView(cv_recommended_track);
+            FascistTrackSelectionManager.changeRecommendedCard(recommendation, cv_recommended_track, context);
+        }
     }
 }

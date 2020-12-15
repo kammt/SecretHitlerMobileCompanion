@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -260,34 +259,7 @@ public class SetupFragment extends Fragment {
 
                 if(PlayerListManager.getPlayerList().size() >=5 && PlayerListManager.getPlayerList().size() <=10) {//Recommended track available
                     container_recommended_track.setVisibility(View.VISIBLE);
-
-                    int recommendation = -10;
-                    if(PlayerListManager.getPlayerList().size() == 5 || PlayerListManager.getPlayerList().size() == 6) {
-                        recommendation = 0;
-                    } else if(PlayerListManager.getPlayerList().size() == 7 || PlayerListManager.getPlayerList().size() == 8) {
-                        recommendation = 1;
-                    } else if(PlayerListManager.getPlayerList().size() == 9 || PlayerListManager.getPlayerList().size() ==10) {
-                        recommendation = 2;
-                    }
-
-                    //Only change the layout if the recommendation changed
-                    if(recommendation != FascistTrackSelectionManager.recommendedTrackIndex) {
-                        CardView cv_recommended_track = (CardView) getLayoutInflater().inflate(R.layout.card_official_track, container_recommended_track, false);
-
-                        if (recommendation == 0) {
-                            FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_5_TO_6, context);
-                        } else if (recommendation == 1) {
-                            FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_7_TO_8, context);
-                        } else if (recommendation == 2) {
-                            FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_9_TO_10, context);
-                        }
-
-                        if (container_recommended_track.getChildCount() > 1)
-                            container_recommended_track.removeViewAt(1); //If there is already a recommended track in there, we remove it.
-
-                        container_recommended_track.addView(cv_recommended_track);
-                        FascistTrackSelectionManager.changeRecommendedCard(recommendation, cv_recommended_track, context);
-                    }
+                    FascistTrackSelectionManager.setupRecommendedCard(getLayoutInflater(), container_recommended_track);
                 } else {
                     container_recommended_track.setVisibility(View.GONE);
                     FascistTrackSelectionManager.recommendedTrackIndex = -1;
