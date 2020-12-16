@@ -290,8 +290,8 @@ public class LegislativeSession extends GameEvent {
             sw_votingoutcome.setChecked(true);
         } else {
             sw_votingoutcome.setChecked(false);
-            if(claimEvent.getPlayedPolicy() == Claim.LIBERAL) cardView.findViewById(R.id.img_liberal_policy).performClick();
-            else cardView.findViewById(R.id.img_fascist_policy).performClick();
+            if(claimEvent.getPlayedPolicy() == Claim.LIBERAL) cardView.findViewById(R.id.img_policy_liberal).performClick();
+            else cardView.findViewById(R.id.img_policy_fascist).performClick();
 
             presClaimSpinner.setSelection( Claim.getPresidentClaims().indexOf( Claim.getClaimStringForJSON(c, claimEvent.getPresidentClaim())) );
             chancClaimSpinner.setSelection( Claim.getChancellorClaims().indexOf( Claim.getClaimStringForJSON(c, claimEvent.getChancellorClaim())) );
