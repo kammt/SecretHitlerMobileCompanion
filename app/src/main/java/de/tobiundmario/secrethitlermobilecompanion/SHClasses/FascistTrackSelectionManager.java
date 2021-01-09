@@ -95,7 +95,7 @@ public final class FascistTrackSelectionManager {
 
     public static void changeRecommendedCard(int newRecommendationIndex, CardView cardView, Context context) {
         if(newRecommendationIndex == selectedTrackIndex) {
-            updateTrackCard(cardView, true, context);
+            updateTrackCard(cardView, true, context, -2);
         }
         recommendedTrackIndex = newRecommendationIndex;
         recommendedCard = cardView;
@@ -108,21 +108,10 @@ public final class FascistTrackSelectionManager {
     public static void processSelection(int newSelection, CardView cardView, FascistTrack fascistTrack, Context context) {
         if(newSelection != -1) {
             //Unselecting the old card
-            if (selectedTrackIndex != -1) {
-
-                updateTrackCard(previousSelection, false, context);
-                if (selectedTrackIndex == recommendedTrackIndex) {
-                    updateTrackCard(recommendedCard, false, context);
-                }
-
-            }
+            if (selectedTrackIndex != -1) updateTrackCard(previousSelection, false, context, selectedTrackIndex);
 
             //Select the new card
-            if (newSelection == recommendedTrackIndex) {
-                updateTrackCard(recommendedCard, true, context);
-            }
-
-            updateTrackCard(cardView, true, context); //If it is an official card, we just need to get the cardView from the ArrayList
+            updateTrackCard(cardView, true, context, newSelection); //If it is an official card, we just need to get the cardView from the ArrayList
 
             //Override the selection value
             selectedTrackIndex = newSelection;
@@ -132,15 +121,15 @@ public final class FascistTrackSelectionManager {
             previousSelection = cardView;
         } else if(selectedTrackIndex != -1){
             //When newSelection is -1, all items should be unselected
-            updateTrackCard(trackCards.get(selectedTrackIndex), false, context);
+            updateTrackCard(trackCards.get(selectedTrackIndex), false, context, selectedTrackIndex);
             GameManager.gameTrack = null;
 
-            selectedTrackIndex = -1;
             recommendedTrackIndex = -1;
         }
     }
 
-    public static void updateTrackCard(CardView cardView, boolean selected, Context context) {
+    public static void updateTrackCard(CardView cardView, boolean selected, Context context, int index) {
+        if(index == recommendedTrackIndex) updateTrackCard(recommendedCard, selected, context, -2);
         Button button = cardView.findViewById(R.id.btn_use);
 
         if(selected) {
@@ -163,10 +152,12 @@ public final class FascistTrackSelectionManager {
         }
 
         //Adding the official tracks to the LinearLayout
-        LayoutInflater inflater = LayoutInflater.from(c);
+        addOfficialTracksToLayout(LayoutInflater.from(c), ll_official_tracks, c);
+    }
 
+    private static void addOfficialTracksToLayout(LayoutInflater inflater, LinearLayout ll_official_tracks, Context c) {
         //For 5-6 players
-        final CardView cv_56 = (CardView) inflater.inflate(R.layout.card_official_track, ll_official_tracks, false);
+        CardView cv_56 = (CardView) inflater.inflate(R.layout.card_official_track, ll_official_tracks, false);
         FascistTrackSelectionManager.setupOfficialCard(cv_56, FascistTrackSelectionManager.TRACK_TYPE_5_TO_6, c);
         ll_official_tracks.addView(cv_56);
         FascistTrackSelectionManager.trackCards.add(0, cv_56);
