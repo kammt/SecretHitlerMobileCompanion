@@ -31,7 +31,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesMa
 
 public class SetupFragment extends Fragment {
 
-    RecyclerView playerCardList;
+    private RecyclerView playerCardList;
 
     private Button btn_setup_forward;
     private Button btn_setup_back;
@@ -151,82 +151,6 @@ public class SetupFragment extends Fragment {
         });
     }
 
-    private void nextSetupPage(boolean forceNextPage) {
-        SetupContinueCondition condition = null;
-        if(page != 3) condition = setupContinueConditions[page - 1];
-
-        if(condition == null || condition.shouldSetupContinue() || forceNextPage) {
-            page++;
-            final ConstraintLayout oldPage, newPage;
-
-            if(page <= 3) {
-                oldPage = pages[page - 2];
-                newPage = pages[page - 1];
-
-
-                Animation slideInRight = AnimationUtils.loadAnimation(context, R.anim.slide_in_right);
-                Animation slideOutLeft = AnimationUtils.loadAnimation(context, R.anim.slide_out_left);
-
-                progressBar_newValue = progressBar_value + progressBar_steps;
-
-                animateTransition(oldPage, newPage, slideOutLeft, slideInRight, false);
-
-                assert condition != null;
-                condition.initialiseLayout();
-
-                if(page == 3) btn_setup_forward.setText(getString(R.string.start_game));
-            } else finishSetup();
-        } else  condition.showErrorMessage();
-    }
-
-    void previousSetupPage() {
-        page--;
-        final ConstraintLayout oldPage, newPage;
-
-        if(page >= 1) {
-            oldPage = pages[page];
-            newPage = pages[page - 1];
-
-            Animation slideInLeft = AnimationUtils.loadAnimation(context, R.anim.slide_in_left);
-            Animation slideOutRight = AnimationUtils.loadAnimation(context, R.anim.slide_out_right);
-
-            progressBar_newValue = progressBar_value - progressBar_steps;
-
-            if(page == 1) fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_close));
-            animateTransition(oldPage, newPage, slideOutRight, slideInLeft, false);
-
-            if(page == 2) btn_setup_forward.setText(getString(R.string.dialog_mismatching_claims_btn_continue));
-        } else cancelSetup();
-    }
-
-    private void animateTransition(final ConstraintLayout oldPage, ConstraintLayout newPage, Animation slide_Out, Animation slide_in, boolean progressBarOnly) {
-        if(!progressBarOnly) {
-            newPage.setVisibility(View.VISIBLE);
-            newPage.startAnimation(slide_in);
-
-            slide_Out.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    oldPage.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-            });
-            oldPage.startAnimation(slide_Out);
-        }
-
-        Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, progressBar_value, progressBar_newValue);
-        progressBarAnimation.setDuration(500);
-        progressBar_setupSteps.startAnimation(progressBarAnimation);
-        progressBar_value = progressBar_newValue;
-    }
-
     private SetupContinueCondition firstCondition() {
         //When switching from page 1 to 2
         return new SetupContinueCondition() {
@@ -291,6 +215,82 @@ public class SetupFragment extends Fragment {
         };
     }
 
+    public void nextSetupPage(boolean forceNextPage) {
+        SetupContinueCondition condition = null;
+        if(page != 3) condition = setupContinueConditions[page - 1];
+
+        if(condition == null || condition.shouldSetupContinue() || forceNextPage) {
+            page++;
+            final ConstraintLayout oldPage, newPage;
+
+            if(page <= 3) {
+                oldPage = pages[page - 2];
+                newPage = pages[page - 1];
+
+
+                Animation slideInRight = AnimationUtils.loadAnimation(context, R.anim.slide_in_right);
+                Animation slideOutLeft = AnimationUtils.loadAnimation(context, R.anim.slide_out_left);
+
+                progressBar_newValue = progressBar_value + progressBar_steps;
+
+                animateTransition(oldPage, newPage, slideOutLeft, slideInRight, false);
+
+                assert condition != null;
+                condition.initialiseLayout();
+
+                if(page == 3) btn_setup_forward.setText(getString(R.string.start_game));
+            } else finishSetup();
+        } else  condition.showErrorMessage();
+    }
+
+    public void previousSetupPage() {
+        page--;
+        final ConstraintLayout oldPage, newPage;
+
+        if(page >= 1) {
+            oldPage = pages[page];
+            newPage = pages[page - 1];
+
+            Animation slideInLeft = AnimationUtils.loadAnimation(context, R.anim.slide_in_left);
+            Animation slideOutRight = AnimationUtils.loadAnimation(context, R.anim.slide_out_right);
+
+            progressBar_newValue = progressBar_value - progressBar_steps;
+
+            if(page == 1) fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_close));
+            animateTransition(oldPage, newPage, slideOutRight, slideInLeft, false);
+
+            if(page == 2) btn_setup_forward.setText(getString(R.string.dialog_mismatching_claims_btn_continue));
+        } else cancelSetup();
+    }
+
+    private void animateTransition(final ConstraintLayout oldPage, ConstraintLayout newPage, Animation slide_Out, Animation slide_in, boolean progressBarOnly) {
+        if(!progressBarOnly) {
+            newPage.setVisibility(View.VISIBLE);
+            newPage.startAnimation(slide_in);
+
+            slide_Out.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    oldPage.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            oldPage.startAnimation(slide_Out);
+        }
+
+        Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, progressBar_value, progressBar_newValue);
+        progressBarAnimation.setDuration(500);
+        progressBar_setupSteps.startAnimation(progressBarAnimation);
+        progressBar_value = progressBar_newValue;
+    }
+
     private void cancelSetup() {
         ((MainActivity) context).replaceFragment(MainActivity.page_main, true);
         progressBar_newValue = 0;
@@ -299,17 +299,29 @@ public class SetupFragment extends Fragment {
 
     private void finishSetup() {
         View fragmentLayout = getView();
-        Switch sw_sounds_execution = fragmentLayout.findViewById(R.id.switch_execution);
-        Switch sw_sonds_policy = fragmentLayout.findViewById(R.id.switch_policies);
-        Switch sw_sounds_end = fragmentLayout.findViewById(R.id.switch_gameEnd);
+        GameEventsManager.endSounds = ((Switch) fragmentLayout.findViewById(R.id.switch_gameEnd)).isChecked();
+        GameEventsManager.policySounds = ((Switch) fragmentLayout.findViewById(R.id.switch_policies)).isChecked();
+        GameEventsManager.executionSounds = ((Switch) fragmentLayout.findViewById(R.id.switch_execution)).isChecked();
 
-        Switch sw_server = fragmentLayout.findViewById(R.id.switch_server);
+        GameEventsManager.server = ((Switch) fragmentLayout.findViewById(R.id.switch_server)).isChecked();
 
-        GameEventsManager.endSounds = sw_sounds_end.isChecked();
-        GameEventsManager.policySounds = sw_sonds_policy.isChecked();
-        GameEventsManager.executionSounds = sw_sounds_execution.isChecked();
+        //Delete Variables to save memory
+        container_settings = null;
+        container_select_track = null;
+        container_new_player = null;
+        container_setup_buttons = null;
 
-        GameEventsManager.server = sw_server.isChecked();
+        progressBar_setupSteps = null;
+        btn_setup_back = null;
+        btn_setup_forward = null;
+
+        tv_choose_from_previous_games_players = null;
+        tv_title_custom_tracks = null;
+        playerCardList = null;
+
+        setupContinueConditions = null;
+        pages = null;
+        fab_newTrack = null;
 
         ((MainActivity) context).replaceFragment(MainActivity.game, true);
     }
