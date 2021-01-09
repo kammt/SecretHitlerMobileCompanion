@@ -41,7 +41,10 @@ public class LegislativeSessionManager {
         if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_FAILED) {
             if(gameTrack.isManualMode()) return;
 
-            if(removed) return;
+            if(removed) {
+                electionTracker --;
+                return;
+            }
             else {
                 electionTracker++;
                 if(electionTracker == gameTrack.getElectionTrackerLength()) {
