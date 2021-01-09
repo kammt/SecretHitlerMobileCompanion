@@ -167,7 +167,7 @@ public class LegislativeSession extends GameEvent {
     }
 
     @Override
-    public void initialiseSetupCard(CardView cardView) {
+    public void initialiseSetupCard(final CardView cardView) {
         if(!isEditing) {
             cardView.findViewById(R.id.legacy).setVisibility(View.GONE);
             cardView.findViewById(R.id.initial_setup).setVisibility(View.VISIBLE);
@@ -226,8 +226,8 @@ public class LegislativeSession extends GameEvent {
 
             CardSetupHelper.initialiseSetupPages(new View[]{cardView.findViewById(R.id.page1_selection), cardView.findViewById(R.id.page2_voting), cardView.findViewById(R.id.page3_policies), cardView.findViewById(R.id.page4_claims)}, (Button) cardView.findViewById(R.id.btn_setup_forward), (Button) cardView.findViewById(R.id.btn_setup_back), onSetupFinishedListener, onSetupCancelledListener, new SetupFinishCondition() {
                 @Override
-                public boolean shouldSetupBeFinished() {
-                    return icon_nein.getAlpha() == 1f;
+                public boolean shouldSetupBeFinished(int newPage) {
+                    return icon_nein.getAlpha() == 1f && newPage == 3;
                 }
             });
         } else {

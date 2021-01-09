@@ -132,7 +132,7 @@ public final class CardSetupHelper {
                 image1.setAlpha(1f);
                 image2.setAlpha(0.2f);
 
-                if(cl1 != null) colorViews(cl1, coloredViews);
+                if(cl1 != null && coloredViews != null) colorViews(cl1, coloredViews);
             }
         });
 
@@ -142,7 +142,7 @@ public final class CardSetupHelper {
                 image2.setAlpha(1f);
                 image1.setAlpha(0.2f);
 
-                if(cl2 != null) colorViews(cl2, coloredViews);
+                if(cl2 != null && coloredViews != null) colorViews(cl2, coloredViews);
             }
         });
     }
@@ -153,18 +153,14 @@ public final class CardSetupHelper {
      * @param viewsToBeColored An array of views that will be colored. Supports Switches and Checkboxes
      */
     private static void colorViews (ColorStateList colorStateList, View[] viewsToBeColored) {
-        if(viewsToBeColored != null) {
-            for(View view : viewsToBeColored) {
+        for(View view : viewsToBeColored) {
 
-                if(view instanceof CheckBox) {
-                    ((CheckBox) view).setButtonTintList(colorStateList);
-                }
-                else if (view instanceof Switch) {
-                    ((Switch) view).setThumbTintList(colorStateList);
-                    ((Switch) view).setTrackTintList(colorStateList);
-                }
-
+            if(view instanceof CheckBox) ((CheckBox) view).setButtonTintList(colorStateList);
+            else if (view instanceof Switch) {
+                ((Switch) view).setThumbTintList(colorStateList);
+                ((Switch) view).setTrackTintList(colorStateList);
             }
+
         }
     }
 
@@ -193,41 +189,8 @@ public final class CardSetupHelper {
             @Override
             public void onClick(View view) {
                 setupPage[0]++;
-                final View oldPage, newPage;
-                if(setupPage[0] <= setupPages.length && (setupFinishCondition == null || !setupFinishCondition.shouldSetupBeFinished())) {
-                    oldPage = setupPages[setupPage[0] - 2];
-                    newPage = setupPages[setupPage[0] - 1];
-
-                    //Animations
-                    Animation slideOutLeft = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_out_left);
-                    slideOutLeft.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animation animation) {
-                            oldPage.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-
-                        }
-                    });
-                    Animation slideInRight = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_in_right);
-                    slideInRight.setFillAfter(true);
-                    oldPage.startAnimation(slideOutLeft);
-
-                    newPage.setVisibility(View.VISIBLE);
-                    newPage.startAnimation(slideInRight);
-
-                    if(setupPage[0] == 2) btn_back.setText(GameEventsManager.getContext().getString(R.string.back));
-                } else {
-                    onSetupFinishedListener.onSetupFinished();
-                }
-
+                if(setupPage[0] == 2) btn_back.setText(GameEventsManager.getContext().getString(R.string.back));
+                nextSetupPage(setupPage, setupPages, setupFinishCondition, onSetupFinishedListener);
                 }
         });
 
@@ -235,27 +198,66 @@ public final class CardSetupHelper {
             @Override
             public void onClick(View view) {
                 setupPage[0]--;
-
-                final View oldPage, newPage;
-                if(setupPage[0] >= 1) {
-                    oldPage = setupPages[setupPage[0]];
-                    newPage = setupPages[setupPage[0] - 1];
-
-                    //Animations
-                    Animation slideOutRight = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_out_right);
-                    slideOutRight.setFillAfter(true);
-                    Animation slideInLeft = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_in_left);
-                    slideInLeft.setFillAfter(true);
-                    oldPage.startAnimation(slideOutRight);
-
-                    newPage.setVisibility(View.VISIBLE);
-                    newPage.startAnimation(slideInLeft);
-
-                    if(setupPage[0] == 1) btn_back.setText(GameEventsManager.getContext().getString(R.string.dialog_mismatching_claims_btn_cancel));
-                } else {
-                    onSetupCancelledListener.onSetupCancelled();
-                }
+                previousSetupPage(setupPage, setupPages, btn_back, onSetupCancelledListener);
             }
         });
+    }
+
+    private static void nextSetupPage(int[] setupPage, View[] setupPages, SetupFinishCondition setupFinishCondition, OnSetupFinishedListener onSetupFinishedListener) {
+        final View oldPage, newPage;
+        if(setupPage[0] <= setupPages.length && (setupFinishCondition == null || !setupFinishCondition.shouldSetupBeFinished(setupPage[0]))) {
+            oldPage = setupPages[setupPage[0] - 2];
+            newPage = setupPages[setupPage[0] - 1];
+
+            //Animations
+            Animation slideOutLeft = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_out_left);
+            slideOutLeft.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    oldPage.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            Animation slideInRight = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_in_right);
+            slideInRight.setFillAfter(true);
+            oldPage.startAnimation(slideOutLeft);
+
+            newPage.setVisibility(View.VISIBLE);
+            newPage.startAnimation(slideInRight);
+
+        } else {
+            onSetupFinishedListener.onSetupFinished();
+        }
+    }
+
+    private static void previousSetupPage(int[] setupPage, View[] setupPages, Button btn_back, OnSetupCancelledListener onSetupCancelledListener) {
+        final View oldPage, newPage;
+        if(setupPage[0] >= 1) {
+            oldPage = setupPages[setupPage[0]];
+            newPage = setupPages[setupPage[0] - 1];
+
+            //Animations
+            Animation slideOutRight = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_out_right);
+            slideOutRight.setFillAfter(true);
+            Animation slideInLeft = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_in_left);
+            slideInLeft.setFillAfter(true);
+            oldPage.startAnimation(slideOutRight);
+
+            newPage.setVisibility(View.VISIBLE);
+            newPage.startAnimation(slideInLeft);
+
+            if(setupPage[0] == 1) btn_back.setText(GameEventsManager.getContext().getString(R.string.dialog_mismatching_claims_btn_cancel));
+        } else {
+            onSetupCancelledListener.onSetupCancelled();
+        }
     }
 }
