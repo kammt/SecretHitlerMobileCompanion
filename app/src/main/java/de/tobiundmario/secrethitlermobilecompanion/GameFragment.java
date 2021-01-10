@@ -113,6 +113,8 @@ public class GameFragment extends Fragment {
         serverPaneManager = new ServerPaneManager(GameFragment.this);
         bottomSheetMenuManager = new BottomSheetMenuManager(GameFragment.this);
 
+        performGameBackup();
+
         View view = getView();
         setupRecyclerViews(view);
         bottomSheetMenuManager.setupBottomMenu(view);

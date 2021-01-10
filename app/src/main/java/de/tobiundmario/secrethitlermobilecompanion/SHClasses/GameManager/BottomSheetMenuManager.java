@@ -104,7 +104,9 @@ public class BottomSheetMenuManager {
             }
 
             @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) { }
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                //Function unneeded, as we only update the bottom sheets after the slides are completed
+            }
         };
         bottomSheetBehaviorAdd.addBottomSheetCallback(deselectMenuItemsCallback);
         bottomSheetBehaviorServer.addBottomSheetCallback(deselectMenuItemsCallback);
@@ -150,41 +152,45 @@ public class BottomSheetMenuManager {
             entry_special_election.setVisibility(View.GONE);
             entry_top_policy.setVisibility(View.GONE);
         } else {
-            entry_loyaltyInvestigation.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    handleAddEvent(new LoyaltyInvestigationEvent(null, context));
-                }
-            });
-
-            entry_execution.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    handleAddEvent(new ExecutionEvent(null, context));
-                }
-            });
-
-            entry_policy_peek.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    handleAddEvent(new PolicyPeekEvent(null, context));
-                }
-            });
-
-            entry_special_election.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    handleAddEvent(new SpecialElectionEvent(null, context));
-                }
-            });
-
-            entry_top_policy.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    handleAddEvent(new TopPolicyPlayedEvent(context));
-                }
-            });
+            setupManualModeAddButtons();
         }
+    }
+
+    private void setupManualModeAddButtons() {
+        entry_loyaltyInvestigation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleAddEvent(new LoyaltyInvestigationEvent(null, context));
+            }
+        });
+
+        entry_execution.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleAddEvent(new ExecutionEvent(null, context));
+            }
+        });
+
+        entry_policy_peek.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleAddEvent(new PolicyPeekEvent(null, context));
+            }
+        });
+
+        entry_special_election.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleAddEvent(new SpecialElectionEvent(null, context));
+            }
+        });
+
+        entry_top_policy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleAddEvent(new TopPolicyPlayedEvent(context));
+            }
+        });
     }
 
     private void handleAddEvent(GameEvent newEvent) {
@@ -198,29 +204,38 @@ public class BottomSheetMenuManager {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch(item.getItemId()) {
                     case R.id.navigation_add_event:
-                        if(bottomSheetBehaviorAdd.getState() == BottomSheetBehavior.STATE_HIDDEN) {
-                            bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_EXPANDED);
-
-                            //Check if Server page is open. If so, we close it
-                            if(bottomSheetBehaviorServer.getState() != BottomSheetBehavior.STATE_HIDDEN) bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-                        } else bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN); //If it is already open and the user clicks it again, it should hide
+                        handleNavigationSelection(false);
                         break;
                     case R.id.navigation_server_status:
-                        if(bottomSheetBehaviorServer.getState() == BottomSheetBehavior.STATE_HIDDEN) {
-                            gameFragment.getServerPaneManager().setServerStatus();
-                            bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_EXPANDED);
-
-                            //Check if Add page is open. If so, we close it
-                            if(bottomSheetBehaviorAdd.getState() != BottomSheetBehavior.STATE_HIDDEN) bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-                        } else bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN); //If it is already open and the user clicks it again, it should hide
+                        handleNavigationSelection(true);
+                        break;
+                    default:
                         break;
                 }
                 return true;
             }
         };
         bottomNavigationMenu_game.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
+    }
+
+    private void handleNavigationSelection(boolean serverPage) {
+        BottomSheetBehavior newBottomSheet, otherBottomSheet;
+
+        if(serverPage) {
+            newBottomSheet = bottomSheetBehaviorServer;
+            otherBottomSheet = bottomSheetBehaviorAdd;
+        } else {
+            newBottomSheet = bottomSheetBehaviorAdd;
+            otherBottomSheet = bottomSheetBehaviorServer;
+        }
+
+        if(newBottomSheet.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+            newBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+            //Check if the other page is open. If so, we close it
+            if(otherBottomSheet.getState() != BottomSheetBehavior.STATE_HIDDEN) otherBottomSheet.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        } else newBottomSheet.setState(BottomSheetBehavior.STATE_HIDDEN); //If it is already open and the user clicks it again, it should hide
     }
 
     public void animateMenuBar(boolean show) {
