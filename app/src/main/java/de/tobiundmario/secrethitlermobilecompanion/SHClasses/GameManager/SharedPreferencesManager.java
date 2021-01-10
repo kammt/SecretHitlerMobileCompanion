@@ -79,25 +79,12 @@ public final class SharedPreferencesManager {
 
 
     //Old Player Lists related
-    public static JSONArray getPastPlayerLists(Context context) throws JSONException {
-        SharedPreferences preferences = getSharedPreferences(context);
-        String pastPlayers = preferences.getString("old-players", null);
-
-        if(pastPlayers == null) {
-            return new JSONArray();
-        }
-
-        JSONObject object = new JSONObject(pastPlayers);
-
-        return object.getJSONArray("players");
-    }
-
     public static void writeCurrentPlayerListIfNew(Context context) throws JSONException {
         JSONObject playerListAsJSON = playerListtoJSON();
 
         if(playerListAlreadyPresent(playerListAsJSON, context)) return;
 
-        JSONArray array = getPastPlayerLists(context);
+        JSONArray array = getJsonArray(context, true);
         array.put(playerListAsJSON);
         writePastPlayerLists(array, context);
     }
@@ -118,7 +105,7 @@ public final class SharedPreferencesManager {
     }
 
     private static boolean playerListAlreadyPresent(JSONObject playerJSON, Context context) throws JSONException {
-        JSONArray array = getPastPlayerLists(context);
+        JSONArray array = getJsonArray(context, true);
 
         for(int i = 0; i < array.length(); i++) {
             JSONObject object = array.getJSONObject(i);
@@ -142,7 +129,7 @@ public final class SharedPreferencesManager {
     }
 
     public static void setPlayerListName(String name, int position, Context context) throws JSONException {
-        JSONArray newArray = getPastPlayerLists(context);
+        JSONArray newArray = getJsonArray(context, true);
         JSONObject object = newArray.getJSONObject(position);
 
         if(!name.matches("")) object.put("name", name);
@@ -152,7 +139,7 @@ public final class SharedPreferencesManager {
 
 
     public static JSONObject removePlayerList(int position, Context context) throws JSONException {
-        JSONArray array = getPastPlayerLists(context);
+        JSONArray array = getJsonArray(context, true);
         JSONObject removed = array.getJSONObject(position);
         array.remove(position);
         writePastPlayerLists(array, context);
@@ -164,24 +151,10 @@ public final class SharedPreferencesManager {
     }
 
     //FascistTrack related
-
-    public static JSONArray getFascistTracks(Context context) throws JSONException {
-        SharedPreferences preferences = getSharedPreferences(context);
-        String tracks = preferences.getString("fas-tracks", null);
-
-        if(tracks == null) {
-            return new JSONArray();
-        }
-
-        JSONObject object = new JSONObject(tracks);
-
-        return object.getJSONArray("tracks");
-    }
-
     public static void writeFascistTrack(FascistTrack fascistTrack, Context context) throws JSONException {
         JSONObject trackAsJSON = JSONManager.writeFascistTrackToJSON(fascistTrack);
 
-        JSONArray array = getFascistTracks(context);
+        JSONArray array = getJsonArray(context, false);
         array.put(trackAsJSON);
         writeFascistTracks(array, context);
     }
@@ -203,7 +176,7 @@ public final class SharedPreferencesManager {
     }
 
     public static JSONObject removeFascistTrack(int position, Context context) throws JSONException {
-        JSONArray array = getFascistTracks(context);
+        JSONArray array = getJsonArray(context, false);
         JSONObject removed = array.getJSONObject(position);
         array.remove(position);
         writeFascistTracks(array, context);
@@ -214,16 +187,29 @@ public final class SharedPreferencesManager {
         return removed;
     }
 
+    public static JSONArray getJsonArray(Context context, boolean isPlayerList) throws JSONException {
+        SharedPreferences preferences = getSharedPreferences(context);
+        String tracks = preferences.getString(isPlayerList ? "old-players" : "fas-tracks", null);
+
+        if(tracks == null) {
+            return new JSONArray();
+        }
+
+        JSONObject object = new JSONObject(tracks);
+
+        return object.getJSONArray(isPlayerList ? "players" : "tracks");
+    }
 
     public static void setCustomTitle(Context context, boolean isPlayerList) throws JSONException {
         TextView tv;
         String message;
+        boolean empty = getJsonArray(context, isPlayerList).length() == 0;
         if(isPlayerList) {
             tv = ((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players;
-            message = getPastPlayerLists(context).length() == 0 ?  context.getString(R.string.choose_from_previous_games_empty) : context.getString(R.string.choose_from_previous_games);
+            message = empty ?  context.getString(R.string.choose_from_previous_games_empty) : context.getString(R.string.choose_from_previous_games);
         } else {
             tv = ((MainActivity) context).fragment_setup.tv_title_custom_tracks;
-            message = getFascistTracks(context).length() == 0 ? context.getString(R.string.no_custom_tracks_title) : context.getString(R.string.custom_tracks_title);
+            message = empty ? context.getString(R.string.no_custom_tracks_title) : context.getString(R.string.custom_tracks_title);
         }
         tv.setText(message);
     }
@@ -239,7 +225,7 @@ public final class SharedPreferencesManager {
                 public void onClick(View v) {
                     try {
                         RecyclerView.Adapter recyclerViewAdapter = isPlayerList ? RecyclerViewManager.getOldPlayerListRecyclerViewAdapter() : RecyclerViewManager.getCustomTracksRecyclerViewAdapter();
-                        JSONArray jsonArray = isPlayerList ? getPastPlayerLists(context) : getFascistTracks(context);
+                        JSONArray jsonArray = getJsonArray(context, isPlayerList);
 
                         addJSONObjectToArray(removed, jsonArray, position);
 
