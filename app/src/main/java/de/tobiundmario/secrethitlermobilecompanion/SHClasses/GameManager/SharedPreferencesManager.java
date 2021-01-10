@@ -147,14 +147,6 @@ public final class SharedPreferencesManager {
     }
 
 
-    public static void setCorrectPlayerListExplanationText(TextView tv, Context context) throws JSONException {
-        if(getPastPlayerLists(context).length() == 0) {
-            tv.setText(context.getString(R.string.choose_from_previous_games_empty));
-        } else {
-            tv.setText(context.getString(R.string.choose_from_previous_games));
-        }
-    }
-
     public static JSONObject removePlayerList(int position, Context context) throws JSONException {
         JSONArray array = getPastPlayerLists(context);
         JSONObject removed = array.getJSONObject(position);
@@ -162,7 +154,7 @@ public final class SharedPreferencesManager {
         writePastPlayerLists(array, context);
         RecyclerViewManager.getOldPlayerListRecyclerViewAdapter().notifyItemRemoved(position);
 
-        setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
+        setCustomTitle(context, true);
 
         return removed;
     }
@@ -202,7 +194,7 @@ public final class SharedPreferencesManager {
         if(customTracksRecyclerViewAdapter != null) {
             customTracksRecyclerViewAdapter.tracks = array;
             customTracksRecyclerViewAdapter.notifyDataSetChanged();
-            setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
+            setCustomTitle(context, false);
         }
     }
 
@@ -213,17 +205,28 @@ public final class SharedPreferencesManager {
         writeFascistTracks(array, context);
         RecyclerViewManager.getCustomTracksRecyclerViewAdapter().notifyItemRemoved(position);
 
-        setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
+        setCustomTitle(context, false);
 
         return removed;
     }
 
 
-    public static void setCustomTracksTitle(TextView tv, Context context) throws JSONException {
-        if(getFascistTracks(context).length() == 0) {
-            tv.setText(context.getString(R.string.no_custom_tracks_title));
+    public static void setCustomTitle(Context context, boolean isPlayerList) throws JSONException {
+        TextView tv;
+        if(isPlayerList) {
+            tv = ((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players;
+            if(getPastPlayerLists(context).length() == 0) {
+                tv.setText(context.getString(R.string.choose_from_previous_games_empty));
+            } else {
+                tv.setText(context.getString(R.string.choose_from_previous_games));
+            }
         } else {
-            tv.setText(context.getString(R.string.custom_tracks_title));
+            tv = ((MainActivity) context).fragment_setup.tv_title_custom_tracks;
+            if(getFascistTracks(context).length() == 0) {
+                tv.setText(context.getString(R.string.no_custom_tracks_title));
+            } else {
+                tv.setText(context.getString(R.string.custom_tracks_title));
+            }
         }
     }
 
@@ -244,11 +247,10 @@ public final class SharedPreferencesManager {
 
                         if(isPlayerList) {
                             writePastPlayerLists(jsonArray, context);
-                            setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
                         } else {
                             writeFascistTracks(jsonArray, context);
-                            setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
                         }
+                        setCustomTitle(context, isPlayerList);
 
                         recyclerViewAdapter.notifyItemInserted(position);
 

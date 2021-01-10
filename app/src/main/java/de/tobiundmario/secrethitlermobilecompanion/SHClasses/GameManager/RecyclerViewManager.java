@@ -17,7 +17,6 @@ import org.json.JSONException;
 import java.io.IOException;
 
 import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
-import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CustomTracksRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.EventCardRecyclerViewAdapter;
@@ -176,8 +175,7 @@ public final class RecyclerViewManager {
 
             setupSwipeCallback(recyclerView, isPlayerList, context);
 
-            if(isPlayerList) SharedPreferencesManager.setCorrectPlayerListExplanationText( ((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
-            else SharedPreferencesManager.setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
+            SharedPreferencesManager.setCustomTitle(context, isPlayerList);
         } catch (JSONException e) {
             ExceptionHandler.showErrorSnackbar(e, "RecyclerViewManager.initialiseSetupRecyclerView()");
         }
