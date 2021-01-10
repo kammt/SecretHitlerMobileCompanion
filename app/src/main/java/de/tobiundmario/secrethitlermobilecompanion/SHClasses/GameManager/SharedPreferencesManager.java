@@ -36,15 +36,19 @@ public final class SharedPreferencesManager {
         for(int i = 0; i < lengths[0]; i++) {
             String name = (String) one.get(Integer.toString(i));
 
-            for (int j = 0; j < lengths[1]; j++) {
-                String secondName = (String) two.get(Integer.toString(j));
-                if(secondName.equals(name)) break;
-
-                if(j == lengths[1] - 1) return false; //We just checked the last value and the name is not there, they cannot be the same
-            }
-
+            boolean isPresent = contains(two, name);
+            if(!isPresent) return false;
         }
         return true;
+    }
+
+    private static boolean contains(JSONObject jsonObject, String name) throws JSONException {
+        int length = getPlayerListLength(jsonObject);
+        for (int j = 0; j < length; j++) {
+            String secondName = (String) jsonObject.get(Integer.toString(j));
+            if(secondName.equals(name)) return true;
+        }
+        return false; //We just checked the last value and the name is not there, they cannot be the same
     }
 
     private static SharedPreferences getSharedPreferences(Context context) {
@@ -132,7 +136,7 @@ public final class SharedPreferencesManager {
 
         JSONObject object = new JSONObject();
         for(int i = 0; i < playerList.size(); i++) {
-            object.put("" + i, playerList.get(i));
+            object.put(Integer.toString(i), playerList.get(i));
         }
         return object;
     }
@@ -213,21 +217,15 @@ public final class SharedPreferencesManager {
 
     public static void setCustomTitle(Context context, boolean isPlayerList) throws JSONException {
         TextView tv;
+        String message;
         if(isPlayerList) {
             tv = ((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players;
-            if(getPastPlayerLists(context).length() == 0) {
-                tv.setText(context.getString(R.string.choose_from_previous_games_empty));
-            } else {
-                tv.setText(context.getString(R.string.choose_from_previous_games));
-            }
+            message = getPastPlayerLists(context).length() == 0 ?  context.getString(R.string.choose_from_previous_games_empty) : context.getString(R.string.choose_from_previous_games);
         } else {
             tv = ((MainActivity) context).fragment_setup.tv_title_custom_tracks;
-            if(getFascistTracks(context).length() == 0) {
-                tv.setText(context.getString(R.string.no_custom_tracks_title));
-            } else {
-                tv.setText(context.getString(R.string.custom_tracks_title));
-            }
+            message = getFascistTracks(context).length() == 0 ? context.getString(R.string.no_custom_tracks_title) : context.getString(R.string.custom_tracks_title);
         }
+        tv.setText(message);
     }
 
     public static void removeItemWithSnackbar(final int position, final Context context, RecyclerView recyclerView, final boolean isPlayerList) {
