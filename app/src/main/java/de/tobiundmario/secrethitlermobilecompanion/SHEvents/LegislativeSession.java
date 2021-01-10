@@ -9,16 +9,12 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.text.Html;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 
@@ -28,19 +24,17 @@ import org.json.JSONObject;
 import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
-import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper;
-import de.tobiundmario.secrethitlermobilecompanion.SHCards.OnSetupCancelledListener;
-import de.tobiundmario.secrethitlermobilecompanion.SHCards.OnSetupFinishedListener;
-import de.tobiundmario.secrethitlermobilecompanion.SHCards.SetupFinishCondition;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionSetupManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
 public class LegislativeSession extends GameEvent {
 
     /*
-    To simplify creating a Legislative Session, it is divided into two sub-events: VoteEvent and ClaimEvent. This is so that when a vote is rejected, no ClaimEvent has to be initialised (which would involve using a lot of null objects in the constructor)
+    To simplify creating a Legislative Session, it is divided into two sub-events: VoteEvent and ClaimEvent.
+    This is so that when a vote is rejected, no ClaimEvent has to be initialised (which would involve using a lot of null objects in the constructor)
      */
 
     private int sessionNumber;
@@ -51,20 +45,21 @@ public class LegislativeSession extends GameEvent {
 
     private GameEvent presidentAction;
 
-    //Defining Setup variables here as they are needed in multiple setup functions
-    private Spinner presSpinner, chancSpinner, presClaimSpinner, chancClaimSpinner;
-
+    private LegislativeSessionSetupManager legislativeSessionSetupManager;
 
     public LegislativeSession(VoteEvent voteEvent, ClaimEvent claimEvent, Context context) {
         sessionNumber = LegislativeSessionManager.legSessionNo++;
         this.voteEvent = voteEvent;
         this.claimEvent = claimEvent;
+
+        legislativeSessionSetupManager = new LegislativeSessionSetupManager(LegislativeSession.this, context);
         c = context;
     }
 
     public LegislativeSession(Context context) {
         isSetup = true;
         c = context;
+        legislativeSessionSetupManager = new LegislativeSessionSetupManager(LegislativeSession.this, context);
     }
 
     public void setPresidentAction(GameEvent presidentAction) {
@@ -87,185 +82,12 @@ public class LegislativeSession extends GameEvent {
         return sessionNumber;
     }
 
-    public void initialiseEditCard(CardView cardView) {
-        cardView.findViewById(R.id.legacy).setVisibility(View.VISIBLE);
-        cardView.findViewById(R.id.initial_setup).setVisibility(View.GONE);
-
-        //Setting up Spinners
-        presSpinner = cardView.findViewById(R.id.spinner_president);
-        chancSpinner = cardView.findViewById(R.id.spinner_chancellor);
-
-        presClaimSpinner = cardView.findViewById(R.id.spinner_pres_claim);
-
-        chancClaimSpinner = cardView.findViewById(R.id.spinner_chanc_claim);
-
-
-        //Initialise all other important bits
-        final LinearLayout ll_policyplayed = cardView.findViewById(R.id.ll_policy_outcome);
-        final CheckBox cb_vetoed = cardView.findViewById(R.id.checkBox_policy_vetoed);
-        final Switch sw_votingoutcome = cardView.findViewById(R.id.switch_vote_outcome);
-        final ImageView iv_fascist = cardView.findViewById(R.id.img_policy_fascist);
-        final ImageView iv_liberal = cardView.findViewById(R.id.img_policy_liberal);
-        final Button btn_continue = cardView.findViewById(R.id.btn_setup_forward);
-
-        //When the switch is changed, we want certain UI elements to disappear
-        sw_votingoutcome.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    ll_policyplayed.setVisibility(View.GONE);
-                    cb_vetoed.setVisibility(View.GONE);
-                    chancClaimSpinner.setVisibility(View.GONE);
-                    presClaimSpinner.setVisibility(View.GONE);
-                } else {
-                    ll_policyplayed.setVisibility(View.VISIBLE);
-                    cb_vetoed.setVisibility(View.VISIBLE);
-                    chancClaimSpinner.setVisibility(View.VISIBLE);
-                    presClaimSpinner.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-        //Setting up the OnClickListeners for the ImageViews
-        CardSetupHelper.setupImageViewSelector(iv_liberal, iv_fascist, ColorStateList.valueOf(c.getColor(R.color.colorLiberal)), ColorStateList.valueOf(c.getColor(R.color.colorFascist)), new View[]{cb_vetoed, sw_votingoutcome});
-
-        btn_continue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                processEdit(sw_votingoutcome.isChecked(), (iv_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL, cb_vetoed.isChecked());
-            }
-        });
-    }
-
-    private void processEdit(boolean voteRejected, int playedPolicy, boolean vetoed) {
-        final VoteEvent newVoteEvent;
-        final ClaimEvent newClaimEvent;
-
-        if (presSpinner.getSelectedItem().equals(chancSpinner.getSelectedItem())) {
-            Toast.makeText(c, c.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
-        } else {
-            String presName = (String) presSpinner.getSelectedItem();
-            String chancName = (String) chancSpinner.getSelectedItem();
-
-            newVoteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED);
-
-            if (voteRejected) {
-                newClaimEvent = null;
-            } else {
-                int presClaim = Claim.getClaimInt((String) presClaimSpinner.getSelectedItem());
-                int chancClaim = Claim.getClaimInt((String) chancClaimSpinner.getSelectedItem());
-                newClaimEvent = new ClaimEvent(presClaim, chancClaim, playedPolicy, vetoed);
-            }
-
-            if (isEditing) { //We are editing the card, we need to process the changes (e.g. update the policy count)
-                LegislativeSessionManager.processLegislativeSessionEdit(LegislativeSession.this, claimEvent, newClaimEvent, voteEvent, newVoteEvent);
-            }
-
-            leaveSetupPhase(newClaimEvent, newVoteEvent);
-            if (LegislativeSessionManager.trackActionRequired(LegislativeSession.this, claimEvent, newClaimEvent, voteEvent, newVoteEvent)) LegislativeSessionManager.addTrackAction(LegislativeSession.this, false);
-        }
-    }
-
     @Override
     public void initialiseSetupCard(final CardView cardView) {
-        if(!isEditing) {
-            cardView.findViewById(R.id.legacy).setVisibility(View.GONE);
-            cardView.findViewById(R.id.initial_setup).setVisibility(View.VISIBLE);
-
-            presSpinner = cardView.findViewById(R.id.spinner_president_selection);
-            chancSpinner = cardView.findViewById(R.id.spinner_chancellor_selection);
-
-            presClaimSpinner = cardView.findViewById(R.id.spinner_president_claim);
-            chancClaimSpinner = cardView.findViewById(R.id.spinner_chancellor_claim);
-
-            final ImageView icon_fascist = cardView.findViewById(R.id.icon_policyf);
-            final ImageView icon_liberal = cardView.findViewById(R.id.icon_policyl);
-
-            final ImageView icon_ja = cardView.findViewById(R.id.icon_voting_ja);
-            icon_ja.setAlpha(1f);
-            final ImageView icon_nein = cardView.findViewById(R.id.icon_voting_nein);
-            icon_nein.setAlpha(0.2f);
-
-            final CheckBox cb_vetoed = cardView.findViewById(R.id.checkBox_played_policy_vetoed);
-
-            //Setting up ImageViewSelectors
-            CardSetupHelper.setupImageViewSelector(icon_liberal, icon_fascist, ColorStateList.valueOf(c.getColor(R.color.colorLiberal)), ColorStateList.valueOf(c.getColor(R.color.colorFascist)), new View[]{cb_vetoed});
-            CardSetupHelper.setupImageViewSelector(icon_ja, icon_nein, null, null, null);
-
-            OnSetupFinishedListener onSetupFinishedListener = new OnSetupFinishedListener() {
-                @Override
-                public void onSetupFinished() {
-                    boolean voteRejected = icon_nein.getAlpha() == 1.0f;
-                    String presName = (String) presSpinner.getSelectedItem();
-                    String chancName = (String) chancSpinner.getSelectedItem();
-
-                    VoteEvent newVoteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED);
-                    ClaimEvent newClaimEvent;
-
-                    if (voteRejected) {
-                        newClaimEvent = null;
-                    } else {
-                        int presClaim = Claim.getClaimInt((String) presClaimSpinner.getSelectedItem());
-                        int chancClaim = Claim.getClaimInt((String) chancClaimSpinner.getSelectedItem());
-
-                        int playedPolicy = (icon_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL;
-                        boolean vetoed = cb_vetoed.isChecked();
-
-                        newClaimEvent = new ClaimEvent(presClaim, chancClaim, playedPolicy, vetoed);
-                    }
-                    leaveSetupPhase(newClaimEvent, newVoteEvent);
-                }
-            };
-
-            OnSetupCancelledListener onSetupCancelledListener = new OnSetupCancelledListener() {
-                @Override
-                public void onSetupCancelled() {
-                    GameEventsManager.remove(LegislativeSession.this);
-                }
-            };
-
-            CardSetupHelper.initialiseSetupPages(new View[]{cardView.findViewById(R.id.page1_selection), cardView.findViewById(R.id.page2_voting), cardView.findViewById(R.id.page3_policies), cardView.findViewById(R.id.page4_claims)}, (Button) cardView.findViewById(R.id.btn_setup_forward), (Button) cardView.findViewById(R.id.btn_setup_back), onSetupFinishedListener, onSetupCancelledListener, new SetupFinishCondition() {
-                @Override
-                public boolean shouldSetupBeFinished(int newPage) {
-                    return icon_nein.getAlpha() == 1f && newPage == 3;
-                }
-            });
-        } else {
-            initialiseEditCard(cardView);
-        }
-
-        ArrayAdapter<String> playerListadapter = CardSetupHelper.getPlayerNameAdapter(c);
-        playerListadapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-        presSpinner.setAdapter(playerListadapter);
-
-        //Attempting to get the last Legislative Session and setting the next player in order as president. If this is the first LegSession, the first player will be selected
-        LegislativeSession lastSession = LegislativeSessionManager.getLastLegislativeSession();
-        int newChancellorPos = 1;
-        if (lastSession != null) {
-            int newPresidentPos = PlayerListManager.getPlayerPosition(lastSession.getVoteEvent().getPresidentName()) + 1;
-            if (newPresidentPos == PlayerListManager.getPlayerList().size()) newPresidentPos = 0;
-
-            presSpinner.setSelection(newPresidentPos);
-
-            newChancellorPos = (newPresidentPos == PlayerListManager.getPlayerList().size() - 1) ? 0 : newPresidentPos + 1;
-        }
-
-        chancSpinner.setAdapter(playerListadapter);
-        chancSpinner.setSelection(newChancellorPos); //Setting a different item on the chancellor spinner so they don't have the same name at the beginning
-
-        final ArrayAdapter<String> presClaimListadapter = CardSetupHelper.getClaimAdapter(c, Claim.getPresidentClaims());
-        presClaimListadapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-        presClaimSpinner.setAdapter(presClaimListadapter);
-
-        ArrayAdapter<String> chancClaimListadapter = CardSetupHelper.getClaimAdapter(c, Claim.getChancellorClaims());
-        chancClaimListadapter.setDropDownViewResource(android.R.layout
-                .simple_spinner_dropdown_item);
-        chancClaimSpinner.setAdapter(chancClaimListadapter);
+        legislativeSessionSetupManager.initialiseSetupCard(cardView);
     }
 
-    private void leaveSetupPhase(ClaimEvent newClaimEvent, VoteEvent newVoteEvent) {
+    public void leaveSetupPhase(ClaimEvent newClaimEvent, VoteEvent newVoteEvent) {
         claimEvent = newClaimEvent;
         voteEvent = newVoteEvent;
 
