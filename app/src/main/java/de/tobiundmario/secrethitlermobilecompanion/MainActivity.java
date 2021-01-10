@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
         FascistTrackSelectionManager.destroy();
         CardDialog.destroy();
         ExceptionHandler.destroy();
+        Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
         uncaughtExceptionHandler = null;
     }
 
