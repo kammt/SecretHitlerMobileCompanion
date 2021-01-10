@@ -102,15 +102,9 @@ public class LegislativeSessionSetupManager {
 
         //Attempting to get the last Legislative Session and setting the next player in order as president. If this is the first LegSession, the first player will be selected
         LegislativeSession lastSession = LegislativeSessionManager.getLastLegislativeSession();
-        int newChancellorPos = 1;
-        if (lastSession != null) {
-            int newPresidentPos = PlayerListManager.getPlayerPosition(lastSession.getVoteEvent().getPresidentName()) + 1;
-            if (newPresidentPos == PlayerListManager.getPlayerList().size()) newPresidentPos = 0;
-
-            presSpinner.setSelection(newPresidentPos);
-
-            newChancellorPos = (newPresidentPos == PlayerListManager.getPlayerList().size() - 1) ? 0 : newPresidentPos + 1;
-        }
+        int newPresidentPos = getNewPresidentPosition(lastSession);
+        int newChancellorPos = getNewChancellorPosition(newPresidentPos);
+        presSpinner.setSelection(newPresidentPos);
 
         chancSpinner.setAdapter(playerListadapter);
         chancSpinner.setSelection(newChancellorPos); //Setting a different item on the chancellor spinner so they don't have the same name at the beginning
@@ -124,6 +118,19 @@ public class LegislativeSessionSetupManager {
         chancClaimListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         chancClaimSpinner.setAdapter(chancClaimListadapter);
+    }
+    
+    private int getNewPresidentPosition(LegislativeSession lastLegislativeSession) {
+        int newPresidentPos = 0;
+        if (lastLegislativeSession != null) {
+            newPresidentPos = PlayerListManager.getPlayerPosition(lastLegislativeSession.getVoteEvent().getPresidentName()) + 1;
+            if (newPresidentPos == PlayerListManager.getPlayerList().size()) newPresidentPos = 0;
+        }
+        return newPresidentPos;
+    }
+    
+    private int getNewChancellorPosition(int newPresidentPos) {
+        return  (newPresidentPos == PlayerListManager.getPlayerList().size() - 1) ? 0 : newPresidentPos + 1;
     }
 
     private void initialiseSetup(CardView cardView) {
@@ -189,9 +196,6 @@ public class LegislativeSessionSetupManager {
         presClaimSpinner = cardView.findViewById(R.id.spinner_pres_claim);
 
         chancClaimSpinner = cardView.findViewById(R.id.spinner_chanc_claim);
-
-
-
 
         //When the switch is changed, we want certain UI elements to disappear
         sw_votingoutcome.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
