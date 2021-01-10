@@ -93,7 +93,7 @@ public class SetupFragment extends Fragment {
         container_settings.setVisibility(View.GONE);
 
         //Resetting button
-        btn_setup_forward.setText(context.getString(R.string.dialog_mismatching_claims_btn_continue));
+        btn_setup_forward.setText(context.getString(R.string.btn_continue));
 
         container_setup_buttons.setVisibility(View.VISIBLE);
         container_new_player.setVisibility(View.VISIBLE);
@@ -167,12 +167,12 @@ public class SetupFragment extends Fragment {
                     String title = (playerCount == 0) ? getString(R.string.no_players_added) : getString(R.string.title_too_little_players);
                     CardDialog.showMessageDialog(context, title, getString(R.string.no_players_added_msg), getString(R.string.btn_ok), null, null, null);
                 } else if (playerCount < 5) {
-                    CardDialog.showMessageDialog(context, getString(R.string.title_too_little_players), getString(R.string.msg_too_little_players, playerCount), getString(R.string.dialog_mismatching_claims_btn_continue), new Runnable() {
+                    CardDialog.showMessageDialog(context, getString(R.string.title_too_little_players), getString(R.string.msg_too_little_players, playerCount), getString(R.string.btn_continue), new Runnable() {
                         @Override
                         public void run() {
                             nextSetupPage(true);
                         }
-                    }, getString(R.string.dialog_mismatching_claims_btn_cancel), null);
+                    }, getString(R.string.btn_cancel), null);
                 }
             }
 
@@ -259,7 +259,7 @@ public class SetupFragment extends Fragment {
             if(page == 1) fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_close));
             animateTransition(oldPage, newPage, slideOutRight, slideInLeft, false);
 
-            if(page == 2) btn_setup_forward.setText(getString(R.string.dialog_mismatching_claims_btn_continue));
+            if(page == 2) btn_setup_forward.setText(getString(R.string.btn_continue));
         } else cancelSetup();
     }
 

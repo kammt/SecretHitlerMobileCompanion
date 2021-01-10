@@ -73,7 +73,7 @@ public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<Dimmable
                             PlayerListManager.addPlayer(playerName);
                             rootDialog.dismiss();
                         }
-                    }, context.getString(R.string.dialog_mismatching_claims_btn_cancel), null);
+                    }, context.getString(R.string.btn_cancel), null);
                 }
             });
 

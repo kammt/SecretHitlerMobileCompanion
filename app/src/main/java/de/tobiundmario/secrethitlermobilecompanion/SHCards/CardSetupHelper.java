@@ -174,7 +174,7 @@ public final class CardSetupHelper {
      * @param setupFinishCondition a function that provides a condition on whether a setup should be finished earlier when the user hits the "next" button. Example: When the user selects that a vote was rejected, the setup should be finished earlier since no policy is played
      */
     public static void initialiseSetupPages(final View[] setupPages, Button btn_continue, final Button btn_back, final OnSetupFinishedListener onSetupFinishedListener, final OnSetupCancelledListener onSetupCancelledListener, final SetupFinishCondition setupFinishCondition) {
-        btn_back.setText(GameEventsManager.getContext().getString(R.string.dialog_mismatching_claims_btn_cancel));
+        btn_back.setText(GameEventsManager.getContext().getString(R.string.btn_cancel));
         final int[] setupPage = {1};
 
         for(int i = 0; i < setupPages.length; i++) {
@@ -255,7 +255,7 @@ public final class CardSetupHelper {
             newPage.setVisibility(View.VISIBLE);
             newPage.startAnimation(slideInLeft);
 
-            if(setupPage[0] == 1) btn_back.setText(GameEventsManager.getContext().getString(R.string.dialog_mismatching_claims_btn_cancel));
+            if(setupPage[0] == 1) btn_back.setText(GameEventsManager.getContext().getString(R.string.btn_cancel));
         } else {
             onSetupCancelledListener.onSetupCancelled();
         }

@@ -108,7 +108,7 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
 
         if(event.isSetup) {
              //The Cancel button is visible on every card, hence we initialise it here to save code
-            btn_cancel.setText(c.getString(R.string.dialog_mismatching_claims_btn_cancel));
+            btn_cancel.setText(c.getString(R.string.btn_cancel));
             btn_cancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

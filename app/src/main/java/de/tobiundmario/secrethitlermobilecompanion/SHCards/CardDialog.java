@@ -67,8 +67,8 @@ public final class CardDialog {
     }
 
     public static void showTrackCreationDialog(final Context c) {
-        String positive = c.getString(R.string.dialog_mismatching_claims_btn_continue);
-        String negative = c.getString(R.string.dialog_mismatching_claims_btn_cancel);
+        String positive = c.getString(R.string.btn_continue);
+        String negative = c.getString(R.string.btn_cancel);
 
         final CustomDialog customDialog = createDialog(c, c.getString(R.string.new_fascistTrack), null, positive, null, negative, null, trackCreation);
 
@@ -102,7 +102,7 @@ public final class CardDialog {
                     input_electionTrackerLength.setVisibility(View.GONE);
                     title_eTrackerLength.setVisibility(View.GONE);
                 } else {
-                    tvPositive.setText(c.getString(R.string.dialog_mismatching_claims_btn_continue));
+                    tvPositive.setText(c.getString(R.string.btn_continue));
 
                     input_electionTrackerLength.setVisibility(View.VISIBLE);
                     title_eTrackerLength.setVisibility(View.VISIBLE);
@@ -194,10 +194,10 @@ public final class CardDialog {
                 container_general.setVisibility(View.VISIBLE);
 
                 //Change the buttons
-                tvPositive.setText(c.getString(R.string.dialog_mismatching_claims_btn_continue));
+                tvPositive.setText(c.getString(R.string.btn_continue));
                 tvPositive.setOnClickListener(listener_forward_one);
 
-                tvNegative.setText(c.getString(R.string.dialog_mismatching_claims_btn_cancel));
+                tvNegative.setText(c.getString(R.string.btn_cancel));
                 tvNegative.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
