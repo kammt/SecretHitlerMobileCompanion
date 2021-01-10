@@ -89,7 +89,7 @@ public class LegislativeSessionSetupManager {
     public void initialiseSetupCard(CardView cardView) {
         if(legislativeSession.isEditing) {
             initialiseLayoutVariables(cardView,true);
-            initialiseEditCard(cardView, legislativeSession);
+            initialiseEditCard(cardView);
         } else {
             initialiseLayoutVariables(cardView, false);
             initialiseSetup(cardView);
@@ -178,7 +178,7 @@ public class LegislativeSessionSetupManager {
         legislativeSession.leaveSetupPhase(newClaimEvent, newVoteEvent);
     }
 
-    private void initialiseEditCard(CardView cardView, LegislativeSession legislativeSession) {
+    private void initialiseEditCard(CardView cardView) {
         cardView.findViewById(R.id.legacy).setVisibility(View.VISIBLE);
         cardView.findViewById(R.id.initial_setup).setVisibility(View.GONE);
 
@@ -217,37 +217,37 @@ public class LegislativeSessionSetupManager {
         btn_continue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                processEdit(sw_votingoutcome.isChecked(), (icon_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL, cb_vetoed.isChecked());
+                if (presSpinner.getSelectedItem().equals(chancSpinner.getSelectedItem())) {
+                    Toast.makeText(context, context.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
+                } else processEdit(sw_votingoutcome.isChecked(), (icon_fascist.getAlpha() == (float) 1) ? Claim.FASCIST : Claim.LIBERAL, cb_vetoed.isChecked());
             }
         });
     }
 
     private void processEdit(boolean voteRejected, int playedPolicy, boolean vetoed) {
-        final VoteEvent newVoteEvent;
-        final ClaimEvent newClaimEvent;
+        String presName = (String) presSpinner.getSelectedItem();
+        String chancName = (String) chancSpinner.getSelectedItem();
 
-        if (presSpinner.getSelectedItem().equals(chancSpinner.getSelectedItem())) {
-            Toast.makeText(context, context.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
+        VoteEvent newVoteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED);
+        ClaimEvent newClaimEvent = createNewClaimEvent(voteRejected, playedPolicy, vetoed);
+
+        if (legislativeSession.isEditing) { //We are editing the card, we need to process the changes (e.g. update the policy count)
+            LegislativeSessionManager.processLegislativeSessionEdit(legislativeSession, legislativeSession.getClaimEvent(), newClaimEvent, legislativeSession.getVoteEvent(), newVoteEvent);
+        }
+
+        legislativeSession.leaveSetupPhase(newClaimEvent, newVoteEvent);
+        if (LegislativeSessionManager.trackActionRequired(legislativeSession, legislativeSession.getClaimEvent(), newClaimEvent, legislativeSession.getVoteEvent(), newVoteEvent)) {
+            LegislativeSessionManager.addTrackAction(legislativeSession, false);
+        }
+    }
+
+    private ClaimEvent createNewClaimEvent(boolean voteRejected, int playedPolicy, boolean vetoed) {
+        if (voteRejected) {
+            return null;
         } else {
-            String presName = (String) presSpinner.getSelectedItem();
-            String chancName = (String) chancSpinner.getSelectedItem();
-
-            newVoteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED);
-
-            if (voteRejected) {
-                newClaimEvent = null;
-            } else {
-                int presClaim = Claim.getClaimInt((String) presClaimSpinner.getSelectedItem());
-                int chancClaim = Claim.getClaimInt((String) chancClaimSpinner.getSelectedItem());
-                newClaimEvent = new ClaimEvent(presClaim, chancClaim, playedPolicy, vetoed);
-            }
-
-            if (legislativeSession.isEditing) { //We are editing the card, we need to process the changes (e.g. update the policy count)
-                LegislativeSessionManager.processLegislativeSessionEdit(legislativeSession, legislativeSession.getClaimEvent(), newClaimEvent, legislativeSession.getVoteEvent(), newVoteEvent);
-            }
-
-            legislativeSession.leaveSetupPhase(newClaimEvent, newVoteEvent);
-            if (LegislativeSessionManager.trackActionRequired(legislativeSession, legislativeSession.getClaimEvent(), newClaimEvent, legislativeSession.getVoteEvent(), newVoteEvent)) LegislativeSessionManager.addTrackAction(legislativeSession, false);
+            int presClaim = Claim.getClaimInt((String) presClaimSpinner.getSelectedItem());
+            int chancClaim = Claim.getClaimInt((String) chancClaimSpinner.getSelectedItem());
+            return new ClaimEvent(presClaim, chancClaim, playedPolicy, vetoed);
         }
     }
 }
