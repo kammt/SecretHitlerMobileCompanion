@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -182,11 +183,12 @@ public final class RecyclerViewManager {
     }
 
     private static RecyclerView.Adapter getRecyclerViewAdapter(boolean isPlayerList, Context context) throws JSONException {
+        JSONArray data = SharedPreferencesManager.getJsonArray(context, isPlayerList);
         if(isPlayerList) {
-            oldPlayerListRecyclerViewAdapter = new OldPlayerListRecyclerViewAdapter(SharedPreferencesManager.getPastPlayerLists(context), context);
+            oldPlayerListRecyclerViewAdapter = new OldPlayerListRecyclerViewAdapter(data, context);
             return oldPlayerListRecyclerViewAdapter;
         } else {
-            customTracksRecyclerViewAdapter = new CustomTracksRecyclerViewAdapter(SharedPreferencesManager.getFascistTracks(context), context);
+            customTracksRecyclerViewAdapter = new CustomTracksRecyclerViewAdapter(data, context);
             return customTracksRecyclerViewAdapter;
         }
     }

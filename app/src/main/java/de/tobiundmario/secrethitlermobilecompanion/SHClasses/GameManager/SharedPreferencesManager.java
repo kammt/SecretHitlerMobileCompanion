@@ -86,22 +86,7 @@ public final class SharedPreferencesManager {
 
         JSONArray array = getJsonArray(context, true);
         array.put(playerListAsJSON);
-        writePastPlayerLists(array, context);
-    }
-
-    private static void writePastPlayerLists(JSONArray array, Context context) throws JSONException {
-        SharedPreferences preferences = getSharedPreferences(context);
-
-        JSONObject object = new JSONObject();
-        object.put("players", array);
-
-        preferences.edit().putString("old-players", object.toString()).apply();
-
-        OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter = RecyclerViewManager.getOldPlayerListRecyclerViewAdapter();
-        if(oldPlayerListRecyclerViewAdapter != null) {
-            oldPlayerListRecyclerViewAdapter.oldPlayers = array;
-            oldPlayerListRecyclerViewAdapter.notifyDataSetChanged();
-        }
+        writeJsonArray(array, context, true);
     }
 
     private static boolean playerListAlreadyPresent(JSONObject playerJSON, Context context) throws JSONException {
@@ -134,21 +119,9 @@ public final class SharedPreferencesManager {
 
         if(!name.matches("")) object.put("name", name);
         else if(object.has("name")) object.remove("name");
-        writePastPlayerLists(newArray, context);
+        writeJsonArray(newArray, context, true);
     }
 
-
-    public static JSONObject removePlayerList(int position, Context context) throws JSONException {
-        JSONArray array = getJsonArray(context, true);
-        JSONObject removed = array.getJSONObject(position);
-        array.remove(position);
-        writePastPlayerLists(array, context);
-        RecyclerViewManager.getOldPlayerListRecyclerViewAdapter().notifyItemRemoved(position);
-
-        setCustomTitle(context, true);
-
-        return removed;
-    }
 
     //FascistTrack related
     public static void writeFascistTrack(FascistTrack fascistTrack, Context context) throws JSONException {
@@ -156,35 +129,7 @@ public final class SharedPreferencesManager {
 
         JSONArray array = getJsonArray(context, false);
         array.put(trackAsJSON);
-        writeFascistTracks(array, context);
-    }
-
-    private static void writeFascistTracks(JSONArray array, Context context) throws JSONException {
-        SharedPreferences preferences = getSharedPreferences(context);
-
-        JSONObject object = new JSONObject();
-        object.put("tracks", array);
-
-        preferences.edit().putString("fas-tracks", object.toString()).apply();
-
-        CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter = RecyclerViewManager.getCustomTracksRecyclerViewAdapter();
-        if(customTracksRecyclerViewAdapter != null) {
-            customTracksRecyclerViewAdapter.tracks = array;
-            customTracksRecyclerViewAdapter.notifyDataSetChanged();
-            setCustomTitle(context, false);
-        }
-    }
-
-    public static JSONObject removeFascistTrack(int position, Context context) throws JSONException {
-        JSONArray array = getJsonArray(context, false);
-        JSONObject removed = array.getJSONObject(position);
-        array.remove(position);
-        writeFascistTracks(array, context);
-        RecyclerViewManager.getCustomTracksRecyclerViewAdapter().notifyItemRemoved(position);
-
-        setCustomTitle(context, false);
-
-        return removed;
+        writeJsonArray(array, context, false);
     }
 
     public static JSONArray getJsonArray(Context context, boolean isPlayerList) throws JSONException {
@@ -198,6 +143,45 @@ public final class SharedPreferencesManager {
         JSONObject object = new JSONObject(tracks);
 
         return object.getJSONArray(isPlayerList ? "players" : "tracks");
+    }
+
+    public static void writeJsonArray(JSONArray array, Context context, boolean isPlayerList) throws JSONException {
+        SharedPreferences preferences = getSharedPreferences(context);
+
+        JSONObject object = new JSONObject();
+        object.put(isPlayerList ? "players" : "tracks", array);
+
+        preferences.edit().putString(isPlayerList ? "old-players" : "fas-tracks", object.toString()).apply();
+
+        RecyclerView.Adapter adapter = isPlayerList ? RecyclerViewManager.getOldPlayerListRecyclerViewAdapter() : RecyclerViewManager.getCustomTracksRecyclerViewAdapter();
+        if(adapter != null) {
+            adapter.notifyDataSetChanged();
+            setCustomTitle(context, false);
+            updateData(array, adapter, isPlayerList);
+        }
+    }
+
+    private static void updateData(JSONArray array, RecyclerView.Adapter adapter, boolean isPlayerList) {
+        if(isPlayerList) {
+            ((OldPlayerListRecyclerViewAdapter) adapter).oldPlayers = array;
+        } else {
+            ((CustomTracksRecyclerViewAdapter) adapter).tracks = array;
+        }
+
+    }
+
+    public static JSONObject removeObject(int position, Context context, boolean isPlayerList) throws JSONException {
+        JSONArray array = getJsonArray(context, isPlayerList);
+        JSONObject removed = array.getJSONObject(position);
+        array.remove(position);
+
+        writeJsonArray(array, context, isPlayerList);
+
+        RecyclerViewManager.getCustomTracksRecyclerViewAdapter().notifyItemRemoved(position);
+
+        setCustomTitle(context, isPlayerList);
+
+        return removed;
     }
 
     public static void setCustomTitle(Context context, boolean isPlayerList) throws JSONException {
@@ -216,7 +200,7 @@ public final class SharedPreferencesManager {
 
     public static void removeItemWithSnackbar(final int position, final Context context, RecyclerView recyclerView, final boolean isPlayerList) {
         try {
-            final JSONObject removed = isPlayerList ? removePlayerList(position, context) : removeFascistTrack(position, context);
+            final JSONObject removed = removeObject(position, context, isPlayerList);
 
             Snackbar snackbar = Snackbar.make(recyclerView, context.getString(R.string.snackbar_track_removed_message), BaseTransientBottomBar.LENGTH_LONG);
 
@@ -229,11 +213,7 @@ public final class SharedPreferencesManager {
 
                         addJSONObjectToArray(removed, jsonArray, position);
 
-                        if(isPlayerList) {
-                            writePastPlayerLists(jsonArray, context);
-                        } else {
-                            writeFascistTracks(jsonArray, context);
-                        }
+                        writeJsonArray(jsonArray, context, isPlayerList);
                         setCustomTitle(context, isPlayerList);
 
                         recyclerViewAdapter.notifyItemInserted(position);
