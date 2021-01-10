@@ -28,17 +28,19 @@ public final class SharedPreferencesManager {
     private SharedPreferencesManager() {}
 
     private static boolean playerListsTheSame(JSONObject one, JSONObject two) throws JSONException {
-        int oneLength = getPlayerListLength(one);
-        int twoLength = getPlayerListLength(two);
-        if(oneLength != twoLength) return false;
+        int[] lengths = new int[2];
+        lengths[0] = getPlayerListLength(one);
+        lengths[1] = getPlayerListLength(two);
+        if(lengths[0] != lengths[1]) return false;
 
-        for(int i = 0; i < oneLength; i++) {
-            String name = (String) one.get("" + i);
+        for(int i = 0; i < lengths[0]; i++) {
+            String name = (String) one.get(Integer.toString(i));
 
-            for (int j = 0; j < twoLength; j++) {
-                if(two.get("" + j).equals(name)) break;
+            for (int j = 0; j < lengths[1]; j++) {
+                String secondName = (String) two.get(Integer.toString(j));
+                if(secondName.equals(name)) break;
 
-                if(j == twoLength - 1) return false; //We just checked the last value and the name is not there, they cannot be the same
+                if(j == lengths[1] - 1) return false; //We just checked the last value and the name is not there, they cannot be the same
             }
 
         }
@@ -165,35 +167,6 @@ public final class SharedPreferencesManager {
         return removed;
     }
 
-    public static void removePlayerListWithSnackBar(final int position, final Context context, RecyclerView recyclerView, final OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter) {
-        try {
-            final JSONObject removed = removePlayerList(position, context);
-
-            Snackbar snackbar = Snackbar.make(recyclerView, context.getString(R.string.snackbar_playerList_removed_message), BaseTransientBottomBar.LENGTH_LONG);
-
-            snackbar.setAction(context.getString(R.string.undo), new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        JSONArray playerListsArray = getPastPlayerLists(context);
-
-                        addJSONObjectToArray(removed, playerListsArray, position);
-
-                        writePastPlayerLists(playerListsArray, context);
-                        oldPlayerListRecyclerViewAdapter.notifyItemInserted(position);
-
-                        setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
-                    } catch (JSONException e) {
-                        ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.removePlayerListWithSnackBar() (Snackbar Action)");
-                    }
-                }
-            }).show();
-        } catch (JSONException e) {
-            ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.removePlayerListWithSnackBar()");
-        }
-    }
-
-
     //FascistTrack related
 
     public static JSONArray getFascistTracks(Context context) throws JSONException {
@@ -254,9 +227,9 @@ public final class SharedPreferencesManager {
         }
     }
 
-    public static void removeTrackWithSnackbar(final int position, final Context context, RecyclerView recyclerView, final CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter) {
+    public static void removeItemWithSnackbar(final int position, final Context context, RecyclerView recyclerView, final boolean isPlayerList) {
         try {
-            final JSONObject removed = removeFascistTrack(position, context);
+            final JSONObject removed = isPlayerList ? removePlayerList(position, context) : removeFascistTrack(position, context);
 
             Snackbar snackbar = Snackbar.make(recyclerView, context.getString(R.string.snackbar_track_removed_message), BaseTransientBottomBar.LENGTH_LONG);
 
@@ -264,21 +237,28 @@ public final class SharedPreferencesManager {
                 @Override
                 public void onClick(View v) {
                     try {
-                        JSONArray tracksArray = getFascistTracks(context);
+                        RecyclerView.Adapter recyclerViewAdapter = isPlayerList ? RecyclerViewManager.getOldPlayerListRecyclerViewAdapter() : RecyclerViewManager.getCustomTracksRecyclerViewAdapter();
+                        JSONArray jsonArray = isPlayerList ? getPastPlayerLists(context) : getFascistTracks(context);
 
-                        addJSONObjectToArray(removed, tracksArray, position);
+                        addJSONObjectToArray(removed, jsonArray, position);
 
-                        writeFascistTracks(tracksArray, context);
-                        customTracksRecyclerViewAdapter.notifyItemInserted(position);
+                        if(isPlayerList) {
+                            writePastPlayerLists(jsonArray, context);
+                            setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
+                        } else {
+                            writeFascistTracks(jsonArray, context);
+                            setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
+                        }
 
-                        setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
+                        recyclerViewAdapter.notifyItemInserted(position);
+
                     } catch (JSONException e) {
-                        ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.removeTrackWithSnackbar() (Snackbar action)");
+                        ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.removeItemWithSnackbar() (Snackbar action)");
                     }
                 }
             }).show();
         } catch (JSONException e) {
-            ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.removeTrackWithSnackbar()");
+            ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.removeItemWithSnackbar()");
         }
     }
 

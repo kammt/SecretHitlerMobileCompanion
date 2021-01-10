@@ -75,6 +75,8 @@ public class SetupFragment extends Fragment {
 
     public void startSetup() {
         //Resetting values in case there has been a setup before which was cancelled
+        initialiseLayout();
+        page = 1;
         PlayerListManager.initialise(playerCardList, context);
         FascistTrackSelectionManager.selectedTrackIndex = -1;
         FascistTrackSelectionManager.recommendedTrackIndex = -1;
@@ -84,10 +86,10 @@ public class SetupFragment extends Fragment {
 
         //Initialising RecyclerViews
         RecyclerView pastPlayerLists = getView().findViewById(R.id.oldPlayerLists);
-        RecyclerViewManager.setupOldPlayerListRecyclerView(pastPlayerLists, context);
+        RecyclerViewManager.initialiseSetupRecyclerView(pastPlayerLists, context, true);
 
         RecyclerView fascistTracks = getView().findViewById(R.id.list_custom_tracks);
-        RecyclerViewManager.setupCustomTracksRecyclerView(fascistTracks, context);
+        RecyclerViewManager.initialiseSetupRecyclerView(fascistTracks, context, false);
 
         //Resetting view visibility
         container_settings.setVisibility(View.GONE);

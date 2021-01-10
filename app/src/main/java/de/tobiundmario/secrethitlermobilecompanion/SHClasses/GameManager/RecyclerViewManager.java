@@ -169,44 +169,34 @@ public final class RecyclerViewManager {
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(cardList);
     }
 
-    public static void setCustomTracksRecyclerViewAdapter(CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter) {
-        RecyclerViewManager.customTracksRecyclerViewAdapter = customTracksRecyclerViewAdapter;
-    }
-
-    public static void setOldPlayerListRecyclerViewAdapter(OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter) {
-        RecyclerViewManager.oldPlayerListRecyclerViewAdapter = oldPlayerListRecyclerViewAdapter;
-    }
-
-    public static void setupCustomTracksRecyclerView(final RecyclerView recyclerView, final Context context) {
+    public static void initialiseSetupRecyclerView(final RecyclerView recyclerView, final Context context, boolean isPlayerList) {
         try {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            customTracksRecyclerViewAdapter = new CustomTracksRecyclerViewAdapter(SharedPreferencesManager.getFascistTracks(context), context);
-            recyclerView.setAdapter(customTracksRecyclerViewAdapter);
+            recyclerView.setAdapter(getRecyclerViewAdapter(isPlayerList, context));
 
-            setupSwipeCallback(recyclerView, false, context);
+            setupSwipeCallback(recyclerView, isPlayerList, context);
 
-            SharedPreferencesManager.setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
+            if(isPlayerList) SharedPreferencesManager.setCorrectPlayerListExplanationText( ((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
+            else SharedPreferencesManager.setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
         } catch (JSONException e) {
-            ExceptionHandler.showErrorSnackbar(e, "RecyclerViewManager.setupCustomTracksRecyclerView()");
+            ExceptionHandler.showErrorSnackbar(e, "RecyclerViewManager.initialiseSetupRecyclerView()");
         }
     }
 
-    public static void setupOldPlayerListRecyclerView(final RecyclerView recyclerView, final Context context) {
-        try {
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+    private static RecyclerView.Adapter getRecyclerViewAdapter(boolean isPlayerList, Context context) throws JSONException {
+        if(isPlayerList) {
             oldPlayerListRecyclerViewAdapter = new OldPlayerListRecyclerViewAdapter(SharedPreferencesManager.getPastPlayerLists(context), context);
-            recyclerView.setAdapter(oldPlayerListRecyclerViewAdapter);
-
-            setupSwipeCallback(recyclerView, true, context);
-
-            SharedPreferencesManager.setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
-        } catch (JSONException e) {
-            ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.setupOldPlayerListRecyclerView() (outer try/catch block)");
+            return oldPlayerListRecyclerViewAdapter;
+        } else {
+            customTracksRecyclerViewAdapter = new CustomTracksRecyclerViewAdapter(SharedPreferencesManager.getFascistTracks(context), context);
+            return customTracksRecyclerViewAdapter;
         }
     }
 
-    private static void setupSwipeCallback(final RecyclerView recyclerView, final boolean playerList, final Context context) {
-        final ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+    private static void setupSwipeCallback(final RecyclerView recyclerView,
+                                           final boolean isPlayerList, final Context context) {
+        final ItemTouchHelper.SimpleCallback itemTouchHelperCallback =
+                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -216,9 +206,7 @@ public final class RecyclerViewManager {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 final int position = viewHolder.getAdapterPosition();
-                if(playerList) {
-                    SharedPreferencesManager.removePlayerListWithSnackBar(position, context, recyclerView, oldPlayerListRecyclerViewAdapter);
-                } else SharedPreferencesManager.removeTrackWithSnackbar(position, context, recyclerView, customTracksRecyclerViewAdapter);
+                SharedPreferencesManager.removeItemWithSnackbar(position, context, recyclerView, isPlayerList);
             }
         };
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
