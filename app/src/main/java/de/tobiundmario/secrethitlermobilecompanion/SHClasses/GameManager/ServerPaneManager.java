@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -24,9 +23,6 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import net.glxn.qrgen.android.QRCode;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
 import de.tobiundmario.secrethitlermobilecompanion.GameFragment;
 import de.tobiundmario.secrethitlermobilecompanion.R;
@@ -64,39 +60,19 @@ public class ServerPaneManager {
     }
 
     public void setupServerLayout(View fragmentLayout) {
-        ServerSercive serverSercive = gameFragment.getBoundServerService();
-        final String serverURL = (serverSercive == null) ? null : serverSercive.server.getURL();
-
-        tv_server_desc = fragmentLayout.findViewById(R.id.tv_server_url_desc);
-        tv_server_title = fragmentLayout.findViewById(R.id.tv_title_server_status);
-
-        qrImage = fragmentLayout.findViewById(R.id.img_qr);
-
-        fab_share = fragmentLayout.findViewById(R.id.fab_share);
-        fab_copy = fragmentLayout.findViewById(R.id.fab_copy_address);
-        fab_toggle_server = fragmentLayout.findViewById(R.id.fab_toggle_server);
-
-        fab_close = AnimationUtils.loadAnimation(context, R.anim.fab_close);
-        fab_open = AnimationUtils.loadAnimation(context, R.anim.fab_open);
+        setupLayoutVariables(fragmentLayout);
 
         fab_copy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("Server URL", gameFragment.getBoundServerService().server.getURL());
-                clipboard.setPrimaryClip(clip);
-
-                Toast.makeText(context, context.getString(R.string.url_copied_to_clipboard), Toast.LENGTH_SHORT).show();
+                copyServerURL();
             }
         });
 
         fab_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent share = new Intent(Intent.ACTION_SEND);
-                share.setType("text/plain");
-                share.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_server_url_string, gameFragment.getBoundServerService().server.getURL()));
-                context.startActivity(Intent.createChooser(share, context.getString(R.string.share_server_url_title)));
+                shareServerURL();
             }
         });
 
@@ -124,72 +100,79 @@ public class ServerPaneManager {
         });
     }
 
+    private void setupLayoutVariables(View fragmentLayout) {
+        tv_server_desc = fragmentLayout.findViewById(R.id.tv_server_url_desc);
+        tv_server_title = fragmentLayout.findViewById(R.id.tv_title_server_status);
 
+        qrImage = fragmentLayout.findViewById(R.id.img_qr);
+
+        fab_share = fragmentLayout.findViewById(R.id.fab_share);
+        fab_copy = fragmentLayout.findViewById(R.id.fab_copy_address);
+        fab_toggle_server = fragmentLayout.findViewById(R.id.fab_toggle_server);
+
+        fab_close = AnimationUtils.loadAnimation(context, R.anim.fab_close);
+        fab_open = AnimationUtils.loadAnimation(context, R.anim.fab_open);
+    }
+
+    private void shareServerURL() {
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.share_server_url_string, gameFragment.getBoundServerService().server.getURL()));
+        context.startActivity(Intent.createChooser(share, context.getString(R.string.share_server_url_title)));
+    }
+
+
+    private void copyServerURL() {
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("Server URL", gameFragment.getBoundServerService().server.getURL());
+        clipboard.setPrimaryClip(clip);
+
+        Toast.makeText(context, context.getString(R.string.url_copied_to_clipboard), Toast.LENGTH_SHORT).show();
+    }
+
+    private String[] getServerPaneText(int connectionType, boolean serverRunning, boolean isUsingHotspot) {
+        if(serverRunning) {
+            if(connectionType == Server.WIFI || isUsingHotspot) return new String[] {context.getString(R.string.server_status_url, serverURL), context.getString(R.string.server_running), "#009933"};
+            else if(connectionType == Server.MOBILE_DATA) return new String[] {context.getString(R.string.server_status_url_mobile_data), context.getString(R.string.server_status_using_mobile_data), "#ff9900"};
+            else return new String[] {context.getString(R.string.server_status_url_not_connected), context.getString(R.string.server_status_not_connected), "#ff9900"};
+        } else return new String[] {context.getString(R.string.server_status_url_disabled), context.getString(R.string.server_stopped), "#cc0000"};
+    }
+
+    private void handleQRCode(ImageView qrImage, int connectionType, boolean serverRunning, boolean isUsingHotspot) {
+        ServerSercive boundServerService = gameFragment.getBoundServerService();
+
+        if(serverRunning && (connectionType == Server.WIFI || isUsingHotspot)) {
+            if(serverURL == null || !serverURL.equals(boundServerService.server.getURL())) { //Only recreate the QR Code when the URL changed
+                serverURL = boundServerService.server.getURL();
+
+                qrBitmap = QRCode.from(serverURL).withSize(200,200).bitmap();
+            }
+
+            qrImage.setImageBitmap(qrBitmap);
+            qrImage.setClickable(true);
+        } else {
+            qrImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.qr_placeholder));
+            qrImage.setClickable(false);
+        }
+    }
 
     public void setServerStatus() {
         int connectionType = Server.getConnectionType(context);
 
-        boolean usingHotspot = isUsingHotspot((WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE));
+        boolean usingHotspot = Server.isUsingHotspot((WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE));
 
         ServerSercive boundServerService = gameFragment.getBoundServerService();
+        boolean serverRunning = boundServerService != null && boundServerService.server.isAlive();
 
-        String titleColor = "", titleServerStatus = "", serverDescText = "";
-        ColorStateList fabColorScheme;
-        Drawable fab_icon;
-        if(boundServerService != null && boundServerService.server.isAlive()) { //ServerService is bound and Server is running
+        String[] serverPaneText = getServerPaneText(connectionType, serverRunning, usingHotspot);
 
-            if(connectionType == Server.NOT_CONNECTED && !usingHotspot) {//Server is running but device is not connected to a network
+        String titleColor = serverPaneText[2];
+        String titleServerStatus = serverPaneText[1];
+        String serverDescText = serverPaneText[0];
 
-                titleColor = "#ff9900";
-                titleServerStatus = context.getString(R.string.server_status_not_connected);
-                serverDescText = context.getString(R.string.server_status_url_not_connected);
-
-                qrImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.qr_placeholder));
-                qrImage.setClickable(false);
-
-                startFABAnimation(false);
-            } else if(connectionType == Server.MOBILE_DATA && !usingHotspot) {//Only connected to mobile data
-
-                titleColor = "#ff9900";
-                titleServerStatus = context.getString(R.string.server_status_using_mobile_data);
-                serverDescText = context.getString(R.string.server_status_url_mobile_data);
-
-                qrImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.qr_placeholder));
-                qrImage.setClickable(false);
-
-                startFABAnimation(false);
-            } else {//everything is fine
-                if(serverURL == null || !serverURL.equals(boundServerService.server.getURL())) { //Only recreate the QR Code when the URL changed
-                    serverURL = boundServerService.server.getURL();
-
-                    qrBitmap = QRCode.from(serverURL).withSize(200,200).bitmap();
-                }
-
-                qrImage.setImageBitmap(qrBitmap);
-                qrImage.setClickable(true);
-
-                serverDescText = context.getString(R.string.server_status_url, serverURL);
-                titleColor = "#009933";
-                titleServerStatus = context.getString(R.string.server_running);
-
-                startFABAnimation(true);
-            }
-
-            fabColorScheme = ColorStateList.valueOf(context.getColor(R.color.stop_server));
-            fab_icon = ContextCompat.getDrawable(context, R.drawable.ic_stop);
-        } else {
-            serverDescText = context.getString(R.string.server_status_url_disabled);
-            titleColor = "#cc0000";
-            titleServerStatus = context.getString(R.string.server_stopped);
-
-            qrImage.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.qr_placeholder));
-            qrImage.setClickable(false);
-
-            startFABAnimation(false);
-
-            fabColorScheme = ColorStateList.valueOf(context.getColor(R.color.start_server));
-            fab_icon = ContextCompat.getDrawable(context, R.drawable.ic_start);
-        }
+        ColorStateList fabColorScheme = serverRunning ? ColorStateList.valueOf(context.getColor(R.color.stop_server)) : ColorStateList.valueOf(context.getColor(R.color.start_server));;
+        Drawable fab_icon = serverRunning ? ContextCompat.getDrawable(context, R.drawable.ic_stop) : ContextCompat.getDrawable(context, R.drawable.ic_start);
+        startFABAnimation(serverRunning && (connectionType == Server.WIFI || usingHotspot));
 
         setSpannable(tv_server_desc, serverDescText);
         setSpannable(tv_server_title, context.getString(R.string.title_server_status) + " <font color='" + titleColor + "'>" + titleServerStatus + "</font>");
@@ -210,15 +193,4 @@ public class ServerPaneManager {
         }
     }
 
-    public boolean isUsingHotspot(WifiManager wifiManager) {
-        int actualState = 0;
-        try {
-            java.lang.reflect.Method method = wifiManager.getClass().getDeclaredMethod("getWifiApState");
-            method.setAccessible(true);
-            actualState = (Integer) method.invoke(wifiManager, (Object[]) null);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            Log.e("Error", Arrays.toString(e.getStackTrace()));
-        }
-        return actualState == 13; //public static int AP_STATE_ENABLED = 13;
-    }
 }

@@ -165,7 +165,7 @@ public class Server extends NanoHTTPD {
     }
 
 
-    public boolean isUsingHotspot(WifiManager wifiManager) {
+    public static boolean isUsingHotspot(WifiManager wifiManager) {
         int actualState = 0;
         try {
             java.lang.reflect.Method method = wifiManager.getClass().getDeclaredMethod("getWifiApState");
@@ -174,7 +174,7 @@ public class Server extends NanoHTTPD {
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             ExceptionHandler.showErrorSnackbar(e, "Server.isUsingHotspot()");
         }
-        return actualState == 13; //public static int AP_STATE_ENABLED = 13;
+        return actualState == 13; //AP_STATE_ENABLED = 13;
     }
 
     private String getHotspotIPAddress() {
