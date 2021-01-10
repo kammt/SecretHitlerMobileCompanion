@@ -5,9 +5,8 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
-import android.os.Build;
-import android.text.Html;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -17,6 +16,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +29,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEve
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionSetupManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.ServerPaneManager;
 
 public class LegislativeSession extends GameEvent {
 
@@ -42,6 +43,11 @@ public class LegislativeSession extends GameEvent {
     private ClaimEvent claimEvent;
     private Context c;
     private static ColorStateList oldcolors;
+
+    //View items of regular CardView
+    private TextView title, presName, chancName, presClaim, chancClaim, playedPolicytv;
+    private ImageView playedPolicyLogo;
+    private LinearLayout ll_warning_claims;
 
     private GameEvent presidentAction;
 
@@ -140,18 +146,7 @@ public class LegislativeSession extends GameEvent {
 
     @SuppressLint("SetTextI18n")
     public void initialiseCard(CardView cardLayout) {
-        //We get the objects from the layout
-        TextView title = cardLayout.findViewById(R.id.title);
-        TextView presName = cardLayout.findViewById(R.id.pres_name);
-        TextView chancName = cardLayout.findViewById(R.id.chanc_name);
-
-        TextView presClaim = cardLayout.findViewById(R.id.pres_claim);
-        TextView chancClaim = cardLayout.findViewById(R.id.chanc_claim);
-
-        TextView playedPolicytv = cardLayout.findViewById(R.id.policy_played);
-        ImageView playedPolicyLogo = cardLayout.findViewById(R.id.img_policy_played);
-
-        LinearLayout ll_warning_claims = cardLayout.findViewById(R.id.warning_mismatching_claims);
+        initialiseCardViewLayout(cardLayout);
 
         //Set the president and chancellor names. This will always be done, no matter what outcome the event was
         presName.setText(voteEvent.getPresidentName());
@@ -161,11 +156,7 @@ public class LegislativeSession extends GameEvent {
             title.setText(c.getString(R.string.legislative_session)+ " #" + sessionNumber + c.getString(R.string.rejected));
 
             //Hide unnecessary stuff
-            chancClaim.setVisibility(View.GONE);
-            presClaim.setVisibility(View.GONE);
-            playedPolicytv.setVisibility(View.GONE);
-            playedPolicyLogo.setVisibility(View.GONE);
-            ll_warning_claims.setVisibility(View.GONE);
+            hideCardViewItems(true);
 
             if(oldcolors == null) oldcolors =  chancName.getTextColors();
             chancName.setTextColor(Color.RED);
@@ -174,10 +165,7 @@ public class LegislativeSession extends GameEvent {
             title.setText(c.getString(R.string.legislative_session)+ " #" + sessionNumber);
 
             //Resetting the layout
-            chancClaim.setVisibility(View.VISIBLE);
-            presClaim.setVisibility(View.VISIBLE);
-            playedPolicytv.setVisibility(View.VISIBLE);
-            playedPolicyLogo.setVisibility(View.VISIBLE);
+            hideCardViewItems(false);
 
             if(oldcolors != null) {
                 chancName.setTextColor(oldcolors);
@@ -187,17 +175,11 @@ public class LegislativeSession extends GameEvent {
             playedPolicytv.setPaintFlags(playedPolicytv.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
 
             //The vote didn't fail, now we have to set the colored Claims. To do this, we parse the HTML <font> attribute (see Claim.java for more)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                chancClaim.setText(Html.fromHtml(Claim.getClaimString(c, claimEvent.getChancellorClaim()),  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
-                presClaim.setText(Html.fromHtml(Claim.getClaimString(c, claimEvent.getPresidentClaim()),  Html.FROM_HTML_MODE_LEGACY), TextView.BufferType.SPANNABLE);
-            } else {
-                chancClaim.setText(Html.fromHtml(Claim.getClaimString(c, claimEvent.getChancellorClaim())), TextView.BufferType.SPANNABLE);
-                presClaim.setText(Html.fromHtml(Claim.getClaimString(c, claimEvent.getPresidentClaim())), TextView.BufferType.SPANNABLE);
-            }
+            ServerPaneManager.setSpannable(chancClaim, Claim.getClaimString(c, claimEvent.getChancellorClaim()));
+            ServerPaneManager.setSpannable(presClaim, Claim.getClaimString(c, claimEvent.getPresidentClaim()));
 
-            if(claimEvent.getPlayedPolicy() == Claim.LIBERAL) {
-                playedPolicyLogo.setImageDrawable(c.getDrawable(R.drawable.liberal_logo));
-            } else playedPolicyLogo.setImageDrawable(c.getDrawable(R.drawable.fascist_logo));
+            Drawable playedPolicyDrawable = (claimEvent.getPlayedPolicy() == Claim.LIBERAL) ? ContextCompat.getDrawable(c, R.drawable.liberal_logo) : ContextCompat.getDrawable(c, R.drawable.fascist_logo);
+            playedPolicyLogo.setImageDrawable(playedPolicyDrawable);
 
             if(!Claim.doClaimsFit(claimEvent.getPresidentClaim(), claimEvent.getChancellorClaim(), claimEvent.getPlayedPolicy())) {
                 ll_warning_claims.setVisibility(View.VISIBLE);
@@ -211,6 +193,29 @@ public class LegislativeSession extends GameEvent {
             playedPolicytv.setTextColor(Color.RED);
             playedPolicytv.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         }
+    }
+
+    private void initialiseCardViewLayout(CardView cardLayout) {
+        title = cardLayout.findViewById(R.id.title);
+        presName = cardLayout.findViewById(R.id.pres_name);
+        chancName = cardLayout.findViewById(R.id.chanc_name);
+
+        presClaim = cardLayout.findViewById(R.id.pres_claim);
+        chancClaim = cardLayout.findViewById(R.id.chanc_claim);
+
+        playedPolicytv = cardLayout.findViewById(R.id.policy_played);
+        playedPolicyLogo = cardLayout.findViewById(R.id.img_policy_played);
+
+        ll_warning_claims = cardLayout.findViewById(R.id.warning_mismatching_claims);
+    }
+
+    private void hideCardViewItems(boolean hide) {
+        int visibility = hide ? View.GONE : View.VISIBLE;
+        chancClaim.setVisibility(visibility);
+        presClaim.setVisibility(visibility);
+        playedPolicytv.setVisibility(visibility);
+        playedPolicyLogo.setVisibility(visibility);
+        ll_warning_claims.setVisibility(visibility);
     }
 
     @Override
