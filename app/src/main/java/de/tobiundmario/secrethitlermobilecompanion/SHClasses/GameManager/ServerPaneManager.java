@@ -169,6 +169,7 @@ public class ServerPaneManager {
         String titleColor = serverPaneText[2];
         String titleServerStatus = serverPaneText[1];
         String serverDescText = serverPaneText[0];
+        handleQRCode(qrImage, connectionType, serverRunning, usingHotspot);
 
         ColorStateList fabColorScheme = serverRunning ? ColorStateList.valueOf(context.getColor(R.color.stop_server)) : ColorStateList.valueOf(context.getColor(R.color.start_server));;
         Drawable fab_icon = serverRunning ? ContextCompat.getDrawable(context, R.drawable.ic_stop) : ContextCompat.getDrawable(context, R.drawable.ic_start);
