@@ -7,17 +7,17 @@ import java.util.HashSet;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
 
-public class GameLogChange {
-    public static String EVENT_UPDATE = "event_update";
-    public static String EVENT_DELETE = "event_delete";
-    public static String NEW_EVENT = "new_event";
+public class EventChange {
+    public static final String EVENT_UPDATE = "event_update";
+    public static final String EVENT_DELETE = "event_delete";
+    public static final String NEW_EVENT = "new_event";
 
     private GameEvent event;
     private String type;
 
     private HashSet<String> servedTo;
 
-    public GameLogChange(GameEvent event, String type) {
+    public EventChange(GameEvent event, String type) {
         servedTo = new HashSet<String>();
 
         this.event = event;

@@ -13,11 +13,11 @@ import androidx.core.content.ContextCompat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
 
 public class TopPolicyPlayedEvent extends GameEvent {
 
@@ -46,7 +46,7 @@ public class TopPolicyPlayedEvent extends GameEvent {
     }
 
     private void playSound() {
-        if(GameLog.policySounds) {
+        if(GameEventsManager.policySounds) {
             MediaPlayer mp;
             if (policyPlayed == Claim.LIBERAL) mp = MediaPlayer.create(c, R.raw.enactpolicyl);
             else mp = MediaPlayer.create(c, R.raw.enactpolicyf);
@@ -81,7 +81,7 @@ public class TopPolicyPlayedEvent extends GameEvent {
             public void onClick(View v) {
                 policyPlayed = (iv_fascist.getAlpha() == 1f) ? Claim.FASCIST : Claim.LIBERAL;
                 isSetup = false;
-                GameLog.notifySetupPhaseLeft(TopPolicyPlayedEvent.this);
+                GameEventsManager.notifySetupPhaseLeft(TopPolicyPlayedEvent.this);
                 playSound();
             }
         });
@@ -109,7 +109,7 @@ public class TopPolicyPlayedEvent extends GameEvent {
     }
 
     @Override
-    public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
+    public boolean allInvolvedPlayersAreUnselected(List<String> unselectedPlayers) {
         return false;
     }
 

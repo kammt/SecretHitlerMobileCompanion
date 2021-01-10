@@ -19,8 +19,8 @@ import java.util.ArrayList;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
 public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableViewHolder> {
 
@@ -44,7 +44,7 @@ public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<Dimmable
 
     @Override
     public int getItemCount() {
-        if(GameLog.isGameStarted()) return players.size();
+        if(GameManager.isGameStarted()) return players.size();
         else return players.size() + 1;
     }
 
@@ -62,7 +62,7 @@ public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<Dimmable
                         @Override
                         public void onInputDialogSubmitted(EditText inputField, Dialog rootDialog) {
                             String playerName = inputField.getText().toString();
-                            if(PlayerList.playerAlreadyExists(playerName)) {
+                            if(PlayerListManager.playerAlreadyExists(playerName)) {
                                 inputField.setError(context.getString(R.string.error_player_already_exists));
                                 return;
                             }
@@ -70,10 +70,10 @@ public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<Dimmable
                                 rootDialog.dismiss();
                                 return;
                             }
-                            PlayerList.addPlayer(playerName);
+                            PlayerListManager.addPlayer(playerName);
                             rootDialog.dismiss();
                         }
-                    }, context.getString(R.string.dialog_mismatching_claims_btn_cancel), null);
+                    }, context.getString(R.string.btn_cancel), null);
                 }
             });
 
@@ -121,7 +121,7 @@ public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<Dimmable
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(GameLog.isGameStarted()) {
+                if(GameManager.isGameStarted()) {
                     CardView cv = (CardView) v;
 
                     if (cv.getAlpha() == 1.0) { //if it is unselected, select it
@@ -133,7 +133,7 @@ public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<Dimmable
                         cardViewHolder.alpha = 1f;
                         hiddenPlayers.remove(player);
                     }
-                    GameLog.blurEventsInvolvingHiddenPlayers(hiddenPlayers); //Tell GameLog to update the list of which cards to blur
+                    GameManager.blurEventsInvolvingHiddenPlayers(hiddenPlayers); //Tell GameLog to update the list of which cards to blur
                 }
             }
         });
@@ -149,17 +149,17 @@ public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<Dimmable
     @Override
     public void onViewAttachedToWindow(@NonNull DimmableViewHolder holder) {
         super.onViewAttachedToWindow(holder);
-        if(holder.getItemViewType() == ADD_BUTTON || !GameLog.isGameStarted()) return;
+        if(holder.getItemViewType() == ADD_BUTTON || !GameManager.isGameStarted()) return;
 
         int position = holder.getLayoutPosition();
-        int claim = PlayerList.getMembershipClaims().get(position);
+        int claim = PlayerListManager.getMembershipClaims().get(position);
 
         CardView cv = holder.cv;
-        if(PlayerList.isDead(position)) {
-            PlayerList.setDeadSymbol(cv);
+        if(PlayerListManager.isDead(position)) {
+            PlayerListManager.setDeadSymbol(cv);
             return;
         }
-        PlayerList.setClaimImage(cv, claim);
+        PlayerListManager.setClaimImage(cv, claim);
     }
 }
 

@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
 
 public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPlayerListRecyclerViewAdapter.OldPlayerListViewHolder> {
@@ -36,7 +37,6 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
 
     public static class OldPlayerListViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
-        ArrayList<String> players;
 
         OldPlayerListViewHolder(View itemView) {
             super(itemView);
@@ -53,12 +53,11 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
     public OldPlayerListViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_old_player_list, viewGroup, false);
 
-        OldPlayerListViewHolder cardViewHolder = new OldPlayerListViewHolder(v);
-        return cardViewHolder;
+        return new OldPlayerListViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(OldPlayerListViewHolder oldPlayerListViewHolder, final int pos) {
+    public void onBindViewHolder(@NonNull OldPlayerListViewHolder oldPlayerListViewHolder, final int pos) {
         try {
             JSONObject object = oldPlayers.getJSONObject(pos);
             final ArrayList<String> players = new ArrayList<>();
@@ -81,7 +80,6 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
                 stringBuilder.append(playerName);
                 if(j != listLength - 1) stringBuilder.append(", ");
             }
-            oldPlayerListViewHolder.players = players;
             String playerListAsString = stringBuilder.toString();
 
             CardView cardView = oldPlayerListViewHolder.cv;
@@ -92,7 +90,7 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
             btn_use.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PlayerList.setPlayerList(players);
+                    PlayerListManager.setPlayerList(players);
                 }
             });
 
@@ -114,7 +112,7 @@ public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPl
                             }
                             rootDialog.dismiss();
                         }
-                    }, context.getString(R.string.dialog_mismatching_claims_btn_cancel), null);
+                    }, context.getString(R.string.btn_cancel), null);
                 }
             });
 

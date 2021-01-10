@@ -15,6 +15,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Arrays;
+
 public class CrashActivity extends AppCompatActivity {
 
     @Override
@@ -36,7 +38,7 @@ public class CrashActivity extends AppCompatActivity {
                     PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
                     version = pInfo.versionName;
                 } catch (PackageManager.NameNotFoundException e1) {
-                    e1.printStackTrace();
+                    Log.e("Error", Arrays.toString(e1.getStackTrace()));
                 }
 
                 String url = "https://github.com/TobeSoftwareGmbH/SecretHitlerMobileCompanion/issues/new?labels=bug"
@@ -73,7 +75,7 @@ public class CrashActivity extends AppCompatActivity {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
-                throwable.printStackTrace();
+                Log.e("Error", Arrays.toString(throwable.getStackTrace()));
                 finishAffinity();
             }
         });

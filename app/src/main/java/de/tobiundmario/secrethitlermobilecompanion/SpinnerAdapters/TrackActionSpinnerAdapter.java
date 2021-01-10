@@ -23,7 +23,6 @@ public class TrackActionSpinnerAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private static ArrayList<String> titles, descriptions;
     private static ArrayList<Drawable> icons;
-    Context c;
 
     private static void setupArrayLists(Context c) {
         titles = new ArrayList<>();
@@ -57,7 +56,6 @@ public class TrackActionSpinnerAdapter extends BaseAdapter {
     }
 
     public TrackActionSpinnerAdapter(Context c) {
-        this.c = c;
         inflater = LayoutInflater.from(c);
 
         //Set up the lists for the spinners

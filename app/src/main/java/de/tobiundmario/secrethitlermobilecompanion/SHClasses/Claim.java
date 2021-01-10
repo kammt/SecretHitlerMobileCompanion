@@ -6,10 +6,12 @@ import android.text.Html;
 import android.text.Spanned;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 
-public class Claim {
+public final class Claim {
+    private Claim() {}
     /*
     This Class is responsible for everything surrounding Claims and Claim values. Some of its functions do things like
     - color the Claim accordingly (red/blue)
@@ -35,25 +37,29 @@ public class Claim {
     public static final int NO_CLAIM = -1;
 
     public static String getClaimString(Context context, int claimString) {
+        String blueFont = "<font color='#387CB3'>";
+        String redFont = "<font color='#E23A12'>";
+        String closingHtml = "</font>";
+
         switch(claimString){
             case BBB:
-                return "<font color='#387CB3'>BBB</font>";
+                return blueFont + "BBB" + closingHtml;
             case RBB:
-                return "<font color='red'>R</font><font color='#387CB3'>BB</font>";
+                return redFont + "R" + closingHtml + blueFont +"BB" + closingHtml;
             case RRB:
-                return "<font color='red'>RR</font><font color='#387CB3'>B</font>";
+                return redFont + "RR" + closingHtml + blueFont + "B" + closingHtml;
             case RRR:
-                return "<font color='#E23A12'>RRR</font>";
+                return redFont + "RRR" + closingHtml;
             case RR:
-                return "<font color='#E23A12'>RR</font>";
+                return redFont + "RR" + closingHtml;
             case RB:
-                return "<font color='#E23A12'>R</font><font color='#387CB3'>B</font>";
+                return redFont + "R" + closingHtml + blueFont + "B" + closingHtml;
             case BB:
-                return "<font color='#387CB3'>BB</font>";
+                return blueFont + "BB" + closingHtml;
             case LIBERAL:
-                return "<font color='#387CB3'>" + context.getString(R.string.liberal) + "</font>";
+                return blueFont + context.getString(R.string.liberal) + closingHtml;
             case FASCIST:
-                return "<font color='#E23A12'>" + context.getString(R.string.fascist) + "</font>";
+                return redFont + context.getString(R.string.fascist) + closingHtml;
             default: return context.getString(R.string.claim_nothing); //Either no claim was made or the value is invalid
         }
     }
@@ -98,12 +104,10 @@ public class Claim {
         else if (presidentClaim == RBB && chancellorClaim == BB && playedPolicy == LIBERAL) return true;
         else if (presidentClaim == RBB && chancellorClaim == RB) return true; //It doesn't matter what policy is played, not checking
 
-        else if (presidentClaim == BBB && chancellorClaim == BB && playedPolicy == LIBERAL) return true;
-
-        else return false;
+        else return presidentClaim == BBB && chancellorClaim == BB && playedPolicy == LIBERAL;
     }
 
-    public static ArrayList<String> getPresidentClaims() {
+    public static List<String> getPresidentClaims() {
         ArrayList<String> claims = new ArrayList<>();
 
         claims.add("RRR");
@@ -114,7 +118,7 @@ public class Claim {
         return claims;
     }
 
-    public static ArrayList<String> getChancellorClaims() {
+    public static List<String> getChancellorClaims() {
         ArrayList<String> claims = new ArrayList<>();
 
         claims.add("RR");

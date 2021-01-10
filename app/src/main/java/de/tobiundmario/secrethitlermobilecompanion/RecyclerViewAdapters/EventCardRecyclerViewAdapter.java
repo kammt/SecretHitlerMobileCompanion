@@ -15,7 +15,10 @@ import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.RecyclerViewManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
@@ -53,7 +56,7 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
     }
 
     public void blurCardIfNeeded(DimmableViewHolder cardViewHolder, int position) {
-        boolean toBeBlurred = GameLog.hiddenEventIndexes.contains(position);
+        boolean toBeBlurred = GameEventsManager.hiddenEventIndexes.contains(position);
         CardView cv = cardViewHolder.cv;
 
         if(toBeBlurred) {
@@ -105,20 +108,20 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
 
         if(event.isSetup) {
              //The Cancel button is visible on every card, hence we initialise it here to save code
-            btn_cancel.setText(c.getString(R.string.dialog_mismatching_claims_btn_cancel));
+            btn_cancel.setText(c.getString(R.string.btn_cancel));
             btn_cancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!event.isEditing) GameLog.remove(event);
+                    if (!event.isEditing) GameEventsManager.remove(event);
                     else {
                         event.isEditing = false;
                         event.isSetup = false;
-                        GameLog.getCardListAdapter().notifyItemChanged(position);
+                        RecyclerViewManager.getCardListAdapter().notifyItemChanged(position);
                     }
                 }
             });
 
-            if(!GameLog.gameTrack.isManualMode() && !(event instanceof LegislativeSession) && !(event instanceof DeckShuffledEvent) && !(event instanceof GameEndCard) && !event.isEditing) { //If manual mode is disabled, then we don't want to have cancel buttons on automatically generated actions
+            if(!GameManager.gameTrack.isManualMode() && !(event instanceof LegislativeSession) && !(event instanceof DeckShuffledEvent) && !(event instanceof GameEndCard) && !event.isEditing) { //If manual mode is disabled, then we don't want to have cancel buttons on automatically generated actions
                 btn_cancel.setVisibility(View.GONE);
             } else {
                 btn_cancel.setVisibility(View.VISIBLE);
@@ -132,8 +135,8 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
                 cv.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        if(GameLog.editingEnabled) {
-                            if (event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() != GameLog.legSessionNo - 1) {
+                        if(GameEventsManager.editingEnabled) {
+                            if (event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() != LegislativeSessionManager.legSessionNo - 1) {
                                 Toast.makeText(c, c.getString(R.string.toast_message_edit_blocked), Toast.LENGTH_LONG).show();
                             } else {
                                 event.isEditing = true;

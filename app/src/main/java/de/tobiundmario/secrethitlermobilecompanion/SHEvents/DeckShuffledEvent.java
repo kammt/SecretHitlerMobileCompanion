@@ -19,7 +19,7 @@ import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
 
 public class DeckShuffledEvent extends GameEvent {
 
@@ -65,7 +65,7 @@ public class DeckShuffledEvent extends GameEvent {
                     liberalPolicies = Integer.parseInt(et_liberalp.getText().toString());
                     fascistPolicies = Integer.parseInt(et_fascistp.getText().toString());
                     isSetup = false;
-                    GameLog.notifySetupPhaseLeft(DeckShuffledEvent.this);
+                    GameEventsManager.notifySetupPhaseLeft(DeckShuffledEvent.this);
                 }
             }
         });
@@ -96,7 +96,7 @@ public class DeckShuffledEvent extends GameEvent {
 
         ArrayList<LegislativeSession> legSessions = new ArrayList<>();
         DeckShuffledEvent lastShuffle = null;
-        List<GameEvent> eventList = GameLog.getEventList();
+        List<GameEvent> eventList = GameEventsManager.getEventList();
 
         int position = eventList.indexOf(DeckShuffledEvent.this);
 
@@ -146,7 +146,7 @@ public class DeckShuffledEvent extends GameEvent {
     }
 
     @Override
-    public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
+    public boolean allInvolvedPlayersAreUnselected(List<String> unselectedPlayers) {
         return false; //as no players are involved anyway
     }
 

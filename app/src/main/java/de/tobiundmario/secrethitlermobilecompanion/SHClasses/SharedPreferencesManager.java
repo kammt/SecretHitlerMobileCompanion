@@ -24,11 +24,15 @@ import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CustomTracksRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.OldPlayerListRecyclerViewAdapter;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.JSONManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
-public class SharedPreferencesManager {
+public final class SharedPreferencesManager {
 
     private static OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter;
     private static CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter;
+
+    private SharedPreferencesManager() {}
 
     public static void destroy() {
         oldPlayerListRecyclerViewAdapter = null;
@@ -131,7 +135,7 @@ public class SharedPreferencesManager {
     }
 
     private static JSONObject playerListtoJSON() throws JSONException {
-        ArrayList<String> playerList = PlayerList.getPlayerList();
+        ArrayList<String> playerList = PlayerListManager.getPlayerList();
 
         JSONObject object = new JSONObject();
         for(int i = 0; i < playerList.size(); i++) {

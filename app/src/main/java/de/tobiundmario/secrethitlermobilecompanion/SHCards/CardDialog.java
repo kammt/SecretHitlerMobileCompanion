@@ -26,7 +26,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
 import de.tobiundmario.secrethitlermobilecompanion.SpinnerAdapters.TrackActionSpinnerAdapter;
 
-public class CardDialog {
+public final class CardDialog {
 
     private static int message = 0;
     private static int input = 1;
@@ -35,6 +35,8 @@ public class CardDialog {
     private static View.OnClickListener listener_forward_one;
     private static View.OnClickListener listener_create_track = null;
     private static View.OnClickListener listener_backward_two = null;
+
+    private CardDialog() {}
 
     public static void destroy() {
         listener_forward_one = null;
@@ -65,8 +67,8 @@ public class CardDialog {
     }
 
     public static void showTrackCreationDialog(final Context c) {
-        String positive = c.getString(R.string.dialog_mismatching_claims_btn_continue);
-        String negative = c.getString(R.string.dialog_mismatching_claims_btn_cancel);
+        String positive = c.getString(R.string.btn_continue);
+        String negative = c.getString(R.string.btn_cancel);
 
         final CustomDialog customDialog = createDialog(c, c.getString(R.string.new_fascistTrack), null, positive, null, negative, null, trackCreation);
 
@@ -100,7 +102,7 @@ public class CardDialog {
                     input_electionTrackerLength.setVisibility(View.GONE);
                     title_eTrackerLength.setVisibility(View.GONE);
                 } else {
-                    tvPositive.setText(c.getString(R.string.dialog_mismatching_claims_btn_continue));
+                    tvPositive.setText(c.getString(R.string.btn_continue));
 
                     input_electionTrackerLength.setVisibility(View.VISIBLE);
                     title_eTrackerLength.setVisibility(View.VISIBLE);
@@ -133,12 +135,11 @@ public class CardDialog {
                     error = true;
                 }
 
-                if(!manual) {
-                    if (eTrackerLength.equals("") || Integer.parseInt(eTrackerLength) <= 0) {
-                        input_electionTrackerLength.setError(c.getString(R.string.error_invalid_value));
-                        error = true;
-                    }
+                if (!manual && (eTrackerLength.equals("") || Integer.parseInt(eTrackerLength) <= 0)) {
+                    input_electionTrackerLength.setError(c.getString(R.string.error_invalid_value));
+                    error = true;
                 }
+
 
                 if(error) return;
 
@@ -193,10 +194,10 @@ public class CardDialog {
                 container_general.setVisibility(View.VISIBLE);
 
                 //Change the buttons
-                tvPositive.setText(c.getString(R.string.dialog_mismatching_claims_btn_continue));
+                tvPositive.setText(c.getString(R.string.btn_continue));
                 tvPositive.setOnClickListener(listener_forward_one);
 
-                tvNegative.setText(c.getString(R.string.dialog_mismatching_claims_btn_cancel));
+                tvNegative.setText(c.getString(R.string.btn_cancel));
                 tvNegative.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -234,7 +235,7 @@ public class CardDialog {
                     fascistTrack.setElectionTrackerLength(Integer.parseInt(input_electionTrackerLength.getText().toString()));
                 } else {
                     fascistTrack.setManualMode(true);
-                };
+                }
 
                 try {
                     SharedPreferencesManager.writeFascistTrack(fascistTrack, c);
@@ -338,7 +339,7 @@ public class CardDialog {
         private Dialog dialog;
         private View content;
 
-        public CustomDialog(Dialog dialog, View content) {
+        CustomDialog(Dialog dialog, View content) {
             this.dialog = dialog;
             this.content = content;
         }

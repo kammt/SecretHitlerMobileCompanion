@@ -299,7 +299,7 @@ public class ModifiedDefaultItemAnimator extends SimpleItemAnimator {
     @Override
     public boolean animateChange(RecyclerView.ViewHolder oldHolder, RecyclerView.ViewHolder newHolder,
                                  int fromX, int fromY, int toX, int toY) {
-        if (oldHolder == newHolder) {
+        if (oldHolder.equals(newHolder)) {
             // Don't know how to run change animations when the same view holder is re-used.
             // run a move animation to handle position changes.
             return animateMove(oldHolder, fromX, fromY, toX, toY);
@@ -380,10 +380,8 @@ public class ModifiedDefaultItemAnimator extends SimpleItemAnimator {
     private void endChangeAnimation(List<ChangeInfo> infoList, RecyclerView.ViewHolder item) {
         for (int i = infoList.size() - 1; i >= 0; i--) {
             ChangeInfo changeInfo = infoList.get(i);
-            if (endChangeAnimationIfNecessary(changeInfo, item)) {
-                if (changeInfo.oldHolder == null && changeInfo.newHolder == null) {
-                    infoList.remove(changeInfo);
-                }
+            if (endChangeAnimationIfNecessary(changeInfo, item) && changeInfo.oldHolder == null && changeInfo.newHolder == null) {
+                infoList.remove(changeInfo);
             }
         }
     }

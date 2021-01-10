@@ -19,11 +19,6 @@ public class MainScreenFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -38,7 +33,7 @@ public class MainScreenFragment extends Fragment {
         createGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).replaceFragment(MainActivity.setup, true);
+                ((MainActivity) getActivity()).replaceFragment(MainActivity.page_setup, true);
             }
         });
     }

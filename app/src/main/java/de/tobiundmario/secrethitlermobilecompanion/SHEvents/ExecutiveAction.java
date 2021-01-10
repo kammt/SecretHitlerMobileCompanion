@@ -20,6 +20,18 @@ public abstract class ExecutiveAction extends GameEvent {
 
     String presidentName, targetName;
 
+    public String getPresidentName() {
+        return presidentName;
+    }
+
+    public void setPresidentName(String presidentName) {
+        this.presidentName = presidentName;
+    }
+
+    public String getTargetName() {
+        return targetName;
+    }
+
     private LegislativeSession linkedLegislativeSession;
 
     public LegislativeSession getLinkedLegislativeSession() {

@@ -13,10 +13,14 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
-public class FascistTrackSelectionManager {
+public final class FascistTrackSelectionManager {
 
     public static final int TRACK_TYPE_5_TO_6 = 5;
     public static final int TRACK_TYPE_7_TO_8 = 6;
@@ -25,10 +29,12 @@ public class FascistTrackSelectionManager {
     public static int selectedTrackIndex = -1;
     public static int recommendedTrackIndex = -1;
 
-    public static ArrayList<CardView> trackCards = new ArrayList<>();
-    public static ArrayList<FascistTrack> fasTracks = new ArrayList<>();
+    public static List<CardView> trackCards = new ArrayList<>();
+    public static List<FascistTrack> fasTracks = new ArrayList<>();
     public static CardView recommendedCard;
     public static CardView previousSelection;
+
+    private FascistTrackSelectionManager() {}
 
     /*
     This class is responsible for handling clicks on the "Use"-button in the Fascist Track Selection Screen of the Setup phase.
@@ -89,7 +95,7 @@ public class FascistTrackSelectionManager {
 
     public static void changeRecommendedCard(int newRecommendationIndex, CardView cardView, Context context) {
         if(newRecommendationIndex == selectedTrackIndex) {
-            updateTrackCard(cardView, true, context);
+            updateTrackCard(cardView, true, context, -2);
         }
         recommendedTrackIndex = newRecommendationIndex;
         recommendedCard = cardView;
@@ -102,39 +108,28 @@ public class FascistTrackSelectionManager {
     public static void processSelection(int newSelection, CardView cardView, FascistTrack fascistTrack, Context context) {
         if(newSelection != -1) {
             //Unselecting the old card
-            if (selectedTrackIndex != -1) {
-
-                updateTrackCard(previousSelection, false, context);
-                if (selectedTrackIndex == recommendedTrackIndex) {
-                    updateTrackCard(recommendedCard, false, context);
-                }
-
-            }
+            if (selectedTrackIndex != -1) updateTrackCard(previousSelection, false, context, selectedTrackIndex);
 
             //Select the new card
-            if (newSelection == recommendedTrackIndex) {
-                updateTrackCard(recommendedCard, true, context);
-            }
-
-            updateTrackCard(cardView, true, context); //If it is an official card, we just need to get the cardView from the ArrayList
+            updateTrackCard(cardView, true, context, newSelection); //If it is an official card, we just need to get the cardView from the ArrayList
 
             //Override the selection value
             selectedTrackIndex = newSelection;
 
             //Update the FascistTrack in GameLog
-            GameLog.gameTrack = fascistTrack;
+            GameManager.gameTrack = fascistTrack;
             previousSelection = cardView;
         } else if(selectedTrackIndex != -1){
             //When newSelection is -1, all items should be unselected
-            updateTrackCard(trackCards.get(selectedTrackIndex), false, context);
-            GameLog.gameTrack = null;
+            updateTrackCard(trackCards.get(selectedTrackIndex), false, context, selectedTrackIndex);
+            GameManager.gameTrack = null;
 
-            selectedTrackIndex = -1;
             recommendedTrackIndex = -1;
         }
     }
 
-    public static void updateTrackCard(CardView cardView, boolean selected, Context context) {
+    public static void updateTrackCard(CardView cardView, boolean selected, Context context, int index) {
+        if(index == recommendedTrackIndex) updateTrackCard(recommendedCard, selected, context, -2);
         Button button = cardView.findViewById(R.id.btn_use);
 
         if(selected) {
@@ -157,10 +152,12 @@ public class FascistTrackSelectionManager {
         }
 
         //Adding the official tracks to the LinearLayout
-        LayoutInflater inflater = LayoutInflater.from(c);
+        addOfficialTracksToLayout(LayoutInflater.from(c), ll_official_tracks, c);
+    }
 
+    private static void addOfficialTracksToLayout(LayoutInflater inflater, LinearLayout ll_official_tracks, Context c) {
         //For 5-6 players
-        final CardView cv_56 = (CardView) inflater.inflate(R.layout.card_official_track, ll_official_tracks, false);
+        CardView cv_56 = (CardView) inflater.inflate(R.layout.card_official_track, ll_official_tracks, false);
         FascistTrackSelectionManager.setupOfficialCard(cv_56, FascistTrackSelectionManager.TRACK_TYPE_5_TO_6, c);
         ll_official_tracks.addView(cv_56);
         FascistTrackSelectionManager.trackCards.add(0, cv_56);
@@ -191,5 +188,40 @@ public class FascistTrackSelectionManager {
         ft_910.setActions(new int[] {FascistTrack.INVESTIGATION, FascistTrack.INVESTIGATION, FascistTrack.SPECIAL_ELECTION, FascistTrack.EXECUTION, FascistTrack.EXECUTION});
         ft_910.setElectionTrackerLength(3);
         FascistTrackSelectionManager.fasTracks.add(2, ft_910);
+    }
+
+    public static int getRecommendedTrack() {
+        int playerCount = PlayerListManager.getPlayerList().size();
+        if(playerCount == 5 || playerCount == 6) {
+            return 0;
+        } else if(playerCount == 7 || playerCount == 8) {
+            return 1;
+        } else if(playerCount == 9 || playerCount ==10) {
+            return 2;
+        }
+
+        else return -1;
+    }
+
+    public static void setupRecommendedCard(LayoutInflater inflater, LinearLayout container_recommended_track) {
+        int recommendation = getRecommendedTrack();
+        Context context = GameEventsManager.getContext();
+
+        //Only change the layout if the recommendation changed
+        if(recommendation != FascistTrackSelectionManager.recommendedTrackIndex) {
+            CardView cv_recommended_track = (CardView) inflater.inflate(R.layout.card_official_track, container_recommended_track, false);
+
+            if (recommendation == 0) {
+                FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_5_TO_6, context);
+            } else if (recommendation == 1) {
+                FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_7_TO_8, context);
+            } else if (recommendation == 2) {
+                FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_9_TO_10, context);
+            }
+
+            container_recommended_track.removeAllViews();
+            container_recommended_track.addView(cv_recommended_track);
+            FascistTrackSelectionManager.changeRecommendedCard(recommendation, cv_recommended_track, context);
+        }
     }
 }

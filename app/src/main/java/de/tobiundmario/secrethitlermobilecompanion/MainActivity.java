@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
@@ -13,11 +14,16 @@ import android.widget.ProgressBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import java.util.Arrays;
+
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.JSONManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.BackupManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.JSONManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.RecyclerViewManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Thread.UncaughtExceptionHandler uncaughtExceptionHandler;
 
-    public static final int main = 0, setup = 1, game = 2;
+    public static final int page_main = 0, page_setup = 1, game = 2;
 
 
     @Override
@@ -53,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         fragment_setup.initialiseLayout();
 
-        GameLog.setContext(this);
+        GameEventsManager.setContext(this);
         checkForBackups();
 
         uncaughtExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -64,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             public void uncaughtException (Thread thread, Throwable e)
             {
                 try {
-                    e.printStackTrace();
+                    Log.e("Error", Arrays.toString(e.getStackTrace()));
 
                     //Re-set the exception Handler
                     Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
@@ -75,8 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
                     startActivity(intent);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
-                    uncaughtExceptionHandler.uncaughtException(thread, ex);
+                    Log.e("Error", Arrays.toString(ex.getStackTrace()));
                 }
             }
         });
@@ -86,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         final LinearLayout oldContainer = currentFragmentContainer;
 
         switch (fragmentNumberToReplace) {
-            case main:
+            case page_main:
                 container_main.setVisibility(View.VISIBLE);
                 currentFragmentContainer = container_main;
                 break;
@@ -95,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 currentFragmentContainer = container_game;
                 fragment_game.start();
                 break;
-            case setup:
+            case page_setup:
                 container_setup.setVisibility(View.VISIBLE);
                 currentFragmentContainer = container_setup;
                 fragment_setup.startSetup();
@@ -133,9 +138,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if(currentFragmentContainer.equals(container_setup)) {
-            fragment_setup.previousPage();
-        } else if(GameLog.isGameStarted()) { //Game is currently running, we ask the user if he wants to end the game
-            if(!GameLog.swipeEnabled) return; //This means that the "Game Ended" Screen is currently showing, we do not want to show the dialog during this
+            fragment_setup.previousSetupPage();
+        } else if(GameManager.isGameStarted()) { //Game is currently running, we ask the user if he wants to end the game
+            if(!RecyclerViewManager.swipeEnabled) return; //This means that the "Game Ended" Screen is currently showing, we do not want to show the dialog during this
 
             CardDialog.showMessageDialog(this, getString(R.string.title_end_game_policies), null, getString(R.string.yes), new Runnable() {
                 @Override
@@ -149,43 +154,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
 
         //These functions set references to MainActivity to null, as not doing this would result in a memory leak
-        GameLog.destroy();
-        PlayerList.destroy();
+        GameEventsManager.destroy();
+        PlayerListManager.destroy();
         JSONManager.destroy();
         FascistTrackSelectionManager.destroy();
         CardDialog.destroy();
         ExceptionHandler.destroy();
+        Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
         uncaughtExceptionHandler = null;
     }
 
     public void checkForBackups() {
-        if(GameLog.backupPresent()) {
+        if(BackupManager.backupPresent()) {
             CardDialog.showMessageDialog(this, getString(R.string.dialog_restore_title), getString(R.string.dialog_restore_msg), getString(R.string.yes), new Runnable() {
                 @Override
                 public void run() {
-                    PlayerList.setContext(MainActivity.this);
-                    GameLog.restoreBackup();
+                    PlayerListManager.setContext(MainActivity.this);
+                    BackupManager.restoreBackup();
                     replaceFragment(game, true);
                 }
             }, getString(R.string.no), new Runnable() {
                 @Override
                 public void run() {
-                    GameLog.deleteBackup();
+                    BackupManager.deleteBackup();
                 }
             });
         }

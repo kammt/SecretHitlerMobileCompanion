@@ -1,6 +1,8 @@
 package de.tobiundmario.secrethitlermobilecompanion.Server;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
@@ -16,11 +18,12 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 
 import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.JSONManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.JSONManager;
 import fi.iki.elonen.NanoHTTPD;
 
 import static android.content.Context.WIFI_SERVICE;
@@ -28,6 +31,8 @@ import static android.content.Context.WIFI_SERVICE;
 public class Server extends NanoHTTPD {
     private Context c;
     private int port;
+
+    public static final int MOBILE_DATA = 3, WIFI = 2, NOT_CONNECTED = 1;
 
     private HashSet<String> clientIPs;
 
@@ -87,14 +92,14 @@ public class Server extends NanoHTTPD {
             case "/bootstrap.min.css":
                 return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("bootstrap.min.css"));
             case "/getGameJSON":
-                if (GameLog.isGameStarted()) {
+                if (GameManager.isGameStarted()) {
                     String response = JSONManager.getCompleteGameJSON(clientIP);
                     Log.v("/getGameJSON: JSON: ", response);
                     return newFixedLengthResponse(Response.Status.OK, "application/json", response);
                 }
                 return newFixedLengthResponse(Response.Status.SERVICE_UNAVAILABLE, "application/json", "");
             case "/getGameChangesJSON":
-                if (GameLog.isGameStarted()) {
+                if (GameManager.isGameStarted()) {
                     String response = JSONManager.getGameChangesJSON(clientIP);
                     Log.v("/getGameChanges: JSON: ", response);
                     return newFixedLengthResponse(Response.Status.OK, "application/json", response);
@@ -152,7 +157,7 @@ public class Server extends NanoHTTPD {
         if(isUsingHotspot(wifiManager)) return "http://" + getHotspotIPAddress() + ":" + port;
 
         int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
-        final String formatedIpAddress = String.format("%d.%d.%d.%d", (ipAddress & 0xff), (ipAddress >> 8 & 0xff),
+        final String formatedIpAddress = String.format(Locale.GERMANY, "%d.%d.%d.%d", (ipAddress & 0xff), (ipAddress >> 8 & 0xff),
                 (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
 
 
@@ -160,7 +165,7 @@ public class Server extends NanoHTTPD {
     }
 
 
-    public boolean isUsingHotspot(WifiManager wifiManager) {
+    public static boolean isUsingHotspot(WifiManager wifiManager) {
         int actualState = 0;
         try {
             java.lang.reflect.Method method = wifiManager.getClass().getDeclaredMethod("getWifiApState");
@@ -169,7 +174,7 @@ public class Server extends NanoHTTPD {
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             ExceptionHandler.showErrorSnackbar(e, "Server.isUsingHotspot()");
         }
-        return actualState == 13; //public static int AP_STATE_ENABLED = 13;
+        return actualState == 13; //AP_STATE_ENABLED = 13;
     }
 
     private String getHotspotIPAddress() {
@@ -196,6 +201,23 @@ public class Server extends NanoHTTPD {
         }
 
         return deviceIpAddress;
+    }
+
+    public static int getConnectionType(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null) {
+            // connected to the internet
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                // connected to wifi
+                return  WIFI;
+            } else if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                // connected to mobile data
+                return MOBILE_DATA;
+            }
+        }
+
+        return NOT_CONNECTED;
     }
 
 }

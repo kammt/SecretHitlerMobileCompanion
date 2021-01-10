@@ -14,12 +14,12 @@ import androidx.cardview.widget.CardView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameLog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.PlayerList;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
 public class SpecialElectionEvent extends ExecutiveAction {
     Context context;
@@ -38,7 +38,7 @@ public class SpecialElectionEvent extends ExecutiveAction {
 
     @Override
     public String getInfoText() {
-        return context.getString(R.string.specialElection_string, PlayerList.boldPlayerName(presidentName), PlayerList.boldPlayerName(targetName));
+        return context.getString(R.string.specialElection_string, PlayerListManager.boldPlayerName(presidentName), PlayerListManager.boldPlayerName(targetName));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class SpecialElectionEvent extends ExecutiveAction {
                     Toast.makeText(context, context.getString(R.string.err_names_cannot_be_the_same), Toast.LENGTH_LONG).show();
                 } else {
                     isSetup = false;
-                    GameLog.notifySetupPhaseLeft(SpecialElectionEvent.this);
+                    GameEventsManager.notifySetupPhaseLeft(SpecialElectionEvent.this);
                 }
             }
         });
@@ -90,12 +90,12 @@ public class SpecialElectionEvent extends ExecutiveAction {
         Spinner electedSpinner = cardView.findViewById(R.id.spinner_executed_player);
         Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
 
-        presSpinner.setSelection(PlayerList.getPlayerPosition( presidentName ));
-        electedSpinner.setSelection(PlayerList.getPlayerPosition( targetName ));
+        presSpinner.setSelection(PlayerListManager.getPlayerPosition( presidentName ));
+        electedSpinner.setSelection(PlayerListManager.getPlayerPosition( targetName ));
     }
 
     @Override
-    public boolean allInvolvedPlayersAreUnselected(ArrayList<String> unselectedPlayers) {
+    public boolean allInvolvedPlayersAreUnselected(List<String> unselectedPlayers) {
         return unselectedPlayers.contains(presidentName) && unselectedPlayers.contains(targetName);
     }
 

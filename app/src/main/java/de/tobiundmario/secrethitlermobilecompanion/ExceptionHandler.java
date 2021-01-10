@@ -14,10 +14,12 @@ import com.google.android.material.snackbar.Snackbar;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-public class ExceptionHandler {
+public final class ExceptionHandler {
 
     private static Context context;
     private static String version = "(Error)";
+
+    private ExceptionHandler() {}
 
     public static void initialise(Context context) {
         ExceptionHandler.context = context;

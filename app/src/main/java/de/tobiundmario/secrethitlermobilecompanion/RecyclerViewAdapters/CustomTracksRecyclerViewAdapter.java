@@ -23,7 +23,7 @@ import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.JSONManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.JSONManager;
 
 public class CustomTracksRecyclerViewAdapter extends RecyclerView.Adapter<CustomTracksRecyclerViewAdapter.TrackViewHolder> {
 
@@ -53,8 +53,7 @@ public class CustomTracksRecyclerViewAdapter extends RecyclerView.Adapter<Custom
     public TrackViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_fascist_track, viewGroup, false);
 
-        TrackViewHolder cardViewHolder = new TrackViewHolder(v);
-        return cardViewHolder;
+        return new TrackViewHolder(v);
     }
 
     @Override
