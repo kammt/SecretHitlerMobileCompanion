@@ -22,7 +22,7 @@ import org.json.JSONObject;
 import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.JSONManager;
 
 public class CustomTracksRecyclerViewAdapter extends RecyclerView.Adapter<CustomTracksRecyclerViewAdapter.TrackViewHolder> {

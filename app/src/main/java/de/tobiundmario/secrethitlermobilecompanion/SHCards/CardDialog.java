@@ -23,7 +23,7 @@ import org.json.JSONException;
 import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.SharedPreferencesManager;
 import de.tobiundmario.secrethitlermobilecompanion.SpinnerAdapters.TrackActionSpinnerAdapter;
 
 public final class CardDialog {

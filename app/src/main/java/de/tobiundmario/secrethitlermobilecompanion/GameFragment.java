@@ -24,16 +24,16 @@ import java.io.IOException;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.BackupManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.BottomSheetMenuManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.JSONManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.RecyclerViewManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.ServerPaneManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.SharedPreferencesManager;
 import de.tobiundmario.secrethitlermobilecompanion.Server.ServerSercive;
 
 public class GameFragment extends Fragment {
@@ -107,7 +107,6 @@ public class GameFragment extends Fragment {
         //Destroying the Setup to prevent memory leaks
         FascistTrackSelectionManager.destroy();
         CardDialog.destroy();
-        SharedPreferencesManager.destroy();
 
         JSONManager.initialise();
         serverPaneManager = new ServerPaneManager(GameFragment.this);

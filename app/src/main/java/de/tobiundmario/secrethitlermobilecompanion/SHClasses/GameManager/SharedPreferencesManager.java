@@ -1,13 +1,10 @@
-package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
+package de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -24,32 +21,26 @@ import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CustomTracksRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.OldPlayerListRecyclerViewAdapter;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.JSONManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 
 public final class SharedPreferencesManager {
 
-    private static OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter;
-    private static CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter;
-
     private SharedPreferencesManager() {}
 
-    public static void destroy() {
-        oldPlayerListRecyclerViewAdapter = null;
-        customTracksRecyclerViewAdapter = null;
-    }
-
     private static boolean playerListsTheSame(JSONObject one, JSONObject two) throws JSONException {
-        int oneLength = (one.has("name")) ? one.length() - 1 : one.length();
-        int twoLength = (two.has("name")) ? two.length() - 1 : two.length();
+        int oneLength = getPlayerListLength(one);
+        int twoLength = getPlayerListLength(two);
+        if(oneLength != twoLength) return false;
 
         for(int i = 0; i < oneLength; i++) {
             String name = (String) one.get("" + i);
+
             for (int j = 0; j < twoLength; j++) {
                 if(two.get("" + j).equals(name)) break;
 
                 if(j == twoLength - 1) return false; //We just checked the last value and the name is not there, they cannot be the same
             }
+
         }
         return true;
     }
@@ -113,6 +104,7 @@ public final class SharedPreferencesManager {
 
         preferences.edit().putString("old-players", object.toString()).apply();
 
+        OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter = RecyclerViewManager.getOldPlayerListRecyclerViewAdapter();
         if(oldPlayerListRecyclerViewAdapter != null) {
             oldPlayerListRecyclerViewAdapter.oldPlayers = array;
             oldPlayerListRecyclerViewAdapter.notifyDataSetChanged();
@@ -124,14 +116,13 @@ public final class SharedPreferencesManager {
 
         for(int i = 0; i < array.length(); i++) {
             JSONObject object = array.getJSONObject(i);
-
-            int oneLength = (playerJSON.has("name")) ? playerJSON.length() - 1 : playerJSON.length();
-            int twoLength = (object.has("name")) ? object.length() - 1 : object.length();
-            if(oneLength != twoLength) continue; //They cannot be the same, skipping
-
             if(playerListsTheSame(playerJSON, object)) return true;
         }
         return false; //No objects match
+    }
+
+    private static int getPlayerListLength(JSONObject object) {
+        return (object.has("name")) ? object.length() - 1 : object.length();
     }
 
     private static JSONObject playerListtoJSON() throws JSONException {
@@ -167,63 +158,38 @@ public final class SharedPreferencesManager {
         JSONObject removed = array.getJSONObject(position);
         array.remove(position);
         writePastPlayerLists(array, context);
-        oldPlayerListRecyclerViewAdapter.notifyItemRemoved(position);
+        RecyclerViewManager.getOldPlayerListRecyclerViewAdapter().notifyItemRemoved(position);
 
         setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
 
         return removed;
     }
 
-    public static void setupOldPlayerListRecyclerView(final RecyclerView recyclerView, final Context context) {
+    public static void removePlayerListWithSnackBar(final int position, final Context context, RecyclerView recyclerView, final OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter) {
         try {
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            oldPlayerListRecyclerViewAdapter = new OldPlayerListRecyclerViewAdapter(getPastPlayerLists(context), context);
-            recyclerView.setAdapter(oldPlayerListRecyclerViewAdapter);
+            final JSONObject removed = removePlayerList(position, context);
 
-            ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            Snackbar snackbar = Snackbar.make(recyclerView, context.getString(R.string.snackbar_playerList_removed_message), BaseTransientBottomBar.LENGTH_LONG);
 
+            snackbar.setAction(context.getString(R.string.undo), new View.OnClickListener() {
                 @Override
-                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                    return false;
-                }
-
-                @Override
-                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                    final int position = viewHolder.getAdapterPosition();
+                public void onClick(View v) {
                     try {
-                        final JSONObject removed = removePlayerList(position, context);
+                        JSONArray playerListsArray = getPastPlayerLists(context);
 
-                        Snackbar snackbar = Snackbar.make(recyclerView, context.getString(R.string.snackbar_playerList_removed_message), BaseTransientBottomBar.LENGTH_LONG);
+                        addJSONObjectToArray(removed, playerListsArray, position);
 
-                        snackbar.setAction(context.getString(R.string.undo), new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    JSONArray playerListsArray = getPastPlayerLists(context);
+                        writePastPlayerLists(playerListsArray, context);
+                        oldPlayerListRecyclerViewAdapter.notifyItemInserted(position);
 
-                                    addJSONObjectToArray(removed, playerListsArray, position);
-
-                                    writePastPlayerLists(playerListsArray, context);
-                                    oldPlayerListRecyclerViewAdapter.notifyItemInserted(position);
-
-                                    setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
-                                } catch (JSONException e) {
-                                    ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.setupOldPlayerListRecyclerView().onSwiped() (Snackbar Action)");
-                                }
-                            }
-                        }).show();
+                        setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
                     } catch (JSONException e) {
-                        ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.setupOldPlayerListRecyclerView().onSwiped()");
+                        ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.removePlayerListWithSnackBar() (Snackbar Action)");
                     }
-
-
                 }
-            };
-            new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
-
-            setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
+            }).show();
         } catch (JSONException e) {
-            ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.setupOldPlayerListRecyclerView() (outer try/catch block)");
+            ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.removePlayerListWithSnackBar()");
         }
     }
 
@@ -259,6 +225,7 @@ public final class SharedPreferencesManager {
 
         preferences.edit().putString("fas-tracks", object.toString()).apply();
 
+        CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter = RecyclerViewManager.getCustomTracksRecyclerViewAdapter();
         if(customTracksRecyclerViewAdapter != null) {
             customTracksRecyclerViewAdapter.tracks = array;
             customTracksRecyclerViewAdapter.notifyDataSetChanged();
@@ -271,71 +238,47 @@ public final class SharedPreferencesManager {
         JSONObject removed = array.getJSONObject(position);
         array.remove(position);
         writeFascistTracks(array, context);
-        customTracksRecyclerViewAdapter.notifyItemRemoved(position);
+        RecyclerViewManager.getCustomTracksRecyclerViewAdapter().notifyItemRemoved(position);
 
         setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
 
         return removed;
     }
 
-    public static void setupCustomTracksRecyclerView(final RecyclerView recyclerView, final Context context) {
-        try {
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            customTracksRecyclerViewAdapter = new CustomTracksRecyclerViewAdapter(getFascistTracks(context), context);
-            recyclerView.setAdapter(customTracksRecyclerViewAdapter);
-
-            ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-
-                @Override
-                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                    return false;
-                }
-
-                @Override
-                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                    final int position = viewHolder.getAdapterPosition();
-                    try {
-                        final JSONObject removed = removeFascistTrack(position, context);
-
-                        Snackbar snackbar = Snackbar.make(recyclerView, context.getString(R.string.snackbar_track_removed_message), BaseTransientBottomBar.LENGTH_LONG);
-
-                        snackbar.setAction(context.getString(R.string.undo), new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                try {
-                                    JSONArray tracksArray = getFascistTracks(context);
-
-                                    addJSONObjectToArray(removed, tracksArray, position);
-
-                                    writeFascistTracks(tracksArray, context);
-                                    customTracksRecyclerViewAdapter.notifyItemInserted(position);
-
-                                    setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
-                                } catch (JSONException e) {
-                                    ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.setupCustomTracksRecyclerView() (Snackbar action)");
-                                }
-                            }
-                        }).show();
-                    } catch (JSONException e) {
-                        ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.setupCustomTracksRecyclerView()");
-                    }
-
-
-                }
-            };
-            new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
-
-            setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
-        } catch (JSONException e) {
-            ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.setupCustomTracksRecyclerView() (outer try/catch block)");
-        }
-    }
 
     public static void setCustomTracksTitle(TextView tv, Context context) throws JSONException {
         if(getFascistTracks(context).length() == 0) {
             tv.setText(context.getString(R.string.no_custom_tracks_title));
         } else {
             tv.setText(context.getString(R.string.custom_tracks_title));
+        }
+    }
+
+    public static void removeTrackWithSnackbar(final int position, final Context context, RecyclerView recyclerView, final CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter) {
+        try {
+            final JSONObject removed = removeFascistTrack(position, context);
+
+            Snackbar snackbar = Snackbar.make(recyclerView, context.getString(R.string.snackbar_track_removed_message), BaseTransientBottomBar.LENGTH_LONG);
+
+            snackbar.setAction(context.getString(R.string.undo), new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        JSONArray tracksArray = getFascistTracks(context);
+
+                        addJSONObjectToArray(removed, tracksArray, position);
+
+                        writeFascistTracks(tracksArray, context);
+                        customTracksRecyclerViewAdapter.notifyItemInserted(position);
+
+                        setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
+                    } catch (JSONException e) {
+                        ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.removeTrackWithSnackbar() (Snackbar action)");
+                    }
+                }
+            }).show();
+        } catch (JSONException e) {
+            ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.removeTrackWithSnackbar()");
         }
     }
 

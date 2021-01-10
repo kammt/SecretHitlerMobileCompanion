@@ -18,7 +18,6 @@ import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.EventChange;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutiveAction;

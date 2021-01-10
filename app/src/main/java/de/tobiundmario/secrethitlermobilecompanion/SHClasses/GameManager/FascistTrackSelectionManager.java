@@ -1,4 +1,4 @@
-package de.tobiundmario.secrethitlermobilecompanion.SHClasses;
+package de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager;
 
 import android.content.Context;
 import android.util.Log;
@@ -16,9 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
 
 public final class FascistTrackSelectionManager {
 

@@ -1,10 +1,12 @@
 package de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -15,9 +17,12 @@ import org.json.JSONException;
 import java.io.IOException;
 
 import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
+import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CustomTracksRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.EventCardRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.ModifiedDefaultItemAnimator;
+import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.OldPlayerListRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.EventChange;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutiveAction;
@@ -38,6 +43,9 @@ public final class RecyclerViewManager {
     private static EventCardRecyclerViewAdapter cardListAdapter;
     public static boolean swipeEnabled = false;
 
+    private static OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter;
+    private static CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter;
+
     public static EventCardRecyclerViewAdapter getCardListAdapter() {
         return cardListAdapter;
     }
@@ -55,6 +63,16 @@ public final class RecyclerViewManager {
     public static void destroy() {
         cardList = null;
         cardListAdapter = null;
+        oldPlayerListRecyclerViewAdapter = null;
+        customTracksRecyclerViewAdapter = null;
+    }
+
+    public static CustomTracksRecyclerViewAdapter getCustomTracksRecyclerViewAdapter() {
+        return customTracksRecyclerViewAdapter;
+    }
+
+    public static OldPlayerListRecyclerViewAdapter getOldPlayerListRecyclerViewAdapter() {
+        return oldPlayerListRecyclerViewAdapter;
     }
 
     public static void setupSwipeToDelete() {
@@ -149,5 +167,60 @@ public final class RecyclerViewManager {
         };
 
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(cardList);
+    }
+
+    public static void setCustomTracksRecyclerViewAdapter(CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter) {
+        RecyclerViewManager.customTracksRecyclerViewAdapter = customTracksRecyclerViewAdapter;
+    }
+
+    public static void setOldPlayerListRecyclerViewAdapter(OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter) {
+        RecyclerViewManager.oldPlayerListRecyclerViewAdapter = oldPlayerListRecyclerViewAdapter;
+    }
+
+    public static void setupCustomTracksRecyclerView(final RecyclerView recyclerView, final Context context) {
+        try {
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            customTracksRecyclerViewAdapter = new CustomTracksRecyclerViewAdapter(SharedPreferencesManager.getFascistTracks(context), context);
+            recyclerView.setAdapter(customTracksRecyclerViewAdapter);
+
+            setupSwipeCallback(recyclerView, false, context);
+
+            SharedPreferencesManager.setCustomTracksTitle( ((MainActivity) context).fragment_setup.tv_title_custom_tracks, context);
+        } catch (JSONException e) {
+            ExceptionHandler.showErrorSnackbar(e, "RecyclerViewManager.setupCustomTracksRecyclerView()");
+        }
+    }
+
+    public static void setupOldPlayerListRecyclerView(final RecyclerView recyclerView, final Context context) {
+        try {
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            oldPlayerListRecyclerViewAdapter = new OldPlayerListRecyclerViewAdapter(SharedPreferencesManager.getPastPlayerLists(context), context);
+            recyclerView.setAdapter(oldPlayerListRecyclerViewAdapter);
+
+            setupSwipeCallback(recyclerView, true, context);
+
+            SharedPreferencesManager.setCorrectPlayerListExplanationText(((MainActivity) context).fragment_setup.tv_choose_from_previous_games_players, context);
+        } catch (JSONException e) {
+            ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.setupOldPlayerListRecyclerView() (outer try/catch block)");
+        }
+    }
+
+    private static void setupSwipeCallback(final RecyclerView recyclerView, final boolean playerList, final Context context) {
+        final ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                final int position = viewHolder.getAdapterPosition();
+                if(playerList) {
+                    SharedPreferencesManager.removePlayerListWithSnackBar(position, context, recyclerView, oldPlayerListRecyclerViewAdapter);
+                } else SharedPreferencesManager.removeTrackWithSnackbar(position, context, recyclerView, customTracksRecyclerViewAdapter);
+            }
+        };
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
     }
 }

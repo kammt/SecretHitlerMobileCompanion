@@ -23,7 +23,7 @@ import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.SharedPreferencesManager;
 
 public class OldPlayerListRecyclerViewAdapter extends RecyclerView.Adapter<OldPlayerListRecyclerViewAdapter.OldPlayerListViewHolder> {
 

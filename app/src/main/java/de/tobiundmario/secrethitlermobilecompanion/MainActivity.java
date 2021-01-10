@@ -17,8 +17,8 @@ import androidx.fragment.app.FragmentManager;
 import java.util.Arrays;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.BackupManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.JSONManager;

@@ -23,11 +23,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.RecyclerViewManager;
 
 public class SetupFragment extends Fragment {
 
@@ -84,10 +84,10 @@ public class SetupFragment extends Fragment {
 
         //Initialising RecyclerViews
         RecyclerView pastPlayerLists = getView().findViewById(R.id.oldPlayerLists);
-        SharedPreferencesManager.setupOldPlayerListRecyclerView(pastPlayerLists, context);
+        RecyclerViewManager.setupOldPlayerListRecyclerView(pastPlayerLists, context);
 
         RecyclerView fascistTracks = getView().findViewById(R.id.list_custom_tracks);
-        SharedPreferencesManager.setupCustomTracksRecyclerView(fascistTracks, context);
+        RecyclerViewManager.setupCustomTracksRecyclerView(fascistTracks, context);
 
         //Resetting view visibility
         container_settings.setVisibility(View.GONE);
