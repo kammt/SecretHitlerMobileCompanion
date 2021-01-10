@@ -10,34 +10,23 @@ import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.BackupManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.BottomSheetMenuManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.JSONManager;
@@ -45,13 +34,6 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerL
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.RecyclerViewManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.ServerPaneManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
-import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LoyaltyInvestigationEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHEvents.PolicyPeekEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHEvents.SpecialElectionEvent;
-import de.tobiundmario.secrethitlermobilecompanion.SHEvents.TopPolicyPlayedEvent;
 import de.tobiundmario.secrethitlermobilecompanion.Server.ServerSercive;
 
 public class GameFragment extends Fragment {
@@ -60,18 +42,14 @@ public class GameFragment extends Fragment {
 
     RecyclerView cardList, playerCardList;
 
-    private BottomNavigationView bottomNavigationMenu_game;
-    private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener;
-
-    private BottomSheetBehavior bottomSheetBehaviorAdd;
-    private BottomSheetBehavior bottomSheetBehaviorServer;
-
     private BroadcastReceiver serverPageUpdateReceiver;
     private IntentFilter serverUpdateFilter;
 
     private boolean started = false;
 
     private ServerPaneManager serverPaneManager;
+    private BottomSheetMenuManager bottomSheetMenuManager;
+
     boolean serverConnected = false;
     private ServerSercive boundServerService;
     private ServiceConnection serverServiceConnection = new ServiceConnection() {
@@ -92,6 +70,10 @@ public class GameFragment extends Fragment {
 
     public ServerSercive getBoundServerService() {
         return boundServerService;
+    }
+
+    public ServerPaneManager getServerPaneManager() {
+        return serverPaneManager;
     }
 
     public boolean isServerConnected() {
@@ -129,22 +111,15 @@ public class GameFragment extends Fragment {
 
         JSONManager.initialise();
         serverPaneManager = new ServerPaneManager(GameFragment.this);
+        bottomSheetMenuManager = new BottomSheetMenuManager(GameFragment.this);
 
         View view = getView();
         setupRecyclerViews(view);
-        setupBottomMenu(view);
+        bottomSheetMenuManager.setupBottomMenu(view);
 
         if(GameEventsManager.server) startAndBindServerService();
 
-        try {
-            SharedPreferencesManager.writeCurrentPlayerListIfNew(context);
-            BackupManager.backupToCache();
-        } catch (JSONException | IOException e) {
-            Log.e("Error", Arrays.toString(e.getStackTrace()));
-        }
-
-        bottomNavigationMenu_game.setVisibility(View.VISIBLE);
-        bottomNavigationMenu_game.startAnimation(AnimationUtils.loadAnimation(context, R.anim.slide_in_bottom));
+        bottomSheetMenuManager.animateMenuBar(true);
 
         //Creating the BroadcastReceiver
         serverUpdateFilter = new IntentFilter();
@@ -163,6 +138,15 @@ public class GameFragment extends Fragment {
         context.registerReceiver(serverPageUpdateReceiver, serverUpdateFilter);
 
         started = true;
+    }
+
+    private void performGameBackup() {
+        try {
+            SharedPreferencesManager.writeCurrentPlayerListIfNew(context);
+            BackupManager.backupToCache();
+        } catch (JSONException | IOException e) {
+            ExceptionHandler.showErrorSnackbar(e, "GameFragement.performGameBackup()");
+        }
     }
 
     @Override
@@ -188,24 +172,14 @@ public class GameFragment extends Fragment {
             return;
         }
 
+        bottomSheetMenuManager.disableMenuBar();
         GameEventsManager.addEvent(new GameEndCard(context));
-
-        //Make the Menu non-functioning
-        bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(false);
-        bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(false);
-        bottomNavigationMenu_game.setOnNavigationItemSelectedListener(null);
-        deselectAllMenuItems();
-        //Hide the BottomSheets
-        bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN);
-        bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
         RecyclerViewManager.swipeEnabled = false;
         GameEventsManager.editingEnabled = false;
     }
 
     public void undoEndGameOptions() {
-        bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(true);
-        bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(true);
-        bottomNavigationMenu_game.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
+        bottomSheetMenuManager.enableMenuBar();
         RecyclerViewManager.swipeEnabled = true;
         GameEventsManager.editingEnabled = true;
     }
@@ -216,183 +190,10 @@ public class GameFragment extends Fragment {
 
         BackupManager.deleteBackup();
 
-        Animation swipeOutBottom = new TranslateAnimation(0, 0, 0, 200);
-        swipeOutBottom.setDuration(500);
-        bottomNavigationMenu_game.startAnimation(swipeOutBottom);
+        bottomSheetMenuManager.animateMenuBar(false);
 
         ((MainActivity) context).replaceFragment(MainActivity.page_main, true);
     }
-
-
-
-
-    /*
-    These functions below are necessary for layout initialisation
-     */
-
-    public void deselectAllMenuItems() {
-        Menu menu = bottomNavigationMenu_game.getMenu();
-        menu.getItem(0).setVisible(false);
-        menu.getItem(0).setChecked(true);
-    }
-
-    public void setupBottomMenu(View fragmentLayout) {
-        //Setting up the Bottom Menu
-        bottomNavigationMenu_game = fragmentLayout.findViewById(R.id.bottomNavigationView_game);
-        Menu menu = bottomNavigationMenu_game.getMenu();
-        menu.getItem(0).setVisible(false);
-        menu.getItem(0).setChecked(true); //As you cannot have no items selected, I created a third item, select that one and set it as hidden #Lifehack
-
-        //When the game ends, the Menu items are disabled. Hence, we enable them again just in case
-        bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(true);
-        bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(true);
-
-        //initialising the "Add Event" bottom Sheet
-        ConstraintLayout bottomSheetAdd = fragmentLayout.findViewById(R.id.bottom_sheet_add_event);
-        bottomSheetBehaviorAdd = BottomSheetBehavior.from(bottomSheetAdd);
-        bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-        /*
-        Setting up the OnClickListeners. For this, we get each ConstraintLayout by using fragmentLayout.findViewById
-        However, we have to differentiate here, as we only want Legislative Session and Deck shuffled to be visible when manual mode is enabled
-         */
-        bottomSheetAdd.findViewById(R.id.legislative_session).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                GameEventsManager.addEvent(new LegislativeSession(context));
-            }
-        });
-
-        bottomSheetAdd.findViewById(R.id.deck_shuffled).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                GameEventsManager.addEvent(new DeckShuffledEvent(context));
-            }
-        });
-
-        View entry_loyaltyInvestigation = bottomSheetAdd.findViewById(R.id.loyalty_investigation);
-        View entry_execution = bottomSheetAdd.findViewById(R.id.execution);
-        View entry_policy_peek = bottomSheetAdd.findViewById(R.id.policy_peek);
-        View entry_special_election = bottomSheetAdd.findViewById(R.id.special_election);
-        View entry_top_policy = bottomSheetAdd.findViewById(R.id.topPolicy);
-
-        if(!GameManager.gameTrack.isManualMode()) {
-            entry_loyaltyInvestigation.setVisibility(View.GONE);
-            entry_execution.setVisibility(View.GONE);
-            entry_policy_peek.setVisibility(View.GONE);
-            entry_special_election.setVisibility(View.GONE);
-            entry_top_policy.setVisibility(View.GONE);
-        } else {
-            entry_loyaltyInvestigation.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    GameEventsManager.addEvent(new LoyaltyInvestigationEvent(null, context));
-                }
-            });
-
-            entry_execution.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    GameEventsManager.addEvent(new ExecutionEvent(null, context));
-                }
-            });
-
-            entry_policy_peek.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    GameEventsManager.addEvent(new PolicyPeekEvent(null, context));
-                }
-            });
-
-            entry_special_election.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    GameEventsManager.addEvent(new SpecialElectionEvent(null, context));
-                }
-            });
-
-            entry_top_policy.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    GameEventsManager.addEvent(new TopPolicyPlayedEvent(context));
-                }
-            });
-        }
-
-
-        //Setting Up the Server Status Page
-        ConstraintLayout bottomSheetServer = fragmentLayout.findViewById(R.id.bottom_sheet_server_status);
-        bottomSheetBehaviorServer = BottomSheetBehavior.from(bottomSheetServer);
-        bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN);
-        serverPaneManager.setupServerLayout(fragmentLayout);
-
-        //Setting up the BottomSheetCallback
-        BottomSheetBehavior.BottomSheetCallback callbackAdd = new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if(newState == BottomSheetBehavior.STATE_HIDDEN && bottomSheetBehaviorServer.getState() == BottomSheetBehavior.STATE_HIDDEN) { //If the state changed to hidden (i.e. the user closed the menu), the item should now be unselected
-                    deselectAllMenuItems();
-                }
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) { }
-        };
-
-        BottomSheetBehavior.BottomSheetCallback callbackServer = new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if(newState == BottomSheetBehavior.STATE_HIDDEN && bottomSheetBehaviorAdd.getState() == BottomSheetBehavior.STATE_HIDDEN) { //If the state changed to hidden (i.e. the user closed the menu), the item should now be unselected
-                    deselectAllMenuItems();
-                }
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) { }
-        };
-        bottomSheetBehaviorAdd.addBottomSheetCallback(callbackAdd);
-        bottomSheetBehaviorServer.addBottomSheetCallback(callbackServer);
-
-        //Adding the Listener to the BottomNavigationMenu
-        onNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch(item.getItemId()) {
-                    case R.id.navigation_add_event:
-                        if(bottomSheetBehaviorAdd.getState() == BottomSheetBehavior.STATE_HIDDEN) {
-                            bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_EXPANDED);
-
-                            //Check if Server page is open. If so, we close it
-                            if(bottomSheetBehaviorServer.getState() != BottomSheetBehavior.STATE_HIDDEN) bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-                        } else bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN); //If it is already open and the user clicks it again, it should hide
-                        break;
-                    case R.id.navigation_server_status:
-                        if(bottomSheetBehaviorServer.getState() == BottomSheetBehavior.STATE_HIDDEN) {
-                            serverPaneManager.setServerStatus();
-                            bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_EXPANDED);
-
-                            //Check if Add page is open. If so, we close it
-                            if(bottomSheetBehaviorAdd.getState() != BottomSheetBehavior.STATE_HIDDEN) bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
-
-                        } else bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN); //If it is already open and the user clicks it again, it should hide
-                        break;
-                }
-                return true;
-            }
-        };
-        bottomNavigationMenu_game.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
-    }
-
-
-
 
     public void setupRecyclerViews(View fragmentLayout) {
         cardList = fragmentLayout.findViewById(R.id.cardList);
