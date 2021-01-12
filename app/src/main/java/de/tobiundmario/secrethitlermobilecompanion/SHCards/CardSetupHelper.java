@@ -176,25 +176,18 @@ public final class CardSetupHelper {
         final int[] setupPage = {1};
 
         for(int i = 0; i < setupPages.length; i++) {
-            int visibility;
-            if(i == 0) visibility = View.VISIBLE;
-            else visibility = View.GONE;
-
-            setupPages[i].setVisibility(visibility);
+            setupPages[i].setVisibility((i == 0) ? View.VISIBLE : View.GONE);
         }
-
-        final SetupFinishCondition setupFinishCondition = cardSetupListeners.getSetupFinishCondition();
-        final OnSetupCancelledListener onSetupCancelledListener = cardSetupListeners.getOnSetupCancelledListener();
-        final OnSetupFinishedListener onSetupFinishedListener = cardSetupListeners.getOnSetupFinishedListener();
 
         btn_continue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(cardSetupListeners.triggerPageSetup(setupPage[0], setupPages)) {
+                if(cardSetupListeners.shouldPageTransitionOccurr(setupPage[0])) {
                     setupPage[0]++;
                     if (setupPage[0] == 2)
                         changeButtonText(btn_back, GameEventsManager.getContext().getString(R.string.back));
-                    nextSetupPage(setupPage, setupPages, setupFinishCondition, onSetupFinishedListener);
+                    nextSetupPage(setupPage, setupPages, cardSetupListeners.getSetupFinishCondition(), cardSetupListeners.getOnSetupFinishedListener());
+                    cardSetupListeners.triggerPageSetup(setupPage[0] - 1, setupPages);
                 }
             }
         });
@@ -203,7 +196,7 @@ public final class CardSetupHelper {
             @Override
             public void onClick(View view) {
                 setupPage[0]--;
-                previousSetupPage(setupPage, setupPages, btn_back, onSetupCancelledListener);
+                previousSetupPage(setupPage, setupPages, btn_back, cardSetupListeners.getOnSetupCancelledListener());
             }
         });
     }
@@ -252,7 +245,6 @@ public final class CardSetupHelper {
 
             //Animations
             Animation slideOutRight = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_out_right);
-            slideOutRight.setFillAfter(true);
             slideOutRight.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -266,7 +258,6 @@ public final class CardSetupHelper {
                 }
             });
             Animation slideInLeft = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_in_left);
-            slideInLeft.setFillAfter(true);
             oldPage.startAnimation(slideOutRight);
 
             newPage.setVisibility(View.VISIBLE);
