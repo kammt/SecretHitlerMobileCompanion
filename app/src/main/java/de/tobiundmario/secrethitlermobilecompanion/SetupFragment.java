@@ -267,13 +267,18 @@ public class SetupFragment extends Fragment {
     }
 
     private void animateFAB(int page, boolean back) {
-        int animResource = -1;
         if(back) {
-            if(page == 1) animResource = R.anim.fab_close;
-            else if (page == 3) animResource = R.anim.fab_open;
-        } else if(page == 2) animResource = R.anim.fab_open;
+            if(page == 1) closeFAB();
+            else if (page == 2) openFab();
+        } else if(page == 2) openFab();
+    }
 
-        if(animResource != 1) fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, animResource));
+    private void openFab() {
+        fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_open));
+    }
+
+    private void closeFAB() {
+        fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_close));
     }
 
     private void animateTransition(final ConstraintLayout oldPage, ConstraintLayout newPage, Animation slide_Out, Animation slide_in, boolean progressBarOnly) {

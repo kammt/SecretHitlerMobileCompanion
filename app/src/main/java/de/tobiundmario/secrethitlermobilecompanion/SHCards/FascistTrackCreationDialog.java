@@ -140,9 +140,7 @@ public class FascistTrackCreationDialog {
     private static SetupPageOpenedListener nextSetupPage(final Context c) {
         return new SetupPageOpenedListener() {
             @Override
-            public boolean onSetupPageOpened(int pageNumber, View pageView) {
-                if(errorsOnSetupPage(c)) return false;
-
+            public void onSetupPageOpened(int pageNumber, View pageView) {
                 //Create the LayoutParams for the spinners
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                 params.bottomMargin = 50;
@@ -168,7 +166,11 @@ public class FascistTrackCreationDialog {
                         ll_actions.addView(spinner);
                     }
                 }
-                return true;
+            }
+
+            @Override
+            public boolean shouldSetupPageBeOpened(int pageNumber) {
+                return !errorsOnSetupPage(c);
             }
         };
     }
