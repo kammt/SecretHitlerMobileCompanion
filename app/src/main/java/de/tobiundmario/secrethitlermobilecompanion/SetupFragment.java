@@ -193,7 +193,7 @@ public class SetupFragment extends Fragment {
                     FascistTrackSelectionManager.recommendedCard = null;
                 }
 
-                fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_open));
+                animateFAB(2, false);
             }
         };
     }
@@ -259,12 +259,21 @@ public class SetupFragment extends Fragment {
 
             progressBar_newValue = progressBar_value - progressBar_steps;
 
-            if(page == 1) fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_close));
-            if(page == 3) fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_open));
+            animateFAB(page, true);
             animateTransition(oldPage, newPage, slideOutRight, slideInLeft, false);
 
             if(page == 2) btn_setup_forward.setText(getString(R.string.btn_continue));
         } else cancelSetup();
+    }
+
+    private void animateFAB(int page, boolean back) {
+        int animResource = -1;
+        if(back) {
+            if(page == 1) animResource = R.anim.fab_close;
+            else if (page == 3) animResource = R.anim.fab_open;
+        } else if(page == 2) animResource = R.anim.fab_open;
+
+        if(animResource != 1) fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, animResource));
     }
 
     private void animateTransition(final ConstraintLayout oldPage, ConstraintLayout newPage, Animation slide_Out, Animation slide_in, boolean progressBarOnly) {
