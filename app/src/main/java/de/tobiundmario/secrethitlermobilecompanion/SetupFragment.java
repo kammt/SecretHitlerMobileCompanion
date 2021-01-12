@@ -260,6 +260,7 @@ public class SetupFragment extends Fragment {
             progressBar_newValue = progressBar_value - progressBar_steps;
 
             if(page == 1) fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_close));
+            if(page == 3) fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_open));
             animateTransition(oldPage, newPage, slideOutRight, slideInLeft, false);
 
             if(page == 2) btn_setup_forward.setText(getString(R.string.btn_continue));
