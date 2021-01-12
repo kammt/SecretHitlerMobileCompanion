@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.FascistTrackCreationDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
@@ -135,7 +136,7 @@ public class SetupFragment extends Fragment {
         fab_newTrack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CardDialog.showTrackCreationDialog(context);
+                FascistTrackCreationDialog.showTrackCreationDialog(context);
             }
         });
 

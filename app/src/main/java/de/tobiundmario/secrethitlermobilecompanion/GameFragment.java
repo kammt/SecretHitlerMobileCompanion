@@ -22,7 +22,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
-import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.FascistTrackCreationDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.BackupManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.BottomSheetMenuManager;
@@ -106,7 +106,7 @@ public class GameFragment extends Fragment {
     public void start() {
         //Destroying the Setup to prevent memory leaks
         FascistTrackSelectionManager.destroy();
-        CardDialog.destroy();
+        FascistTrackCreationDialog.destroy();
 
         JSONManager.initialise();
         serverPaneManager = new ServerPaneManager(GameFragment.this);
