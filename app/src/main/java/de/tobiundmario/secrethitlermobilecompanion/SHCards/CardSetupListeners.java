@@ -37,10 +37,20 @@ public class CardSetupListeners {
         return setupFinishCondition;
     }
 
-    public boolean triggerPageSetup(int page, View[] views) {
-        if(setupPageOpenedListeners == null || page >= setupPageOpenedListeners.length || setupPageOpenedListeners[page] == null) return true;
+    public boolean shouldPageTransitionOccurr(int page) {
+        if(!setupPageOpenedListenerExists(page)) return true;
         else {
-            return setupPageOpenedListeners[page].onSetupPageOpened(page, views[page]);
+            return setupPageOpenedListeners[page].shouldSetupPageBeOpened(page);
         }
+    }
+
+    public void triggerPageSetup(int page, View[] views) {
+        if(setupPageOpenedListenerExists(page)) {
+            setupPageOpenedListeners[page].onSetupPageOpened(page, views[page]);
+        }
+    }
+
+    private boolean setupPageOpenedListenerExists(int page) {
+        return !(setupPageOpenedListeners == null || page >= setupPageOpenedListeners.length || setupPageOpenedListeners[page] == null);
     }
 }
