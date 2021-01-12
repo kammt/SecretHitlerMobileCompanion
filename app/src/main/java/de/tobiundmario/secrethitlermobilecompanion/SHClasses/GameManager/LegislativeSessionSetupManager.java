@@ -17,6 +17,7 @@ import androidx.cardview.widget.CardView;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupListeners;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.OnSetupCancelledListener;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.OnSetupFinishedListener;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.SetupFinishCondition;
@@ -155,12 +156,17 @@ public class LegislativeSessionSetupManager {
             }
         };
 
-        CardSetupHelper.initialiseSetupPages(new View[]{cardView.findViewById(R.id.page1_selection), cardView.findViewById(R.id.page2_voting), cardView.findViewById(R.id.page3_policies), cardView.findViewById(R.id.page4_claims)}, (Button) cardView.findViewById(R.id.btn_setup_forward), (Button) cardView.findViewById(R.id.btn_setup_back), onSetupFinishedListener, onSetupCancelledListener, new SetupFinishCondition() {
+        CardSetupListeners cardSetupListeners = new CardSetupListeners();
+        cardSetupListeners.setOnSetupFinishedListener(onSetupFinishedListener);
+        cardSetupListeners.setOnSetupCancelledListener(onSetupCancelledListener);
+        cardSetupListeners.setSetupFinishCondition(new SetupFinishCondition() {
             @Override
             public boolean shouldSetupBeFinished(int newPage) {
                 return icon_nein.getAlpha() == 1f && newPage == 3;
             }
         });
+
+        CardSetupHelper.initialiseSetupPages(new View[]{cardView.findViewById(R.id.page1_selection), cardView.findViewById(R.id.page2_voting), cardView.findViewById(R.id.page3_policies), cardView.findViewById(R.id.page4_claims)}, (Button) cardView.findViewById(R.id.btn_setup_forward), (Button) cardView.findViewById(R.id.btn_setup_back), cardSetupListeners);
     }
 
     private void setupFinished() {

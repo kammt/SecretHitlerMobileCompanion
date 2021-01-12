@@ -169,12 +169,10 @@ public final class CardSetupHelper {
      * @param setupPages An Array of pages, must be in correct order
      * @param btn_continue a reference to the next page button
      * @param btn_back a reference to the previous page button
-     * @param onSetupFinishedListener called when the setup is finished
-     * @param onSetupCancelledListener called the setup has been cancelled by the user
-     * @param setupFinishCondition a function that provides a condition on whether a setup should be finished earlier when the user hits the "next" button. Example: When the user selects that a vote was rejected, the setup should be finished earlier since no policy is played
+     * @param cardSetupListeners A helper class containing multiple Listeners useful for creating a setup
      */
-    public static void initialiseSetupPages(final View[] setupPages, Button btn_continue, final Button btn_back, final OnSetupFinishedListener onSetupFinishedListener, final OnSetupCancelledListener onSetupCancelledListener, final SetupFinishCondition setupFinishCondition) {
-        btn_back.setText(GameEventsManager.getContext().getString(R.string.btn_cancel));
+    public static void initialiseSetupPages(final View[] setupPages, View btn_continue, final View btn_back, final CardSetupListeners cardSetupListeners) {
+        changeButtonText(btn_back, GameEventsManager.getContext().getString(R.string.btn_cancel));
         final int[] setupPage = {1};
 
         for(int i = 0; i < setupPages.length; i++) {
@@ -185,13 +183,20 @@ public final class CardSetupHelper {
             setupPages[i].setVisibility(visibility);
         }
 
+        final SetupFinishCondition setupFinishCondition = cardSetupListeners.getSetupFinishCondition();
+        final OnSetupCancelledListener onSetupCancelledListener = cardSetupListeners.getOnSetupCancelledListener();
+        final OnSetupFinishedListener onSetupFinishedListener = cardSetupListeners.getOnSetupFinishedListener();
+
         btn_continue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setupPage[0]++;
-                if(setupPage[0] == 2) btn_back.setText(GameEventsManager.getContext().getString(R.string.back));
-                nextSetupPage(setupPage, setupPages, setupFinishCondition, onSetupFinishedListener);
+                if(cardSetupListeners.triggerPageSetup(setupPage[0], setupPages)) {
+                    setupPage[0]++;
+                    if (setupPage[0] == 2)
+                        changeButtonText(btn_back, GameEventsManager.getContext().getString(R.string.back));
+                    nextSetupPage(setupPage, setupPages, setupFinishCondition, onSetupFinishedListener);
                 }
+            }
         });
 
         btn_back.setOnClickListener(new View.OnClickListener() {
@@ -239,7 +244,7 @@ public final class CardSetupHelper {
         }
     }
 
-    private static void previousSetupPage(int[] setupPage, View[] setupPages, Button btn_back, OnSetupCancelledListener onSetupCancelledListener) {
+    private static void previousSetupPage(int[] setupPage, View[] setupPages, View btn_back, OnSetupCancelledListener onSetupCancelledListener) {
         final View oldPage, newPage;
         if(setupPage[0] >= 1) {
             oldPage = setupPages[setupPage[0]];
@@ -248,6 +253,18 @@ public final class CardSetupHelper {
             //Animations
             Animation slideOutRight = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_out_right);
             slideOutRight.setFillAfter(true);
+            slideOutRight.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    oldPage.setVisibility(View.GONE);
+                }
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
             Animation slideInLeft = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_in_left);
             slideInLeft.setFillAfter(true);
             oldPage.startAnimation(slideOutRight);
@@ -255,9 +272,14 @@ public final class CardSetupHelper {
             newPage.setVisibility(View.VISIBLE);
             newPage.startAnimation(slideInLeft);
 
-            if(setupPage[0] == 1) btn_back.setText(GameEventsManager.getContext().getString(R.string.btn_cancel));
+            if(setupPage[0] == 1) changeButtonText(btn_back, GameEventsManager.getContext().getString(R.string.btn_cancel));
         } else {
-            onSetupCancelledListener.onSetupCancelled();
+            if(onSetupCancelledListener != null) onSetupCancelledListener.onSetupCancelled();
         }
+    }
+
+    private static void changeButtonText(View btn, String text) {
+        if(btn instanceof Button) ((Button) btn).setText(text);
+        else if(btn instanceof TextView) ((TextView) btn).setText(text);
     }
 }
