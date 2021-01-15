@@ -176,7 +176,7 @@ public final class BackupManager {
 
         JSONObject game = object.getJSONObject("game");
         JSONArray players = game.getJSONArray("players");
-        JSONArray plays = game.getJSONArray("plays");
+        JSONArray plays = game.has("plays") ? game.getJSONArray("plays") : null;
         GameEventsManager.jsonData = plays;
 
         //Restore players
@@ -185,7 +185,7 @@ public final class BackupManager {
         }
 
         //Restore plays
-        restorePlays(plays);
+        if(plays != null) restorePlays(plays);
 
         //When the auto-created executive action was not submitted (=> setup phase left) before the app closed, it will not be included in the backup. To mitigate this, we check if the last event is a LegislativeSession and if so add the track action again
         if(restoredEventList.size() > 0) {
