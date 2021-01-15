@@ -244,14 +244,16 @@ public class LegislativeSessionManager {
     }
 
     private static void processPolicyChange(ClaimEvent claimEvent, ClaimEvent newClaimEvent) {
+        if(newClaimEvent == null ||  newClaimEvent.isVetoed() || claimEvent == null || claimEvent.isVetoed() ) return; //This case is already covered by processRejectionOrVetoChange()
+
         //If we had a liberal policy and change it to a fascist policy, we update the policy count
-        if (newClaimEvent != null && !newClaimEvent.isVetoed() && newClaimEvent.getPlayedPolicy() == Claim.FASCIST && claimEvent != null && !claimEvent.isVetoed() && claimEvent.getPlayedPolicy() == Claim.LIBERAL) {
+        if (newClaimEvent.getPlayedPolicy() == Claim.FASCIST && claimEvent.getPlayedPolicy() == Claim.LIBERAL) {
             liberalPolicies--;
             fascistPolicies++;
         }
 
         //If we had a fascist policy and change it to a liberal policy, we update the policy count
-        if (newClaimEvent != null && !newClaimEvent.isVetoed() && newClaimEvent.getPlayedPolicy() == Claim.LIBERAL && claimEvent != null && !claimEvent.isVetoed() && claimEvent.getPlayedPolicy() == Claim.FASCIST) {
+        if (newClaimEvent.getPlayedPolicy() == Claim.LIBERAL && claimEvent.getPlayedPolicy() == Claim.FASCIST) {
             liberalPolicies++;
             fascistPolicies--;
         }
