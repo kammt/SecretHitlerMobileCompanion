@@ -175,7 +175,7 @@ public class LegislativeSessionManager {
 
         //The tests are in different sub-functions to simplify understanding the code
 
-        processRejectedOrVetoedLegislativeSession(legislativeSession, newClaimEvent, newVoteEvent);
+        processRejectionOrVetoChange(legislativeSession, newClaimEvent, newVoteEvent);
 
         processPolicyChange(claimEvent, newClaimEvent);
 
@@ -197,24 +197,29 @@ public class LegislativeSessionManager {
         }
     }
 
-    private static void processRejectedOrVetoedLegislativeSession(LegislativeSession legislativeSession, ClaimEvent newClaimEvent, VoteEvent newVoteEvent) {
+    private static void processRejectionOrVetoChange(LegislativeSession legislativeSession, ClaimEvent newClaimEvent, VoteEvent newVoteEvent) {
         ClaimEvent claimEvent = legislativeSession.getClaimEvent();
-        int factor = 0;
-        ClaimEvent checkedClaimEvent = null;
-        if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_FAILED || claimEvent != null && claimEvent.isVetoed()) {
-            //If we the rejected/vetoed event is now "normal", we increase the policy count
-            factor = 1;
-            checkedClaimEvent = newClaimEvent;
-        } else if(newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || newClaimEvent != null && newClaimEvent.isVetoed()) {
-            //If we change the event to be rejected or vetoed, we reduce the policy count
-            factor = -1;
-            checkedClaimEvent = claimEvent;
-        } else return;
 
+        boolean voteRejected = legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_FAILED;
+        boolean vetoed = claimEvent != null && claimEvent.isVetoed();
 
-        if (checkedClaimEvent != null && checkedClaimEvent.getPlayedPolicy() == Claim.LIBERAL)
+        boolean newVoteRejected = newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED;
+        boolean newClaimVetoed = newClaimEvent != null && newClaimEvent.isVetoed();
+
+        /*There are two possibilities:
+         1. The old leg.Session was rejected/vetoed and the new one isn't
+            => increase policy count, check the new Claim event
+         2. The new leg.Session is rejected/vetoed and the old one wasn't
+            => Decrease policy count, check the old claim event
+         */
+        int factor = (voteRejected || vetoed) ? 1 : -1;
+        ClaimEvent checkedClaimEvent = (voteRejected || vetoed) ? newClaimEvent : claimEvent;;
+
+        if((!voteRejected && !vetoed && !newClaimVetoed && !newVoteRejected) || checkedClaimEvent == null) return;
+
+        if (checkedClaimEvent.getPlayedPolicy() == Claim.LIBERAL)
             liberalPolicies += factor;
-        if (checkedClaimEvent != null && checkedClaimEvent.getPlayedPolicy() == Claim.FASCIST)
+        if (checkedClaimEvent.getPlayedPolicy() == Claim.FASCIST)
             fascistPolicies += factor;
     }
 
