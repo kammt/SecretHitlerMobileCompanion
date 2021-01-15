@@ -142,23 +142,22 @@ public class LegislativeSessionSetupManager {
         CardSetupHelper.setupImageViewSelector(icon_liberal, icon_fascist, ColorStateList.valueOf(context.getColor(R.color.colorLiberal)), ColorStateList.valueOf(context.getColor(R.color.colorFascist)), new View[]{cb_vetoed});
         CardSetupHelper.setupImageViewSelector(icon_ja, icon_nein, null, null, null);
 
-        OnSetupFinishedListener onSetupFinishedListener = new OnSetupFinishedListener() {
+        CardSetupListeners cardSetupListeners = new CardSetupListeners();
+
+        cardSetupListeners.setOnSetupFinishedListener(new OnSetupFinishedListener() {
             @Override
             public void onSetupFinished() {
                 setupFinished();
             }
-        };
+        });
 
-        OnSetupCancelledListener onSetupCancelledListener = new OnSetupCancelledListener() {
+        cardSetupListeners.setOnSetupCancelledListener(new OnSetupCancelledListener() {
             @Override
             public void onSetupCancelled() {
                 GameEventsManager.remove(legislativeSession);
             }
-        };
+        });
 
-        CardSetupListeners cardSetupListeners = new CardSetupListeners();
-        cardSetupListeners.setOnSetupFinishedListener(onSetupFinishedListener);
-        cardSetupListeners.setOnSetupCancelledListener(onSetupCancelledListener);
         cardSetupListeners.setSetupFinishCondition(new SetupFinishCondition() {
             @Override
             public boolean shouldSetupBeFinished(int newPage) {
