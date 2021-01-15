@@ -145,12 +145,14 @@ public final class FascistTrackSelectionManager {
 
     public static void setupOfficialTrackList(LinearLayout ll_official_tracks, Context c) {
         if(ll_official_tracks.getChildCount() > 1 && fasTracks.size() > 0) return;
-        else if(ll_official_tracks.getChildCount() > 1 && fasTracks.size() == 0) { //In this case, the arrays were cleared to prevent memory leaks. However, the CardViews are still there. Hence, we remove them first
-            while(ll_official_tracks.getChildCount() > 1) ll_official_tracks.removeViewAt(ll_official_tracks.getChildCount() - 1);
-        }
+        else { //In this case, the arrays were cleared to prevent memory leaks
+            while(ll_official_tracks.getChildCount() > 1) { //However, the CardViews are still there. Hence, we remove them first
+                ll_official_tracks.removeViewAt(ll_official_tracks.getChildCount() - 1);
+            }
 
-        //Adding the official tracks to the LinearLayout
-        addOfficialTracksToLayout(LayoutInflater.from(c), ll_official_tracks, c);
+            //Adding the official tracks to the LinearLayout
+            addOfficialTracksToLayout(LayoutInflater.from(c), ll_official_tracks, c);
+        }
     }
 
     private static void addOfficialTracksToLayout(LayoutInflater inflater, LinearLayout ll_official_tracks, Context c) {
@@ -190,15 +192,22 @@ public final class FascistTrackSelectionManager {
 
     public static int getRecommendedTrack() {
         int playerCount = PlayerListManager.getPlayerList().size();
-        if(playerCount == 5 || playerCount == 6) {
-            return 0;
-        } else if(playerCount == 7 || playerCount == 8) {
-            return 1;
-        } else if(playerCount == 9 || playerCount ==10) {
-            return 2;
-        }
+        switch (playerCount) {
+            case 5:
+            case 6:
+                return 0;
 
-        else return -1;
+            case 7:
+            case 8:
+                return 1;
+
+            case 9:
+            case 10:
+                return 2;
+
+            default:
+                return -1;
+        }
     }
 
     public static void setupRecommendedCard(LayoutInflater inflater, LinearLayout container_recommended_track) {
