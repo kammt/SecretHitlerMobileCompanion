@@ -209,29 +209,9 @@ public final class CardSetupHelper {
 
             //Animations
             Animation slideOutLeft = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_out_left);
-            slideOutLeft.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    oldPage.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
             Animation slideInRight = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_in_right);
             slideInRight.setFillAfter(true);
-            oldPage.startAnimation(slideOutLeft);
-
-            newPage.setVisibility(View.VISIBLE);
-            newPage.startAnimation(slideInRight);
-
+            animateTransition(oldPage, newPage, slideOutLeft, slideInRight);
         } else {
             onSetupFinishedListener.onSetupFinished();
         }
@@ -245,28 +225,34 @@ public final class CardSetupHelper {
 
             //Animations
             Animation slideOutRight = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_out_right);
-            slideOutRight.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    oldPage.setVisibility(View.GONE);
-                }
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-            });
             Animation slideInLeft = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_in_left);
-            oldPage.startAnimation(slideOutRight);
-
-            newPage.setVisibility(View.VISIBLE);
-            newPage.startAnimation(slideInLeft);
+            animateTransition(oldPage, newPage, slideOutRight, slideInLeft);
 
             if(setupPage[0] == 1) changeButtonText(btn_back, GameEventsManager.getContext().getString(R.string.btn_cancel));
         } else {
             if(onSetupCancelledListener != null) onSetupCancelledListener.onSetupCancelled();
         }
+    }
+
+    private static void animateTransition(final View oldPage, View newPage, Animation slide_Out, Animation slide_in) {
+        newPage.setVisibility(View.VISIBLE);
+        newPage.startAnimation(slide_in);
+
+        slide_Out.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                oldPage.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        oldPage.startAnimation(slide_Out);
     }
 
     private static void changeButtonText(View btn, String text) {
