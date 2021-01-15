@@ -49,26 +49,19 @@ public class LegislativeSessionManager {
 
     private static void updatePolicyCount(LegislativeSession legislativeSession, boolean removed) {
         boolean fascist = legislativeSession.getClaimEvent().getPlayedPolicy() == Claim.FASCIST;
+        int factor = removed ? -1 : 1; //If the event is removed, we decrease the policy count
 
         if(fascist) {
-            if(removed) {
-                fascistPolicies--;
-            } else {
-                fascistPolicies++;
+            fascistPolicies += factor;
 
-                if (fascistPolicies == gameTrack.getFasPolicies()) {
-                    ((MainActivity) GameEventsManager.getContext()).fragment_game.displayEndGameOptions();
-                } else if(GameManager.isGameStarted() && legislativeSession.getPresidentAction() == null) addTrackAction(legislativeSession, false); //This method could also be called when a game is restored. In that case, we do not want to add new events
-            }
+            if (fascistPolicies == gameTrack.getFasPolicies()) {
+                ((MainActivity) GameEventsManager.getContext()).fragment_game.displayEndGameOptions();
+            } else if(!removed && GameManager.isGameStarted() && legislativeSession.getPresidentAction() == null) addTrackAction(legislativeSession, false); //This method could also be called when a game is restored. In that case, we do not want to add new events
         } else {
-            if(removed) {
-                liberalPolicies--;
-            } else {
-                liberalPolicies++;
+            liberalPolicies += factor;
 
-                if(liberalPolicies == gameTrack.getLibPolicies()) {
-                    ((MainActivity) GameEventsManager.getContext()).fragment_game.displayEndGameOptions();
-                }
+            if(liberalPolicies == gameTrack.getLibPolicies()) {
+                ((MainActivity) GameEventsManager.getContext()).fragment_game.displayEndGameOptions();
             }
         }
     }
