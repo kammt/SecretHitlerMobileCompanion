@@ -82,19 +82,22 @@ public class LegislativeSessionManager {
             electionTracker++;
             if(electionTracker == gameTrack.getElectionTrackerLength()) {
                 electionTracker = 0;
-
-                if(GameManager.isGameStarted() && legislativeSession.getPresidentAction() == null) {
-                    TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(GameEventsManager.getContext());
-
-                    //Link them together
-                    legislativeSession.setPresidentAction(topPolicyPlayedEvent);
-                    topPolicyPlayedEvent.setLinkedLegislativeSession(legislativeSession);
-
-                    //Add it
-                    addEvent(topPolicyPlayedEvent);
-                }
+                createTopPolicyEvent(legislativeSession);
             }
         }
+    }
+
+    private static void createTopPolicyEvent(LegislativeSession legislativeSession) {
+        if(!GameManager.isGameStarted() || legislativeSession.getPresidentAction() != null)  return;
+
+        TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(GameEventsManager.getContext());
+
+        //Link them together
+        legislativeSession.setPresidentAction(topPolicyPlayedEvent);
+        topPolicyPlayedEvent.setLinkedLegislativeSession(legislativeSession);
+
+        //Add it
+        addEvent(topPolicyPlayedEvent);
     }
 
     /**
