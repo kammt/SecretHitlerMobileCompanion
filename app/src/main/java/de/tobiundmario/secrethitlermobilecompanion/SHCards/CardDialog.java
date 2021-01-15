@@ -55,13 +55,29 @@ public final class CardDialog {
         final Dialog dialog = builder.create();
 
         //Retrieve the children
-        TextView tvTitle = dialogView.findViewById(R.id.tv_title);
         TextView tvDesc = dialogView.findViewById(R.id.tv_description);
-        TextView tvPositive = dialogView.findViewById(R.id.tv_positive);
-        TextView tvNegative = dialogView.findViewById(R.id.tv_negative);
-        View buttonSeparator = dialogView.findViewById(R.id.line_separator_buttons);
-        final EditText dialogInput = dialogView.findViewById(R.id.dialog_input);
 
+        processLayoutChanges(type, dialog, dialogView);
+
+        //Set the Title and Description
+        ((TextView) dialogView.findViewById(R.id.tv_title)).setText(title);
+        if(message == null) tvDesc.setVisibility(View.GONE);
+        else {
+            tvDesc.setVisibility(View.VISIBLE);
+            tvDesc.setText(message);
+        }
+        //Set the listeners and text
+        setupTextViewButtons(dialogView, new String[] {positive, negative}, new Runnable[] {positiveListener, negativeListener}, dialog);
+
+        //Setting the view
+        Window dialogWindow = dialog.getWindow();
+        dialogWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        return new CustomDialog(dialog, dialogView);
+    }
+
+    private static void processLayoutChanges(int type, Dialog dialog, View dialogView) {
+        final EditText dialogInput = dialogView.findViewById(R.id.dialog_input);
         ConstraintLayout container_newTrack = dialogView.findViewById(R.id.container_newTrack);
 
         if(type == input) {
@@ -77,33 +93,32 @@ public final class CardDialog {
         } else {
             container_newTrack.setVisibility(View.VISIBLE);
             dialogInput.setVisibility(View.GONE);
-            tvDesc.setVisibility(View.GONE);
+            dialogView.findViewById(R.id.tv_description).setVisibility(View.GONE);
         }
+    }
 
-        //Set the texts
-        tvTitle.setText(title);
-
-        if(message == null) tvDesc.setVisibility(View.GONE);
-        else {
-            tvDesc.setVisibility(View.VISIBLE);
-            tvDesc.setText(message);
-        }
-
-        tvPositive.setText(positive);
+    private static void setNegativeButtonText(TextView tvNegative, String negative, View buttonSeparator) {
         if(negative != null) {
             tvNegative.setText(negative);
             tvNegative.setVisibility(View.VISIBLE);
             buttonSeparator.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             tvNegative.setVisibility(View.GONE);
             buttonSeparator.setVisibility(View.GONE);
         }
+    }
 
-        //Set the listeners
+    private static void setupTextViewButtons(View dialogView, String[] buttonText, final Runnable[] buttonListeners, final Dialog dialog) {
+        TextView tvPositive = dialogView.findViewById(R.id.tv_positive);
+        TextView tvNegative = dialogView.findViewById(R.id.tv_negative);
+
+        tvPositive.setText(buttonText[0]);
+        setNegativeButtonText(tvNegative, buttonText[1], dialogView.findViewById(R.id.line_separator_buttons));
+
         tvNegative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Runnable negativeListener = buttonListeners[1];
                 if(negativeListener != null) negativeListener.run();
                 dialog.dismiss();
             }
@@ -112,16 +127,11 @@ public final class CardDialog {
         tvPositive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Runnable positiveListener = buttonListeners[0];
                 if(positiveListener != null) positiveListener.run();
                 dialog.dismiss();
             }
         });
-
-        //Setting the view
-        Window dialogWindow = dialog.getWindow();
-        dialogWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        return new CustomDialog(dialog, dialogView);
     }
 
     public interface InputDialogSubmittedListener {

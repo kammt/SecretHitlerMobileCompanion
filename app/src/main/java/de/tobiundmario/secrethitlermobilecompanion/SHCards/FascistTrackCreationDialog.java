@@ -97,6 +97,13 @@ public class FascistTrackCreationDialog {
             }
         });
 
+        cardSetupListeners.setOnSetupCancelledListener(new OnSetupCancelledListener() {
+            @Override
+            public void onSetupCancelled() {
+                customDialog.getDialog().dismiss();
+            }
+        });
+
         cardSetupListeners.setSetupPageOpenedListeners(new SetupPageOpenedListener[] {null, nextSetupPage(c)});
 
         CardSetupHelper.initialiseSetupPages(pages, tvPositive, tvNegative, cardSetupListeners);
