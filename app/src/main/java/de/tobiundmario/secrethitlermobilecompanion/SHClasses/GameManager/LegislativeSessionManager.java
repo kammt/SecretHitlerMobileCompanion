@@ -39,54 +39,62 @@ public class LegislativeSessionManager {
      */
     public static void processLegislativeSession(LegislativeSession legislativeSession, boolean removed) {
         if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_FAILED) {
-            if(gameTrack.isManualMode()) return;
-
-            if(removed) {
-                electionTracker --;
-                return;
-            }
-            else {
-                electionTracker++;
-                if(electionTracker == gameTrack.getElectionTrackerLength()) {
-                    electionTracker = 0;
-
-                    if(GameManager.isGameStarted() && legislativeSession.getPresidentAction() == null) {
-                        TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(GameEventsManager.getContext());
-
-                        //Link them together
-                        legislativeSession.setPresidentAction(topPolicyPlayedEvent);
-                        topPolicyPlayedEvent.setLinkedLegislativeSession(legislativeSession);
-
-                        //Add it
-                        addEvent(topPolicyPlayedEvent);
-                    }
-                }
-            }
+            processRejectedLegislativeSession(legislativeSession, removed);
             return;
         } else electionTracker = 0;
 
         if(legislativeSession.getClaimEvent().isVetoed()) return;
+        updatePolicyCount(legislativeSession, removed);
+    }
+
+    private static void updatePolicyCount(LegislativeSession legislativeSession, boolean removed) {
         boolean fascist = legislativeSession.getClaimEvent().getPlayedPolicy() == Claim.FASCIST;
 
-        if(removed && fascist) {
-            fascistPolicies--;
-        } else if (removed) {
-            liberalPolicies--;
-        } else if (fascist) {
-            fascistPolicies++;
+        if(fascist) {
+            if(removed) {
+                fascistPolicies--;
+            } else {
+                fascistPolicies++;
 
-            if (fascistPolicies == gameTrack.getFasPolicies()) {
-                ((MainActivity) GameEventsManager.getContext()).fragment_game.displayEndGameOptions();
-            } else if(GameManager.isGameStarted() && legislativeSession.getPresidentAction() == null) addTrackAction(legislativeSession, false); //This method could also be called when a game is restored. In that case, we do not want to add new events
-
+                if (fascistPolicies == gameTrack.getFasPolicies()) {
+                    ((MainActivity) GameEventsManager.getContext()).fragment_game.displayEndGameOptions();
+                } else if(GameManager.isGameStarted() && legislativeSession.getPresidentAction() == null) addTrackAction(legislativeSession, false); //This method could also be called when a game is restored. In that case, we do not want to add new events
+            }
         } else {
-            liberalPolicies++;
+            if(removed) {
+                liberalPolicies--;
+            } else {
+                liberalPolicies++;
 
-            if(liberalPolicies == gameTrack.getLibPolicies()) {
-                ((MainActivity) GameEventsManager.getContext()).fragment_game.displayEndGameOptions();
+                if(liberalPolicies == gameTrack.getLibPolicies()) {
+                    ((MainActivity) GameEventsManager.getContext()).fragment_game.displayEndGameOptions();
+                }
             }
         }
+    }
 
+    private static void processRejectedLegislativeSession(LegislativeSession legislativeSession, boolean removed) {
+        if(gameTrack.isManualMode()) return;
+
+        if(removed) {
+            electionTracker --;
+        } else {
+            electionTracker++;
+            if(electionTracker == gameTrack.getElectionTrackerLength()) {
+                electionTracker = 0;
+
+                if(GameManager.isGameStarted() && legislativeSession.getPresidentAction() == null) {
+                    TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(GameEventsManager.getContext());
+
+                    //Link them together
+                    legislativeSession.setPresidentAction(topPolicyPlayedEvent);
+                    topPolicyPlayedEvent.setLinkedLegislativeSession(legislativeSession);
+
+                    //Add it
+                    addEvent(topPolicyPlayedEvent);
+                }
+            }
+        }
     }
 
     /**
