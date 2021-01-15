@@ -147,25 +147,7 @@ public class FascistTrackCreationDialog {
 
                 //We now check if there are too little or too many spinners in the layout
                 int fascistPolicies = Integer.parseInt(input_fpolicies.getText().toString());
-                int children = ll_actions.getChildCount();
-
-                if(children > fascistPolicies) {
-                    //Too many spinners, we need to remove some
-                    for (int i = children - 1; i > fascistPolicies - 1; i--) {
-                        ll_actions.removeViewAt(i);
-                    }
-                } else if(children < fascistPolicies) {
-                    //Too little spinners, we add some
-                    for (int i = children; i < fascistPolicies; i++) {
-                        Spinner spinner = new Spinner(c);
-                        spinner.setAdapter(new TrackActionSpinnerAdapter(c));
-                        spinner.setLayoutParams(params);
-
-                        spinner.setDropDownWidth(spinner.getLayoutParams().width);
-
-                        ll_actions.addView(spinner);
-                    }
-                }
+                updateSpinnerLayout(fascistPolicies, params, c);
             }
 
             @Override
@@ -173,6 +155,31 @@ public class FascistTrackCreationDialog {
                 return !errorsOnSetupPage(c);
             }
         };
+    }
+
+    private static void updateSpinnerLayout(int fascistPolicies, LinearLayout.LayoutParams params, Context c) {
+        int children = ll_actions.getChildCount();
+
+        if(children > fascistPolicies) {
+            //Too many spinners, we need to remove some
+            for (int i = children - 1; i > fascistPolicies - 1; i--) {
+                ll_actions.removeViewAt(i);
+            }
+        } else if(children < fascistPolicies) {
+            //Too little spinners, we add some
+            for (int i = children; i < fascistPolicies; i++) {
+                ll_actions.addView(createSpinner(params, c));
+            }
+        }
+    }
+
+    private static Spinner createSpinner(LinearLayout.LayoutParams params, Context c) {
+        Spinner spinner = new Spinner(c);
+        spinner.setAdapter(new TrackActionSpinnerAdapter(c));
+        spinner.setLayoutParams(params);
+
+        spinner.setDropDownWidth(spinner.getLayoutParams().width);
+        return spinner;
     }
 
     private static boolean errorsOnSetupPage(Context c) {
