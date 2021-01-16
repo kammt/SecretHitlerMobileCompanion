@@ -132,7 +132,7 @@ public class ServerPaneManager {
 
     private String[] getServerPaneText(int connectionType, boolean serverRunning, boolean isUsingHotspot) {
         if(serverRunning) {
-            if(connectionType == Server.WIFI || isUsingHotspot) return new String[] {context.getString(R.string.server_status_url, serverURL), context.getString(R.string.server_running), "#009933"};
+            if(connectionType == Server.WIFI || isUsingHotspot) return new String[] {context.getString(R.string.server_status_url, gameFragment.getBoundServerService().server.getURL()), context.getString(R.string.server_running), "#009933"};
             else if(connectionType == Server.MOBILE_DATA) return new String[] {context.getString(R.string.server_status_url_mobile_data), context.getString(R.string.server_status_using_mobile_data), "#ff9900"};
             else return new String[] {context.getString(R.string.server_status_url_not_connected), context.getString(R.string.server_status_not_connected), "#ff9900"};
         } else return new String[] {context.getString(R.string.server_status_url_disabled), context.getString(R.string.server_stopped), "#cc0000"};

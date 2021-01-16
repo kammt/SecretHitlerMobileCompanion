@@ -195,7 +195,7 @@ public final class SharedPreferencesManager {
             tv = ((MainActivity) context).fragment_setup.tv_title_custom_tracks;
             message = empty ? context.getString(R.string.no_custom_tracks_title) : context.getString(R.string.custom_tracks_title);
         }
-        tv.setText(message);
+        if(tv != null) tv.setText(message);
     }
 
     public static void removeItemWithSnackbar(final int position, final Context context, RecyclerView recyclerView, final boolean isPlayerList) {
