@@ -139,8 +139,8 @@ public class LegislativeSessionSetupManager {
         icon_nein.setAlpha(0.2f);
 
         //Setting up ImageViewSelectors
-        CardSetupHelper.setupImageViewSelector(icon_liberal, icon_fascist, ColorStateList.valueOf(context.getColor(R.color.colorLiberal)), ColorStateList.valueOf(context.getColor(R.color.colorFascist)), new View[]{cb_vetoed});
-        CardSetupHelper.setupImageViewSelector(icon_ja, icon_nein, null, null, null);
+        CardSetupHelper.setupImageViewSelector(new ImageView[] {icon_liberal, icon_fascist}, new ColorStateList[] {ColorStateList.valueOf(context.getColor(R.color.colorLiberal)), ColorStateList.valueOf(context.getColor(R.color.colorFascist))}, new View[]{cb_vetoed}, new Runnable[] {null, null});
+        CardSetupHelper.setupImageViewSelector(new ImageView[] {icon_ja, icon_nein}, new ColorStateList[] {null, null}, null, new Runnable[] {null, null});
 
         CardSetupListeners cardSetupListeners = new CardSetupListeners();
 
@@ -221,7 +221,7 @@ public class LegislativeSessionSetupManager {
         });
 
         //Setting up the OnClickListeners for the ImageViews
-        CardSetupHelper.setupImageViewSelector(icon_liberal, icon_fascist, ColorStateList.valueOf(context.getColor(R.color.colorLiberal)), ColorStateList.valueOf(context.getColor(R.color.colorFascist)), new View[]{cb_vetoed, sw_votingoutcome});
+        CardSetupHelper.setupImageViewSelector(new ImageView[] {icon_liberal, icon_fascist}, new ColorStateList[] {ColorStateList.valueOf(context.getColor(R.color.colorLiberal)), ColorStateList.valueOf(context.getColor(R.color.colorFascist))}, new View[]{cb_vetoed, sw_votingoutcome}, new Runnable[] {null, null});
 
         btn_continue.setOnClickListener(new View.OnClickListener() {
             @Override
