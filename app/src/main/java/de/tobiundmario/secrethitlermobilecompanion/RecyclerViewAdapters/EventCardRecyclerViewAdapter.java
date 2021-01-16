@@ -73,59 +73,55 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
     @Override
     public DimmableViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int type) {
         //The card can use two layouts - Legislative session or Executive Action. Thus we check to which class the Event belongs
-        View v = null;
-        if(type == LEGISLATIVE_SESSION) {
-            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_legislative_session, viewGroup, false);
-        } else if (type == LEGISLATIVE_SESSION_SETUP) {
-            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_legislative_session, viewGroup, false);
-        } else if (type == EXECUTIVE_ACTION) {
-            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_executive_action, viewGroup, false);
-        } else if (type == DECK_SHUFFLED){
-            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_deck_shuffled, viewGroup, false);
-        } else if (type == LOYALTY_INVESTIGATION_SETUP) {
-            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_loyalty_investigation, viewGroup, false);
-        } else if (type == EXECUTION_SETUP) {
-            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_execution, viewGroup, false);
-        } else if (type == DECK_SHUFFLED_SETUP) {
-            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_deck_shuffled, viewGroup, false);
-        } else if (type == POLICY_PEEK_SETUP) {
-            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_policy_peek, viewGroup, false);
-        } else if(type == TOP_POLICY) {
-            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_top_policy, viewGroup, false);
-        } else if(type == TOP_POLICY_SETUP) {
-            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_top_policy, viewGroup, false);
-        } else if (type == GAME_END) {
-            v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.setup_card_game_end, viewGroup, false);
+        int id = 0;
+        switch (type) {
+            case LEGISLATIVE_SESSION:
+                id = R.layout.card_legislative_session;
+                break;
+            case LEGISLATIVE_SESSION_SETUP:
+                id = R.layout.setup_card_legislative_session;
+                break;
+            case EXECUTIVE_ACTION:
+                id = R.layout.card_executive_action;
+                break;
+            case DECK_SHUFFLED:
+                id = R.layout.card_deck_shuffled;
+                break;
+            case LOYALTY_INVESTIGATION_SETUP:
+                id = R.layout.setup_card_loyalty_investigation;
+                break;
+            case EXECUTION_SETUP:
+                id = R.layout.setup_card_execution;
+                break;
+            case DECK_SHUFFLED_SETUP:
+                id = R.layout.setup_card_deck_shuffled;
+                break;
+            case POLICY_PEEK_SETUP:
+                id = R.layout.setup_card_policy_peek;
+                break;
+            case TOP_POLICY_SETUP:
+                id = R.layout.setup_card_top_policy;
+                break;
+            case TOP_POLICY:
+                id = R.layout.card_top_policy;
+                break;
+            case GAME_END:
+                id = R.layout.setup_card_game_end;
+                break;
         }
-        return new DimmableViewHolder(v);
+
+        return new DimmableViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(id, viewGroup, false));
     }
 
     @Override
     public void onBindViewHolder(DimmableViewHolder cardViewHolder, final int position) {
         final CardView cv = cardViewHolder.cv;
         final GameEvent event = events.get(position);
-        final Button btn_cancel = cv.findViewById(R.id.btn_setup_back);
 
         if(event.isSetup) {
              //The Cancel button is visible on every card, hence we initialise it here to save code
-            btn_cancel.setText(c.getString(R.string.btn_cancel));
-            btn_cancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!event.isEditing) GameEventsManager.remove(event);
-                    else {
-                        event.isEditing = false;
-                        event.isSetup = false;
-                        RecyclerViewManager.getCardListAdapter().notifyItemChanged(position);
-                    }
-                }
-            });
-
-            if(!GameManager.gameTrack.isManualMode() && !(event instanceof LegislativeSession) && !(event instanceof DeckShuffledEvent) && !(event instanceof GameEndCard) && !event.isEditing) { //If manual mode is disabled, then we don't want to have cancel buttons on automatically generated actions
-                btn_cancel.setVisibility(View.GONE);
-            } else {
-                btn_cancel.setVisibility(View.VISIBLE);
-            }
+            final Button btn_cancel = cv.findViewById(R.id.btn_setup_back);
+            setupCancelButton(btn_cancel, event, position);
 
             event.initialiseSetupCard(cv);
             if(event.isEditing) event.setCurrentValues(cv);
@@ -135,15 +131,7 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
                 cv.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        if(GameEventsManager.editingEnabled) {
-                            if (event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() != LegislativeSessionManager.legSessionNo - 1) {
-                                Toast.makeText(c, c.getString(R.string.toast_message_edit_blocked), Toast.LENGTH_LONG).show();
-                            } else {
-                                event.isEditing = true;
-                                event.isSetup = true;
-                                notifyItemChanged(position);
-                            }
-                        }
+                        processLongClick(event, position);
                         return false;
                     }
                 });
@@ -153,6 +141,38 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
         }
     }
 
+    private void processLongClick(GameEvent event, int position) {
+        if(GameEventsManager.editingEnabled) {
+            if (event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() != LegislativeSessionManager.legSessionNo - 1) {
+                Toast.makeText(c, c.getString(R.string.toast_message_edit_blocked), Toast.LENGTH_LONG).show();
+            } else {
+                event.isEditing = true;
+                event.isSetup = true;
+                notifyItemChanged(position);
+            }
+        }
+    }
+
+    private void setupCancelButton(Button btn_cancel, final GameEvent event, final int position) {
+        btn_cancel.setText(c.getString(R.string.btn_cancel));
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!event.isEditing) GameEventsManager.remove(event);
+                else {
+                    event.isEditing = false;
+                    event.isSetup = false;
+                    RecyclerViewManager.getCardListAdapter().notifyItemChanged(position);
+                }
+            }
+        });
+
+        if(!GameManager.gameTrack.isManualMode() && !(event instanceof LegislativeSession) && !(event instanceof DeckShuffledEvent) && !(event instanceof GameEndCard) && !event.isEditing) { //If manual mode is disabled, then we don't want to have cancel buttons on automatically generated actions
+            btn_cancel.setVisibility(View.GONE);
+        } else {
+            btn_cancel.setVisibility(View.VISIBLE);
+        }
+    }
 
     @Override
     public int getItemViewType(int position) {
