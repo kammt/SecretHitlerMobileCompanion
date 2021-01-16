@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                     startActivity(intent);
+                    System.exit(2);
                 } catch (Exception ex) {
                     Log.e("Error", Arrays.toString(ex.getStackTrace()));
                 }
