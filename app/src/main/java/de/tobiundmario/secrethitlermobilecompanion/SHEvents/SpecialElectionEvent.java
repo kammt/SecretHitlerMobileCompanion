@@ -57,7 +57,7 @@ public class SpecialElectionEvent extends ExecutiveAction {
 
         //Setting up Spinners
         final Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = CardSetupHelper.getPlayerNameAdapter(context);
+        ArrayAdapter<String> playerListadapter = CardSetupHelper.getArrayAdapter(context, PlayerListManager.getAlivePlayerList(), false);
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);

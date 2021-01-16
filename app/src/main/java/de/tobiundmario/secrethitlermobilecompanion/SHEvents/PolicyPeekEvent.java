@@ -20,9 +20,6 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
-import static de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper.getClaimAdapter;
-import static de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper.getPlayerNameAdapter;
-
 public class PolicyPeekEvent extends ExecutiveAction {
 
     private Context c;
@@ -56,7 +53,7 @@ public class PolicyPeekEvent extends ExecutiveAction {
         Button btn_create = cardView.findViewById(R.id.btn_setup_forward);
 
         final Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);
+        ArrayAdapter<String> playerListadapter =  CardSetupHelper.getArrayAdapter(c, PlayerListManager.getAlivePlayerList(), false);
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
@@ -64,7 +61,7 @@ public class PolicyPeekEvent extends ExecutiveAction {
         if(presidentName != null) CardSetupHelper.lockPresidentSpinner(presidentName, presSpinner);
 
         final Spinner presClaimSpinner = cardView.findViewById(R.id.spinner_pres_claim);
-        final ArrayAdapter<String> presClaimListadapter = getClaimAdapter(c, Claim.getPresidentClaims());
+        final ArrayAdapter<String> presClaimListadapter = CardSetupHelper.getArrayAdapter(c, Claim.getPresidentClaims(), true);
         presClaimListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presClaimSpinner.setAdapter(presClaimListadapter);

@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
@@ -74,7 +75,7 @@ public class ExecutionEvent extends ExecutiveAction {
 
         //Setting up Spinners
         final Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = CardSetupHelper.getPlayerNameAdapter(context);
+        ArrayAdapter<String> playerListadapter = CardSetupHelper.getArrayAdapter(context, PlayerListManager.getAlivePlayerList(), false);
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
@@ -114,7 +115,10 @@ public class ExecutionEvent extends ExecutiveAction {
         presSpinner.setSelection(PlayerListManager.getPlayerPosition( presidentName ));
 
         //Here we face a problem. We cannot just set the selection before, as the player was marked as dead, thus not being in the selection anymore. To mitigate this, we add the player name temporarily to a new adapter and set it. See the function in CardSetupHelper for details
-        ArrayAdapter<String> playerListadapterWithDeadPlayer = CardSetupHelper.getPlayerNameAdapterWithDeadPlayer(context, targetName);
+        ArrayList<String> playerListWithDeadPlayer = PlayerListManager.getAlivePlayerList();
+        playerListWithDeadPlayer.add(targetName);
+
+        ArrayAdapter<String> playerListadapterWithDeadPlayer = CardSetupHelper.getArrayAdapter(context, playerListWithDeadPlayer,false);
         playerListadapterWithDeadPlayer.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         executedSpinner.setAdapter(playerListadapterWithDeadPlayer);

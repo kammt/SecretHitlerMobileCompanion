@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import androidx.core.content.res.ResourcesCompat;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
@@ -27,6 +26,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameMan
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
 public final class CardSetupHelper {
+
     private CardSetupHelper() {}
 
     public static void lockPresidentSpinner(String presidentName, Spinner spinner) {
@@ -35,86 +35,39 @@ public final class CardSetupHelper {
         if(!GameManager.gameTrack.isManualMode()) spinner.setEnabled(false);
     }
 
-    public static ArrayAdapter<String> getPlayerNameAdapter(final Context context) {
-        return new ArrayAdapter<String>(context,
-                android.R.layout.simple_spinner_item, PlayerListManager.getAlivePlayerList()) {
-
+    /**
+     * Is responsible for creating the ArrayAdapter required for our Spinners during Setup. They are mainly responsible for setting the font style to Comfortaa
+     * @param context
+     * @param data A List of data to put in the Spinner (e.g. a list of Claims or the Player List)
+     * @param claimSpinnerAdapter whether or not the Spinner contains Claims to be colored
+     * @return an ArrayAdapter
+     */
+    public static ArrayAdapter<String> getArrayAdapter(final Context context, List<String> data, final boolean claimSpinnerAdapter) {
+        return new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, data) {
+            @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-
-                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
-                ((TextView) v).setTypeface(externalFont);
-
-                return v;
+                return createView(position, convertView, parent);
             }
 
-
+            @Override
             public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
-                View v =super.getDropDownView(position, convertView, parent);
-
-                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
-                ((TextView) v).setTypeface(externalFont);
-
-                return v;
+                return createView(position, convertView, parent);
             }
-        };
-    }
 
-    public static ArrayAdapter<String> getClaimAdapter(final Context context, List<String> data) {
-        return new ArrayAdapter<String>(context,
-                android.R.layout.simple_spinner_item, data) {
-
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
+            private View createView(int position, View convertView, ViewGroup parent) {
+                TextView tv = (TextView) super.getView(position, convertView, parent);
 
                 Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
-                TextView tv = (TextView) v;
                 tv.setTypeface(externalFont);
-                tv.setText(Claim.colorClaim(tv.getText().toString()), TextView.BufferType.SPANNABLE);
 
-                return v;
-            }
+                if(claimSpinnerAdapter) tv.setText(Claim.colorClaim(tv.getText().toString()), TextView.BufferType.SPANNABLE);
 
-
-            public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
-                View v =super.getDropDownView(position, convertView, parent);
-
-                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
-                TextView tv = (TextView) v;
-                tv.setTypeface(externalFont);
-                tv.setText(Claim.colorClaim(tv.getText().toString()), TextView.BufferType.SPANNABLE);
-
-                return v;
+                return tv;
             }
         };
     }
 
-    public static ArrayAdapter<String> getPlayerNameAdapterWithDeadPlayer(final Context context, String deadPlayer) {
-        ArrayList<String> playerList = PlayerListManager.getAlivePlayerList();
-        playerList.add(deadPlayer);
-        return new ArrayAdapter<String>(context,
-                android.R.layout.simple_spinner_item, playerList) {
 
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-
-                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
-                ((TextView) v).setTypeface(externalFont);
-
-                return v;
-            }
-
-
-            public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
-                View v =super.getDropDownView(position, convertView, parent);
-
-                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
-                ((TextView) v).setTypeface(externalFont);
-
-                return v;
-            }
-        };
-    }
 
     /**
      * Creates an imageView selector, as e.g. seen in the Setup of a Legislative session. If the first image is clicked, the alpha of the second image is reduced, indicating a selection.

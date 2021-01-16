@@ -96,7 +96,7 @@ public class LegislativeSessionSetupManager {
             initialiseSetup(cardView);
         }
 
-        ArrayAdapter<String> playerListadapter = CardSetupHelper.getPlayerNameAdapter(context);
+        ArrayAdapter<String> playerListadapter = CardSetupHelper.getArrayAdapter(context, PlayerListManager.getAlivePlayerList(), false);
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
@@ -110,12 +110,12 @@ public class LegislativeSessionSetupManager {
         chancSpinner.setAdapter(playerListadapter);
         chancSpinner.setSelection(newChancellorPos); //Setting a different item on the chancellor spinner so they don't have the same name at the beginning
 
-        final ArrayAdapter<String> presClaimListadapter = CardSetupHelper.getClaimAdapter(context, Claim.getPresidentClaims());
+        final ArrayAdapter<String> presClaimListadapter = CardSetupHelper.getArrayAdapter(context, Claim.getPresidentClaims(), true);
         presClaimListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presClaimSpinner.setAdapter(presClaimListadapter);
 
-        ArrayAdapter<String> chancClaimListadapter = CardSetupHelper.getClaimAdapter(context, Claim.getChancellorClaims());
+        ArrayAdapter<String> chancClaimListadapter = CardSetupHelper.getArrayAdapter(context, Claim.getChancellorClaims(), true);
         chancClaimListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         chancClaimSpinner.setAdapter(chancClaimListadapter);
