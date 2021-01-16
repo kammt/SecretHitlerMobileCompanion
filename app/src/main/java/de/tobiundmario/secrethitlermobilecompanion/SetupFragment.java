@@ -22,13 +22,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.FascistTrackCreationDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.RecyclerViewManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.SetupFragmentManager;
 
 public class SetupFragment extends Fragment {
 
@@ -41,22 +40,22 @@ public class SetupFragment extends Fragment {
     private ConstraintLayout container_new_player;
 
     private ConstraintLayout container_select_track;
-    private FloatingActionButton fab_newTrack;
+    public FloatingActionButton fab_newTrack;
     public TextView tv_title_custom_tracks;
 
     private ConstraintLayout container_settings;
     public TextView tv_choose_from_previous_games_players;
 
-    private ProgressBar progressBar_setupSteps;
+    public ProgressBar progressBar_setupSteps;
 
     private Context context;
 
     private int page = 1;
     private ConstraintLayout[] pages;
-    private int progressBar_value = 300;
-    private final int progressBar_steps = 300;
-    private int progressBar_newValue = 0;
-    private SetupContinueCondition[] setupContinueConditions;
+    public int progressBar_value = 300;
+    public final int progressBar_steps = 300;
+    public int progressBar_newValue = 0;
+    private SetupFragmentManager.SetupContinueCondition[] setupContinueConditions;
 
     public SetupFragment() {
 
@@ -129,7 +128,12 @@ public class SetupFragment extends Fragment {
         progressBar_setupSteps = fragmentLayout.findViewById(R.id.progressBar_setupProgress);
         progressBar_setupSteps.setMax(900);
 
-        setupContinueConditions = new SetupContinueCondition[] {firstCondition(), secondCondition()};
+        setupVariables(fragmentLayout);
+    }
+
+
+    private void setupVariables(View fragmentLayout) {
+        setupContinueConditions = new SetupFragmentManager.SetupContinueCondition[] {SetupFragmentManager.firstCondition(context, SetupFragment.this), SetupFragmentManager.secondCondition(context, SetupFragment.this)};
         pages = new ConstraintLayout[] {container_new_player, container_select_track, container_settings};
 
         fab_newTrack = fragmentLayout.findViewById(R.id.fab_create_custom_track);
@@ -154,72 +158,8 @@ public class SetupFragment extends Fragment {
         });
     }
 
-    private SetupContinueCondition firstCondition() {
-        //When switching from page 1 to 2
-        return new SetupContinueCondition() {
-            @Override
-            public boolean shouldSetupContinue() {
-                int playerCount = PlayerListManager.getPlayerList().size();
-                return playerCount >= 5;
-            }
-
-            @Override
-            public void showErrorMessage() {
-                int playerCount = PlayerListManager.getPlayerList().size();
-                if(playerCount <= 2) {
-                    String title = (playerCount == 0) ? getString(R.string.no_players_added) : getString(R.string.title_too_little_players);
-                    CardDialog.showMessageDialog(context, title, getString(R.string.no_players_added_msg), getString(R.string.btn_ok), null, null, null);
-                } else if (playerCount < 5) {
-                    CardDialog.showMessageDialog(context, getString(R.string.title_too_little_players), getString(R.string.msg_too_little_players, playerCount), getString(R.string.btn_continue), new Runnable() {
-                        @Override
-                        public void run() {
-                            nextSetupPage(true);
-                        }
-                    }, getString(R.string.btn_cancel), null);
-                }
-            }
-
-            @Override
-            public void initialiseLayout() {
-                //Check if there is a recommended track available
-                LinearLayout container_recommended_track = getView().findViewById(R.id.container_recommended_track);
-
-                if(PlayerListManager.getPlayerList().size() >=5 && PlayerListManager.getPlayerList().size() <=10) {//Recommended track available
-                    container_recommended_track.setVisibility(View.VISIBLE);
-                    FascistTrackSelectionManager.setupRecommendedCard(getLayoutInflater(), container_recommended_track);
-                } else {
-                    container_recommended_track.setVisibility(View.GONE);
-                    FascistTrackSelectionManager.recommendedTrackIndex = -1;
-                    FascistTrackSelectionManager.recommendedCard = null;
-                }
-
-                animateFAB(2, false);
-            }
-        };
-    }
-
-    private SetupContinueCondition secondCondition() {
-        //When switching from page 2 to 3
-        return new SetupContinueCondition() {
-            @Override
-            public boolean shouldSetupContinue() {
-                return GameManager.gameTrack != null;
-            }
-
-            @Override
-            public void showErrorMessage() {
-                CardDialog.showMessageDialog(context, getString(R.string.no_track_selected), getString(R.string.no_track_selected_message), getString(R.string.btn_ok), null, null, null);
-            }
-
-            @Override
-            public void initialiseLayout() {
-                fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_close));
-            }
-        };
-    }
-
     public void nextSetupPage(boolean forceNextPage) {
-        SetupContinueCondition condition = null;
+        SetupFragmentManager.SetupContinueCondition condition = null;
         if(page != 3) condition = setupContinueConditions[page - 1];
 
         if(condition == null || condition.shouldSetupContinue() || forceNextPage) {
@@ -236,7 +176,7 @@ public class SetupFragment extends Fragment {
 
                 progressBar_newValue = progressBar_value + progressBar_steps;
 
-                animateTransition(oldPage, newPage, slideOutLeft, slideInRight, false);
+                SetupFragmentManager.animateTransition(new ConstraintLayout[] {oldPage, newPage}, new Animation[] {slideInRight, slideOutLeft}, false, SetupFragment.this);
 
                 assert condition != null;
                 condition.initialiseLayout();
@@ -259,60 +199,18 @@ public class SetupFragment extends Fragment {
 
             progressBar_newValue = progressBar_value - progressBar_steps;
 
-            animateFAB(page, true);
-            animateTransition(oldPage, newPage, slideOutRight, slideInLeft, false);
+            SetupFragmentManager.animateFAB(page, true, SetupFragment.this);
+            SetupFragmentManager.animateTransition(new ConstraintLayout[] {oldPage, newPage}, new Animation[] {slideInLeft, slideOutRight}, false, SetupFragment.this);
 
             if(page == 2) btn_setup_forward.setText(getString(R.string.btn_continue));
         } else cancelSetup();
     }
 
-    private void animateFAB(int page, boolean back) {
-        if(back) {
-            if(page == 1) closeFAB();
-            else if (page == 2) openFab();
-        } else if(page == 2) openFab();
-    }
-
-    private void openFab() {
-        fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_open));
-    }
-
-    private void closeFAB() {
-        fab_newTrack.startAnimation(AnimationUtils.loadAnimation(context, R.anim.fab_close));
-    }
-
-    private void animateTransition(final ConstraintLayout oldPage, ConstraintLayout newPage, Animation slide_Out, Animation slide_in, boolean progressBarOnly) {
-        if(!progressBarOnly) {
-            newPage.setVisibility(View.VISIBLE);
-            newPage.startAnimation(slide_in);
-
-            slide_Out.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    oldPage.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-            });
-            oldPage.startAnimation(slide_Out);
-        }
-
-        Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, progressBar_value, progressBar_newValue);
-        progressBarAnimation.setDuration(500);
-        progressBar_setupSteps.startAnimation(progressBarAnimation);
-        progressBar_value = progressBar_newValue;
-    }
-
     private void cancelSetup() {
+        btn_setup_back.setOnClickListener(null);
         ((MainActivity) context).replaceFragment(MainActivity.page_main, true);
         progressBar_newValue = 0;
-        animateTransition(null, null, null, null, true);
+        SetupFragmentManager.animateTransition(null, null, true, SetupFragment.this);
     }
 
     private void finishSetup() {
@@ -342,12 +240,6 @@ public class SetupFragment extends Fragment {
         fab_newTrack = null;
 
         ((MainActivity) context).replaceFragment(MainActivity.game, true);
-    }
-
-    interface SetupContinueCondition {
-        abstract boolean shouldSetupContinue();
-        abstract void showErrorMessage();
-        abstract void initialiseLayout();
     }
 }
 
