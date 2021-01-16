@@ -79,7 +79,7 @@ public class Server extends NanoHTTPD {
                 return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("jquery-3.5.1.slim.min.js"));
             case "/popper.min.js":
                 return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("popper.min.js"));
-            case "/css/style.css":
+            case "/style.css":
                 return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("style.css"));
             case "/googlefonts.css":
                 return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("googlefonts.css"));
