@@ -60,58 +60,45 @@ public class GameEndCard extends GameEvent {
             rb_policy.setText(context.getString(R.string.liberals_won_policies, GameManager.gameTrack.getLibPolicies()));
         }
 
-        iv_liberal.setOnClickListener(new View.OnClickListener() {
+        CardSetupHelper.setupImageViewSelector(new ImageView[] {iv_liberal, iv_fascist}, new ColorStateList[] {ColorStateList.valueOf(context.getColor(R.color.colorLiberal)), ColorStateList.valueOf(context.getColor(R.color.colorFascist))}, new View[]{rb_hitler, rb_policy}, new Runnable[] {new Runnable() {
             @Override
-            public void onClick(View v) {
-                iv_liberal.setAlpha((float) 1);
-                iv_fascist.setAlpha((float) 0.2);
-
-                ColorStateList csl = ColorStateList.valueOf(context.getColor(R.color.colorLiberal));
-                if(!GameManager.gameTrack.isManualMode()) btn_end.setBackgroundTintList(csl);
-                rb_hitler.setButtonTintList(csl);
-                rb_policy.setButtonTintList(csl);
-
+            public void run() {
                 rb_hitler.setText(context.getString(R.string.liberals_won_hitler));
                 rb_policy.setText(context.getString(R.string.liberals_won_policies, libPolicies));
             }
-        });
-
-        iv_fascist.setOnClickListener(new View.OnClickListener() {
+        }, new Runnable() {
             @Override
-            public void onClick(View v) {
-                iv_fascist.setAlpha((float) 1);
-                iv_liberal.setAlpha((float) 0.2);
-
-                ColorStateList csl = ColorStateList.valueOf(context.getColor(R.color.colorFascist));
-                if(!GameManager.gameTrack.isManualMode()) btn_end.setBackgroundTintList(csl);
-                rb_hitler.setButtonTintList(csl);
-                rb_policy.setButtonTintList(csl);
-
+            public void run() {
                 rb_hitler.setText(context.getString(R.string.fascists_won_hitler));
                 rb_policy.setText(context.getString(R.string.fascists_win_policies, fasPolicies));
             }
-        });
+        }});
+
 
         btn_end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean fascistsWon = (iv_fascist.getAlpha() == (float) 1);
-                if(fascistsWon && rb_hitler.isChecked()) {
-                    //Fascists won, hitler elected
-                    if(GameEventsManager.endSounds) MediaPlayer.create(context, R.raw.fascistswinhitlerelected).start();
-                } else if(fascistsWon && rb_policy.isChecked()) {
-                    //Fascists won, n fascist policies
-                    if(GameEventsManager.endSounds) MediaPlayer.create(context, R.raw.fascistswin).start();
-                } else if (!fascistsWon && rb_hitler.isChecked()) {
-                    //Liberals won, hitler shot
-                    if(GameEventsManager.endSounds) MediaPlayer.create(context, R.raw.liberalswin).start();
-                } else {
-                    //Liberals won, n liberal policies
-                    if(GameEventsManager.endSounds) MediaPlayer.create(context, R.raw.liberalswin).start();
-                }
-                mainActivity.fragment_game.endGame();
+                playSound(fascistsWon, rb_hitler, rb_policy);
             }
         });
+    }
+
+    private void playSound(boolean fascistsWon, RadioButton rb_hitler, RadioButton rb_policy) {
+        if(fascistsWon && rb_hitler.isChecked()) {
+            //Fascists won, hitler elected
+            if(GameEventsManager.endSounds) MediaPlayer.create(context, R.raw.fascistswinhitlerelected).start();
+        } else if(fascistsWon && rb_policy.isChecked()) {
+            //Fascists won, n fascist policies
+            if(GameEventsManager.endSounds) MediaPlayer.create(context, R.raw.fascistswin).start();
+        } else if (!fascistsWon && rb_hitler.isChecked()) {
+            //Liberals won, hitler shot
+            if(GameEventsManager.endSounds) MediaPlayer.create(context, R.raw.liberalswin).start();
+        } else {
+            //Liberals won, n liberal policies
+            if(GameEventsManager.endSounds) MediaPlayer.create(context, R.raw.liberalswin).start();
+        }
+        mainActivity.fragment_game.endGame();
     }
 
     @Override
