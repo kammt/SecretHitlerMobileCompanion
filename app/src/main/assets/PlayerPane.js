@@ -56,7 +56,7 @@ class PlayerPane {
 			this.playerDivs[player] = playerDiv;
 
 			// Set an event handler for clicks that calles the playerDivClicked method passing the method the name of the player.
-			playerDiv.click((e) => {
+			playerDiv.on('mousedown touch', (e) => {
 				this.playerDivClicked(player);
 			});
 		});
