@@ -176,7 +176,7 @@ public final class BackupManager {
 
         JSONObject game = object.getJSONObject("game");
         JSONArray players = game.getJSONArray("players");
-        JSONArray plays = game.has("plays") ? game.getJSONArray("plays") : null;
+        JSONArray plays = game.has("plays") ? game.getJSONArray("plays") : new JSONArray();
         GameEventsManager.jsonData = plays;
 
         //Restore players
