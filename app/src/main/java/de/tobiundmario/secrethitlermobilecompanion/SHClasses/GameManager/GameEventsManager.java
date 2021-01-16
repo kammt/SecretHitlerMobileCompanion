@@ -93,6 +93,8 @@ public final class GameEventsManager {
 
         //We have to differentiate between two separate scenarios. If the event left the Editing phase, we want to change the JSON data at a specific position. If it left setup phase, we just want to add it to the array
         position = eventList.indexOf(event);
+        JSONManager.addGameLogChange(new EventChange(event, (event.isEditing) ? EventChange.EVENT_UPDATE : EventChange.NEW_EVENT));
+
         try {
             if(event.isEditing) {
                 event.isEditing = false;
@@ -106,8 +108,6 @@ public final class GameEventsManager {
         } catch (JSONException e) {
             ExceptionHandler.showErrorSnackbar(e, "GameLog.notifySetupPhaseLeft() (arr.put)");
         }
-
-        JSONManager.addGameLogChange(new EventChange(event, (event.isEditing) ? EventChange.EVENT_UPDATE : EventChange.NEW_EVENT));
 
         //Nevertheless, we need to update the RecyclerViewItem
         RecyclerViewManager.getCardListAdapter().notifyItemChanged(position);
@@ -205,6 +205,7 @@ public final class GameEventsManager {
 
     private static void removeEvent(GameEvent event, int position) {
         if(!event.isSetup) jsonData.remove(position);
+        JSONManager.addGameLogChange(new EventChange(event, EventChange.EVENT_DELETE));
         eventList.remove(position);
         RecyclerViewManager.getCardListAdapter().notifyItemRemoved(position);
     }

@@ -240,12 +240,15 @@ public class LegislativeSessionSetupManager {
         VoteEvent newVoteEvent = new VoteEvent(presName, chancName, voteRejected ? VoteEvent.VOTE_FAILED : VoteEvent.VOTE_PASSED);
         ClaimEvent newClaimEvent = createNewClaimEvent(voteRejected, playedPolicy, vetoed);
 
+        VoteEvent oldVoteEvent = legislativeSession.getVoteEvent();
+        ClaimEvent oldClaimEvent = legislativeSession.getClaimEvent();
+
         if (legislativeSession.isEditing) { //We are editing the card, we need to process the changes (e.g. update the policy count)
             LegislativeSessionManager.processLegislativeSessionEdit(legislativeSession, newClaimEvent, newVoteEvent);
         }
 
         legislativeSession.leaveSetupPhase(newClaimEvent, newVoteEvent);
-        if (LegislativeSessionManager.trackActionRequired(legislativeSession.getClaimEvent(), newClaimEvent, legislativeSession.getVoteEvent(), newVoteEvent)) {
+        if (LegislativeSessionManager.trackActionRequired(oldClaimEvent, newClaimEvent, oldVoteEvent, newVoteEvent)) {
             LegislativeSessionManager.addTrackAction(legislativeSession, false);
         }
     }
