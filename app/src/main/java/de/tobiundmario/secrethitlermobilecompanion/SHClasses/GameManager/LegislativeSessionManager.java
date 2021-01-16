@@ -39,54 +39,58 @@ public class LegislativeSessionManager {
      */
     public static void processLegislativeSession(LegislativeSession legislativeSession, boolean removed) {
         if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_FAILED) {
-            if(gameTrack.isManualMode()) return;
-
-            if(removed) {
-                electionTracker --;
-                return;
-            }
-            else {
-                electionTracker++;
-                if(electionTracker == gameTrack.getElectionTrackerLength()) {
-                    electionTracker = 0;
-
-                    if(GameManager.isGameStarted() && legislativeSession.getPresidentAction() == null) {
-                        TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(GameEventsManager.getContext());
-
-                        //Link them together
-                        legislativeSession.setPresidentAction(topPolicyPlayedEvent);
-                        topPolicyPlayedEvent.setLinkedLegislativeSession(legislativeSession);
-
-                        //Add it
-                        addEvent(topPolicyPlayedEvent);
-                    }
-                }
-            }
+            processRejectedLegislativeSession(legislativeSession, removed);
             return;
         } else electionTracker = 0;
 
         if(legislativeSession.getClaimEvent().isVetoed()) return;
-        boolean fascist = legislativeSession.getClaimEvent().getPlayedPolicy() == Claim.FASCIST;
+        updatePolicyCount(legislativeSession, removed);
+    }
 
-        if(removed && fascist) {
-            fascistPolicies--;
-        } else if (removed) {
-            liberalPolicies--;
-        } else if (fascist) {
-            fascistPolicies++;
+    private static void updatePolicyCount(LegislativeSession legislativeSession, boolean removed) {
+        boolean fascist = legislativeSession.getClaimEvent().getPlayedPolicy() == Claim.FASCIST;
+        int factor = removed ? -1 : 1; //If the event is removed, we decrease the policy count
+
+        if(fascist) {
+            fascistPolicies += factor;
 
             if (fascistPolicies == gameTrack.getFasPolicies()) {
                 ((MainActivity) GameEventsManager.getContext()).fragment_game.displayEndGameOptions();
-            } else if(GameManager.isGameStarted() && legislativeSession.getPresidentAction() == null) addTrackAction(legislativeSession, false); //This method could also be called when a game is restored. In that case, we do not want to add new events
-
+            } else if(!removed && GameManager.isGameStarted() && legislativeSession.getPresidentAction() == null) addTrackAction(legislativeSession, false); //This method could also be called when a game is restored. In that case, we do not want to add new events
         } else {
-            liberalPolicies++;
+            liberalPolicies += factor;
 
             if(liberalPolicies == gameTrack.getLibPolicies()) {
                 ((MainActivity) GameEventsManager.getContext()).fragment_game.displayEndGameOptions();
             }
         }
+    }
 
+    private static void processRejectedLegislativeSession(LegislativeSession legislativeSession, boolean removed) {
+        if(gameTrack.isManualMode()) return;
+
+        if(removed) {
+            electionTracker --;
+        } else {
+            electionTracker++;
+            if(electionTracker == gameTrack.getElectionTrackerLength()) {
+                electionTracker = 0;
+                createTopPolicyEvent(legislativeSession);
+            }
+        }
+    }
+
+    private static void createTopPolicyEvent(LegislativeSession legislativeSession) {
+        if(!GameManager.isGameStarted() || legislativeSession.getPresidentAction() != null)  return;
+
+        TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(GameEventsManager.getContext());
+
+        //Link them together
+        legislativeSession.setPresidentAction(topPolicyPlayedEvent);
+        topPolicyPlayedEvent.setLinkedLegislativeSession(legislativeSession);
+
+        //Add it
+        addEvent(topPolicyPlayedEvent);
     }
 
     /**
@@ -158,105 +162,137 @@ public class LegislativeSessionManager {
         return null;
     }
 
+
     /**
      * This function is called when a Legislative Session has been edited by the user. It updates variables such as the policy count, removes the presidential action etc.
      * @param legislativeSession The edited LegislativeSession
-     * @param claimEvent The original claim Event
      * @param newClaimEvent The new claim Event
-     * @param voteEvent The original voteEvent
      * @param newVoteEvent The new voteEvent
      */
-    public static void processLegislativeSessionEdit(LegislativeSession legislativeSession, ClaimEvent claimEvent, ClaimEvent newClaimEvent, VoteEvent voteEvent, VoteEvent newVoteEvent) {
-        boolean voteRejected = newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED;
+    public static void processLegislativeSessionEdit(LegislativeSession legislativeSession, ClaimEvent newClaimEvent, VoteEvent newVoteEvent) {
+        ClaimEvent claimEvent = legislativeSession.getClaimEvent();
+        VoteEvent voteEvent = legislativeSession.getVoteEvent();
 
-        //If we change the event to be rejected or vetoed, we reduce the policy count
-        if (newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || newClaimEvent != null && newClaimEvent.isVetoed()) {
-            if (claimEvent != null && claimEvent.getPlayedPolicy() == Claim.LIBERAL)
-                liberalPolicies--;
-            if (claimEvent != null && claimEvent.getPlayedPolicy() == Claim.FASCIST)
-                fascistPolicies--;
-        }
+        //The tests are in different sub-functions to simplify understanding the code
 
-        //If we change the event to play a policy, we increase the policy count
-        if (voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || claimEvent != null && claimEvent.isVetoed()) {
-            if (newClaimEvent != null && newClaimEvent.getPlayedPolicy() == Claim.LIBERAL)
-                liberalPolicies++;
-            if (newClaimEvent != null && newClaimEvent.getPlayedPolicy() == Claim.FASCIST)
-                fascistPolicies++;
-        }
+        processRejectionOrVetoChange(legislativeSession, newClaimEvent, newVoteEvent);
 
-        //If we had a liberal policy and change it to a fascist policy, we update the policy count
-        if (newClaimEvent != null && !newClaimEvent.isVetoed() && newClaimEvent.getPlayedPolicy() == Claim.FASCIST && claimEvent != null && !claimEvent.isVetoed() && claimEvent.getPlayedPolicy() == Claim.LIBERAL) {
-            liberalPolicies--;
-            fascistPolicies++;
-        }
-
-        //If we had a fascist policy and change it to a liberal policy, we update the policy count
-        if (newClaimEvent != null && !newClaimEvent.isVetoed() && newClaimEvent.getPlayedPolicy() == Claim.LIBERAL && claimEvent != null && !claimEvent.isVetoed() && claimEvent.getPlayedPolicy() == Claim.FASCIST) {
-            liberalPolicies++;
-            fascistPolicies--;
-        }
+        processPolicyChange(claimEvent, newClaimEvent);
 
         //If we are not in manual mode, we have to recalculate the election tracker as well
         if (!gameTrack.isManualMode()) {
-            //If it was rejected and now not anymore, we decrease the election tracker
-            if (voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED && newVoteEvent.getVotingResult() == VoteEvent.VOTE_PASSED)
-                electionTracker--;
-            //If it was passed and now not anymore, we increase the election tracker
-            if (voteEvent.getVotingResult() == VoteEvent.VOTE_PASSED && newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED) {
-                electionTracker++;
-
-                if (electionTracker == gameTrack.getElectionTrackerLength()) {
-                    electionTracker = 0;
-
-                    TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(GameEventsManager.getContext());
-                    topPolicyPlayedEvent.setLinkedLegislativeSession(legislativeSession);
-                    legislativeSession.setPresidentAction(topPolicyPlayedEvent);
-
-                    addEvent(topPolicyPlayedEvent);
-                }
-            }
+            recalculateElectionTracker(legislativeSession, voteEvent, newVoteEvent);
         }
 
         //If we are editing an event, this can cause changes. If there is a presidential action and we switch the policy to a liberal one, we have to remove the presidential action
         if (legislativeSession.getPresidentAction() != null) {
-            GameEvent presidentialAction = legislativeSession.getPresidentAction();
-            if (voteRejected || newClaimEvent.isVetoed() || newClaimEvent.getPlayedPolicy() == Claim.LIBERAL) {
-                if (presidentialAction instanceof ExecutiveAction)
-                    ((ExecutiveAction) presidentialAction).setLinkedLegislativeSession(null);
-                if (presidentialAction instanceof TopPolicyPlayedEvent)
-                    ((TopPolicyPlayedEvent) presidentialAction).setLinkedLegislativeSession(null);
-                GameEventsManager.remove(presidentialAction);
-
-                legislativeSession.setPresidentAction(null);
+            if (newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || newClaimEvent.isVetoed() || newClaimEvent.getPlayedPolicy() == Claim.LIBERAL) {
+                removePresidentialAction(legislativeSession);
             }
         }
 
         //If we switch the president's name and the legislative session has a presidential action, we have to change the name in that one too
         if (!voteEvent.getPresidentName().equals(newVoteEvent.getPresidentName()) && legislativeSession.getPresidentAction() != null) {
-            GameEvent presidentAction = legislativeSession.getPresidentAction();
-            if (presidentAction instanceof ExecutiveAction) {
-                ExecutiveAction presidentExecutiveAction = (ExecutiveAction) presidentAction;
-                presidentExecutiveAction.setPresidentName(newVoteEvent.getPresidentName());
+            changePresidentName(legislativeSession, newVoteEvent);
+        }
+    }
 
-                if (presidentExecutiveAction.getPresidentName().equals(presidentExecutiveAction.getTargetName())) { //If the president and chancellor name are now the same, the user is prompted to edit that event as well
-                    presidentExecutiveAction.isSetup = true;
-                    presidentExecutiveAction.isEditing = true;
-                    RecyclerViewManager.getCardListAdapter().notifyItemChanged(GameEventsManager.getEventList().size() - 1);
-                }
+    private static void processRejectionOrVetoChange(LegislativeSession legislativeSession, ClaimEvent newClaimEvent, VoteEvent newVoteEvent) {
+        ClaimEvent claimEvent = legislativeSession.getClaimEvent();
+
+        boolean voteRejected = legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_FAILED;
+        boolean vetoed = claimEvent != null && claimEvent.isVetoed();
+
+        boolean newVoteRejected = newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED;
+        boolean newClaimVetoed = newClaimEvent != null && newClaimEvent.isVetoed();
+
+        /*There are two possibilities:
+         1. The old leg.Session was rejected/vetoed and the new one isn't
+            => increase policy count, check the new Claim event
+         2. The new leg.Session is rejected/vetoed and the old one wasn't
+            => Decrease policy count, check the old claim event
+         */
+        int factor = (voteRejected || vetoed) ? 1 : -1;
+        ClaimEvent checkedClaimEvent = (voteRejected || vetoed) ? newClaimEvent : claimEvent;;
+
+        if((!voteRejected && !vetoed && !newClaimVetoed && !newVoteRejected) || checkedClaimEvent == null) return;
+
+        if (checkedClaimEvent.getPlayedPolicy() == Claim.LIBERAL)
+            liberalPolicies += factor;
+        if (checkedClaimEvent.getPlayedPolicy() == Claim.FASCIST)
+            fascistPolicies += factor;
+    }
+
+    private static void recalculateElectionTracker(LegislativeSession legislativeSession, VoteEvent voteEvent, VoteEvent newVoteEvent) {
+        //If it was rejected and now not anymore, we decrease the election tracker
+        if (voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED && newVoteEvent.getVotingResult() == VoteEvent.VOTE_PASSED)
+            electionTracker--;
+        //If it was passed and now not anymore, we increase the election tracker
+        if (voteEvent.getVotingResult() == VoteEvent.VOTE_PASSED && newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED) {
+            electionTracker++;
+
+            if (electionTracker == gameTrack.getElectionTrackerLength()) {
+                electionTracker = 0;
+
+                TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(GameEventsManager.getContext());
+                topPolicyPlayedEvent.setLinkedLegislativeSession(legislativeSession);
+                legislativeSession.setPresidentAction(topPolicyPlayedEvent);
+
+                addEvent(topPolicyPlayedEvent);
             }
         }
     }
 
+    private static void processPolicyChange(ClaimEvent claimEvent, ClaimEvent newClaimEvent) {
+        if(newClaimEvent == null ||  newClaimEvent.isVetoed() || claimEvent == null || claimEvent.isVetoed() ) return; //This case is already covered by processRejectionOrVetoChange()
+
+        //If we had a liberal policy and change it to a fascist policy, we update the policy count
+        if (newClaimEvent.getPlayedPolicy() == Claim.FASCIST && claimEvent.getPlayedPolicy() == Claim.LIBERAL) {
+            liberalPolicies--;
+            fascistPolicies++;
+        }
+
+        //If we had a fascist policy and change it to a liberal policy, we update the policy count
+        if (newClaimEvent.getPlayedPolicy() == Claim.LIBERAL && claimEvent.getPlayedPolicy() == Claim.FASCIST) {
+            liberalPolicies++;
+            fascistPolicies--;
+        }
+    }
+
+    private static void changePresidentName(LegislativeSession legislativeSession, VoteEvent newVoteEvent) {
+        GameEvent presidentAction = legislativeSession.getPresidentAction();
+        if (presidentAction instanceof ExecutiveAction) {
+            ExecutiveAction presidentExecutiveAction = (ExecutiveAction) presidentAction;
+            presidentExecutiveAction.setPresidentName(newVoteEvent.getPresidentName());
+
+            if (presidentExecutiveAction.getPresidentName().equals(presidentExecutiveAction.getTargetName())) { //If the president and chancellor name are now the same, the user is prompted to edit that event as well
+                presidentExecutiveAction.isSetup = true;
+                presidentExecutiveAction.isEditing = true;
+                RecyclerViewManager.getCardListAdapter().notifyItemChanged(GameEventsManager.getEventList().size() - 1);
+            }
+        }
+    }
+
+    private static void removePresidentialAction(LegislativeSession legislativeSession) {
+        GameEvent presidentialAction = legislativeSession.getPresidentAction();
+
+        if (presidentialAction instanceof ExecutiveAction)
+            ((ExecutiveAction) presidentialAction).setLinkedLegislativeSession(null);
+        if (presidentialAction instanceof TopPolicyPlayedEvent)
+            ((TopPolicyPlayedEvent) presidentialAction).setLinkedLegislativeSession(null);
+        GameEventsManager.remove(presidentialAction);
+
+        legislativeSession.setPresidentAction(null);
+    }
+
     /**
      * Returns whether a track action has to be added to an edited LegislativeSession
-     * @param legislativeSession The edited LegislativeSession
      * @param claimEvent The original claim Event
      * @param newClaimEvent The new claim Event
      * @param voteEvent The original voteEvent
      * @param newVoteEvent The new voteEvent
      */
-    public static boolean trackActionRequired (LegislativeSession legislativeSession, ClaimEvent claimEvent, ClaimEvent newClaimEvent, VoteEvent voteEvent, VoteEvent newVoteEvent){
+    public static boolean trackActionRequired(ClaimEvent claimEvent, ClaimEvent newClaimEvent, VoteEvent voteEvent, VoteEvent newVoteEvent){
         //If we switch to a fascist policy, we have to create a presidential action
         return newVoteEvent.getVotingResult() == VoteEvent.VOTE_PASSED && newClaimEvent.getPlayedPolicy() == Claim.FASCIST && !newClaimEvent.isVetoed() && (voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED || claimEvent.isVetoed() || claimEvent.getPlayedPolicy() == Claim.LIBERAL);
     }

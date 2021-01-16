@@ -17,6 +17,7 @@ import androidx.cardview.widget.CardView;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupListeners;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.OnSetupCancelledListener;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.OnSetupFinishedListener;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.SetupFinishCondition;
@@ -95,7 +96,7 @@ public class LegislativeSessionSetupManager {
             initialiseSetup(cardView);
         }
 
-        ArrayAdapter<String> playerListadapter = CardSetupHelper.getPlayerNameAdapter(context);
+        ArrayAdapter<String> playerListadapter = CardSetupHelper.getArrayAdapter(context, PlayerListManager.getAlivePlayerList(), false);
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);
@@ -109,12 +110,12 @@ public class LegislativeSessionSetupManager {
         chancSpinner.setAdapter(playerListadapter);
         chancSpinner.setSelection(newChancellorPos); //Setting a different item on the chancellor spinner so they don't have the same name at the beginning
 
-        final ArrayAdapter<String> presClaimListadapter = CardSetupHelper.getClaimAdapter(context, Claim.getPresidentClaims());
+        final ArrayAdapter<String> presClaimListadapter = CardSetupHelper.getArrayAdapter(context, Claim.getPresidentClaims(), true);
         presClaimListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presClaimSpinner.setAdapter(presClaimListadapter);
 
-        ArrayAdapter<String> chancClaimListadapter = CardSetupHelper.getClaimAdapter(context, Claim.getChancellorClaims());
+        ArrayAdapter<String> chancClaimListadapter = CardSetupHelper.getArrayAdapter(context, Claim.getChancellorClaims(), true);
         chancClaimListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         chancClaimSpinner.setAdapter(chancClaimListadapter);
@@ -141,26 +142,30 @@ public class LegislativeSessionSetupManager {
         CardSetupHelper.setupImageViewSelector(icon_liberal, icon_fascist, ColorStateList.valueOf(context.getColor(R.color.colorLiberal)), ColorStateList.valueOf(context.getColor(R.color.colorFascist)), new View[]{cb_vetoed});
         CardSetupHelper.setupImageViewSelector(icon_ja, icon_nein, null, null, null);
 
-        OnSetupFinishedListener onSetupFinishedListener = new OnSetupFinishedListener() {
+        CardSetupListeners cardSetupListeners = new CardSetupListeners();
+
+        cardSetupListeners.setOnSetupFinishedListener(new OnSetupFinishedListener() {
             @Override
             public void onSetupFinished() {
                 setupFinished();
             }
-        };
+        });
 
-        OnSetupCancelledListener onSetupCancelledListener = new OnSetupCancelledListener() {
+        cardSetupListeners.setOnSetupCancelledListener(new OnSetupCancelledListener() {
             @Override
             public void onSetupCancelled() {
                 GameEventsManager.remove(legislativeSession);
             }
-        };
+        });
 
-        CardSetupHelper.initialiseSetupPages(new View[]{cardView.findViewById(R.id.page1_selection), cardView.findViewById(R.id.page2_voting), cardView.findViewById(R.id.page3_policies), cardView.findViewById(R.id.page4_claims)}, (Button) cardView.findViewById(R.id.btn_setup_forward), (Button) cardView.findViewById(R.id.btn_setup_back), onSetupFinishedListener, onSetupCancelledListener, new SetupFinishCondition() {
+        cardSetupListeners.setSetupFinishCondition(new SetupFinishCondition() {
             @Override
             public boolean shouldSetupBeFinished(int newPage) {
                 return icon_nein.getAlpha() == 1f && newPage == 3;
             }
         });
+
+        CardSetupHelper.initialiseSetupPages(new View[]{cardView.findViewById(R.id.page1_selection), cardView.findViewById(R.id.page2_voting), cardView.findViewById(R.id.page3_policies), cardView.findViewById(R.id.page4_claims)}, (Button) cardView.findViewById(R.id.btn_setup_forward), (Button) cardView.findViewById(R.id.btn_setup_back), cardSetupListeners);
     }
 
     private void setupFinished() {
@@ -236,11 +241,11 @@ public class LegislativeSessionSetupManager {
         ClaimEvent newClaimEvent = createNewClaimEvent(voteRejected, playedPolicy, vetoed);
 
         if (legislativeSession.isEditing) { //We are editing the card, we need to process the changes (e.g. update the policy count)
-            LegislativeSessionManager.processLegislativeSessionEdit(legislativeSession, legislativeSession.getClaimEvent(), newClaimEvent, legislativeSession.getVoteEvent(), newVoteEvent);
+            LegislativeSessionManager.processLegislativeSessionEdit(legislativeSession, newClaimEvent, newVoteEvent);
         }
 
         legislativeSession.leaveSetupPhase(newClaimEvent, newVoteEvent);
-        if (LegislativeSessionManager.trackActionRequired(legislativeSession, legislativeSession.getClaimEvent(), newClaimEvent, legislativeSession.getVoteEvent(), newVoteEvent)) {
+        if (LegislativeSessionManager.trackActionRequired(legislativeSession.getClaimEvent(), newClaimEvent, legislativeSession.getVoteEvent(), newVoteEvent)) {
             LegislativeSessionManager.addTrackAction(legislativeSession, false);
         }
     }

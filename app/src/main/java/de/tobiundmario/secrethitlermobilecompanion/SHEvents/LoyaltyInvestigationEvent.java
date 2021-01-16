@@ -22,7 +22,6 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
-import static de.tobiundmario.secrethitlermobilecompanion.SHCards.CardSetupHelper.getPlayerNameAdapter;
 
 public class LoyaltyInvestigationEvent extends ExecutiveAction {
 
@@ -68,7 +67,7 @@ public class LoyaltyInvestigationEvent extends ExecutiveAction {
     public void initialiseSetupCard(CardView cardView) {
         //Setting up Spinners
         final Spinner presSpinner = cardView.findViewById(R.id.spinner_president);
-        ArrayAdapter<String> playerListadapter = getPlayerNameAdapter(c);
+        ArrayAdapter<String> playerListadapter = CardSetupHelper.getArrayAdapter(c, PlayerListManager.getAlivePlayerList(), false);
         playerListadapter.setDropDownViewResource(android.R.layout
                 .simple_spinner_dropdown_item);
         presSpinner.setAdapter(playerListadapter);

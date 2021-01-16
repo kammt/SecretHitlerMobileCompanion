@@ -4,10 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.util.Log;
-
-import androidx.annotation.RequiresApi;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,7 +42,6 @@ public class Server extends NanoHTTPD {
         JSONManager.setClientIPsSet(this.clientIPs);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public Response serve(IHTTPSession session) {
         Log.v(" Server request URI", session.getUri());

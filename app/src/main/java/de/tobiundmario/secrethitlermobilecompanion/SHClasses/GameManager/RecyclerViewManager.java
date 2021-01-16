@@ -1,23 +1,28 @@
 package de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
 
 import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CustomTracksRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.EventCardRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.ModifiedDefaultItemAnimator;
+import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.OldPlayerListRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.EventChange;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutiveAction;
@@ -38,6 +43,9 @@ public final class RecyclerViewManager {
     private static EventCardRecyclerViewAdapter cardListAdapter;
     public static boolean swipeEnabled = false;
 
+    private static OldPlayerListRecyclerViewAdapter oldPlayerListRecyclerViewAdapter;
+    private static CustomTracksRecyclerViewAdapter customTracksRecyclerViewAdapter;
+
     public static EventCardRecyclerViewAdapter getCardListAdapter() {
         return cardListAdapter;
     }
@@ -55,6 +63,16 @@ public final class RecyclerViewManager {
     public static void destroy() {
         cardList = null;
         cardListAdapter = null;
+        oldPlayerListRecyclerViewAdapter = null;
+        customTracksRecyclerViewAdapter = null;
+    }
+
+    public static CustomTracksRecyclerViewAdapter getCustomTracksRecyclerViewAdapter() {
+        return customTracksRecyclerViewAdapter;
+    }
+
+    public static OldPlayerListRecyclerViewAdapter getOldPlayerListRecyclerViewAdapter() {
+        return oldPlayerListRecyclerViewAdapter;
     }
 
     public static void setupSwipeToDelete() {
@@ -149,5 +167,48 @@ public final class RecyclerViewManager {
         };
 
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(cardList);
+    }
+
+    public static void initialiseSetupRecyclerView(final RecyclerView recyclerView, final Context context, boolean isPlayerList) {
+        try {
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            recyclerView.setAdapter(getRecyclerViewAdapter(isPlayerList, context));
+
+            setupSwipeCallback(recyclerView, isPlayerList, context);
+
+            SharedPreferencesManager.setCustomTitle(context, isPlayerList);
+        } catch (JSONException e) {
+            ExceptionHandler.showErrorSnackbar(e, "RecyclerViewManager.initialiseSetupRecyclerView()");
+        }
+    }
+
+    private static RecyclerView.Adapter getRecyclerViewAdapter(boolean isPlayerList, Context context) throws JSONException {
+        JSONArray data = SharedPreferencesManager.getJsonArray(context, isPlayerList);
+        if(isPlayerList) {
+            oldPlayerListRecyclerViewAdapter = new OldPlayerListRecyclerViewAdapter(data, context);
+            return oldPlayerListRecyclerViewAdapter;
+        } else {
+            customTracksRecyclerViewAdapter = new CustomTracksRecyclerViewAdapter(data, context);
+            return customTracksRecyclerViewAdapter;
+        }
+    }
+
+    private static void setupSwipeCallback(final RecyclerView recyclerView,
+                                           final boolean isPlayerList, final Context context) {
+        final ItemTouchHelper.SimpleCallback itemTouchHelperCallback =
+                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                final int position = viewHolder.getAdapterPosition();
+                SharedPreferencesManager.removeItemWithSnackbar(position, context, recyclerView, isPlayerList);
+            }
+        };
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
     }
 }

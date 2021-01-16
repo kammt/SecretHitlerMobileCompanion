@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import androidx.core.content.res.ResourcesCompat;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
@@ -27,6 +26,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameMan
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 
 public final class CardSetupHelper {
+
     private CardSetupHelper() {}
 
     public static void lockPresidentSpinner(String presidentName, Spinner spinner) {
@@ -35,86 +35,39 @@ public final class CardSetupHelper {
         if(!GameManager.gameTrack.isManualMode()) spinner.setEnabled(false);
     }
 
-    public static ArrayAdapter<String> getPlayerNameAdapter(final Context context) {
-        return new ArrayAdapter<String>(context,
-                android.R.layout.simple_spinner_item, PlayerListManager.getAlivePlayerList()) {
-
+    /**
+     * Is responsible for creating the ArrayAdapter required for our Spinners during Setup. They are mainly responsible for setting the font style to Comfortaa
+     * @param context
+     * @param data A List of data to put in the Spinner (e.g. a list of Claims or the Player List)
+     * @param claimSpinnerAdapter whether or not the Spinner contains Claims to be colored
+     * @return an ArrayAdapter
+     */
+    public static ArrayAdapter<String> getArrayAdapter(final Context context, List<String> data, final boolean claimSpinnerAdapter) {
+        return new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, data) {
+            @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-
-                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
-                ((TextView) v).setTypeface(externalFont);
-
-                return v;
+                return createView(position, convertView, parent);
             }
 
-
+            @Override
             public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
-                View v =super.getDropDownView(position, convertView, parent);
-
-                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
-                ((TextView) v).setTypeface(externalFont);
-
-                return v;
+                return createView(position, convertView, parent);
             }
-        };
-    }
 
-    public static ArrayAdapter<String> getClaimAdapter(final Context context, List<String> data) {
-        return new ArrayAdapter<String>(context,
-                android.R.layout.simple_spinner_item, data) {
-
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
+            private View createView(int position, View convertView, ViewGroup parent) {
+                TextView tv = (TextView) super.getView(position, convertView, parent);
 
                 Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
-                TextView tv = (TextView) v;
                 tv.setTypeface(externalFont);
-                tv.setText(Claim.colorClaim(tv.getText().toString()), TextView.BufferType.SPANNABLE);
 
-                return v;
-            }
+                if(claimSpinnerAdapter) tv.setText(Claim.colorClaim(tv.getText().toString()), TextView.BufferType.SPANNABLE);
 
-
-            public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
-                View v =super.getDropDownView(position, convertView, parent);
-
-                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
-                TextView tv = (TextView) v;
-                tv.setTypeface(externalFont);
-                tv.setText(Claim.colorClaim(tv.getText().toString()), TextView.BufferType.SPANNABLE);
-
-                return v;
+                return tv;
             }
         };
     }
 
-    public static ArrayAdapter<String> getPlayerNameAdapterWithDeadPlayer(final Context context, String deadPlayer) {
-        ArrayList<String> playerList = PlayerListManager.getAlivePlayerList();
-        playerList.add(deadPlayer);
-        return new ArrayAdapter<String>(context,
-                android.R.layout.simple_spinner_item, playerList) {
 
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-
-                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
-                ((TextView) v).setTypeface(externalFont);
-
-                return v;
-            }
-
-
-            public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
-                View v =super.getDropDownView(position, convertView, parent);
-
-                Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
-                ((TextView) v).setTypeface(externalFont);
-
-                return v;
-            }
-        };
-    }
 
     /**
      * Creates an imageView selector, as e.g. seen in the Setup of a Legislative session. If the first image is clicked, the alpha of the second image is reduced, indicating a selection.
@@ -169,36 +122,34 @@ public final class CardSetupHelper {
      * @param setupPages An Array of pages, must be in correct order
      * @param btn_continue a reference to the next page button
      * @param btn_back a reference to the previous page button
-     * @param onSetupFinishedListener called when the setup is finished
-     * @param onSetupCancelledListener called the setup has been cancelled by the user
-     * @param setupFinishCondition a function that provides a condition on whether a setup should be finished earlier when the user hits the "next" button. Example: When the user selects that a vote was rejected, the setup should be finished earlier since no policy is played
+     * @param cardSetupListeners A helper class containing multiple Listeners useful for creating a setup
      */
-    public static void initialiseSetupPages(final View[] setupPages, Button btn_continue, final Button btn_back, final OnSetupFinishedListener onSetupFinishedListener, final OnSetupCancelledListener onSetupCancelledListener, final SetupFinishCondition setupFinishCondition) {
-        btn_back.setText(GameEventsManager.getContext().getString(R.string.btn_cancel));
+    public static void initialiseSetupPages(final View[] setupPages, View btn_continue, final View btn_back, final CardSetupListeners cardSetupListeners) {
+        changeButtonText(btn_back, GameEventsManager.getContext().getString(R.string.btn_cancel));
         final int[] setupPage = {1};
 
         for(int i = 0; i < setupPages.length; i++) {
-            int visibility;
-            if(i == 0) visibility = View.VISIBLE;
-            else visibility = View.GONE;
-
-            setupPages[i].setVisibility(visibility);
+            setupPages[i].setVisibility((i == 0) ? View.VISIBLE : View.GONE);
         }
 
         btn_continue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setupPage[0]++;
-                if(setupPage[0] == 2) btn_back.setText(GameEventsManager.getContext().getString(R.string.back));
-                nextSetupPage(setupPage, setupPages, setupFinishCondition, onSetupFinishedListener);
+                if(cardSetupListeners.shouldPageTransitionOccurr(setupPage[0])) {
+                    setupPage[0]++;
+                    if (setupPage[0] == 2)
+                        changeButtonText(btn_back, GameEventsManager.getContext().getString(R.string.back));
+                    nextSetupPage(setupPage, setupPages, cardSetupListeners.getSetupFinishCondition(), cardSetupListeners.getOnSetupFinishedListener());
+                    cardSetupListeners.triggerPageSetup(setupPage[0] - 1, setupPages);
                 }
+            }
         });
 
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setupPage[0]--;
-                previousSetupPage(setupPage, setupPages, btn_back, onSetupCancelledListener);
+                previousSetupPage(setupPage, setupPages, btn_back, cardSetupListeners.getOnSetupCancelledListener());
             }
         });
     }
@@ -211,35 +162,15 @@ public final class CardSetupHelper {
 
             //Animations
             Animation slideOutLeft = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_out_left);
-            slideOutLeft.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    oldPage.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
             Animation slideInRight = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_in_right);
             slideInRight.setFillAfter(true);
-            oldPage.startAnimation(slideOutLeft);
-
-            newPage.setVisibility(View.VISIBLE);
-            newPage.startAnimation(slideInRight);
-
+            animateTransition(oldPage, newPage, slideOutLeft, slideInRight);
         } else {
             onSetupFinishedListener.onSetupFinished();
         }
     }
 
-    private static void previousSetupPage(int[] setupPage, View[] setupPages, Button btn_back, OnSetupCancelledListener onSetupCancelledListener) {
+    private static void previousSetupPage(int[] setupPage, View[] setupPages, View btn_back, OnSetupCancelledListener onSetupCancelledListener) {
         final View oldPage, newPage;
         if(setupPage[0] >= 1) {
             oldPage = setupPages[setupPage[0]];
@@ -247,17 +178,38 @@ public final class CardSetupHelper {
 
             //Animations
             Animation slideOutRight = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_out_right);
-            slideOutRight.setFillAfter(true);
             Animation slideInLeft = AnimationUtils.loadAnimation(GameEventsManager.getContext(), R.anim.slide_in_left);
-            slideInLeft.setFillAfter(true);
-            oldPage.startAnimation(slideOutRight);
+            animateTransition(oldPage, newPage, slideOutRight, slideInLeft);
 
-            newPage.setVisibility(View.VISIBLE);
-            newPage.startAnimation(slideInLeft);
-
-            if(setupPage[0] == 1) btn_back.setText(GameEventsManager.getContext().getString(R.string.btn_cancel));
+            if(setupPage[0] == 1) changeButtonText(btn_back, GameEventsManager.getContext().getString(R.string.btn_cancel));
         } else {
-            onSetupCancelledListener.onSetupCancelled();
+            if(onSetupCancelledListener != null) onSetupCancelledListener.onSetupCancelled();
         }
+    }
+
+    private static void animateTransition(final View oldPage, View newPage, Animation slide_Out, Animation slide_in) {
+        newPage.setVisibility(View.VISIBLE);
+        newPage.startAnimation(slide_in);
+
+        slide_Out.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                oldPage.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        oldPage.startAnimation(slide_Out);
+    }
+
+    private static void changeButtonText(View btn, String text) {
+        if(btn instanceof Button) ((Button) btn).setText(text);
+        else if(btn instanceof TextView) ((TextView) btn).setText(text);
     }
 }

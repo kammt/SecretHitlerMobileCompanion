@@ -256,6 +256,11 @@ public class PlayerListManager {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 final int position = viewHolder.getAdapterPosition();
+                if(position > playerList.size() - 1) {
+                    playerCardRecyclerViewAdapter.notifyItemChanged(position);
+                    return;
+                }
+
                 final String playerName = playerList.get(position);
 
                 removePlayer(playerName);
@@ -275,6 +280,7 @@ public class PlayerListManager {
             public boolean isItemViewSwipeEnabled() {
                 return !GameManager.isGameStarted();
             }
+
         };
 
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(playerRecyclerView);

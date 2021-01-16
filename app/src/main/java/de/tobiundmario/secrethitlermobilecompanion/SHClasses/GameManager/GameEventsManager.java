@@ -18,8 +18,6 @@ import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.GameEndCard;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.EventChange;
-import de.tobiundmario.secrethitlermobilecompanion.SHClasses.SharedPreferencesManager;
-import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutiveAction;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
@@ -94,31 +92,22 @@ public final class GameEventsManager {
         int position;
 
         //We have to differentiate between two separate scenarios. If the event left the Editing phase, we want to change the JSON data at a specific position. If it left setup phase, we just want to add it to the array
-        if(event.isEditing) {
-
-            position = eventList.indexOf(event);
-            event.isEditing = false;
-            try {
+        position = eventList.indexOf(event);
+        try {
+            if(event.isEditing) {
+                event.isEditing = false;
                 jsonData.put(position, event.getJSON());
-            } catch (JSONException e) {
-                ExceptionHandler.showErrorSnackbar(e, "GameLog.notifySetupPhaseLeft() (arr.put, isEditing=true)");
-            }
-
-            JSONManager.addGameLogChange(new EventChange(event, EventChange.EVENT_UPDATE));
-        } else {
-
-            position = eventList.indexOf(event);
-            try {
+            } else {
                 if(position != eventList.size() - 1) SharedPreferencesManager.addJSONObjectToArray(event.getJSON(), jsonData, position);
                 else jsonData.put(event.getJSON());
-            } catch (JSONException e) {
-                ExceptionHandler.showErrorSnackbar(e, "GameLog.notifySetupPhaseLeft() (arr.put, isEditing=false)");
+
+                if(event instanceof LegislativeSession) processLegislativeSession((LegislativeSession) event, false);
             }
-
-            JSONManager.addGameLogChange(new EventChange(event, EventChange.NEW_EVENT));
-
-            if(event instanceof LegislativeSession) processLegislativeSession((LegislativeSession) event, false);
+        } catch (JSONException e) {
+            ExceptionHandler.showErrorSnackbar(e, "GameLog.notifySetupPhaseLeft() (arr.put)");
         }
+
+        JSONManager.addGameLogChange(new EventChange(event, (event.isEditing) ? EventChange.EVENT_UPDATE : EventChange.NEW_EVENT));
 
         //Nevertheless, we need to update the RecyclerViewItem
         RecyclerViewManager.getCardListAdapter().notifyItemChanged(position);
@@ -140,13 +129,9 @@ public final class GameEventsManager {
      */
     public static void addEvent(@NonNull GameEvent event) {
         if(event.isSetup && eventList.size() > 0 && eventList.get(eventList.size() - 1).isSetup) { //Checking if the last event is in setup mode
-            if(event instanceof GameEndCard) { //If it is the EndCard, we remove the setup event
-                eventList.remove(eventList.size() - 1);
-                RecyclerViewManager.getCardListAdapter().notifyItemRemoved(eventList.size() - 1);
-            } else { //If not, the process is blocked since we can't (or at least shouldn't) have two setups active at a time
-                CardDialog.showMessageDialog(c, c.getString(R.string.title_warning), c.getString(R.string.dialog_message_duplicate_event_creation), c.getString(R.string.btn_ok), null, null, null);
-                return;
-            }
+            //If not, the process is blocked since we can't (or at least shouldn't) have two setups active at a time
+            CardDialog.showMessageDialog(c, c.getString(R.string.title_warning), c.getString(R.string.dialog_message_duplicate_event_creation), c.getString(R.string.btn_ok), null, null, null);
+            return;
         }
 
         eventList.add(event);
@@ -157,11 +142,15 @@ public final class GameEventsManager {
             ExceptionHandler.showErrorSnackbar(e, "GameLog.addEvent() (arr.put)");
         }
 
+        postProcessEventAdding(event);
+    }
+
+    private static void postProcessEventAdding(GameEvent event) {
         if(!event.isSetup && event.allInvolvedPlayersAreUnselected(PlayerListManager.getplayerCardRecyclerViewAdapter().getHiddenPlayers())) {
             hiddenEventIndexes.add(eventList.size() - 1);
         }
 
-        if(event.getClass() == LegislativeSession.class && !event.isSetup) processLegislativeSession((LegislativeSession) event, false);
+        if(event instanceof LegislativeSession && !event.isSetup) processLegislativeSession((LegislativeSession) event, false);
         if(event.isSetup) RecyclerViewManager.getCardList().smoothScrollToPosition(eventList.size() - 1);
     }
 
@@ -170,44 +159,54 @@ public final class GameEventsManager {
      * @param event the removed event
      */
     public static void remove(GameEvent event) {
-        if(event instanceof ExecutiveAction) {
-            LegislativeSession legislativeSession = ((ExecutiveAction) event).getLinkedLegislativeSession();
-            if(legislativeSession != null && eventList.indexOf(legislativeSession) != -1) {
-                remove(legislativeSession);
-                return;
-            }
-        }
-
-        if(event instanceof TopPolicyPlayedEvent) {
-            LegislativeSession legislativeSession = ((TopPolicyPlayedEvent) event).getLinkedLegislativeSession();
-            if(legislativeSession != null && eventList.indexOf(legislativeSession) != -1) {
-                remove(legislativeSession);
-                return;
-            }
+        if(event instanceof ExecutiveAction || event instanceof TopPolicyPlayedEvent) {
+            processLinkedLegislativeSessionRemoval(event);
         }
 
         if(event instanceof GameEndCard) ((MainActivity) c).fragment_game.undoEndGameOptions();
 
         int position = eventList.indexOf(event);
-        if(!event.isSetup) jsonData.remove(position);
-        eventList.remove(position);
-        RecyclerViewManager.getCardListAdapter().notifyItemRemoved(position);
+        if(position == -1) return;
+        removeEvent(event, position);
 
         if(event instanceof ExecutionEvent && !event.isSetup) ((ExecutionEvent) event).resetOnRemoval();
         if(event instanceof LoyaltyInvestigationEvent && !event.isSetup) ((LoyaltyInvestigationEvent) event).resetOnRemoval();
 
         if(event instanceof LegislativeSession && !event.isSetup) {
-            reSetSessionNumber();
-            processLegislativeSession((LegislativeSession) event, true);
-
-            GameEvent presidentAction = ((LegislativeSession) event).getPresidentAction();
-            if(presidentAction != null) remove(presidentAction);
-            if(presidentAction instanceof DeckShuffledEvent) {
-                if (GameManager.electionTracker == 0) { //This Legislative Session created a DeckShuffledEvent. Thus we have to reset the electionTracker integer
-                    GameManager.electionTracker = GameManager.gameTrack.getElectionTrackerLength() - 1;
-                } else GameManager.electionTracker--;
-            }
+            processLegislativeSessionRemoval(event);
         }
+    }
+
+    private static void processLegislativeSessionRemoval(GameEvent event) {
+        reSetSessionNumber();
+        processLegislativeSession((LegislativeSession) event, true);
+
+        GameEvent presidentAction = ((LegislativeSession) event).getPresidentAction();
+        if(presidentAction != null) remove(presidentAction);
+        if(presidentAction instanceof TopPolicyPlayedEvent) {
+            if (GameManager.electionTracker == 0) { //This Legislative Session created a TopPolicyPlayedEvent. Thus we have to reset the electionTracker integer
+                GameManager.electionTracker = GameManager.gameTrack.getElectionTrackerLength() - 1;
+            } else GameManager.electionTracker--;
+        }
+    }
+
+    private static void processLinkedLegislativeSessionRemoval(GameEvent event) {
+        LegislativeSession legislativeSession = null;
+        if(event instanceof ExecutiveAction) {
+            legislativeSession = ((ExecutiveAction) event).getLinkedLegislativeSession();
+        } else if(event instanceof TopPolicyPlayedEvent) {
+            legislativeSession = ((TopPolicyPlayedEvent) event).getLinkedLegislativeSession();
+        }
+
+        if(legislativeSession != null && eventList.contains(legislativeSession)) {
+            remove(legislativeSession);
+        }
+    }
+
+    private static void removeEvent(GameEvent event, int position) {
+        if(!event.isSetup) jsonData.remove(position);
+        eventList.remove(position);
+        RecyclerViewManager.getCardListAdapter().notifyItemRemoved(position);
     }
 
     /**
