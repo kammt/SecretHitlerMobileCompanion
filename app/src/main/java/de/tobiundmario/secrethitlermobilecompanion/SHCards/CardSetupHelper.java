@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -68,24 +69,27 @@ public final class CardSetupHelper {
     }
 
 
-
     /**
      * Creates an imageView selector, as e.g. seen in the Setup of a Legislative session. If the first image is clicked, the alpha of the second image is reduced, indicating a selection.
-     * Furthermore, Colorstatelists can be provided, leading to Views e.g. Switches being colored in a specific way if an image is selected
-     * @param image1 The first imageView
-     * @param image2 The second imageView
-     * @param cl1 The Color set to views in case image1 is selected
-     * @param cl2 The color set to views in case image2 is selected
-     * @param coloredViews The views that are to be colored
+     * Furthermore, Colorstatelists and Runnables can be provided, leading to Views e.g. Switches being colored in a specific way if an image is selected or just general Layout changes occurring
+     * @param imageViews the involved ImageViews
+     * @param colorStateLists the ColorStateLists containing the color themes for each selection
+     * @param coloredViews an Array containing the views that are to be colored
+     * @param runnables an Array of Runnables that are run when the ImageView is selected
      */
-    public static void setupImageViewSelector(final ImageView image1, final ImageView image2, final ColorStateList cl1, final ColorStateList cl2, final View[] coloredViews) {
+    public static void setupImageViewSelector(ImageView[] imageViews, final ColorStateList[] colorStateLists, final View[] coloredViews, Runnable[] runnables) {
+        final ImageView image1 = imageViews[0], image2 = imageViews[1];
+        final ColorStateList csl1 = colorStateLists[0], csl2 = colorStateLists[1];
+        final Runnable run1 = runnables[0], run2 = runnables[1];
+
         image1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 image1.setAlpha(1f);
                 image2.setAlpha(0.2f);
 
-                if(cl1 != null && coloredViews != null) colorViews(cl1, coloredViews);
+                if(csl1 != null && coloredViews != null) colorViews(csl1, coloredViews);
+                if(run1 != null) run1.run();
             }
         });
 
@@ -95,7 +99,8 @@ public final class CardSetupHelper {
                 image2.setAlpha(1f);
                 image1.setAlpha(0.2f);
 
-                if(cl2 != null && coloredViews != null) colorViews(cl2, coloredViews);
+                if(csl2 != null && coloredViews != null) colorViews(csl2, coloredViews);
+                if(run2 != null) run2.run();
             }
         });
     }
@@ -103,7 +108,7 @@ public final class CardSetupHelper {
     /**
      * Colors an array of Views according to a ColorStateList
      * @param colorStateList The color that will be used
-     * @param viewsToBeColored An array of views that will be colored. Supports Switches and Checkboxes
+     * @param viewsToBeColored An array of views that will be colored. Supports Switches, Checkboxes and RadioButtons
      */
     private static void colorViews (ColorStateList colorStateList, View[] viewsToBeColored) {
         for(View view : viewsToBeColored) {
@@ -112,6 +117,8 @@ public final class CardSetupHelper {
             else if (view instanceof Switch) {
                 ((Switch) view).setThumbTintList(colorStateList);
                 ((Switch) view).setTrackTintList(colorStateList);
+            } else if(view instanceof RadioButton) {
+                ((RadioButton)view).setButtonTintList(colorStateList);
             }
 
         }
