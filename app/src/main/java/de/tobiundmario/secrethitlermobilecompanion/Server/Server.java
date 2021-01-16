@@ -63,30 +63,14 @@ public class Server extends NanoHTTPD {
 
         String uri = session.getUri();
 
+        return serveData(uri, clientIP);
+    }
+
+    private Response serveData(String uri, String clientIP) {
         switch (uri) {
             case "/index.html":
             case "/":
                 return newFixedLengthResponse(Response.Status.ACCEPTED, "text/html", getFile("index.html"));
-            case "/index.js":
-                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("index.js"));
-            case "/images.js":
-                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("images.js"));
-            case "/PlayerPane.js":
-                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("PlayerPane.js"));
-            case "/bootstrap.min.js":
-                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("bootstrap.min.js"));
-            case "/jquery-3.5.1.slim.min.js":
-                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("jquery-3.5.1.slim.min.js"));
-            case "/popper.min.js":
-                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/javascript", getFile("popper.min.js"));
-            case "/style.css":
-                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("style.css"));
-            case "/googlefonts.css":
-                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("googlefonts.css"));
-            case "/fontawesome.css":
-                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("fontawesome.css"));
-            case "/bootstrap.min.css":
-                return newFixedLengthResponse(Response.Status.ACCEPTED, "text/css", getFile("bootstrap.min.css"));
             case "/getGameJSON":
                 if (GameManager.isGameStarted()) {
                     String response = JSONManager.getCompleteGameJSON(clientIP);
@@ -103,15 +87,24 @@ public class Server extends NanoHTTPD {
                 return newFixedLengthResponse(Response.Status.SERVICE_UNAVAILABLE, "application/json", "");
         }
 
+        if(uri.endsWith(".js") || uri.endsWith(".css")) {
+            return newFixedLengthResponse(Response.Status.ACCEPTED, getMimeTypeForFile(uri), getFile(uri.substring(1)));
+        }
+
         if(uri.contains("/fonts")) {
-            try {
-                return newFixedLengthResponse(Response.Status.ACCEPTED, getMimeTypeForFile(uri), c.getAssets().open(uri.substring(1)), -1);
-            } catch (IOException e) {
-                ExceptionHandler.showErrorSnackbar(e, "Server.serve() (serving a font file)");
-            }
+            return serveFont(uri);
         }
 
         return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/html", getFile("404.html"));
+    }
+
+    private Response serveFont(String uri) {
+        try {
+            return newFixedLengthResponse(Response.Status.ACCEPTED, getMimeTypeForFile(uri), c.getAssets().open(uri.substring(1)), -1);
+        } catch (IOException e) {
+            ExceptionHandler.showErrorSnackbar(e, "Server.serveFont() (serving a font file)");
+        }
+        return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, "application/json", "");
     }
 
     public String getFile(String fileName) {
