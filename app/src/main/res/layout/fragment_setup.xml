@@ -220,7 +220,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            app:cardCornerRadius="10dp"
+            app:cardCornerRadius="@dimen/cardViewCornerRadius"
+            app:cardElevation="@dimen/cardViewElevation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -308,7 +309,8 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             app:cardBackgroundColor="@color/colorAccent"
-            app:cardCornerRadius="10dp"
+            app:cardCornerRadius="@dimen/cardViewCornerRadius"
+            app:cardElevation="@dimen/cardViewElevation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/card_settings_sounds">
