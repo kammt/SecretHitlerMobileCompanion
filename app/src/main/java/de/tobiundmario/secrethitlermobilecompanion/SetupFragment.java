@@ -77,6 +77,7 @@ public class SetupFragment extends Fragment {
         //Resetting values in case there has been a setup before which was cancelled
         initialiseLayout();
         page = 1;
+        progressBar_value = 300;
         PlayerListManager.initialise(playerCardList, context);
         FascistTrackSelectionManager.selectedTrackIndex = -1;
         FascistTrackSelectionManager.recommendedTrackIndex = -1;

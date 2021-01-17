@@ -32,7 +32,7 @@ public final class SetupFragmentManager {
                 if(playerCount <= 2) {
                     String title = (playerCount == 0) ? context.getString(R.string.no_players_added) : context.getString(R.string.title_too_little_players);
                     CardDialog.showMessageDialog(context, title, context.getString(R.string.no_players_added_msg), context.getString(R.string.btn_ok), null, null, null);
-                } else if (playerCount < 5) {
+                } else {
                     CardDialog.showMessageDialog(context, context.getString(R.string.title_too_little_players), context.getString(R.string.msg_too_little_players, playerCount), context.getString(R.string.btn_continue), new Runnable() {
                         @Override
                         public void run() {
