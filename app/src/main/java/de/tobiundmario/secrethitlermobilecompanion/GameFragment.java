@@ -118,7 +118,7 @@ public class GameFragment extends Fragment {
         performGameBackup();
 
         View view = getView();
-        setupRecyclerViews(view);
+        setupLayoutItems(view);
         bottomSheetMenuManager.setupBottomMenu(view);
 
         if(GameEventsManager.server) startAndBindServerService();
@@ -140,8 +140,6 @@ public class GameFragment extends Fragment {
             }
         };
         context.registerReceiver(serverPageUpdateReceiver, serverUpdateFilter);
-
-        setupGameStatusLayout();
 
         started = true;
     }
@@ -165,12 +163,6 @@ public class GameFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if(started) context.registerReceiver(serverPageUpdateReceiver, serverUpdateFilter);
-    }
-
-    private void setupGameStatusLayout() {
-        tv_fpolicies = getActivity().findViewById(R.id.tv_fpolicies);
-        tv_lpolicies = getActivity().findViewById(R.id.tv_lpolicies);
-        tv_electionTracker = getActivity().findViewById(R.id.tv_electionTracker);
     }
 
     public void updateGameStatusPage() {
@@ -213,7 +205,7 @@ public class GameFragment extends Fragment {
         ((MainActivity) context).replaceFragment(MainActivity.page_main, true);
     }
 
-    public void setupRecyclerViews(View fragmentLayout) {
+    public void setupLayoutItems(View fragmentLayout) {
         cardList = fragmentLayout.findViewById(R.id.cardList);
         cardList.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
         GameEventsManager.initialise(cardList, context);
@@ -222,6 +214,10 @@ public class GameFragment extends Fragment {
         playerCardList = fragmentLayout.findViewById(R.id.playerList);
         playerCardList.setLayoutManager(new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false));
         PlayerListManager.changeRecyclerView(playerCardList);
+
+        tv_fpolicies = fragmentLayout.findViewById(R.id.tv_fpolicies);
+        tv_lpolicies = fragmentLayout.findViewById(R.id.tv_lpolicies);
+        tv_electionTracker = fragmentLayout.findViewById(R.id.tv_electionTracker);
     }
 
     public void startAndBindServerService() {
