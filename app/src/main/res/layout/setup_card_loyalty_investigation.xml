@@ -11,7 +11,8 @@
     android:alpha="1"
     android:animateLayoutChanges="true"
     app:cardBackgroundColor="@color/colorAccent"
-    app:cardCornerRadius="10dp">
+    app:cardCornerRadius="@dimen/cardViewCornerRadius"
+    app:cardElevation="@dimen/cardViewElevation">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
