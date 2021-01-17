@@ -51,6 +51,8 @@
 
         <include layout="@layout/bottom_sheet_server_status" />
 
+        <include layout="@layout/bottom_sheet_game_status" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 

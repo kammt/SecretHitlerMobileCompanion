@@ -160,4 +160,7 @@
     <string name="title_voting_outcome">Vote outcome:</string>
     <string name="title_claims">Claims:</string>
     <string name="message_claims_not_matching_with_deck">The specified claims do not match with the shuffled deck. Did someone lie?</string>
+    <string name="menu_game_status">Game Status</string>
+    <string name="title_game_status">Game Status:</string>
+    <string name="status_election_tracker">Election Tracker:</string>
 </resources>
