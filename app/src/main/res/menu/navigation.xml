@@ -12,6 +12,11 @@
         android:title="@string/server_status"/>
 
     <item
+        android:id="@+id/navigation_game_status"
+        android:icon="@drawable/ic_game_status"
+        android:title="@string/menu_game_status"/>
+
+    <item
         android:id="@+id/navigation_add_event"
         android:icon="@drawable/ic_add"
         android:title="@string/new_event"/>
