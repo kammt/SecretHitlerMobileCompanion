@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -49,6 +50,8 @@ public class GameFragment extends Fragment {
 
     private ServerPaneManager serverPaneManager;
     private BottomSheetMenuManager bottomSheetMenuManager;
+
+    private TextView tv_fpolicies, tv_lpolicies, tv_electionTracker;
 
     boolean serverConnected = false;
     private ServerSercive boundServerService;
@@ -138,6 +141,8 @@ public class GameFragment extends Fragment {
         };
         context.registerReceiver(serverPageUpdateReceiver, serverUpdateFilter);
 
+        setupGameStatusLayout();
+
         started = true;
     }
 
@@ -160,6 +165,18 @@ public class GameFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if(started) context.registerReceiver(serverPageUpdateReceiver, serverUpdateFilter);
+    }
+
+    private void setupGameStatusLayout() {
+        tv_fpolicies = getActivity().findViewById(R.id.tv_fpolicies);
+        tv_lpolicies = getActivity().findViewById(R.id.tv_lpolicies);
+        tv_electionTracker = getActivity().findViewById(R.id.tv_electionTracker);
+    }
+
+    public void updateGameStatusPage() {
+        tv_fpolicies.setText(Integer.toString(GameManager.fascistPolicies));
+        tv_lpolicies.setText(Integer.toString(GameManager.liberalPolicies));
+        tv_electionTracker.setText(getContext().getString(R.string.status_election_tracker) + " " + GameManager.electionTracker);
     }
 
     /*

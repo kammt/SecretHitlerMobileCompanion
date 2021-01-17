@@ -46,7 +46,7 @@
         app:srcCompat="@drawable/icon_lpolicy" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/tv_fpolicies"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0"
@@ -58,7 +58,7 @@
         app:layout_constraintTop_toTopOf="@+id/img_fpolicy" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/tv_lpolicies"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0"
@@ -70,7 +70,7 @@
         app:layout_constraintTop_toTopOf="@+id/img_lpolicy" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/tv_electionTracker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"

@@ -242,6 +242,7 @@ public class BottomSheetMenuManager {
             case 1: //Game Status
                 newBottomSheet = bottomSheetBehaviorGameStatus;
                 otherBottomSheets = new BottomSheetBehavior[] {bottomSheetBehaviorAdd, bottomSheetBehaviorServer};
+                gameFragment.updateGameStatusPage();
                 break;
             case 2: //Add Event
                 newBottomSheet = bottomSheetBehaviorAdd;
