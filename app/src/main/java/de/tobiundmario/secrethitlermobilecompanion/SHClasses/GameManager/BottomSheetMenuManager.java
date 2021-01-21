@@ -16,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import de.tobiundmario.secrethitlermobilecompanion.GameFragment;
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
@@ -133,6 +134,18 @@ public class BottomSheetMenuManager {
         entry_top_policy = bottomSheetAdd.findViewById(R.id.topPolicy);
     }
 
+    public void showEnableManualModeDialog() {
+        CardDialog.showMessageDialog(context, context.getString(R.string.dialog_manual_mode_title), context.getString(R.string.dialog_manual_mode_desc), context.getString(R.string.btn_ok), new Runnable() {
+            @Override
+            public void run() {
+                GameManager.gameTrack.setManualMode(true);
+                bottomSheetBehaviorGameStatus.setState(BottomSheetBehavior.STATE_HIDDEN);
+                bottomNavigationMenu_game.getMenu().getItem(2).setVisible(false);
+                setupAddEventButton();
+            }
+        }, context.getString(R.string.btn_cancel), null);
+    }
+
     private void setupAddEventButton() {
         bottomSheetBehaviorAdd = BottomSheetBehavior.from(bottomSheetAdd);
         bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
@@ -155,13 +168,15 @@ public class BottomSheetMenuManager {
             }
         });
 
-        if(!GameManager.gameTrack.isManualMode()) {
-            entry_loyaltyInvestigation.setVisibility(View.GONE);
-            entry_execution.setVisibility(View.GONE);
-            entry_policy_peek.setVisibility(View.GONE);
-            entry_special_election.setVisibility(View.GONE);
-            entry_top_policy.setVisibility(View.GONE);
-        } else {
+        int visibility = GameManager.gameTrack.isManualMode() ? View.VISIBLE : View.GONE;
+
+        entry_loyaltyInvestigation.setVisibility(visibility);
+        entry_execution.setVisibility(visibility);
+        entry_policy_peek.setVisibility(visibility);
+        entry_special_election.setVisibility(visibility);
+        entry_top_policy.setVisibility(visibility);
+
+        if(GameManager.gameTrack.isManualMode()) {
             setupManualModeAddButtons();
         }
     }

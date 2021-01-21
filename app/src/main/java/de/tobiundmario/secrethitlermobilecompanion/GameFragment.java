@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -52,6 +53,7 @@ public class GameFragment extends Fragment {
     private BottomSheetMenuManager bottomSheetMenuManager;
 
     private TextView tv_fpolicies, tv_lpolicies, tv_electionTracker;
+    private Button btn_report_error, btn_enable_manual_mode;
 
     boolean serverConnected = false;
     private ServerSercive boundServerService;
@@ -218,6 +220,15 @@ public class GameFragment extends Fragment {
         tv_fpolicies = fragmentLayout.findViewById(R.id.tv_fpolicies);
         tv_lpolicies = fragmentLayout.findViewById(R.id.tv_lpolicies);
         tv_electionTracker = fragmentLayout.findViewById(R.id.tv_electionTracker);
+        btn_enable_manual_mode = fragmentLayout.findViewById(R.id.btn_enable_manual);
+        btn_report_error = fragmentLayout.findViewById(R.id.btn_report);
+
+        btn_enable_manual_mode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bottomSheetMenuManager.showEnableManualModeDialog();
+            }
+        });
     }
 
     public void startAndBindServerService() {
