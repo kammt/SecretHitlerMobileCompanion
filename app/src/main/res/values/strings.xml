@@ -160,4 +160,11 @@
     <string name="title_voting_outcome">Vote outcome:</string>
     <string name="title_claims">Claims:</string>
     <string name="message_claims_not_matching_with_deck">The specified claims do not match with the shuffled deck. Did someone lie?</string>
+    <string name="menu_game_status">Game Status</string>
+    <string name="title_game_status">Game Status:</string>
+    <string name="status_election_tracker">Election Tracker:</string>
+    <string name="having_issues">Having issues?</string>
+    <string name="btn_disable_automatic_mode">Disable automatic mode</string>
+    <string name="dialog_manual_mode_title">Are you sure?</string>
+    <string name="dialog_manual_mode_desc">This cannot be reverted for this game</string>
 </resources>

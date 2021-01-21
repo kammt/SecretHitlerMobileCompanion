@@ -16,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import de.tobiundmario.secrethitlermobilecompanion.GameFragment;
 import de.tobiundmario.secrethitlermobilecompanion.R;
+import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutionEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
@@ -37,6 +38,7 @@ public class BottomSheetMenuManager {
 
     private BottomSheetBehavior bottomSheetBehaviorAdd;
     private BottomSheetBehavior bottomSheetBehaviorServer;
+    private BottomSheetBehavior bottomSheetBehaviorGameStatus;
 
     private View entry_loyaltyInvestigation, entry_execution, entry_policy_peek, entry_special_election, entry_top_policy;
 
@@ -54,6 +56,7 @@ public class BottomSheetMenuManager {
 
     public void disableMenuBar() {
         //Make the Menu non-functioning
+        bottomNavigationMenu_game.getMenu().getItem(3).setCheckable(false);
         bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(false);
         bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(false);
         bottomNavigationMenu_game.setOnNavigationItemSelectedListener(null);
@@ -61,9 +64,11 @@ public class BottomSheetMenuManager {
         //Hide the BottomSheets
         bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN);
         bottomSheetBehaviorAdd.setState(BottomSheetBehavior.STATE_HIDDEN);
+        bottomSheetBehaviorGameStatus.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 
     public void enableMenuBar() {
+        bottomNavigationMenu_game.getMenu().getItem(3).setCheckable(true);
         bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(true);
         bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(true);
         bottomNavigationMenu_game.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
@@ -76,6 +81,7 @@ public class BottomSheetMenuManager {
         deselectAllMenuItems();
 
         //When the game ends, the Menu items are disabled. Hence, we enable them again just in case
+        bottomNavigationMenu_game.getMenu().getItem(3).setCheckable(true);
         bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(true);
         bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(true);
 
@@ -86,6 +92,10 @@ public class BottomSheetMenuManager {
         bottomSheetBehaviorServer = BottomSheetBehavior.from(bottomSheetServer);
         bottomSheetBehaviorServer.setState(BottomSheetBehavior.STATE_HIDDEN);
         gameFragment.getServerPaneManager().setupServerLayout(fragmentLayout);
+
+        ConstraintLayout bottomSheetGameStatus = fragmentLayout.findViewById(R.id.bottom_sheet_game_status);
+        bottomSheetBehaviorGameStatus = BottomSheetBehavior.from(bottomSheetGameStatus);
+        bottomSheetBehaviorGameStatus.setState(BottomSheetBehavior.STATE_HIDDEN);
 
         //Setting up the BottomSheetCallback
         setupBottomSheetCallback();
@@ -98,7 +108,7 @@ public class BottomSheetMenuManager {
         BottomSheetBehavior.BottomSheetCallback deselectMenuItemsCallback = new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if(newState == BottomSheetBehavior.STATE_HIDDEN && bottomSheetBehaviorServer.getState() == BottomSheetBehavior.STATE_HIDDEN && bottomSheetBehaviorAdd.getState() == BottomSheetBehavior.STATE_HIDDEN) { //If the state changed to hidden (i.e. the user closed the menu), the item should now be unselected
+                if(newState == BottomSheetBehavior.STATE_HIDDEN && bottomSheetBehaviorServer.getState() == BottomSheetBehavior.STATE_HIDDEN && bottomSheetBehaviorAdd.getState() == BottomSheetBehavior.STATE_HIDDEN && bottomSheetBehaviorGameStatus.getState() == BottomSheetBehavior.STATE_HIDDEN) { //If the state changed to hidden (i.e. the user closed the menu), the item should now be unselected
                     deselectAllMenuItems();
                 }
             }
@@ -110,6 +120,7 @@ public class BottomSheetMenuManager {
         };
         bottomSheetBehaviorAdd.addBottomSheetCallback(deselectMenuItemsCallback);
         bottomSheetBehaviorServer.addBottomSheetCallback(deselectMenuItemsCallback);
+        bottomSheetBehaviorGameStatus.addBottomSheetCallback(deselectMenuItemsCallback);
     }
 
     private void initialiseLayoutVariables(View fragmentLayout) {
@@ -121,6 +132,18 @@ public class BottomSheetMenuManager {
         entry_policy_peek = bottomSheetAdd.findViewById(R.id.policy_peek);
         entry_special_election = bottomSheetAdd.findViewById(R.id.special_election);
         entry_top_policy = bottomSheetAdd.findViewById(R.id.topPolicy);
+    }
+
+    public void showEnableManualModeDialog() {
+        CardDialog.showMessageDialog(context, context.getString(R.string.dialog_manual_mode_title), context.getString(R.string.dialog_manual_mode_desc), context.getString(R.string.btn_ok), new Runnable() {
+            @Override
+            public void run() {
+                GameManager.gameTrack.setManualMode(true);
+                bottomSheetBehaviorGameStatus.setState(BottomSheetBehavior.STATE_HIDDEN);
+                bottomNavigationMenu_game.getMenu().getItem(2).setVisible(false);
+                setupAddEventButton();
+            }
+        }, context.getString(R.string.btn_cancel), null);
     }
 
     private void setupAddEventButton() {
@@ -145,13 +168,15 @@ public class BottomSheetMenuManager {
             }
         });
 
-        if(!GameManager.gameTrack.isManualMode()) {
-            entry_loyaltyInvestigation.setVisibility(View.GONE);
-            entry_execution.setVisibility(View.GONE);
-            entry_policy_peek.setVisibility(View.GONE);
-            entry_special_election.setVisibility(View.GONE);
-            entry_top_policy.setVisibility(View.GONE);
-        } else {
+        int visibility = GameManager.gameTrack.isManualMode() ? View.VISIBLE : View.GONE;
+
+        entry_loyaltyInvestigation.setVisibility(visibility);
+        entry_execution.setVisibility(visibility);
+        entry_policy_peek.setVisibility(visibility);
+        entry_special_election.setVisibility(visibility);
+        entry_top_policy.setVisibility(visibility);
+
+        if(GameManager.gameTrack.isManualMode()) {
             setupManualModeAddButtons();
         }
     }
@@ -204,11 +229,13 @@ public class BottomSheetMenuManager {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch(item.getItemId()) {
                     case R.id.navigation_add_event:
-                        handleNavigationSelection(false);
+                        handleNavigationSelection(2);
                         break;
                     case R.id.navigation_server_status:
-                        handleNavigationSelection(true);
+                        handleNavigationSelection(0);
                         break;
+                    case R.id.navigation_game_status:
+                        handleNavigationSelection(1);
                     default:
                         break;
                 }
@@ -218,22 +245,34 @@ public class BottomSheetMenuManager {
         bottomNavigationMenu_game.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
     }
 
-    private void handleNavigationSelection(boolean serverPage) {
-        BottomSheetBehavior newBottomSheet, otherBottomSheet;
+    private void handleNavigationSelection(int page) {
+        BottomSheetBehavior newBottomSheet;
+        BottomSheetBehavior[] otherBottomSheets;
 
-        if(serverPage) {
-            newBottomSheet = bottomSheetBehaviorServer;
-            otherBottomSheet = bottomSheetBehaviorAdd;
-        } else {
-            newBottomSheet = bottomSheetBehaviorAdd;
-            otherBottomSheet = bottomSheetBehaviorServer;
+        switch (page) {
+            case 0: //Server Status
+                newBottomSheet = bottomSheetBehaviorServer;
+                otherBottomSheets = new BottomSheetBehavior[] {bottomSheetBehaviorAdd, bottomSheetBehaviorGameStatus};
+                break;
+            case 1: //Game Status
+                newBottomSheet = bottomSheetBehaviorGameStatus;
+                otherBottomSheets = new BottomSheetBehavior[] {bottomSheetBehaviorAdd, bottomSheetBehaviorServer};
+                gameFragment.updateGameStatusPage();
+                break;
+            case 2: //Add Event
+                newBottomSheet = bottomSheetBehaviorAdd;
+                otherBottomSheets = new BottomSheetBehavior[] {bottomSheetBehaviorServer, bottomSheetBehaviorGameStatus};
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + page);
         }
 
         if(newBottomSheet.getState() == BottomSheetBehavior.STATE_HIDDEN) {
             newBottomSheet.setState(BottomSheetBehavior.STATE_EXPANDED);
 
             //Check if the other page is open. If so, we close it
-            if(otherBottomSheet.getState() != BottomSheetBehavior.STATE_HIDDEN) otherBottomSheet.setState(BottomSheetBehavior.STATE_HIDDEN);
+            otherBottomSheets[0].setState(BottomSheetBehavior.STATE_HIDDEN);
+            otherBottomSheets[1].setState(BottomSheetBehavior.STATE_HIDDEN);
 
         } else newBottomSheet.setState(BottomSheetBehavior.STATE_HIDDEN); //If it is already open and the user clicks it again, it should hide
     }
