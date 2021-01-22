@@ -48,6 +48,7 @@ public class LegislativeSessionManager {
     }
 
     private static void updatePolicyCount(LegislativeSession legislativeSession, boolean removed) {
+        if(GameManager.isManualMode()) return;
         boolean fascist = legislativeSession.getClaimEvent().getPlayedPolicy() == Claim.FASCIST;
         int factor = removed ? -1 : 1; //If the event is removed, we decrease the policy count
 
