@@ -29,6 +29,14 @@ public final class GameManager {
         if(isGameStarted) RecyclerViewManager.setupSwipeToDelete();
     }
 
+    public static boolean isManualMode() {
+        return gameTrack == null;
+    }
+
+    public static void enableManualMode() {
+        gameTrack = null;
+    }
+
     /**
      * Receives a list of players that are deselected and updates the indexes of blurred events accordingly
      * @param hiddenPlayers

@@ -167,7 +167,7 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
             }
         });
 
-        if(!GameManager.gameTrack.isManualMode() && !(event instanceof LegislativeSession) && !(event instanceof DeckShuffledEvent) && !(event instanceof GameEndCard) && !event.isEditing) { //If manual mode is disabled, then we don't want to have cancel buttons on automatically generated actions
+        if(!GameManager.isManualMode() && !(event instanceof LegislativeSession) && !(event instanceof DeckShuffledEvent) && !(event instanceof GameEndCard) && !event.isEditing) { //If manual mode is disabled, then we don't want to have cancel buttons on automatically generated actions
             btn_cancel.setVisibility(View.GONE);
         } else {
             btn_cancel.setVisibility(View.VISIBLE);

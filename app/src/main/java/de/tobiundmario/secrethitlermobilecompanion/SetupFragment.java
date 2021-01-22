@@ -26,6 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.FascistTrackCreationDialog;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.FascistTrackSelectionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerListManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.RecyclerViewManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.SetupFragmentManager;
@@ -226,6 +227,8 @@ public class SetupFragment extends Fragment {
         GameEventsManager.executionSounds = ((Switch) fragmentLayout.findViewById(R.id.switch_execution)).isChecked();
 
         GameEventsManager.server = ((Switch) fragmentLayout.findViewById(R.id.switch_server)).isChecked();
+
+        if(!switch_enable_tracks.isChecked()) GameManager.enableManualMode();
 
         //Delete Variables to save memory
         setup_container_settings = null;

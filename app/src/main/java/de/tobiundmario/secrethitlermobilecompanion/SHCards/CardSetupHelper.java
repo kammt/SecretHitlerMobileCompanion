@@ -33,7 +33,7 @@ public final class CardSetupHelper {
     public static void lockPresidentSpinner(String presidentName, Spinner spinner) {
         int position = PlayerListManager.getPlayerPosition(presidentName);
         spinner.setSelection(position);
-        if(!GameManager.gameTrack.isManualMode()) spinner.setEnabled(false);
+        if(!GameManager.isManualMode()) spinner.setEnabled(false);
     }
 
     /**

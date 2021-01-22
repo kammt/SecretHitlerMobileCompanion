@@ -62,8 +62,6 @@ public class CustomTracksRecyclerViewAdapter extends RecyclerView.Adapter<Custom
             JSONObject object = tracks.getJSONObject(pos);
             final FascistTrack track = JSONManager.restoreFascistTrackFromJSON(object);
 
-            boolean manual = track.isManualMode();
-
             CardView cv = trackViewHolder.cv;
 
             TextView tv_name = cv.findViewById(R.id.tv_trackName);
@@ -73,46 +71,42 @@ public class CustomTracksRecyclerViewAdapter extends RecyclerView.Adapter<Custom
 
             fbl_actions.removeAllViews();
             tv_name.setText(track.getName());
-            if(manual) {
-                tv_desc.setText(context.getString(R.string.description_track_manual, track.getFasPolicies(), track.getLibPolicies()));
-                fbl_actions.setVisibility(View.GONE);
-            } else {
-                tv_desc.setText(context.getString(R.string.description_track, track.getFasPolicies(), track.getLibPolicies()));
-                fbl_actions.setVisibility(View.VISIBLE);
 
-                int width_and_height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, context.getResources().getDisplayMetrics());
+            tv_desc.setText(context.getString(R.string.description_track, track.getFasPolicies(), track.getLibPolicies()));
+            fbl_actions.setVisibility(View.VISIBLE);
 
-                FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(width_and_height, width_and_height);
-                params.rightMargin = 40;
+            int width_and_height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, context.getResources().getDisplayMetrics());
 
-                int[] actions = track.getActions();
-                for(int i = 0; i < actions.length; i++) {
-                    int action = actions[i];
+            FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(width_and_height, width_and_height);
+            params.rightMargin = 40;
 
-                    if(i == actions.length - 1) params.rightMargin = 0;
+            int[] actions = track.getActions();
+            for(int i = 0; i < actions.length; i++) {
+                int action = actions[i];
 
-                    ImageView icon_action = new ImageView(context);
-                    icon_action.setLayoutParams(params);
+                if (i == actions.length - 1) params.rightMargin = 0;
 
-                    switch (action) {
-                        case FascistTrack.NO_POWER:
-                            icon_action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cancel));
-                            break;
-                        case FascistTrack.DECK_PEEK:
-                            icon_action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.policy_peek));
-                            break;
-                        case FascistTrack.EXECUTION:
-                            icon_action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.execution));
-                            break;
-                        case  FascistTrack.INVESTIGATION:
-                            icon_action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.investigate_loyalty));
-                            break;
-                        case FascistTrack.SPECIAL_ELECTION:
-                            icon_action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.special_election));
-                    }
+                ImageView icon_action = new ImageView(context);
+                icon_action.setLayoutParams(params);
 
-                    fbl_actions.addView(icon_action);
+                switch (action) {
+                    case FascistTrack.NO_POWER:
+                        icon_action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_cancel));
+                        break;
+                    case FascistTrack.DECK_PEEK:
+                        icon_action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.policy_peek));
+                        break;
+                    case FascistTrack.EXECUTION:
+                        icon_action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.execution));
+                        break;
+                    case FascistTrack.INVESTIGATION:
+                        icon_action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.investigate_loyalty));
+                        break;
+                    case FascistTrack.SPECIAL_ELECTION:
+                        icon_action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.special_election));
                 }
+
+                fbl_actions.addView(icon_action);
             }
 
             btn_use.setOnClickListener(new View.OnClickListener() {

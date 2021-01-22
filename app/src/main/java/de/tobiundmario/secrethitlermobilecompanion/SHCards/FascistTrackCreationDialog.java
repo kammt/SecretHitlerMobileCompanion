@@ -120,22 +120,16 @@ public class FascistTrackCreationDialog {
         int lpolicies = Integer.parseInt(input_lpolicies.getText().toString());
         fascistTrack.setLibPolicies(lpolicies);
 
-        boolean manual = cb_manualMode.isChecked();
+        int[] actions = new int[fpolicies];
+        for (int i = 0; i < ll_actions.getChildCount(); i++) {
+            Spinner spinnerAtPos = (Spinner) ll_actions.getChildAt(i);
 
-        if(!manual) {
-            int[] actions = new int[fpolicies];
-            for (int i = 0; i < ll_actions.getChildCount(); i++) {
-                Spinner spinnerAtPos = (Spinner) ll_actions.getChildAt(i);
-
-                int selection = (int) spinnerAtPos.getSelectedItem();
-                actions[i] = selection;
-            }
-            fascistTrack.setActions(actions);
-
-            fascistTrack.setElectionTrackerLength(Integer.parseInt(input_electionTrackerLength.getText().toString()));
-        } else {
-            fascistTrack.setManualMode(true);
+            int selection = (int) spinnerAtPos.getSelectedItem();
+            actions[i] = selection;
         }
+        fascistTrack.setActions(actions);
+
+        fascistTrack.setElectionTrackerLength(Integer.parseInt(input_electionTrackerLength.getText().toString()));
 
         try {
             SharedPreferencesManager.writeFascistTrack(fascistTrack, c);

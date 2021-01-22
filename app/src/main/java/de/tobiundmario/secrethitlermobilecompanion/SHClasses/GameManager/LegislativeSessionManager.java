@@ -67,7 +67,7 @@ public class LegislativeSessionManager {
     }
 
     private static void processRejectedLegislativeSession(LegislativeSession legislativeSession, boolean removed) {
-        if(gameTrack.isManualMode()) return;
+        if(GameManager.isManualMode()) return;
 
         if(removed) {
             electionTracker --;
@@ -99,7 +99,7 @@ public class LegislativeSessionManager {
      * @param restorationPhase If true, the track action is added while a game is being restored. It is then added to the restoredEventList ArrayList
      */
     public static void addTrackAction(LegislativeSession session, boolean restorationPhase) {
-        if(gameTrack.isManualMode()) return; //If it is set to manual mode, we abort the function as no track actions exist in that mode
+        if(GameManager.isManualMode()) return; //If it is set to manual mode, we abort the function as no track actions exist in that mode
         String presidentName = session.getVoteEvent().getPresidentName();
 
         ExecutiveAction executiveAction = null;
@@ -180,7 +180,7 @@ public class LegislativeSessionManager {
         processPolicyChange(claimEvent, newClaimEvent);
 
         //If we are not in manual mode, we have to recalculate the election tracker as well
-        if (!gameTrack.isManualMode()) {
+        if (!GameManager.isManualMode()) {
             recalculateElectionTracker(legislativeSession, voteEvent, newVoteEvent);
         }
 

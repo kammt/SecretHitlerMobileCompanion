@@ -138,7 +138,7 @@ public class BottomSheetMenuManager {
         CardDialog.showMessageDialog(context, context.getString(R.string.dialog_manual_mode_title), context.getString(R.string.dialog_manual_mode_desc), context.getString(R.string.btn_ok), new Runnable() {
             @Override
             public void run() {
-                GameManager.gameTrack.setManualMode(true);
+                GameManager.enableManualMode();
                 bottomSheetBehaviorGameStatus.setState(BottomSheetBehavior.STATE_HIDDEN);
                 bottomNavigationMenu_game.getMenu().getItem(2).setVisible(false);
                 setupAddEventButton();
@@ -168,7 +168,7 @@ public class BottomSheetMenuManager {
             }
         });
 
-        int visibility = GameManager.gameTrack.isManualMode() ? View.VISIBLE : View.GONE;
+        int visibility = GameManager.isManualMode() ? View.VISIBLE : View.GONE;
 
         entry_loyaltyInvestigation.setVisibility(visibility);
         entry_execution.setVisibility(visibility);
@@ -176,7 +176,7 @@ public class BottomSheetMenuManager {
         entry_special_election.setVisibility(visibility);
         entry_top_policy.setVisibility(visibility);
 
-        if(GameManager.gameTrack.isManualMode()) {
+        if(GameManager.isManualMode()) {
             setupManualModeAddButtons();
         }
     }

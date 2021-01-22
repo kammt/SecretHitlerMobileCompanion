@@ -192,19 +192,15 @@ public final class JSONManager {
 
         object.put("name", fascistTrack.getName());
 
-        if(fascistTrack.isManualMode())  object.put("manual", true);
-        else {
-
-            int[] actions = fascistTrack.getActions();
-            JSONArray actionsArray = new JSONArray();
-            for(int action : actions) {
-                actionsArray.put(action);
-            }
-            object.put("manual", false);
-            object.put("actions", actionsArray);
-
-            object.put("electionTracker", fascistTrack.getElectionTrackerLength());
+        int[] actions = fascistTrack.getActions();
+        JSONArray actionsArray = new JSONArray();
+        for(int action : actions) {
+            actionsArray.put(action);
         }
+        object.put("manual", false);
+        object.put("actions", actionsArray);
+
+        object.put("electionTracker", fascistTrack.getElectionTrackerLength());
 
         object.put("fpolicies", fascistTrack.getFasPolicies());
         object.put("lpolicies", fascistTrack.getLibPolicies());
@@ -224,19 +220,14 @@ public final class JSONManager {
         track.setFasPolicies(fasPolicies);
         track.setLibPolicies(object.getInt("lpolicies"));
 
-        boolean manual = object.getBoolean("manual");
-        track.setManualMode(manual);
-
-        if(!manual) {
-            JSONArray actionsArray = object.getJSONArray("actions");
-            int[] actions = new int[fasPolicies];
-            for(int i = 0; i < actionsArray.length(); i++) {
-                actions[i] = actionsArray.getInt(i);
-            }
-            track.setActions(actions);
-
-            track.setElectionTrackerLength(object.getInt("electionTracker"));
+        JSONArray actionsArray = object.getJSONArray("actions");
+        int[] actions = new int[fasPolicies];
+        for(int i = 0; i < actionsArray.length(); i++) {
+            actions[i] = actionsArray.getInt(i);
         }
+        track.setActions(actions);
+
+        track.setElectionTrackerLength(object.getInt("electionTracker"));
 
         return track;
     }
