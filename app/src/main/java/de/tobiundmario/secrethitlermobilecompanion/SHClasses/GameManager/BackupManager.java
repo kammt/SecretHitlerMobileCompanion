@@ -75,7 +75,7 @@ public final class BackupManager {
             JSONObject settingsObject = new JSONObject();
 
             //We begin by adding the FascistTrack
-            settingsObject.put("track", JSONManager.writeFascistTrackToJSON(GameManager.gameTrack));
+            if(!GameManager.isManualMode()) settingsObject.put("track", JSONManager.writeFascistTrackToJSON(GameManager.gameTrack));
 
             //Now all other settings
             settingsObject.put("sounds_execution", GameEventsManager.executionSounds);
@@ -165,7 +165,7 @@ public final class BackupManager {
         if(object.has("settings")) { //The file also included settings, they will be restored as well
             JSONObject settingsObject = object.getJSONObject("settings");
 
-            GameManager.gameTrack = JSONManager.restoreFascistTrackFromJSON(settingsObject.getJSONObject("track"));
+            GameManager.gameTrack = settingsObject.has("track") ? JSONManager.restoreFascistTrackFromJSON(settingsObject.getJSONObject("track")) : null;
 
             GameEventsManager.server = settingsObject.getBoolean("server");
 
