@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -56,9 +57,25 @@ public final class SetupFragmentManager {
                     FascistTrackSelectionManager.recommendedCard = null;
                 }
 
+                toggleFascistTracks(setupFragment.container_fascist_tracks, false);
+                setupFragment.switch_enable_tracks.setChecked(false);
+                setupFragment.switch_enable_tracks.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        toggleFascistTracks(setupFragment.container_fascist_tracks, b);
+                    }
+                });
+
                 animateFAB(2, false, setupFragment);
             }
         };
+    }
+
+    private static void toggleFascistTracks(ConstraintLayout container, boolean enabled) {
+        container.setAlpha(enabled ? 1f : 0.5f);
+        container.setClickable(enabled);
+        container.setEnabled(enabled);
+
     }
 
     public static SetupContinueCondition secondCondition(final Context context, final SetupFragment setupFragment) {
@@ -66,7 +83,7 @@ public final class SetupFragmentManager {
         return new SetupContinueCondition() {
             @Override
             public boolean shouldSetupContinue() {
-                return GameManager.gameTrack != null;
+                return GameManager.gameTrack != null || !setupFragment.switch_enable_tracks.isChecked();
             }
 
             @Override

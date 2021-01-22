@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,13 +38,15 @@ public class SetupFragment extends Fragment {
     private Button btn_setup_back;
     private ConstraintLayout container_setup_buttons;
 
-    private ConstraintLayout container_new_player;
+    private ConstraintLayout setup_container_new_player;
 
-    private ConstraintLayout container_select_track;
+    private ConstraintLayout setup_container_select_track;
     public FloatingActionButton fab_newTrack;
     public TextView tv_title_custom_tracks;
+    public SwitchCompat switch_enable_tracks;
+    public ConstraintLayout container_fascist_tracks;
 
-    private ConstraintLayout container_settings;
+    private ConstraintLayout setup_container_settings;
     public TextView tv_choose_from_previous_games_players;
 
     public ProgressBar progressBar_setupSteps;
@@ -93,13 +96,13 @@ public class SetupFragment extends Fragment {
         RecyclerViewManager.initialiseSetupRecyclerView(fascistTracks, context, false);
 
         //Resetting view visibility
-        container_settings.setVisibility(View.GONE);
+        setup_container_settings.setVisibility(View.GONE);
 
         //Resetting button
         btn_setup_forward.setText(context.getString(R.string.btn_continue));
 
         container_setup_buttons.setVisibility(View.VISIBLE);
-        container_new_player.setVisibility(View.VISIBLE);
+        setup_container_new_player.setVisibility(View.VISIBLE);
         progressBar_setupSteps.setVisibility(View.VISIBLE);
 
         Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 0, 300);
@@ -114,13 +117,15 @@ public class SetupFragment extends Fragment {
         btn_setup_forward = fragmentLayout.findViewById(R.id.btn_setup_forward);
         container_setup_buttons = fragmentLayout.findViewById(R.id.setup_buttons);
 
-        container_new_player = fragmentLayout.findViewById(R.id.container_setup_add_players);
+        setup_container_new_player = fragmentLayout.findViewById(R.id.container_setup_add_players);
         tv_choose_from_previous_games_players = fragmentLayout.findViewById(R.id.tv_choose_old_players);
 
-        container_select_track = fragmentLayout.findViewById(R.id.container_setup_set_Track);
+        setup_container_select_track = fragmentLayout.findViewById(R.id.container_setup_set_Track);
+        switch_enable_tracks = fragmentLayout.findViewById(R.id.switch_useTrack);
+        container_fascist_tracks = fragmentLayout.findViewById(R.id.container_fascist_track);
         tv_title_custom_tracks = fragmentLayout.findViewById(R.id.tv_title_custom_tracks);
 
-        container_settings = fragmentLayout.findViewById(R.id.container_setup_settings);
+        setup_container_settings = fragmentLayout.findViewById(R.id.container_setup_settings);
 
         playerCardList = fragmentLayout.findViewById(R.id.playerList);
         playerCardList.setLayoutManager(new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false));
@@ -135,7 +140,7 @@ public class SetupFragment extends Fragment {
 
     private void setupVariables(View fragmentLayout) {
         setupContinueConditions = new SetupFragmentManager.SetupContinueCondition[] {SetupFragmentManager.firstCondition(context, SetupFragment.this), SetupFragmentManager.secondCondition(context, SetupFragment.this)};
-        pages = new ConstraintLayout[] {container_new_player, container_select_track, container_settings};
+        pages = new ConstraintLayout[] {setup_container_new_player, setup_container_select_track, setup_container_settings};
 
         fab_newTrack = fragmentLayout.findViewById(R.id.fab_create_custom_track);
         fab_newTrack.setOnClickListener(new View.OnClickListener() {
@@ -223,9 +228,9 @@ public class SetupFragment extends Fragment {
         GameEventsManager.server = ((Switch) fragmentLayout.findViewById(R.id.switch_server)).isChecked();
 
         //Delete Variables to save memory
-        container_settings = null;
-        container_select_track = null;
-        container_new_player = null;
+        setup_container_settings = null;
+        setup_container_select_track = null;
+        setup_container_new_player = null;
         container_setup_buttons = null;
 
         progressBar_setupSteps = null;
