@@ -14,6 +14,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import org.json.JSONException;
+
+import java.io.IOException;
+
+import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.GameFragment;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
@@ -84,6 +89,7 @@ public class BottomSheetMenuManager {
         bottomNavigationMenu_game.getMenu().getItem(3).setCheckable(true);
         bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(true);
         bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(true);
+        if(GameManager.isManualMode()) bottomNavigationMenu_game.getMenu().getItem(2).setVisible(false);
 
         setupAddEventButton();
 
@@ -142,6 +148,11 @@ public class BottomSheetMenuManager {
                 bottomSheetBehaviorGameStatus.setState(BottomSheetBehavior.STATE_HIDDEN);
                 bottomNavigationMenu_game.getMenu().getItem(2).setVisible(false);
                 setupAddEventButton();
+                try {
+                    BackupManager.backupToCache();
+                }catch (IOException | JSONException e) {
+                    ExceptionHandler.showErrorSnackbar(e, "BottomSheetMenuManager.showEnableManualModeDialog()");
+                }
             }
         }, context.getString(R.string.btn_cancel), null);
     }
