@@ -143,7 +143,7 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
 
     private void processLongClick(GameEvent event, int position) {
         if(GameEventsManager.editingEnabled) {
-            if (event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() != LegislativeSessionManager.legSessionNo - 1) {
+            if (!GameManager.isManualMode() && (event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() != LegislativeSessionManager.legSessionNo - 1)) {
                 Toast.makeText(c, c.getString(R.string.toast_message_edit_blocked), Toast.LENGTH_LONG).show();
             } else {
                 event.isEditing = true;
