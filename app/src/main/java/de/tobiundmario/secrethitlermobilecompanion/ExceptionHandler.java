@@ -57,15 +57,19 @@ public final class ExceptionHandler {
                 .show();
     }
 
+    private static String getBasicGitHubURL(String title, String labels) {
+        return "https://github.com/TobeSoftwareGmbH/SecretHitlerMobileCompanion/issues/new?labels="+labels
+                + "&title=" + title
+                + "&body=";
+    }
+
     public static void reportOnGitHub(Exception e, String function) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         String sStackTrace = sw.toString();
 
-        String url = "https://github.com/TobeSoftwareGmbH/SecretHitlerMobileCompanion/issues/new?labels=bug"
-                + "&title=" + e.getClass().getCanonicalName() + "+in+Version+" + version + " (API" + Build.VERSION.SDK_INT + ")"
-                + "&body="
+        String url = getBasicGitHubURL(e.getClass().getCanonicalName() + "+in+Version+" + version + " (API" + Build.VERSION.SDK_INT + ")", "bug")
                 + sStackTrace
                 + "%0A%0A"
                 + "The error occurred in the function "+function
@@ -78,8 +82,7 @@ public final class ExceptionHandler {
     }
 
     public static void reportFascistTrackError() {
-        String url = "https://github.com/TobeSoftwareGmbH/SecretHitlerMobileCompanion/issues/new?labels=bug,FascistTrack"
-                + "&title=FascistTrack+issue+in+Version+" + version + " (API" + Build.VERSION.SDK_INT + ")"
+        String url = getBasicGitHubURL("FascistTrack+issue+in+Version+" + version + " (API" + Build.VERSION.SDK_INT + ")", "bug,FascistTrack")
                 + "&body="
                 + getEditingLog()
                 + "%0A(The information above is automatically generated, please do not change it) %0A%0A"
