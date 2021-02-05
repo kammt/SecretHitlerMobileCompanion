@@ -175,6 +175,7 @@ public final class GameEventsManager {
 
         if(event instanceof ExecutionEvent && !event.isSetup) ((ExecutionEvent) event).resetOnRemoval();
         if(event instanceof LoyaltyInvestigationEvent && !event.isSetup) ((LoyaltyInvestigationEvent) event).resetOnRemoval();
+        if(event instanceof TopPolicyPlayedEvent && !event.isSetup) ((TopPolicyPlayedEvent) event).undoChanges();
 
         if(event instanceof LegislativeSession && !event.isSetup) {
             processLegislativeSessionRemoval(event);
@@ -232,6 +233,7 @@ public final class GameEventsManager {
 
         if(event instanceof ExecutionEvent && !event.isSetup) ((ExecutionEvent) event).undoRemoval();
         if(event instanceof LoyaltyInvestigationEvent && !event.isSetup) ((LoyaltyInvestigationEvent) event).undoRemoval();
+        if(event instanceof TopPolicyPlayedEvent) ((TopPolicyPlayedEvent) event).triggerPolicyChange(((TopPolicyPlayedEvent) event).getPolicyPlayed(), false);
         if(event instanceof LegislativeSession && !event.isSetup) {
             reSetSessionNumber();
             processLegislativeSession((LegislativeSession) event, false);
