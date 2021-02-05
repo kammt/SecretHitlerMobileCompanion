@@ -2,6 +2,7 @@ package de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager;
 
 import android.content.Context;
 
+import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.FascistTrack;
@@ -38,12 +39,13 @@ public class LegislativeSessionManager {
      * @param removed if true, the event has been removed
      */
     public static void processLegislativeSession(LegislativeSession legislativeSession, boolean removed) {
-        if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_FAILED) {
-            processRejectedLegislativeSession(legislativeSession, removed);
+        if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_FAILED && !removed) {
+            processRejectedLegislativeSession(legislativeSession);
             return;
-        } else electionTracker = 0;
+        } else if (removed) recalculateElectionTracker(null);
+        else electionTracker = 0;
 
-        if(legislativeSession.getClaimEvent().isVetoed()) return;
+        if(legislativeSession.getVoteEvent().isRejected() || legislativeSession.getClaimEvent().isVetoed()) return;
         updatePolicyCount(legislativeSession, removed);
     }
 
@@ -67,17 +69,13 @@ public class LegislativeSessionManager {
         }
     }
 
-    private static void processRejectedLegislativeSession(LegislativeSession legislativeSession, boolean removed) {
+    private static void processRejectedLegislativeSession(LegislativeSession legislativeSession) {
         if(GameManager.isManualMode()) return;
 
-        if(removed) {
-            electionTracker --;
-        } else {
-            electionTracker++;
-            if(electionTracker == gameTrack.getElectionTrackerLength()) {
-                electionTracker = 0;
-                createTopPolicyEvent(legislativeSession);
-            }
+        electionTracker++;
+        if(electionTracker == gameTrack.getElectionTrackerLength()) {
+            electionTracker = 0;
+            createTopPolicyEvent(legislativeSession);
         }
     }
 
@@ -163,7 +161,6 @@ public class LegislativeSessionManager {
         return null;
     }
 
-
     /**
      * This function is called when a Legislative Session has been edited by the user. It updates variables such as the policy count, removes the presidential action etc.
      * @param legislativeSession The edited LegislativeSession
@@ -171,6 +168,13 @@ public class LegislativeSessionManager {
      * @param newVoteEvent The new voteEvent
      */
     public static void processLegislativeSessionEdit(LegislativeSession legislativeSession, ClaimEvent newClaimEvent, VoteEvent newVoteEvent) {
+        ExceptionHandler.EditingLogEntry editingLogEntry = new ExceptionHandler.EditingLogEntry();
+        editingLogEntry.setLegislativeSessions(legislativeSession, new LegislativeSession(newVoteEvent, newClaimEvent, GameEventsManager.getContext()));
+        legSessionNo--;
+        editingLogEntry.setElectionTracker_before(electionTracker);
+        editingLogEntry.setFasPolicies_before(fascistPolicies);
+        editingLogEntry.setLibPolicies_before(liberalPolicies);
+
         ClaimEvent claimEvent = legislativeSession.getClaimEvent();
         VoteEvent voteEvent = legislativeSession.getVoteEvent();
 
@@ -179,11 +183,6 @@ public class LegislativeSessionManager {
         processRejectionOrVetoChange(legislativeSession, newClaimEvent, newVoteEvent);
 
         processPolicyChange(claimEvent, newClaimEvent);
-
-        //If we are not in manual mode, we have to recalculate the election tracker as well
-        if (!GameManager.isManualMode()) {
-            recalculateElectionTracker(legislativeSession, voteEvent, newVoteEvent);
-        }
 
         //If we are editing an event, this can cause changes. If there is a presidential action and we switch the policy to a liberal one, we have to remove the presidential action
         if (legislativeSession.getPresidentAction() != null) {
@@ -196,6 +195,14 @@ public class LegislativeSessionManager {
         if (!voteEvent.getPresidentName().equals(newVoteEvent.getPresidentName()) && legislativeSession.getPresidentAction() != null) {
             changePresidentName(legislativeSession, newVoteEvent);
         }
+
+        //we have to check if the election tracker has to be changed
+        processElectionTracker(legislativeSession, newVoteEvent);
+
+        editingLogEntry.setElectionTracker_after(electionTracker);
+        editingLogEntry.setFasPolicies_after(fascistPolicies);
+        editingLogEntry.setLibPolicies_after(liberalPolicies);
+        ExceptionHandler.logLegislativeSessionUpdate(editingLogEntry);
     }
 
     private static void processRejectionOrVetoChange(LegislativeSession legislativeSession, ClaimEvent newClaimEvent, VoteEvent newVoteEvent) {
@@ -224,22 +231,29 @@ public class LegislativeSessionManager {
             fascistPolicies += factor;
     }
 
-    private static void recalculateElectionTracker(LegislativeSession legislativeSession, VoteEvent voteEvent, VoteEvent newVoteEvent) {
-        //If it was rejected and now not anymore, we decrease the election tracker
-        if (voteEvent.getVotingResult() == VoteEvent.VOTE_FAILED && newVoteEvent.getVotingResult() == VoteEvent.VOTE_PASSED)
-            electionTracker--;
-        //If it was passed and now not anymore, we increase the election tracker
-        if (voteEvent.getVotingResult() == VoteEvent.VOTE_PASSED && newVoteEvent.getVotingResult() == VoteEvent.VOTE_FAILED) {
-            electionTracker++;
+    private static void processElectionTracker(LegislativeSession legislativeSession, VoteEvent newVoteEvent) {
+        //If the vote was passed/vetoed and now not anymore, we increase the election tracker
+        recalculateElectionTracker(newVoteEvent);
 
-            if (electionTracker == gameTrack.getElectionTrackerLength()) {
-                electionTracker = 0;
+        if (electionTracker == gameTrack.getElectionTrackerLength()) {
+            electionTracker = 0;
 
-                TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(GameEventsManager.getContext());
-                topPolicyPlayedEvent.setLinkedLegislativeSession(legislativeSession);
-                legislativeSession.setPresidentAction(topPolicyPlayedEvent);
+            TopPolicyPlayedEvent topPolicyPlayedEvent = new TopPolicyPlayedEvent(GameEventsManager.getContext());
+            topPolicyPlayedEvent.setLinkedLegislativeSession(legislativeSession);
+            legislativeSession.setPresidentAction(topPolicyPlayedEvent);
 
-                addEvent(topPolicyPlayedEvent);
+            addEvent(topPolicyPlayedEvent);
+        }
+    }
+
+    private static void recalculateElectionTracker(VoteEvent lastVoteEvent) {
+        electionTracker = 0;
+        for (int i = 0; i < eventList.size(); i++) {
+            GameEvent event = eventList.get(i);
+            if(event instanceof LegislativeSession) {
+                LegislativeSession session = (LegislativeSession) event;
+                if(session.getVoteEvent().isRejected() || (lastVoteEvent != null && lastVoteEvent.isRejected() && session.getSessionNumber() == legSessionNo - 1)) electionTracker++;
+                else electionTracker = 0;
             }
         }
     }

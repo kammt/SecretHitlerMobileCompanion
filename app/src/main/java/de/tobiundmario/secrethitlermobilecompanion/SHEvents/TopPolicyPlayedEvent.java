@@ -18,10 +18,11 @@ import java.util.List;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.Claim;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameEventsManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameManager;
 
 public class TopPolicyPlayedEvent extends GameEvent {
 
-    private int policyPlayed;
+    private int policyPlayed = -1;
     private Context c;
 
     private LegislativeSession linkedLegislativeSession;
@@ -30,11 +31,16 @@ public class TopPolicyPlayedEvent extends GameEvent {
         this.c = c;
         this.policyPlayed = policyPlayed;
         isSetup = false;
+        triggerPolicyChange(policyPlayed, false);
     }
 
     public TopPolicyPlayedEvent(Context c) {
         this.c = c;
         isSetup = true;
+    }
+
+    public int getPolicyPlayed() {
+        return policyPlayed;
     }
 
     public LegislativeSession getLinkedLegislativeSession() {
@@ -51,6 +57,29 @@ public class TopPolicyPlayedEvent extends GameEvent {
             if (policyPlayed == Claim.LIBERAL) mp = MediaPlayer.create(c, R.raw.enactpolicyl);
             else mp = MediaPlayer.create(c, R.raw.enactpolicyf);
             mp.start();
+        }
+    }
+
+    public void triggerPolicyChange(int policyPlayed, boolean changed) {
+        if(policyPlayed == Claim.LIBERAL) {
+            GameManager.liberalPolicies++;
+            if(changed) GameManager.fascistPolicies--;
+        } else {
+            GameManager.fascistPolicies++;
+            if(changed) GameManager.liberalPolicies--;
+        }
+    }
+
+    private void processChanges(int oldPolicyPlayed, int policyPlayed) {
+        if(oldPolicyPlayed == policyPlayed) return;
+        triggerPolicyChange(policyPlayed, oldPolicyPlayed != -1);
+    }
+
+    public void undoChanges() {
+        if(policyPlayed == Claim.LIBERAL) {
+            GameManager.liberalPolicies--;
+        } else {
+            GameManager.fascistPolicies--;
         }
     }
 
@@ -79,7 +108,9 @@ public class TopPolicyPlayedEvent extends GameEvent {
         btn_create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                policyPlayed = (iv_fascist.getAlpha() == 1f) ? Claim.FASCIST : Claim.LIBERAL;
+                int newPolicyPlayed = (iv_fascist.getAlpha() == 1f) ? Claim.FASCIST : Claim.LIBERAL;
+                processChanges(policyPlayed, newPolicyPlayed);
+                policyPlayed = newPolicyPlayed;
                 isSetup = false;
                 GameEventsManager.notifySetupPhaseLeft(TopPolicyPlayedEvent.this);
                 playSound();

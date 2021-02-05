@@ -47,16 +47,16 @@ public final class CardSetupHelper {
         return new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, data) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                return createView(position, convertView, parent);
+                return createView(position, convertView, parent, false);
             }
 
             @Override
             public View getDropDownView(int position,  View convertView,  ViewGroup parent) {
-                return createView(position, convertView, parent);
+                return createView(position, convertView, parent, true);
             }
 
-            private View createView(int position, View convertView, ViewGroup parent) {
-                TextView tv = (TextView) super.getView(position, convertView, parent);
+            private View createView(int position, View convertView, ViewGroup parent, boolean dropdown) {
+                TextView tv = dropdown ? (TextView) super.getDropDownView(position, convertView, parent) : (TextView) super.getView(position, convertView, parent);
 
                 Typeface externalFont = ResourcesCompat.getFont(context, R.font.comfortaa_light);
                 tv.setTypeface(externalFont);

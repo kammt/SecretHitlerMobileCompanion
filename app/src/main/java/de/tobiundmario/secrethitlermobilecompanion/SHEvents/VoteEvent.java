@@ -15,6 +15,10 @@ public class VoteEvent {
         this.votingResult = votingResult;
     }
 
+    public boolean isRejected() {
+        return votingResult == VOTE_FAILED;
+    }
+
     public String getPresidentName() {
         return presidentName;
     }
