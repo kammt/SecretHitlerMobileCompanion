@@ -132,7 +132,6 @@ public class BottomSheetMenuManager {
     private void initialiseLayoutVariables(View fragmentLayout) {
         bottomNavigationMenu_game = fragmentLayout.findViewById(R.id.bottomNavigationView_game);
         bottomSheetAdd = fragmentLayout.findViewById(R.id.bottom_sheet_add_event);
-
         entry_loyaltyInvestigation = bottomSheetAdd.findViewById(R.id.loyalty_investigation);
         entry_execution = bottomSheetAdd.findViewById(R.id.execution);
         entry_policy_peek = bottomSheetAdd.findViewById(R.id.policy_peek);

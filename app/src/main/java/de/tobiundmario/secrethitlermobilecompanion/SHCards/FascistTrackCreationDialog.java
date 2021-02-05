@@ -188,12 +188,10 @@ public class FascistTrackCreationDialog {
     private static void initialiseLayout(View dialogView) {
         tvPositive = dialogView.findViewById(R.id.tv_positive);
         tvNegative = dialogView.findViewById(R.id.tv_negative);
-
         input_name = dialogView.findViewById(R.id.et_trackName);
         input_fpolicies = dialogView.findViewById(R.id.et_fpolicies);
         input_lpolicies = dialogView.findViewById(R.id.et_lpolicies);
         input_electionTrackerLength = dialogView.findViewById(R.id.et_electionTrackerLength);
-
         ll_actions = dialogView.findViewById(R.id.actions);
     }
 
