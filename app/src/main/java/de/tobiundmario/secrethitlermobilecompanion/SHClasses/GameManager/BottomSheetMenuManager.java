@@ -80,7 +80,8 @@ public class BottomSheetMenuManager {
     }
 
     public void setupBottomMenu(View fragmentLayout) {
-        initialiseLayoutVariables(fragmentLayout);
+        initialiseBottomSheetLayout(fragmentLayout);
+        initialiseMenuEntries(fragmentLayout);
 
         //Setting up the Bottom Menu
         deselectAllMenuItems();
@@ -129,9 +130,12 @@ public class BottomSheetMenuManager {
         bottomSheetBehaviorGameStatus.addBottomSheetCallback(deselectMenuItemsCallback);
     }
 
-    private void initialiseLayoutVariables(View fragmentLayout) {
+    private void initialiseBottomSheetLayout(View fragmentLayout) {
         bottomNavigationMenu_game = fragmentLayout.findViewById(R.id.bottomNavigationView_game);
         bottomSheetAdd = fragmentLayout.findViewById(R.id.bottom_sheet_add_event);
+    }
+
+    private void initialiseMenuEntries(View fragmentLayout) {
         entry_loyaltyInvestigation = bottomSheetAdd.findViewById(R.id.loyalty_investigation);
         entry_execution = bottomSheetAdd.findViewById(R.id.execution);
         entry_policy_peek = bottomSheetAdd.findViewById(R.id.policy_peek);
