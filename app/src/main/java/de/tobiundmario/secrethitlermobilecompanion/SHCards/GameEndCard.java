@@ -36,8 +36,8 @@ public class GameEndCard extends GameEvent {
 
     @Override
     public void initialiseSetupCard(CardView cardView) {
-        final int libPolicies = GameManager.gameTrack.getLibPolicies();
-        final int fasPolicies = GameManager.gameTrack.getFasPolicies();
+        final int libPolicies = GameManager.isManualMode() ? 5 : GameManager.gameTrack.getLibPolicies();
+        final int fasPolicies = GameManager.isManualMode() ? 6 : GameManager.gameTrack.getFasPolicies();
 
         final ImageView iv_fascist = cardView.findViewById(R.id.img_policy_fascist);
         final ImageView iv_liberal = cardView.findViewById(R.id.img_policy_liberal);
