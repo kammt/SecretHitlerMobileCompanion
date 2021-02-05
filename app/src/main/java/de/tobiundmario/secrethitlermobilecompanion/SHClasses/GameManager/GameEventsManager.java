@@ -128,7 +128,7 @@ public final class GameEventsManager {
      * @param event the event to be added
      */
     public static void addEvent(@NonNull GameEvent event) {
-        if(event.isSetup && eventList.size() > 0 && eventList.get(eventList.size() - 1).isSetup) { //Checking if the last event is in setup mode
+        if(event.isSetup && eventList.size() > 0 && eventList.get(eventList.size() - 1).isSetup && !isTrackAction(event)) { //Checking if the last event is in setup mode
             //If not, the process is blocked since we can't (or at least shouldn't) have two setups active at a time
             CardDialog.showMessageDialog(c, c.getString(R.string.title_warning), c.getString(R.string.dialog_message_duplicate_event_creation), c.getString(R.string.btn_ok), null, null, null);
             return;
@@ -152,6 +152,10 @@ public final class GameEventsManager {
 
         if(event instanceof LegislativeSession && !event.isSetup) processLegislativeSession((LegislativeSession) event, false);
         if(event.isSetup) RecyclerViewManager.getCardList().smoothScrollToPosition(eventList.size() - 1);
+    }
+
+    private static boolean isTrackAction(GameEvent event) {
+        return  (event instanceof ExecutiveAction && ((ExecutiveAction) event).getLinkedLegislativeSession() != null) || (event instanceof TopPolicyPlayedEvent && ((TopPolicyPlayedEvent) event).getLinkedLegislativeSession() != null);
     }
 
     /**
