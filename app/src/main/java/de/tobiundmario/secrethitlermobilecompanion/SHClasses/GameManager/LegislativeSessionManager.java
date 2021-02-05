@@ -169,8 +169,7 @@ public class LegislativeSessionManager {
      */
     public static void processLegislativeSessionEdit(LegislativeSession legislativeSession, ClaimEvent newClaimEvent, VoteEvent newVoteEvent) {
         ExceptionHandler.EditingLogEntry editingLogEntry = new ExceptionHandler.EditingLogEntry();
-        editingLogEntry.setLegislativeSession_before(legislativeSession);
-        editingLogEntry.setLegislativeSession_after(new LegislativeSession(newVoteEvent, newClaimEvent, GameEventsManager.getContext()));
+        editingLogEntry.setLegislativeSessions(legislativeSession, new LegislativeSession(newVoteEvent, newClaimEvent, GameEventsManager.getContext()));
         legSessionNo--;
         editingLogEntry.setElectionTracker_before(electionTracker);
         editingLogEntry.setFasPolicies_before(fascistPolicies);

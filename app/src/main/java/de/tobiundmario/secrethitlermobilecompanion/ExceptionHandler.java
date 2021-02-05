@@ -112,15 +112,11 @@ public final class ExceptionHandler {
     public static class EditingLogEntry {
         //values before
         private int electionTracker_before, libPolicies_before, fasPolicies_before;
-        private LegislativeSession legislativeSession_before;
-
         boolean rejectedBefore, vetoed_before;
         int playedPolicy_before;
 
         //values after edit
         private int electionTracker_after, libPolicies_after, fasPolicies_after;
-        private LegislativeSession legislativeSession_after;
-
         int playedPolicy_after;
         boolean vetoed_after, rejectedAfter;
 
@@ -151,23 +147,18 @@ public final class ExceptionHandler {
             this.libPolicies_before = libPolicies_before;
         }
 
-        public void setLegislativeSession_after(LegislativeSession legislativeSession) {
-            this.legislativeSession_after = legislativeSession;
-            rejectedAfter = legislativeSession.getVoteEvent().isRejected();
-            vetoed_after = !rejectedAfter && legislativeSession.getClaimEvent().isVetoed();
-            playedPolicy_after = rejectedAfter ? -1 : legislativeSession.getClaimEvent().getPlayedPolicy();
-        }
+        public void setLegislativeSessions(LegislativeSession before, LegislativeSession after) {
+            rejectedBefore = before.getVoteEvent().isRejected();
+            vetoed_before = !rejectedBefore && before.getClaimEvent().isVetoed();
+            playedPolicy_before = rejectedBefore ? -1 : before.getClaimEvent().getPlayedPolicy();
 
-        public void setLegislativeSession_before(LegislativeSession legislativeSession) {
-            this.legislativeSession_before = legislativeSession;
-            rejectedBefore = legislativeSession.getVoteEvent().isRejected();
-            vetoed_before = !rejectedBefore && legislativeSession.getClaimEvent().isVetoed();
-            playedPolicy_before = rejectedBefore ? -1 : legislativeSession.getClaimEvent().getPlayedPolicy();
+            if(after == null) return;
+            rejectedAfter = after.getVoteEvent().isRejected();
+            vetoed_after = !rejectedAfter && after.getClaimEvent().isVetoed();
+            playedPolicy_after = rejectedAfter ? -1 : after.getClaimEvent().getPlayedPolicy();
         }
 
         private String getLegSessionChanges() {
-            if(legislativeSession_after == null) return "removed";
-
             if(rejectedAfter != rejectedBefore) {
                 return "Rejected: " + rejectedBefore + " => " + rejectedAfter;
             } else if(!rejectedBefore) {
@@ -179,7 +170,7 @@ public final class ExceptionHandler {
         @NonNull
         @Override
         public String toString() {
-            return "[LegislativeSession update on No. "+legislativeSession_before.getSessionNumber()+" (" + getLegSessionChanges() + ") led to the following changes: %0A"
+            return "[LegislativeSession update (" + getLegSessionChanges() + ") led to the following changes: %0A"
             + "Election Tracker: "+electionTracker_before+" => "+electionTracker_after+", %0A"
             + "Liberal Policies: "+libPolicies_before+" => "+libPolicies_after+", %0A"
             + "Fascist Policies: "+fasPolicies_before+" => "+fasPolicies_after+"]";
