@@ -229,6 +229,12 @@ public class GameFragment extends Fragment {
                 bottomSheetMenuManager.showEnableManualModeDialog();
             }
         });
+        btn_report_error.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ExceptionHandler.reportFascistTrackError();
+            }
+        });
     }
 
     public void startAndBindServerService() {
