@@ -75,7 +75,7 @@ public final class BackupManager {
             JSONObject settingsObject = new JSONObject();
 
             //We begin by adding the FascistTrack
-            settingsObject.put("track", JSONManager.writeFascistTrackToJSON(GameManager.gameTrack));
+            if(!GameManager.isManualMode()) settingsObject.put("track", JSONManager.writeFascistTrackToJSON(GameManager.gameTrack));
 
             //Now all other settings
             settingsObject.put("sounds_execution", GameEventsManager.executionSounds);
@@ -165,7 +165,7 @@ public final class BackupManager {
         if(object.has("settings")) { //The file also included settings, they will be restored as well
             JSONObject settingsObject = object.getJSONObject("settings");
 
-            GameManager.gameTrack = JSONManager.restoreFascistTrackFromJSON(settingsObject.getJSONObject("track"));
+            GameManager.gameTrack = settingsObject.has("track") ? JSONManager.restoreFascistTrackFromJSON(settingsObject.getJSONObject("track")) : null;
 
             GameEventsManager.server = settingsObject.getBoolean("server");
 
@@ -190,7 +190,7 @@ public final class BackupManager {
         //When the auto-created executive action was not submitted (=> setup phase left) before the app closed, it will not be included in the backup. To mitigate this, we check if the last event is a LegislativeSession and if so add the track action again
         if(restoredEventList.size() > 0) {
             GameEvent lastEvent = restoredEventList.get(restoredEventList.size() - 1);
-            if (lastEvent instanceof LegislativeSession && !GameManager.gameTrack.isManualMode()) {
+            if (lastEvent instanceof LegislativeSession && !GameManager.isManualMode()) {
                 LegislativeSession legislativeSession = ((LegislativeSession) lastEvent);
                 //However, we need to check if this LegislativeSession actually passed a fascist policy
                 if(legislativeSession.getVoteEvent().getVotingResult() == VoteEvent.VOTE_PASSED && legislativeSession.getClaimEvent().getPlayedPolicy() == Claim.FASCIST && !legislativeSession.getClaimEvent().isVetoed())  addTrackAction(legislativeSession, true);
@@ -213,7 +213,7 @@ public final class BackupManager {
 
             //We have to link Legislative Session and Executive Action back manually, as this is not saved in JSON
             //To do this, we check if the event before the Executive Action / TopPolicyPlayedEvent is a Legislative Session. If so, they are linked together
-            if(!GameManager.gameTrack.isManualMode() && i > 0) {
+            if(!GameManager.isManualMode() && i > 0) {
                 GameEvent priorEvent = restoredEventList.get(restoredEventList.size() - 2);
                 if(priorEvent instanceof LegislativeSession) {
                     LegislativeSession legislativeSession = (LegislativeSession) priorEvent;

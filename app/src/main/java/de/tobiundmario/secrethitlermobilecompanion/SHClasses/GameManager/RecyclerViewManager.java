@@ -94,7 +94,7 @@ public final class RecyclerViewManager {
                 - it is the last event
                 - It is the last Legislative Session in the list with no DeckShuffledEvent in front of it
                  */
-                if(GameManager.gameTrack.isManualMode() || position == eventList.size() - 1 || event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() == legSessionNo - 1 && !(eventList.get(eventList.size() - 1) instanceof DeckShuffledEvent)) {
+                if(GameManager.isManualMode() || position == eventList.size() - 1 || event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() == legSessionNo - 1 && !(eventList.get(eventList.size() - 1) instanceof DeckShuffledEvent)) {
                     remove(event);
                     Snackbar snackbar = Snackbar.make(cardList, GameEventsManager.getContext().getString(R.string.snackbar_GameEvent_removed_message), BaseTransientBottomBar.LENGTH_LONG);
 

@@ -94,109 +94,175 @@
         app:layout_constraintBottom_toTopOf="@+id/setup_buttons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar_setupProgress">
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_setupProgress"
+        tools:visibility="visible">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_create_custom_track"
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_useTrack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:backgroundTint="@color/colorFascist"
-            android:clickable="true"
-            android:focusable="true"
-            app:backgroundTint="@color/colorFascist"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_add" />
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline12"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ScrollView
-            android:id="@+id/scrollView_tracks"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:requiresFadingEdge="horizontal|vertical"
+        <TextView
+            android:id="@+id/switch_text_fascist_track"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Use a Fascist Track"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@+id/switch_useTrack"
+            app:layout_constraintStart_toEndOf="@+id/switch_useTrack"
+            app:layout_constraintTop_toTopOf="@+id/switch_useTrack" />
+
+        <TextView
+            android:id="@+id/switch_desc_fascist_track"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/comfortaa_light"
+            android:text="The app will handle presidential powers and ending the game for you."
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/switch_useTrack"
+            app:layout_constraintTop_toBottomOf="@+id/switch_text_fascist_track" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_fascist_track"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:animateLayoutChanges="true"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/switch_desc_fascist_track">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_create_custom_track"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/colorFascist"
+                android:clickable="true"
+                android:focusable="true"
+                app:backgroundTint="@color/colorFascist"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/ic_add" />
 
-                <TextView
-                    android:id="@+id/tv_explanation_tracks"
-                    android:layout_width="wrap_content"
+            <ScrollView
+                android:id="@+id/scrollView_tracks"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:requiresFadingEdge="horizontal|vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="10dp"
-                    android:fontFamily="@font/comfortaa_light"
-                    android:gravity="center"
-                    android:text="@string/explanation_trackSelection"
-                    android:textColor="#FFFFFF" />
-
-                <LinearLayout
-                    android:id="@+id/container_recommended_track"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tv_title_recommended"
-                        android:layout_width="match_parent"
+                        android:id="@+id/tv_explanation_tracks"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="10dp"
                         android:fontFamily="@font/comfortaa_light"
                         android:gravity="center"
-                        android:text="@string/recommended_title"
+                        android:text="@string/explanation_trackSelection"
                         android:textColor="#FFFFFF"
-                        android:textSize="18sp" />
-                </LinearLayout>
+                        android:visibility="visible" />
 
-                <LinearLayout
-                    android:id="@+id/container_official_tracks"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_title_official"
+                    <LinearLayout
+                        android:id="@+id/container_recommended_track"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/comfortaa_light"
-                        android:gravity="center"
-                        android:text="@string/official_tracks_title"
-                        android:textColor="#FFFFFF"
-                        android:textSize="18sp" />
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_title_recommended"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/comfortaa_light"
+                            android:gravity="center"
+                            android:text="@string/recommended_title"
+                            android:textColor="#FFFFFF"
+                            android:textSize="18sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/container_official_tracks"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_title_official"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/comfortaa_light"
+                            android:gravity="center"
+                            android:text="@string/official_tracks_title"
+                            android:textColor="#FFFFFF"
+                            android:textSize="18sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/container_custom_tracks"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_title_custom_tracks"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/comfortaa_light"
+                            android:gravity="center"
+                            android:text="@string/custom_tracks_title"
+                            android:textColor="#FFFFFF"
+                            android:textSize="18sp" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/list_custom_tracks"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:scrollbars="none" />
+                    </LinearLayout>
 
                 </LinearLayout>
+            </ScrollView>
 
-                <LinearLayout
-                    android:id="@+id/container_custom_tracks"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <TextView
-                        android:id="@+id/tv_title_custom_tracks"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/comfortaa_light"
-                        android:gravity="center"
-                        android:text="@string/custom_tracks_title"
-                        android:textColor="#FFFFFF"
-                        android:textSize="18sp" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.2" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/list_custom_tracks"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:scrollbars="none" />
-                </LinearLayout>
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="40dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="-8dp"
+            android:src="@drawable/ic_beta_badge"
+            app:layout_constraintStart_toEndOf="@+id/switch_text_fascist_track"
+            app:layout_constraintTop_toTopOf="@+id/switch_text_fascist_track" />
 
-            </LinearLayout>
-        </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

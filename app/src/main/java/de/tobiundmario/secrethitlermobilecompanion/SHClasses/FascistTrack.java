@@ -15,8 +15,6 @@ public class FascistTrack {
 
     private int electionTrackerLength = 5;
 
-    private boolean manualMode = false;
-
     String name;
 
     public void setName(String name) {
@@ -25,14 +23,6 @@ public class FascistTrack {
 
     public String getName() {
         return name;
-    }
-
-    public boolean isManualMode() {
-        return manualMode;
-    }
-
-    public void setManualMode(boolean manualMode) {
-        this.manualMode = manualMode;
     }
 
     public void setActions(int[] actions) {

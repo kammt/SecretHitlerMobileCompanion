@@ -52,7 +52,7 @@ public class GameEndCard extends GameEvent {
             iv_fascist.setAlpha((float) 0.2);
 
             ColorStateList csl = ColorStateList.valueOf(context.getColor(R.color.colorLiberal));
-            if(!GameManager.gameTrack.isManualMode()) btn_end.setBackgroundTintList(csl);
+            if(!GameManager.isManualMode()) btn_end.setBackgroundTintList(csl);
             rb_hitler.setButtonTintList(csl);
             rb_policy.setButtonTintList(csl);
 

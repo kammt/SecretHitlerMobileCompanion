@@ -91,17 +91,6 @@
             app:layout_constraintStart_toStartOf="@+id/img_liberal_policy"
             app:layout_constraintTop_toTopOf="@+id/img_liberal_policy" />
 
-        <CheckBox
-            android:id="@+id/checkBox_manualMode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/comfortaa_light"
-            android:text="@string/add_track_section_basics_noActions"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/img_fascist_policy" />
-
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline8"
             android:layout_width="wrap_content"
@@ -135,7 +124,7 @@
             android:text="3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/et_title_eTracker"
-            app:layout_constraintTop_toBottomOf="@+id/checkBox_manualMode" />
+            app:layout_constraintTop_toBottomOf="@+id/img_liberal_policy" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

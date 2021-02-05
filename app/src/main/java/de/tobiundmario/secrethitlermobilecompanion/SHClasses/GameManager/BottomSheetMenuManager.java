@@ -14,6 +14,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import org.json.JSONException;
+
+import java.io.IOException;
+
+import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.GameFragment;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.SHCards.CardDialog;
@@ -75,7 +80,8 @@ public class BottomSheetMenuManager {
     }
 
     public void setupBottomMenu(View fragmentLayout) {
-        initialiseLayoutVariables(fragmentLayout);
+        initialiseBottomSheetLayout(fragmentLayout);
+        initialiseMenuEntries(fragmentLayout);
 
         //Setting up the Bottom Menu
         deselectAllMenuItems();
@@ -84,6 +90,7 @@ public class BottomSheetMenuManager {
         bottomNavigationMenu_game.getMenu().getItem(3).setCheckable(true);
         bottomNavigationMenu_game.getMenu().getItem(2).setCheckable(true);
         bottomNavigationMenu_game.getMenu().getItem(1).setCheckable(true);
+        if(GameManager.isManualMode()) bottomNavigationMenu_game.getMenu().getItem(2).setVisible(false);
 
         setupAddEventButton();
 
@@ -123,10 +130,12 @@ public class BottomSheetMenuManager {
         bottomSheetBehaviorGameStatus.addBottomSheetCallback(deselectMenuItemsCallback);
     }
 
-    private void initialiseLayoutVariables(View fragmentLayout) {
+    private void initialiseBottomSheetLayout(View fragmentLayout) {
         bottomNavigationMenu_game = fragmentLayout.findViewById(R.id.bottomNavigationView_game);
         bottomSheetAdd = fragmentLayout.findViewById(R.id.bottom_sheet_add_event);
+    }
 
+    private void initialiseMenuEntries(View fragmentLayout) {
         entry_loyaltyInvestigation = bottomSheetAdd.findViewById(R.id.loyalty_investigation);
         entry_execution = bottomSheetAdd.findViewById(R.id.execution);
         entry_policy_peek = bottomSheetAdd.findViewById(R.id.policy_peek);
@@ -138,10 +147,15 @@ public class BottomSheetMenuManager {
         CardDialog.showMessageDialog(context, context.getString(R.string.dialog_manual_mode_title), context.getString(R.string.dialog_manual_mode_desc), context.getString(R.string.btn_ok), new Runnable() {
             @Override
             public void run() {
-                GameManager.gameTrack.setManualMode(true);
+                GameManager.enableManualMode();
                 bottomSheetBehaviorGameStatus.setState(BottomSheetBehavior.STATE_HIDDEN);
                 bottomNavigationMenu_game.getMenu().getItem(2).setVisible(false);
                 setupAddEventButton();
+                try {
+                    BackupManager.backupToCache();
+                }catch (IOException | JSONException e) {
+                    ExceptionHandler.showErrorSnackbar(e, "BottomSheetMenuManager.showEnableManualModeDialog()");
+                }
             }
         }, context.getString(R.string.btn_cancel), null);
     }
@@ -168,7 +182,7 @@ public class BottomSheetMenuManager {
             }
         });
 
-        int visibility = GameManager.gameTrack.isManualMode() ? View.VISIBLE : View.GONE;
+        int visibility = GameManager.isManualMode() ? View.VISIBLE : View.GONE;
 
         entry_loyaltyInvestigation.setVisibility(visibility);
         entry_execution.setVisibility(visibility);
@@ -176,7 +190,7 @@ public class BottomSheetMenuManager {
         entry_special_election.setVisibility(visibility);
         entry_top_policy.setVisibility(visibility);
 
-        if(GameManager.gameTrack.isManualMode()) {
+        if(GameManager.isManualMode()) {
             setupManualModeAddButtons();
         }
     }

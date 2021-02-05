@@ -4,8 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -21,7 +19,6 @@ import de.tobiundmario.secrethitlermobilecompanion.SpinnerAdapters.TrackActionSp
 
 public class FascistTrackCreationDialog {
 
-    private static CheckBox cb_manualMode;
     private static TextView tvPositive;
     private static TextView tvNegative;
 
@@ -29,12 +26,10 @@ public class FascistTrackCreationDialog {
     private static EditText input_fpolicies;
     private static EditText input_lpolicies;
     private static EditText input_electionTrackerLength;
-    private static TextView title_eTrackerLength;
 
     private static LinearLayout ll_actions;
 
     public static void destroy() {
-        cb_manualMode = null;
         tvPositive = null;
         tvNegative = null;
 
@@ -42,7 +37,6 @@ public class FascistTrackCreationDialog {
         input_fpolicies = null;
         input_lpolicies = null;
         input_electionTrackerLength = null;
-        title_eTrackerLength = null;
         ll_actions = null;
     }
 
@@ -59,35 +53,13 @@ public class FascistTrackCreationDialog {
         initialiseLayout(dialogView);
         initialiseSetup(pages, customDialog, c);
 
-        cb_manualMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    tvPositive.setText(c.getString(R.string.done));
-
-                    input_electionTrackerLength.setVisibility(View.GONE);
-                    title_eTrackerLength.setVisibility(View.GONE);
-                } else {
-                    tvPositive.setText(c.getString(R.string.btn_continue));
-
-                    input_electionTrackerLength.setVisibility(View.VISIBLE);
-                    title_eTrackerLength.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
         dialog.show();
     }
 
     private static void initialiseSetup(View[] pages, final CardDialog.CustomDialog customDialog, final Context c) {
         CardSetupListeners cardSetupListeners = new CardSetupListeners();
 
-        cardSetupListeners.setSetupFinishCondition(new SetupFinishCondition() {
-            @Override
-            public boolean shouldSetupBeFinished(int newPage) {
-                return cb_manualMode.isChecked() && !errorsOnSetupPage(c);
-            }
-        });
+        cardSetupListeners.setSetupFinishCondition(null);
 
         cardSetupListeners.setOnSetupFinishedListener(new OnSetupFinishedListener() {
             @Override
@@ -120,22 +92,16 @@ public class FascistTrackCreationDialog {
         int lpolicies = Integer.parseInt(input_lpolicies.getText().toString());
         fascistTrack.setLibPolicies(lpolicies);
 
-        boolean manual = cb_manualMode.isChecked();
+        int[] actions = new int[fpolicies];
+        for (int i = 0; i < ll_actions.getChildCount(); i++) {
+            Spinner spinnerAtPos = (Spinner) ll_actions.getChildAt(i);
 
-        if(!manual) {
-            int[] actions = new int[fpolicies];
-            for (int i = 0; i < ll_actions.getChildCount(); i++) {
-                Spinner spinnerAtPos = (Spinner) ll_actions.getChildAt(i);
-
-                int selection = (int) spinnerAtPos.getSelectedItem();
-                actions[i] = selection;
-            }
-            fascistTrack.setActions(actions);
-
-            fascistTrack.setElectionTrackerLength(Integer.parseInt(input_electionTrackerLength.getText().toString()));
-        } else {
-            fascistTrack.setManualMode(true);
+            int selection = (int) spinnerAtPos.getSelectedItem();
+            actions[i] = selection;
         }
+        fascistTrack.setActions(actions);
+
+        fascistTrack.setElectionTrackerLength(Integer.parseInt(input_electionTrackerLength.getText().toString()));
 
         try {
             SharedPreferencesManager.writeFascistTrack(fascistTrack, c);
@@ -195,7 +161,6 @@ public class FascistTrackCreationDialog {
         String fpolicies = input_fpolicies.getText().toString();
         String lpolicies = input_lpolicies.getText().toString();
         String eTrackerLength = input_electionTrackerLength.getText().toString();
-        boolean manual = cb_manualMode.isChecked();
 
         if(name.equals("")) {
             input_name.setError(c.getString(R.string.cannot_be_empty));
@@ -212,7 +177,7 @@ public class FascistTrackCreationDialog {
             error = true;
         }
 
-        if (!manual && (eTrackerLength.equals("") || Integer.parseInt(eTrackerLength) <= 0)) {
+        if (eTrackerLength.equals("") || Integer.parseInt(eTrackerLength) <= 0) {
             input_electionTrackerLength.setError(c.getString(R.string.error_invalid_value));
             error = true;
         }
@@ -221,16 +186,12 @@ public class FascistTrackCreationDialog {
     }
 
     private static void initialiseLayout(View dialogView) {
-        cb_manualMode = dialogView.findViewById(R.id.checkBox_manualMode);
         tvPositive = dialogView.findViewById(R.id.tv_positive);
         tvNegative = dialogView.findViewById(R.id.tv_negative);
-
         input_name = dialogView.findViewById(R.id.et_trackName);
         input_fpolicies = dialogView.findViewById(R.id.et_fpolicies);
         input_lpolicies = dialogView.findViewById(R.id.et_lpolicies);
         input_electionTrackerLength = dialogView.findViewById(R.id.et_electionTrackerLength);
-        title_eTrackerLength = dialogView.findViewById(R.id.et_title_eTracker);
-
         ll_actions = dialogView.findViewById(R.id.actions);
     }
 

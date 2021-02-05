@@ -113,7 +113,6 @@
     <string name="in_use">In Use</string>
     <string name="hint_track_name">Track Name</string>
     <string name="add_track_section_basics">Basics:</string>
-    <string name="add_track_section_basics_noActions">Manual Mode (No pre-defined actions)</string>
     <string name="add_track_section_actions">Actions:</string>
     <string name="title_execution">Execution</string>
     <string name="description_execution">The president selects to execute a player</string>
@@ -126,7 +125,6 @@
     <string name="description_noAction">The president doesn\'t perform any action</string>
     <string name="snackbar_track_removed_message">Fascist Track removed</string>
     <string name="description_track">Fascists win with %1$d and liberals with %2$d policies. It contains the following actions:</string>
-    <string name="description_track_manual">Fascists win with %1$d and liberals with %2$d policies. Manual mode is enabled.</string>
     <string name="no_custom_tracks_title">No Custom Tracks created (yet)</string>
     <string name="title_investigation">Loyalty Investigation</string>
     <string name="description_investigation">The president sees the party membership of another player</string>
@@ -145,8 +143,8 @@
     <string name="et_title_electiontrackerLength">Election Tracker Length:</string>
     <string name="title_warning">Warning</string>
     <string name="dialog_message_duplicate_event_creation">Another event is already being created. Please either finish creating the event or cancel it.</string>
-    <string name="toast_message_deletion_disabled">When manual mode is disabled, you can only delete the last event in the list!</string>
-    <string name="toast_message_edit_blocked">When manual mode is disabled, you can only edit the last Legislative Session in the list!</string>
+    <string name="toast_message_deletion_disabled">When using a Fascist Track, you can only delete the last event in the list!</string>
+    <string name="toast_message_edit_blocked">When using a Fascist Track, you can only edit the last Legislative Session in the list!</string>
     <string name="snackbar_message_error">Sorry, an error occured</string>
     <string name="btn_report_error">Report</string>
     <string name="title_ohNo">Oh No!</string>
@@ -164,7 +162,7 @@
     <string name="title_game_status">Game Status:</string>
     <string name="status_election_tracker">Election Tracker:</string>
     <string name="having_issues">Having issues?</string>
-    <string name="btn_disable_automatic_mode">Disable automatic mode</string>
+    <string name="btn_disable_automatic_mode">Disable Fascist Track</string>
     <string name="dialog_manual_mode_title">Are you sure?</string>
     <string name="dialog_manual_mode_desc">This cannot be reverted for this game</string>
 </resources>

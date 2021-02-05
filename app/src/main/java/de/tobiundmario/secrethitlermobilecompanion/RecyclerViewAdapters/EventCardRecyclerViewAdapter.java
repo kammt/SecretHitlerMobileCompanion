@@ -142,14 +142,15 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
     }
 
     private void processLongClick(GameEvent event, int position) {
-        if(GameEventsManager.editingEnabled) {
-            if (event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() != LegislativeSessionManager.legSessionNo - 1) {
-                Toast.makeText(c, c.getString(R.string.toast_message_edit_blocked), Toast.LENGTH_LONG).show();
-            } else {
-                event.isEditing = true;
-                event.isSetup = true;
-                notifyItemChanged(position);
-            }
+        if(!GameEventsManager.editingEnabled) return;
+
+        boolean notLastLegislativeSession = (event instanceof LegislativeSession && ((LegislativeSession) event).getSessionNumber() != LegislativeSessionManager.legSessionNo - 1);
+        if (!GameManager.isManualMode() && notLastLegislativeSession) {
+            Toast.makeText(c, c.getString(R.string.toast_message_edit_blocked), Toast.LENGTH_LONG).show();
+        } else {
+            event.isEditing = true;
+            event.isSetup = true;
+            notifyItemChanged(position);
         }
     }
 
@@ -167,7 +168,7 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
             }
         });
 
-        if(!GameManager.gameTrack.isManualMode() && !(event instanceof LegislativeSession) && !(event instanceof DeckShuffledEvent) && !(event instanceof GameEndCard) && !event.isEditing) { //If manual mode is disabled, then we don't want to have cancel buttons on automatically generated actions
+        if(!GameManager.isManualMode() && !(event instanceof LegislativeSession) && !(event instanceof DeckShuffledEvent) && !(event instanceof GameEndCard) && !event.isEditing) { //If manual mode is disabled, then we don't want to have cancel buttons on automatically generated actions
             btn_cancel.setVisibility(View.GONE);
         } else {
             btn_cancel.setVisibility(View.VISIBLE);
