@@ -273,6 +273,7 @@ public class PlayerListManager {
                                 addPlayer(playerName, position);
                             }
                         })
+                        .setAnchorView(((MainActivity) c).findViewById(R.id.setup_buttons))
                         .show();
             }
 
