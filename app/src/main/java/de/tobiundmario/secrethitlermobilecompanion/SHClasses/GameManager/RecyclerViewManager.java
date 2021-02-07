@@ -18,6 +18,7 @@ import org.json.JSONException;
 import java.io.IOException;
 
 import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
+import de.tobiundmario.secrethitlermobilecompanion.MainActivity;
 import de.tobiundmario.secrethitlermobilecompanion.R;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.CustomTracksRecyclerViewAdapter;
 import de.tobiundmario.secrethitlermobilecompanion.RecyclerViewAdapters.EventCardRecyclerViewAdapter;
@@ -116,7 +117,9 @@ public final class RecyclerViewManager {
                             }
                             undoRemoval(event, position);
                         }
-                    }).show();
+                    })
+                    .setAnchorView(((MainActivity) GameEventsManager.getContext()).findViewById(R.id.bottomNavigationView_game))
+                    .show();
 
                     snackbar.addCallback(new Snackbar.Callback() {
                         @Override

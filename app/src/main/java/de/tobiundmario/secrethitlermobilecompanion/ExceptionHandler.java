@@ -54,6 +54,7 @@ public final class ExceptionHandler {
                         reportOnGitHub(e, function);
                     }
                 })
+                .setAnchorView(((MainActivity) context).findViewById(R.id.bottomNavigationView_game))
                 .show();
     }
 

@@ -222,7 +222,7 @@ public final class SharedPreferencesManager {
                         ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.removeItemWithSnackbar() (Snackbar action)");
                     }
                 }
-            }).show();
+            }).setAnchorView(((MainActivity) context).findViewById(R.id.setup_buttons)).show();
         } catch (JSONException e) {
             ExceptionHandler.showErrorSnackbar(e, "SharedPreferencesManager.removeItemWithSnackbar()");
         }
