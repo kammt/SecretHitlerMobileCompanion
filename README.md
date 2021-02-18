@@ -1,6 +1,6 @@
 <p align="center">
  <img width="8%" src="/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" align="center" alt="SecretHitlerMobileCompanion Logo" />
- <h2 align="center">Secret Hitler Mobile Companion</h2>
+ <h1 align="center">Secret Hitler Mobile Companion</h1>
  <p align="center">An Android App intended to make the board game experience of Secret Hitler more easy and fun.</p>
 </p>
   <p align="center">
