@@ -10,6 +10,9 @@
     <a href="https://codeclimate.com/github/TobeSoftwareGmbH/SecretHitlerMobileCompanion/maintainability">
       <img src="https://api.codeclimate.com/v1/badges/4007329870969dd3f78b/maintainability" />
     </a>
+    <a href="https://travis-ci.com/TobeSoftwareGmbH/SecretHitlerMobileCompanion">
+      <img src="https://travis-ci.com/TobeSoftwareGmbH/SecretHitlerMobileCompanion.svg?branch=master" />
+    </a>
   </p>
 
 ## Overview and Features
