@@ -7,8 +7,8 @@
     <a href="https://snyk.io/test/github/TobeSoftwareGmbH/SecretHitlerMobileCompanion?targetFile=app/build.gradle">
       <img alt="Known Vulnerabilities" src="https://snyk.io/test/github/TobeSoftwareGmbH/SecretHitlerMobileCompanion/badge.svg?targetFile=app/build.gradle" />
     </a>
-    <a href="https://codeclimate.com/github/TobeSoftwareGmbH/SecretHitlerMobileCompanion/maintainability">
-      <img src="https://api.codeclimate.com/v1/badges/4007329870969dd3f78b/maintainability" />
+    <a href="https://codeclimate.com/github/kammt/SecretHitlerMobileCompanion/maintainability">
+      <img src="https://api.codeclimate.com/v1/badges/1e334be329b5829165fa/maintainability" />
     </a>
     <a href="https://travis-ci.com/kammt/SecretHitlerMobileCompanion">
       <img src="https://travis-ci.com/kammt/SecretHitlerMobileCompanion.svg?branch=master" />
