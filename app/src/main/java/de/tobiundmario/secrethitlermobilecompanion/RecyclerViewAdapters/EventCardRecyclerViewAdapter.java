@@ -207,17 +207,21 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
 
         } else if(event.isSetup) {
 
-            if(event instanceof LoyaltyInvestigationEvent) return LOYALTY_INVESTIGATION_SETUP;
-            else if(event instanceof PolicyPeekEvent) return POLICY_PEEK_SETUP;
-            else if (event instanceof TopPolicyPlayedEvent) return TOP_POLICY_SETUP;
-            else if (event instanceof GameEndCard) return GAME_END;
-            else return EXECUTION_SETUP;
+            return getItemSetupViewType(event);
 
         } else if (event instanceof TopPolicyPlayedEvent) {
             return TOP_POLICY;
         } else if(event instanceof ExecutiveAction) {
             return EXECUTIVE_ACTION;
         } else return DUMMY;
+    }
+
+    private int getItemSetupViewType(GameEvent event) {
+        if(event instanceof LoyaltyInvestigationEvent) return LOYALTY_INVESTIGATION_SETUP;
+        else if(event instanceof PolicyPeekEvent) return POLICY_PEEK_SETUP;
+        else if (event instanceof TopPolicyPlayedEvent) return TOP_POLICY_SETUP;
+        else if (event instanceof GameEndCard) return GAME_END;
+        else return EXECUTION_SETUP;
     }
 
     @Override
