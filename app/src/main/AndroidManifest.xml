@@ -15,10 +15,11 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings"
+            android:theme="@style/AppTheme.DarkMode"/>
         <activity
             android:name=".CrashActivity"
-            android:process=":report_process"></activity>
+            android:process=":report_process" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"
