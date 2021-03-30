@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.preference.PreferenceManager;
 
 import java.util.Arrays;
 
@@ -203,20 +204,28 @@ public class MainActivity extends AppCompatActivity {
 
     public void checkForBackups() {
         if(BackupManager.backupPresent()) {
-            CardDialog.showMessageDialog(this, getString(R.string.dialog_restore_title), getString(R.string.dialog_restore_msg), getString(R.string.yes), new Runnable() {
-                @Override
-                public void run() {
-                    PlayerListManager.setContext(MainActivity.this);
-                    BackupManager.restoreBackup();
-                    replaceFragment(page_game, true);
-                }
-            }, getString(R.string.no), new Runnable() {
-                @Override
-                public void run() {
-                    BackupManager.deleteBackup();
-                }
-            });
+            if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("autoRestoreBackup", false)) {
+                restoreBackup();
+            } else {
+                CardDialog.showMessageDialog(this, getString(R.string.dialog_restore_title), getString(R.string.dialog_restore_msg), getString(R.string.yes), new Runnable() {
+                    @Override
+                    public void run() {
+                        restoreBackup();
+                    }
+                }, getString(R.string.no), new Runnable() {
+                    @Override
+                    public void run() {
+                        BackupManager.deleteBackup();
+                    }
+                });
+            }
         }
+    }
+
+    private void restoreBackup() {
+        PlayerListManager.setContext(MainActivity.this);
+        BackupManager.restoreBackup();
+        replaceFragment(page_game, true);
     }
 
     public LinearLayout getCurrentFragmentContainer() {
