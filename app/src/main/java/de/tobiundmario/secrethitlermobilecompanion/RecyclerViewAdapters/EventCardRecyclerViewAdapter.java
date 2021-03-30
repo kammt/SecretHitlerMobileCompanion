@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.tobiundmario.secrethitlermobilecompanion.R;
@@ -20,6 +21,8 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.GameMan
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.LegislativeSessionManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.RecyclerViewManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DummyEvent;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.ExecutiveAction;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.GameEvent;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LegislativeSession;
 import de.tobiundmario.secrethitlermobilecompanion.SHEvents.LoyaltyInvestigationEvent;
@@ -44,10 +47,19 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
 
     private static final int GAME_END = 9;
 
+    private static final int DUMMY = 11;
+
 
     public EventCardRecyclerViewAdapter(List<GameEvent> events, Context c){
         this.events = events;
         this.c = c;
+    }
+
+    public static EventCardRecyclerViewAdapter generateDemoAdapter(Context context) {
+        List<GameEvent> demoEvents = new ArrayList<>();
+
+        for (int i = 0; i < 2; i++) demoEvents.add(new DummyEvent());
+        return new EventCardRecyclerViewAdapter(demoEvents, context);
     }
 
     @Override
@@ -56,6 +68,7 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
     }
 
     public void blurCardIfNeeded(DimmableViewHolder cardViewHolder, int position) {
+        if(!GameManager.isGameStarted()) return;
         boolean toBeBlurred = GameEventsManager.hiddenEventIndexes.contains(position);
         CardView cv = cardViewHolder.cv;
 
@@ -76,6 +89,7 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
         int id = 0;
         switch (type) {
             case LEGISLATIVE_SESSION:
+            case DUMMY:
                 id = R.layout.card_legislative_session;
                 break;
             case LEGISLATIVE_SESSION_SETUP:
@@ -201,7 +215,9 @@ public class EventCardRecyclerViewAdapter extends RecyclerView.Adapter<DimmableV
 
         } else if (event instanceof TopPolicyPlayedEvent) {
             return TOP_POLICY;
-        } else return EXECUTIVE_ACTION;
+        } else if(event instanceof ExecutiveAction) {
+            return EXECUTIVE_ACTION;
+        } else return DUMMY;
     }
 
     @Override
