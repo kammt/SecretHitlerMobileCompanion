@@ -57,8 +57,6 @@ public final class SetupFragmentManager {
                     FascistTrackSelectionManager.recommendedCard = null;
                 }
 
-                toggleFascistTracks(setupFragment.container_fascist_tracks, false);
-                setupFragment.switch_enable_tracks.setChecked(false);
                 setupFragment.switch_enable_tracks.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -71,11 +69,10 @@ public final class SetupFragmentManager {
         };
     }
 
-    private static void toggleFascistTracks(ConstraintLayout container, boolean enabled) {
+    public static void toggleFascistTracks(ConstraintLayout container, boolean enabled) {
         container.setAlpha(enabled ? 1f : 0.5f);
         container.setClickable(enabled);
         container.setEnabled(enabled);
-
     }
 
     public static SetupContinueCondition secondCondition(final Context context, final SetupFragment setupFragment) {

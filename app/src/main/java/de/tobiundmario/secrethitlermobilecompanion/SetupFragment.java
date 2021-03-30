@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -79,15 +80,7 @@ public class SetupFragment extends Fragment {
 
     public void startSetup() {
         //Resetting values in case there has been a setup before which was cancelled
-        initialiseLayout();
-        page = 1;
-        progressBar_value = 300;
-        PlayerListManager.initialise(playerCardList, context);
-        FascistTrackSelectionManager.selectedTrackIndex = -1;
-        FascistTrackSelectionManager.recommendedTrackIndex = -1;
-        FascistTrackSelectionManager.previousSelection = null;
-        FascistTrackSelectionManager.initialise();
-        FascistTrackSelectionManager.setupOfficialTrackList((LinearLayout) getView().findViewById(R.id.container_official_tracks), context);
+        resetValues();
 
         //Initialising RecyclerViews
         RecyclerView pastPlayerLists = getView().findViewById(R.id.oldPlayerLists);
@@ -109,6 +102,22 @@ public class SetupFragment extends Fragment {
         Animation progressBarAnimation = new MainActivity.ProgressBarAnimation(progressBar_setupSteps, 0, 300);
         progressBarAnimation.setDuration(500);
         progressBar_setupSteps.startAnimation(progressBarAnimation);
+
+        boolean useFascistTrack = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("fascistTrack_defaultValue", false);
+        SetupFragmentManager.toggleFascistTracks(container_fascist_tracks, useFascistTrack);
+        switch_enable_tracks.setChecked(useFascistTrack);
+    }
+
+    private void resetValues() {
+        initialiseLayout();
+        page = 1;
+        progressBar_value = 300;
+        PlayerListManager.initialise(playerCardList, context);
+        FascistTrackSelectionManager.selectedTrackIndex = -1;
+        FascistTrackSelectionManager.recommendedTrackIndex = -1;
+        FascistTrackSelectionManager.previousSelection = null;
+        FascistTrackSelectionManager.initialise();
+        FascistTrackSelectionManager.setupOfficialTrackList((LinearLayout) getView().findViewById(R.id.container_official_tracks), context);
     }
 
     public void initialiseLayout() {
@@ -229,24 +238,6 @@ public class SetupFragment extends Fragment {
         GameEventsManager.server = ((Switch) fragmentLayout.findViewById(R.id.switch_server)).isChecked();
 
         if(!switch_enable_tracks.isChecked()) GameManager.enableManualMode();
-
-        //Delete Variables to save memory
-        setup_container_settings = null;
-        setup_container_select_track = null;
-        setup_container_new_player = null;
-        container_setup_buttons = null;
-
-        progressBar_setupSteps = null;
-        btn_setup_back = null;
-        btn_setup_forward = null;
-
-        tv_choose_from_previous_games_players = null;
-        tv_title_custom_tracks = null;
-        playerCardList = null;
-
-        setupContinueConditions = null;
-        pages = null;
-        fab_newTrack = null;
 
         ((MainActivity) context).replaceFragment(MainActivity.page_game, true);
     }
