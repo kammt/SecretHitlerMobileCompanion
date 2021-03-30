@@ -17,6 +17,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 
 import de.tobiundmario.secrethitlermobilecompanion.ExceptionHandler;
 import de.tobiundmario.secrethitlermobilecompanion.R;
@@ -58,7 +59,7 @@ public class ServerSercive extends Service {
         };
         registerReceiver(killSignalReceiver, filter);
 
-        server = new Server(8080, this);
+        server = new Server(getPort(this), this);
         server.startServer();
         Log.v("Server", "URL is " + server.getURL());
 
@@ -75,6 +76,10 @@ public class ServerSercive extends Service {
 
         startForeground(server.hashCode(), getForegroundNotification());
         return Service.START_STICKY;
+    }
+
+    private int getPort(Context context) {
+        return Integer.parseInt( PreferenceManager.getDefaultSharedPreferences(context).getString("serverPort", "8080") );
     }
 
     @Override
