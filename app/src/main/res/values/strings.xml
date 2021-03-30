@@ -38,7 +38,7 @@
     <string name="btn_continue">Continue</string>
     <string name="btn_cancel">Cancel</string>
     <string name="title_server_status">Server Status:</string>
-    <string name="nothing_here">Nothing here</string>
+    <string name="nothing_here">No active game</string>
     <string name="create_new_game">Create new game</string>
     <string name="new_event">New Event</string>
     <string name="server_status">Server Status</string>
