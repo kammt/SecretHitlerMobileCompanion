@@ -1,0 +1,38 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/server_header">
+
+        <EditTextPreference
+            app:key="serverPort"
+            app:title="@string/port_title"
+            app:defaultValue="8080"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/setup_header">
+
+        <SwitchPreferenceCompat
+            app:key="fascistTrack_defaultValue"
+            app:defaultValue="false"
+            app:summaryOff="@string/fascistTrack_summary_off"
+            app:summaryOn="@string/fascistTrack_summary_on"
+            app:title="@string/fascistTrack_title" />
+
+        <SwitchPreferenceCompat
+            app:key="server_defaultValue"
+            app:defaultValue="true"
+            app:summaryOff="@string/server_summary_off"
+            app:summaryOn="@string/server_summary_on"
+            app:title="@string/server_title" />
+
+        <SwitchPreferenceCompat
+            app:key="sounds_defaultValue"
+            app:defaultValue="true"
+            app:summaryOff="@string/sounds_summary_off"
+            app:summaryOn="@string/sounds_summary_on"
+            app:title="@string/sounds_title" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

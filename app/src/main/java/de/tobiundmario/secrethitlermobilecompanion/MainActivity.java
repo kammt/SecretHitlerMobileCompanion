@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.menu_settings) {
-            //TODO Open Settings
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             return true;
         } else if(item.getItemId() == R.id.menu_help){
             CardDialog.showMessageDialog(this, getString(R.string.dialog_explanations_title), getString(R.string.dialog_explanations_message), getString(R.string.btn_ok), null, null, null);

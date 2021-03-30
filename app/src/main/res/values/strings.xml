@@ -169,4 +169,25 @@
     <string name="title_help">Help</string>
     <string name="dialog_explanations_title">Understanding app gestures</string>
     <string name="dialog_explanations_message">- Adding an event: Use the plus button on the bottom right to add a new event\n- Edit: Long-press an event to edit it\n- Delete: Swipe an Event to any side to delete it</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="server_header">Server</string>
+    <string name="setup_header">Game Setup</string>
+
+    <!-- Server Preferences -->
+    <string name="port_title">Custom server port</string>
+
+    <!-- Game Setup Preferences -->
+    <string name="fascistTrack_title">Fascist Track</string>
+    <string name="fascistTrack_summary_on">By default, the Fascist Track feature will be turned on</string>
+    <string name="fascistTrack_summary_off">By default, the Fascist Track feature will be turned off</string>
+
+    <string name="server_title">Server</string>
+    <string name="server_summary_on">By default, the Web Server will be turned on</string>
+    <string name="server_summary_off">By default, the Web Server will be turned off</string>
+
+    <string name="sounds_title">Sounds</string>
+    <string name="sounds_summary_on">By default, all sounds will be played</string>
+    <string name="sounds_summary_off">By default, no sounds will be played</string>
 </resources>
