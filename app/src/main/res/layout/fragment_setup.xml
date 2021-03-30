@@ -29,17 +29,18 @@
         app:layout_constraintBottom_toTopOf="@+id/setup_buttons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar_setupProgress">
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_setupProgress"
+        tools:visibility="visible">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/playerList"
             android:layout_width="0dp"
-            android:layout_height="140dp"
+            android:layout_height="135dp"
             android:animateLayoutChanges="false"
             android:orientation="horizontal"
+            android:requiresFadingEdge="horizontal|vertical"
             android:scrollbars="horizontal"
             android:visibility="visible"
-            android:requiresFadingEdge="horizontal|vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -94,8 +95,7 @@
         app:layout_constraintBottom_toTopOf="@+id/setup_buttons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar_setupProgress"
-        tools:visibility="visible">
+        app:layout_constraintTop_toBottomOf="@+id/progressBar_setupProgress">
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switch_useTrack"
@@ -133,8 +133,8 @@
             android:id="@+id/container_fascist_track"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:animateLayoutChanges="true"
             android:layout_marginTop="8dp"
+            android:animateLayoutChanges="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
