@@ -50,7 +50,7 @@ public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<Dimmable
 
     public static PlayerCardRecyclerViewAdapter generateDemoAdapter(Context context) {
         ArrayList<String> demoList = new ArrayList<>();
-        for(int i = 0; i < 4; i++) demoList.add("████");
+        for(int i = 0; i < 10; i++) demoList.add("████");
         return new PlayerCardRecyclerViewAdapter(demoList, context);
     }
 
