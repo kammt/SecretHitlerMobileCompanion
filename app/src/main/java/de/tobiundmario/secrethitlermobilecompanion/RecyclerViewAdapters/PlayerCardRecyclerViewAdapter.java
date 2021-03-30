@@ -48,6 +48,12 @@ public class PlayerCardRecyclerViewAdapter extends RecyclerView.Adapter<Dimmable
         else return players.size() + 1;
     }
 
+    public static PlayerCardRecyclerViewAdapter generateDemoAdapter(Context context) {
+        ArrayList<String> demoList = new ArrayList<>();
+        for(int i = 0; i < 10; i++) demoList.add("████");
+        return new PlayerCardRecyclerViewAdapter(demoList, context);
+    }
+
     @Override
     public DimmableViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_player_list_single_player, viewGroup, false);

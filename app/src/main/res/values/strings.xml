@@ -38,8 +38,8 @@
     <string name="btn_continue">Continue</string>
     <string name="btn_cancel">Cancel</string>
     <string name="title_server_status">Server Status:</string>
-    <string name="nothing_here">Nothing here</string>
-    <string name="create_new_game">Create a new game</string>
+    <string name="nothing_here">No active game</string>
+    <string name="create_new_game">Create new game</string>
     <string name="new_event">New Event</string>
     <string name="server_status">Server Status</string>
     <string name="server_status_url"><![CDATA[Please ask your friends to scan the QR code below or enter the following URL manually: <br><b>%1$s</b><br>  Make sure that they are in the same WiFi-network as you!]]></string>
@@ -165,4 +165,5 @@
     <string name="btn_disable_automatic_mode">Disable Fascist Track</string>
     <string name="dialog_manual_mode_title">Are you sure?</string>
     <string name="dialog_manual_mode_desc">This cannot be reverted for this game</string>
+    <string name="openRules">Read Rules</string>
 </resources>
