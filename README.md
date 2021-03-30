@@ -10,8 +10,8 @@
     <a href="https://codeclimate.com/github/kammt/SecretHitlerMobileCompanion/maintainability">
       <img src="https://api.codeclimate.com/v1/badges/1e334be329b5829165fa/maintainability" />
     </a>
-    <a href="https://travis-ci.com/kammt/SecretHitlerMobileCompanion">
-      <img src="https://travis-ci.com/kammt/SecretHitlerMobileCompanion.svg?branch=master" />
+    <a href="https://github.com/kammt/SecretHitlerMobileCompanion/actions/workflows/build_test.yml">
+      <img src="https://github.com/kammt/SecretHitlerMobileCompanion/actions/workflows/build_test.yml/badge.svg" />
     </a>
   </p>
 
