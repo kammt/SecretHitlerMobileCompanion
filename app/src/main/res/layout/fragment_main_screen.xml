@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:text="@string/nothing_here"
         android:textColor="#FFFFFF"
-        android:textSize="18sp"
+        android:textSize="24sp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
