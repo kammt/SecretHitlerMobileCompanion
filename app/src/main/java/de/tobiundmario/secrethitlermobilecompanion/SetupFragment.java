@@ -117,7 +117,7 @@ public class SetupFragment extends Fragment {
 
         ((Switch) getView().findViewById(R.id.switch_server)).setChecked(defaultSharedPreferences.getBoolean("server_defaultValue", true));
 
-        boolean useSounds = defaultSharedPreferences.getBoolean("sounds_defaultValue", false);
+        boolean useSounds = defaultSharedPreferences.getBoolean("sounds_defaultValue", true);
         ((Switch) getView().findViewById(R.id.switch_execution)).setChecked(useSounds);
         ((Switch) getView().findViewById(R.id.switch_gameEnd)).setChecked(useSounds);
         ((Switch) getView().findViewById(R.id.switch_policies)).setChecked(useSounds);
