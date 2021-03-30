@@ -8,6 +8,14 @@
         <item name="android:fontFamily">@font/germania_one</item>
     </style>
 
+    <style name="AppTheme.DarkMode" parent="Theme.MaterialComponents.DayNight">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorLiberal</item>
+        <item name="android:fontFamily">@font/germania_one</item>
+    </style>
+
     <style name="SplashTheme" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>

@@ -5,14 +5,19 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.preference.PreferenceManager;
 
 import java.util.Arrays;
 
@@ -33,12 +38,13 @@ public class MainActivity extends AppCompatActivity {
     public GameFragment fragment_game;
 
     private LinearLayout currentFragmentContainer;
+    private int currentFragment = 0;
 
     private LinearLayout container_main, container_setup, container_game;
 
     private Thread.UncaughtExceptionHandler uncaughtExceptionHandler;
 
-    public static final int page_main = 0, page_setup = 1, game = 2;
+    public static final int page_main = 0, page_setup = 1, page_game = 2;
 
 
     @Override
@@ -97,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 container_main.setVisibility(View.VISIBLE);
                 currentFragmentContainer = container_main;
                 break;
-            case game:
+            case page_game:
                 container_game.setVisibility(View.VISIBLE);
                 currentFragmentContainer = container_game;
                 fragment_game.start();
@@ -108,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
                 fragment_setup.startSetup();
                 break;
         }
+
+        currentFragment = fragmentNumberToReplace;
 
         if(fade) {
             oldContainer.animate()
@@ -135,6 +143,30 @@ public class MainActivity extends AppCompatActivity {
         } else {
             oldContainer.setVisibility(View.GONE);
         }
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        if(currentFragment == page_main) {
+            inflater.inflate(R.menu.actionbar_menu_mainscreen, menu);
+        } else if (currentFragment == page_game) {
+            inflater.inflate(R.menu.actionbar_menu_game, menu);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.menu_settings) {
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            return true;
+        } else if(item.getItemId() == R.id.menu_help){
+            CardDialog.showMessageDialog(this, getString(R.string.dialog_explanations_title), getString(R.string.dialog_explanations_message), getString(R.string.btn_ok), null, null, null);
+            return true;
+        } else return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -172,20 +204,28 @@ public class MainActivity extends AppCompatActivity {
 
     public void checkForBackups() {
         if(BackupManager.backupPresent()) {
-            CardDialog.showMessageDialog(this, getString(R.string.dialog_restore_title), getString(R.string.dialog_restore_msg), getString(R.string.yes), new Runnable() {
-                @Override
-                public void run() {
-                    PlayerListManager.setContext(MainActivity.this);
-                    BackupManager.restoreBackup();
-                    replaceFragment(game, true);
-                }
-            }, getString(R.string.no), new Runnable() {
-                @Override
-                public void run() {
-                    BackupManager.deleteBackup();
-                }
-            });
+            if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("autoRestoreBackup", false)) {
+                restoreBackup();
+            } else {
+                CardDialog.showMessageDialog(this, getString(R.string.dialog_restore_title), getString(R.string.dialog_restore_msg), getString(R.string.yes), new Runnable() {
+                    @Override
+                    public void run() {
+                        restoreBackup();
+                    }
+                }, getString(R.string.no), new Runnable() {
+                    @Override
+                    public void run() {
+                        BackupManager.deleteBackup();
+                    }
+                });
+            }
         }
+    }
+
+    private void restoreBackup() {
+        PlayerListManager.setContext(MainActivity.this);
+        BackupManager.restoreBackup();
+        replaceFragment(page_game, true);
     }
 
     public LinearLayout getCurrentFragmentContainer() {

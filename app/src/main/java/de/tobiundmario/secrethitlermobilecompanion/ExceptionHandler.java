@@ -47,6 +47,7 @@ public final class ExceptionHandler {
     }
 
     public static void showErrorSnackbar(final Exception e, final String function) {
+        e.printStackTrace();
         Snackbar.make( ((ViewGroup) ((MainActivity) context).findViewById(android.R.id.content)).getChildAt(0), context.getString(R.string.snackbar_message_error), Snackbar.LENGTH_LONG)
                 .setAction(context.getString(R.string.btn_report_error), new View.OnClickListener() {
                     @Override
