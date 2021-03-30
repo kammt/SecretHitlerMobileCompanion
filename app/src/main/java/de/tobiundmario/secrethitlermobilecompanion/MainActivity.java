@@ -37,12 +37,13 @@ public class MainActivity extends AppCompatActivity {
     public GameFragment fragment_game;
 
     private LinearLayout currentFragmentContainer;
+    private int currentFragment = 0;
 
     private LinearLayout container_main, container_setup, container_game;
 
     private Thread.UncaughtExceptionHandler uncaughtExceptionHandler;
 
-    public static final int page_main = 0, page_setup = 1, game = 2;
+    public static final int page_main = 0, page_setup = 1, page_game = 2;
 
 
     @Override
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 container_main.setVisibility(View.VISIBLE);
                 currentFragmentContainer = container_main;
                 break;
-            case game:
+            case page_game:
                 container_game.setVisibility(View.VISIBLE);
                 currentFragmentContainer = container_game;
                 fragment_game.start();
@@ -112,6 +113,8 @@ public class MainActivity extends AppCompatActivity {
                 fragment_setup.startSetup();
                 break;
         }
+
+        currentFragment = fragmentNumberToReplace;
 
         if(fade) {
             oldContainer.animate()
@@ -139,12 +142,17 @@ public class MainActivity extends AppCompatActivity {
         } else {
             oldContainer.setVisibility(View.GONE);
         }
+        invalidateOptionsMenu();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.actionbar_menu, menu);
+        if(currentFragment == page_main) {
+            inflater.inflate(R.menu.actionbar_menu_mainscreen, menu);
+        } else if (currentFragment == page_game) {
+            inflater.inflate(R.menu.actionbar_menu_game, menu);
+        }
 
         return true;
     }
@@ -200,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     PlayerListManager.setContext(MainActivity.this);
                     BackupManager.restoreBackup();
-                    replaceFragment(game, true);
+                    replaceFragment(page_game, true);
                 }
             }, getString(R.string.no), new Runnable() {
                 @Override

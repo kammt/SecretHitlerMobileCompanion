@@ -248,7 +248,7 @@ public class SetupFragment extends Fragment {
         pages = null;
         fab_newTrack = null;
 
-        ((MainActivity) context).replaceFragment(MainActivity.game, true);
+        ((MainActivity) context).replaceFragment(MainActivity.page_game, true);
     }
 }
 
