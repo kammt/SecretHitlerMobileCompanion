@@ -1,6 +1,7 @@
 package de.tobiundmario.secrethitlermobilecompanion;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,9 +104,23 @@ public class SetupFragment extends Fragment {
         progressBarAnimation.setDuration(500);
         progressBar_setupSteps.startAnimation(progressBarAnimation);
 
-        boolean useFascistTrack = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("fascistTrack_defaultValue", false);
+        applyPreferences();
+    }
+
+
+    private void applyPreferences() {
+        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        boolean useFascistTrack = defaultSharedPreferences.getBoolean("fascistTrack_defaultValue", false);
         SetupFragmentManager.toggleFascistTracks(container_fascist_tracks, useFascistTrack);
         switch_enable_tracks.setChecked(useFascistTrack);
+
+        ((Switch) getView().findViewById(R.id.switch_server)).setChecked(defaultSharedPreferences.getBoolean("server_defaultValue", true));
+
+        boolean useSounds = defaultSharedPreferences.getBoolean("sounds_defaultValue", false);
+        ((Switch) getView().findViewById(R.id.switch_execution)).setChecked(useSounds);
+        ((Switch) getView().findViewById(R.id.switch_gameEnd)).setChecked(useSounds);
+        ((Switch) getView().findViewById(R.id.switch_policies)).setChecked(useSounds);
     }
 
     private void resetValues() {
