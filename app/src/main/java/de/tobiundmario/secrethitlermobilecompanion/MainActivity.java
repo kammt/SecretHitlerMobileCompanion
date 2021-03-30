@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
             //TODO Open Settings
             return true;
         } else if(item.getItemId() == R.id.menu_help){
-            //TODO help dialog
+            CardDialog.showMessageDialog(this, getString(R.string.dialog_explanations_title), getString(R.string.dialog_explanations_message), getString(R.string.btn_ok), null, null, null);
             return true;
         } else return super.onOptionsItemSelected(item);
     }

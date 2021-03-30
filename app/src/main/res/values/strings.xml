@@ -167,4 +167,6 @@
     <string name="dialog_manual_mode_desc">This cannot be reverted for this game</string>
     <string name="title_settings">Settings</string>
     <string name="title_help">Help</string>
+    <string name="dialog_explanations_title">Understanding app gestures</string>
+    <string name="dialog_explanations_message">- Adding an event: Use the plus button on the bottom right to add a new event\n- Edit: Long-press an event to edit it\n- Delete: Swipe an Event to any side to delete it</string>
 </resources>
