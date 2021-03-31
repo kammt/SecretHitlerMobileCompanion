@@ -226,7 +226,7 @@ public final class FascistTrackSelectionManager {
                 FascistTrackSelectionManager.setupOfficialCard(cv_recommended_track, FascistTrackSelectionManager.TRACK_TYPE_9_TO_10, context);
             }
 
-            container_recommended_track.removeAllViews();
+            if(container_recommended_track.getChildCount() > 1) container_recommended_track.removeViewAt(1);
             container_recommended_track.addView(cv_recommended_track);
             FascistTrackSelectionManager.changeRecommendedCard(recommendation, cv_recommended_track, context);
         }
