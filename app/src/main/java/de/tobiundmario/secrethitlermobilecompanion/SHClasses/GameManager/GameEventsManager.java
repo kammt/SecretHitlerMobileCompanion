@@ -44,6 +44,8 @@ public final class GameEventsManager {
 
     public static boolean executionSounds, policySounds, endSounds, server;
 
+    public static int startingLPolicies, startingFPolicies;
+
     public static void initialise(RecyclerView recyclerView, Context context) {
         if(restoredEventList != null) {
             eventList = restoredEventList;

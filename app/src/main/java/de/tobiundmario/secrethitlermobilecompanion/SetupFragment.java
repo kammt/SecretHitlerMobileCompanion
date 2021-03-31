@@ -51,6 +51,7 @@ public class SetupFragment extends Fragment {
     public ConstraintLayout container_fascist_tracks;
 
     private ConstraintLayout setup_container_settings;
+    private EditText lPolicies, fPolicies;
     public TextView tv_choose_from_previous_games_players;
 
     public ProgressBar progressBar_setupSteps;
@@ -123,10 +124,10 @@ public class SetupFragment extends Fragment {
         ((Switch) getView().findViewById(R.id.switch_gameEnd)).setChecked(useSounds);
         ((Switch) getView().findViewById(R.id.switch_policies)).setChecked(useSounds);
 
-        String fPolicies = defaultSharedPreferences.getString("fPolicies", "7");
-        String lPolicies = defaultSharedPreferences.getString("lPolicies", "11");
-        ((EditText) getView().findViewById(R.id.et_fpolicies)).setText(fPolicies);
-        ((EditText) getView().findViewById(R.id.et_lpolicies)).setText(lPolicies);
+        String fPolicies_value = defaultSharedPreferences.getString("fPolicies", "7");
+        String lPolicies_value = defaultSharedPreferences.getString("lPolicies", "11");
+        fPolicies.setText(fPolicies_value);
+        lPolicies.setText(lPolicies_value);
     }
 
     private void resetValues() {
@@ -164,6 +165,9 @@ public class SetupFragment extends Fragment {
 
         progressBar_setupSteps = fragmentLayout.findViewById(R.id.progressBar_setupProgress);
         progressBar_setupSteps.setMax(900);
+
+        lPolicies = fragmentLayout.findViewById(R.id.et_lpolicies);
+        fPolicies = fragmentLayout.findViewById(R.id.et_fpolicies);
 
         setupVariables(fragmentLayout);
     }
@@ -259,6 +263,9 @@ public class SetupFragment extends Fragment {
         GameEventsManager.server = ((Switch) fragmentLayout.findViewById(R.id.switch_server)).isChecked();
 
         if(!switch_enable_tracks.isChecked()) GameManager.enableManualMode();
+
+        GameEventsManager.startingFPolicies = Integer.parseInt(fPolicies.getText().toString());
+        GameEventsManager.startingLPolicies = Integer.parseInt(lPolicies.getText().toString());
 
         ((MainActivity) context).replaceFragment(MainActivity.page_game, true);
     }

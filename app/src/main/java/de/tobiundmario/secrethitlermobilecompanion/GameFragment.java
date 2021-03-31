@@ -36,6 +36,7 @@ import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.PlayerL
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.RecyclerViewManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.ServerPaneManager;
 import de.tobiundmario.secrethitlermobilecompanion.SHClasses.GameManager.SharedPreferencesManager;
+import de.tobiundmario.secrethitlermobilecompanion.SHEvents.DeckShuffledEvent;
 import de.tobiundmario.secrethitlermobilecompanion.Server.ServerSercive;
 
 public class GameFragment extends Fragment {
@@ -142,6 +143,8 @@ public class GameFragment extends Fragment {
             }
         };
         context.registerReceiver(serverPageUpdateReceiver, serverUpdateFilter);
+
+        GameEventsManager.addEvent(new DeckShuffledEvent(GameEventsManager.startingLPolicies, GameEventsManager.startingFPolicies, context));
 
         started = true;
     }
