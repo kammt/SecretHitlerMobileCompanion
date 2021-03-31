@@ -33,15 +33,26 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
+            EditTextPreference.OnBindEditTextListener listener = new EditTextPreference.OnBindEditTextListener() {
+                @Override
+                public void onBindEditText(@NonNull EditText editText) {
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                }
+            };
+
             EditTextPreference serverPortPref = (EditTextPreference) findPreference("serverPort");
             if (serverPortPref != null) {
-                serverPortPref.setOnBindEditTextListener(
-                        new EditTextPreference.OnBindEditTextListener() {
-                            @Override
-                            public void onBindEditText(@NonNull EditText editText) {
-                                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                            }
-                        });
+                serverPortPref.setOnBindEditTextListener(listener);
+            }
+
+            EditTextPreference fPoliciesPref = (EditTextPreference) findPreference("fPolicies");
+            if (fPoliciesPref != null) {
+                fPoliciesPref.setOnBindEditTextListener(listener);
+            }
+
+            EditTextPreference lPoliciesPref = (EditTextPreference) findPreference("lPolicies");
+            if (lPoliciesPref != null) {
+                lPoliciesPref.setOnBindEditTextListener(listener);
             }
         }
     }

@@ -196,4 +196,7 @@
     <string name="sounds_title">Sounds</string>
     <string name="sounds_summary_on">By default, all sounds will be played</string>
     <string name="sounds_summary_off">By default, no sounds will be played</string>
+
+    <string name="fpolicies_title">Default number of fascist policies</string>
+    <string name="lpolicies_title">Default number of liberal policies</string>
 </resources>

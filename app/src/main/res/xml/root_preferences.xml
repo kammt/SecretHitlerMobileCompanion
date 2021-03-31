@@ -43,6 +43,18 @@
             app:summaryOn="@string/sounds_summary_on"
             app:title="@string/sounds_title" />
 
+        <EditTextPreference
+            app:key="fPolicies"
+            app:title="@string/fpolicies_title"
+            app:defaultValue="7"
+            app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+            app:key="lPolicies"
+            app:title="@string/lpolicies_title"
+            app:defaultValue="11"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>
