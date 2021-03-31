@@ -181,8 +181,8 @@ public class GameFragment extends Fragment {
      */
 
     public void displayEndGameOptions() {
-        //The game has no events, so there is no point in creating the "Game Ended" dialogue. The game will end immediately
-        if(GameEventsManager.jsonData.length() == 0) {
+        //The game has no events or no sounds are meant to be played anyway, so there is no point in creating the "Game Ended" dialogue. The game will end immediately
+        if(GameEventsManager.jsonData.length() == 0 && GameEventsManager.endSounds) {
             endGame();
             return;
         }
