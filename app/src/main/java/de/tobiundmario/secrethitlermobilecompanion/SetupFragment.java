@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Switch;
@@ -121,6 +122,11 @@ public class SetupFragment extends Fragment {
         ((Switch) getView().findViewById(R.id.switch_execution)).setChecked(useSounds);
         ((Switch) getView().findViewById(R.id.switch_gameEnd)).setChecked(useSounds);
         ((Switch) getView().findViewById(R.id.switch_policies)).setChecked(useSounds);
+
+        String fPolicies = defaultSharedPreferences.getString("fPolicies", "7");
+        String lPolicies = defaultSharedPreferences.getString("lPolicies", "11");
+        ((EditText) getView().findViewById(R.id.et_fpolicies)).setText(fPolicies);
+        ((EditText) getView().findViewById(R.id.et_lpolicies)).setText(lPolicies);
     }
 
     private void resetValues() {
